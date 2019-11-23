@@ -1,0 +1,23 @@
+{
+  "name": "schematize",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/graph-genome/Schematize.git"
+  },
+  "author": "graph-genome",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/graph-genome/Schematize/issues"
+  },
+  "homepage": "https://github.com/graph-genome/Schematize#readme",
+  "dependencies": {
+    "mobx": "^4.15.0",
+    "mobx-react": "^6.1.4"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "Component": {
+    "arrival": [{
+      "upstream": 2,
+      "downstream": 4,
+      "participants": ["path1", "path2", "path3"]
+    }],
+    "departure": [{
+      "upstream": 3,
+      "downstream": 1,
+      "participants": ["path1", "path2", "path3"]
+    }]
+  },
+  "Component": {
+    "arrival": [{
+      "upstream": 2,
+      "downstream": 4,
+      "participants": ["path1", "path2", "path3"]
+    }],
+    "departure": [{
+      "upstream": 3,
+      "downstream": 1,
+      "participants": ["path1", "path2", "path3"]
+    }]
+  }
+}
+
