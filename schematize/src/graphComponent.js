@@ -14,12 +14,14 @@ class PangenomeSchematic {
 	processArray(jsonFile) {
 		var componentArray = [];
 		var offsetLength = 0;
-		for (var component in jsonFile) {
-			var componentItem = new Component(jsonFile[component], offsetLength)
+		for (var component in jsonFile.components) {
+			var componentItem = new Component(jsonFile.components[component], offsetLength)
 			offsetLength += componentItem.arrivals.length + componentItem.departures.length;
 			componentArray.push(componentItem);
 		}
-		return (componentArray)
+		this.components = componentArray;
+		this.pathNames = jsonFile.path_names;
+		//return (componentArray)
 	}
 }
 
@@ -46,8 +48,8 @@ class Component {
 	}
 }
 
-var testSchematic = new PangenomeSchematic()
+var schematic = new PangenomeSchematic()
 
-var jsonFile = testSchematic.readFile('./dump.json')
-var componentArray = testSchematic.processArray(jsonFile)
-export default componentArray
+var jsonFile = schematic.readFile('./dump.json')
+schematic.processArray(jsonFile)
+export default schematic

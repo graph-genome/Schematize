@@ -8,7 +8,7 @@ class ComponentRect extends React.Component {
     super(props) 
   };
   state = {
-    color: 'green'
+    color: 'gray'
   };
   handleClick = () => {
     this.setState({
