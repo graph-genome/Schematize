@@ -11,9 +11,11 @@ class ComponentRect extends React.Component {
     color: 'gray'
   };
   handleClick = () => {
-    this.setState({
-      color: Konva.Util.getRandomColor()
-    });
+      if (this.state.color == 'gray') { 
+        this.setState({color: 'lightgray'}); 
+      } else if (this.state.color == 'lightgray') {
+        this.setState({color: 'gray'});
+      }
   };
   render() {
     return (
