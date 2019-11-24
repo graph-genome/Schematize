@@ -11,9 +11,9 @@ import React, { Component } from 'react';
 
 class App extends Component {
   constructor(props) {
-   super(props);
-   this.state = { schematize }
-   console.log({schematize})
+    super(props);
+    this.state = { schematize, paddingSize: 1 }
+    console.log({schematize})
   };
   render() {
     return (
@@ -21,10 +21,12 @@ class App extends Component {
         <Layer>
           {schematize.map((schematizeComponent, i)=> (
             <ComponentRect
+              item={schematizeComponent}
               key={i}
-	      x={schematizeComponent.firstBin}
-              y={20}
-	      width={schematizeComponent.lastBin}
+              x={schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset}
+              y={100}
+              height={100}
+              width={(schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length + schematizeComponent.departures.length}
               numPoints={5}
               innerRadius={20}
               outerRadius={40}

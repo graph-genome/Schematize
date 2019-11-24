@@ -13,9 +13,11 @@ class PangenomeSchematic {
 	}
 	processArray(jsonFile) {
 		var componentArray = [];
+		var offsetLength = 0;
 		for (var component in jsonFile) {
-			var jsonIndex = new Component(component)
-			componentArray.push(jsonFile[jsonIndex]);
+			var componentItem = new Component(jsonFile[component], offsetLength)
+			offsetLength += componentItem.arrivals.length + componentItem.departures.length;
+			componentArray.push(componentItem);
 		}
 		return (componentArray)
 	}
@@ -23,25 +25,24 @@ class PangenomeSchematic {
 
 
 class LinkColumn {
-	constructor(upstream, downstream, participants) {
-		this.upstream = upstream;
-		this.downstream = downstream;
-		this.participants = participants;
+	constructor(linkColumn) {
+		this.upstream = linkColumn.upstream;
+		this.downstream = linkColumn.downstream;
+		this.participants = linkColumn.participants;
 	}
 }
 
 class Component {
-	constructor(test) {
+	constructor(component, offsetLength) {
 //firstBin, lastBin, arrivals, departures) {
-		console.log(test);
-		/*/
-		this.firstBin = firstBin;
-		this.lastBin = lastBin;
+		this.offset = offsetLength;
+		this.firstBin = component.first_bin;
+		this.lastBin = component.last_bin;
 		this.arrivals = []
-		for (var arrival in arrivals) {this.arrivals.push(new LinkColumn(arrival))};
+		for (var arrival in component.arrivals) {this.arrivals.push(new LinkColumn(component.arrivals[arrival]))};
 		this.departures = []
-		for (var departure in departures) {this.departures.push(new LinkColumn(departure))};
-		/*/
+		for (var departure in component.departures) {this.departures.push(new LinkColumn(component.departures[departure]))};
+		
 	}
 }
 

@@ -18,9 +18,9 @@ class ComponentRect extends React.Component {
     return (
       <Rect
         x={this.props.x}
-        y={20}
+        y={this.props.y}
         width={this.props.width}
-        height={50}
+        height={this.props.height}
         fill={this.state.color}
         shadowBlur={5}
         onClick={this.handleClick}
