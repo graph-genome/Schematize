@@ -14,7 +14,8 @@ class PangenomeSchematic {
 	processArray(jsonFile) {
 		var componentArray = [];
 		for (var component in jsonFile) {
-			componentArray.push(new Component(component));
+			var jsonIndex = new Component(component)
+			componentArray.push(jsonFile[jsonIndex]);
 		}
 		return (componentArray)
 	}
@@ -30,13 +31,17 @@ class LinkColumn {
 }
 
 class Component {
-	constructor(firstBin, lastBin, arrivals, departures) {
+	constructor(test) {
+//firstBin, lastBin, arrivals, departures) {
+		console.log(test);
+		/*/
 		this.firstBin = firstBin;
 		this.lastBin = lastBin;
 		this.arrivals = []
 		for (var arrival in arrivals) {this.arrivals.push(new LinkColumn(arrival))};
 		this.departures = []
 		for (var departure in departures) {this.departures.push(new LinkColumn(departure))};
+		/*/
 	}
 }
 
@@ -44,4 +49,4 @@ var testSchematic = new PangenomeSchematic()
 
 var jsonFile = testSchematic.readFile('./dump.json')
 var componentArray = testSchematic.processArray(jsonFile)
-console.log(componentArray)
+export default componentArray

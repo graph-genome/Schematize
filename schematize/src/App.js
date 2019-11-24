@@ -1,27 +1,62 @@
-import React from 'react';
+import Konva from 'konva';
 import logo from './logo.svg';
 import './App.css';
 import schematize from './graphComponent.js'
+import ComponentRect from './svgKonvas.js'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { render } from 'react-dom';
+import { Stage, Layer, Rect, Text } from 'react-konva';
+
+import React, { Component } from 'react';
+
+class App extends Component {
+  constructor(props) {
+   super(props);
+   this.state = { schematize }
+   console.log({schematize})
+  };
+  render() {
+    return (
+      <Stage width={window.innerWidth} height={window.innerHeight}>
+        <Layer>
+          {schematize.map((schematizeComponent, i)=> (
+            <ComponentRect
+              key={i}
+	      x={schematizeComponent.firstBin}
+              y={20}
+	      width={schematizeComponent.lastBin}
+              numPoints={5}
+              innerRadius={20}
+              outerRadius={40}
+              fill="#89b717"
+              opacity={0.8}
+              draggable
+              rotation={Math.random() * 180}
+              shadowColor="black"
+              shadowBlur={10}
+              shadowOpacity={0.6}
+              onDragStart={this.handleDragStart}
+              onDragEnd={this.handleDragEnd}
+            />
+          ))}
+        </Layer>
+      </Stage>
+    );
+
+    // Stage is a div container
+    // Layer is actual canvas element (so you may have several canvases in the stage)
+    // And then we have canvas shapes inside the Layer
+    return (
+      <Stage width={window.innerWidth} height={window.innerHeight}>
+        <Layer>
+          <Text text="Try click on rect" />
+          <ComponentRect />
+        </Layer>
+      </Stage>
+    );
+  }
 }
+ 
+render(<App />, document.getElementById('root'));
 
 export default App;
