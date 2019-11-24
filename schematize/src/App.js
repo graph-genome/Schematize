@@ -34,13 +34,18 @@ class App extends Component {
     React.useEffect(() => {
       this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
     }, []);*/
-    this.state = { schematize: schematic.components, pathNames: schematic.pathNames, paddingSize: 1}
+    this.state = { 
+      schematize: schematic.components, 
+      pathNames: schematic.pathNames, 
+      paddingSize: 2,
+      topOffset: 100
+    }
   };
+
   componentDidMount = () => {
     /* attach listeners to google StreetView */
     this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
-   }
-
+  }
 
   render() {
     return (
@@ -54,7 +59,7 @@ class App extends Component {
               item={schematizeComponent}
               key={i}
               x={schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset}
-              y={100}
+              y={this.state.topOffset}
               height={this.state.pathNames.length}
               width={(schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length + schematizeComponent.departures.length}
               /*numPoints={5}
@@ -74,9 +79,10 @@ class App extends Component {
               <LinkRect 
                 key={i+j}
                 item={linkColumn}
+                pathNames={this.state.pathNames}
                 x={schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + j}
                 height={linkColumn.participants.length}
-                y={100}
+                y={this.state.topOffset}
                 width={1}
                 number={(linkColumn.downstream + 1) * (linkColumn.upstream + 1)}
                 color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1))}
@@ -86,9 +92,10 @@ class App extends Component {
               <LinkRect 
                 key={i+j}
                 item={linkColumn}
+                pathNames={this.state.pathNames}
                 x={schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+j}
                 height={linkColumn.participants.length}
-                y={100}
+                y={this.state.topOffset}
                 width={1}
                 color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1))}
 
