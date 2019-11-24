@@ -5,7 +5,8 @@ import Konva from 'konva';
 
 class ComponentRect extends React.Component {
   constructor(props) {
-  super(props) };
+    super(props) 
+  };
   state = {
     color: 'green'
   };
