@@ -39,7 +39,9 @@ class App extends Component {
       pathNames: schematic.pathNames, 
       paddingSize: 2,
       topOffset: 100,
-      binsPerPixel: 5
+      leftOffset: 10,
+      binsPerPixel: 1,
+      pathsPerPixel: 2,
     }
   };
 
@@ -51,7 +53,7 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
-      <Stage width={window.innerWidth} height={window.innerHeight}>
+      <Stage width={window.innerWidth} height={this.state.topOffset + this.state.pathNames.length * this.state.pathsPerPixel}>
         <Layer ref={this.layerRef}>
           {this.state.schematize.map((schematizeComponent, i)=> {
             return (
@@ -59,9 +61,9 @@ class App extends Component {
             <ComponentRect
               item={schematizeComponent}
               key={i}
-              x={(schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset) * this.state.binsPerPixel}
+              x={this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset) * this.state.binsPerPixel}
               y={this.state.topOffset}
-              height={this.state.pathNames.length}
+              height={this.state.pathNames.length * this.state.pathsPerPixel}
               width={((schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length + schematizeComponent.departures.length) * this.state.binsPerPixel}
               /*numPoints={5}
               innerRadius={20}
@@ -78,11 +80,11 @@ class App extends Component {
             />
             {schematizeComponent.arrivals.map((linkColumn, j) => 
               <LinkRect 
-                key={i+j}
+                key={"arrival" + i+j}
                 item={linkColumn}
                 pathNames={this.state.pathNames}
-                x={(schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + j) * this.state.binsPerPixel}
-                height={linkColumn.participants.length}
+                x={this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + j) * this.state.binsPerPixel}
+                pathsPerPixel={this.state.pathsPerPixel}
                 y={this.state.topOffset}
                 width={this.state.binsPerPixel}
                 number={(linkColumn.downstream + 1) * (linkColumn.upstream + 1)}
@@ -91,11 +93,11 @@ class App extends Component {
             )}
             {schematizeComponent.departures.map((linkColumn, j) => 
               <LinkRect 
-                key={i+j}
+                key={"departure" + i+j}
                 item={linkColumn}
                 pathNames={this.state.pathNames}
-                x={(schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+j)*this.state.binsPerPixel}
-                height={linkColumn.participants.length}
+                x={this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+j)*this.state.binsPerPixel}
+                pathsPerPixel={this.state.pathsPerPixel}
                 y={this.state.topOffset}
                 width={this.state.binsPerPixel}
                 color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1))}

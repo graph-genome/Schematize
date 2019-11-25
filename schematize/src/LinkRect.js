@@ -65,7 +65,7 @@ class LinkRect extends React.Component {
                     x={this.props.x}
                     y={this.props.y}
                     width={this.props.width}
-                    height={this.props.item.participants.length}
+                    height={this.props.item.participants.length * this.props.pathsPerPixel}
                     fill={this.state.color}
                 />
         );
