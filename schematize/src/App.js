@@ -39,7 +39,7 @@ class App extends Component {
       pathNames: schematic.pathNames, 
       paddingSize: 2,
       topOffset: 100,
-      binsPerPixel: 1
+      binsPerPixel: 5
     }
   };
 
@@ -94,7 +94,7 @@ class App extends Component {
                 key={i+j}
                 item={linkColumn}
                 pathNames={this.state.pathNames}
-                x={schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+j}
+                x={(schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+j)*this.state.binsPerPixel}
                 height={linkColumn.participants.length}
                 y={this.state.topOffset}
                 width={this.state.binsPerPixel}

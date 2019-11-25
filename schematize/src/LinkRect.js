@@ -6,6 +6,7 @@ import Konva from 'konva';
 class LinkRect extends React.Component {
     constructor(props) {
         super(props)
+        // this.updateCanvas = this.updateCanvas.bind(this);
         let index = 0;
         let coloredList = [];
 
@@ -41,8 +42,9 @@ class LinkRect extends React.Component {
     componentDidUpdate() {
         this.updateCanvas();
     }
+    
     updateCanvas() {
-        const ctx = this.props.canvas.getContext('2d');
+        const ctx = this.refs.rect;
         ctx.fillRect(0, 0, 100, 100);
     }*/
                     /*/
@@ -55,7 +57,6 @@ class LinkRect extends React.Component {
                 fill={this.state.color}
                 onClick={this.handleClick}
             />)
-
             }})}
             /*/
     render() {
