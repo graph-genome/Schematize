@@ -59,7 +59,7 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
-      <Stage width={this.state.actualWidth} height={this.state.topOffset + this.state.pathNames.length * this.state.pathsPerPixel}>
+      <Stage width={this.state.actualWidth + 20 } height={this.state.topOffset + this.state.pathNames.length * this.state.pathsPerPixel}>
         <Layer ref={this.layerRef}>
           {this.state.schematize.map((schematizeComponent, i)=> {
             return (

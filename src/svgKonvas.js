@@ -8,13 +8,13 @@ class ComponentRect extends React.Component {
     super(props) 
   };
   state = {
-    color: 'gray'
+    color: 'lightgray'
   };
   handleClick = () => {
-      if (this.state.color == 'gray') { 
-        this.setState({color: 'lightgray'}); 
-      } else if (this.state.color == 'lightgray') {
+      if (this.state.color == 'lightgray') {
         this.setState({color: 'gray'});
+      } else if (this.state.color == 'gray') {
+        this.setState({color: 'lightgray'});
       }
   };
   render() {

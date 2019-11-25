@@ -7,7 +7,7 @@ class PangenomeSchematic {
 	}
 	readFile(jsonPath) {
 		console.log(jsonPath);
-		var jsonFile = require('./dump.json')
+		var jsonFile = require('./data/Athaliana.bin100000.schematic.json')
 		console.log(jsonFile)
 		return(jsonFile)
 	}
@@ -50,6 +50,6 @@ class Component {
 
 var schematic = new PangenomeSchematic()
 
-var jsonFile = schematic.readFile('./dump.json')
+var jsonFile = schematic.readFile('./data/Athaliana.bin100000.schematic.json')
 schematic.processArray(jsonFile)
 export default schematic
