@@ -47,17 +47,23 @@ class LinkRect extends React.Component {
         const ctx = this.refs.rect;
         ctx.fillRect(0, 0, 100, 100);
     }*/
-                    /*/
+        /*
+        Dot-plotted version of linkrect
+    render() {
+        return (
+            <React.Fragment>
             {this.state.coloredList.map((boolean, i) => {if (boolean) { return(
             <Rect
                 x={this.props.x}
-                y={this.props.y + i}
+                y={this.props.y + i * this.props.pathsPerPixel}
                 width={this.props.width}
-                height={1}
+                height={this.props.pathsPerPixel}
                 fill={this.state.color}
-                onClick={this.handleClick}
             />)
             }})}
+            </React.Fragment>
+        )
+    }
             /*/
     render() {
         return (
