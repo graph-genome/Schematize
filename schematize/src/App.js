@@ -38,7 +38,8 @@ class App extends Component {
       schematize: schematic.components, 
       pathNames: schematic.pathNames, 
       paddingSize: 2,
-      topOffset: 100
+      topOffset: 100,
+      binsPerPixel: 1
     }
   };
 
@@ -58,10 +59,10 @@ class App extends Component {
             <ComponentRect
               item={schematizeComponent}
               key={i}
-              x={schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset}
+              x={(schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset) * this.state.binsPerPixel}
               y={this.state.topOffset}
               height={this.state.pathNames.length}
-              width={(schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length + schematizeComponent.departures.length}
+              width={((schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length + schematizeComponent.departures.length) * this.state.binsPerPixel}
               /*numPoints={5}
               innerRadius={20}
               outerRadius={40}
@@ -80,10 +81,10 @@ class App extends Component {
                 key={i+j}
                 item={linkColumn}
                 pathNames={this.state.pathNames}
-                x={schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + j}
+                x={(schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + j) * this.state.binsPerPixel}
                 height={linkColumn.participants.length}
                 y={this.state.topOffset}
-                width={1}
+                width={this.state.binsPerPixel}
                 number={(linkColumn.downstream + 1) * (linkColumn.upstream + 1)}
                 color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1))}
               />
@@ -96,7 +97,7 @@ class App extends Component {
                 x={schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+j}
                 height={linkColumn.participants.length}
                 y={this.state.topOffset}
-                width={1}
+                width={this.state.binsPerPixel}
                 color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1))}
 
               />

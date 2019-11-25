@@ -10,7 +10,7 @@ class LinkRect extends React.Component {
         let coloredList = [];
 
         // Create colored list for putting dots on Link rectangle.
-        /*
+/*
         props.item.participants.forEach((item, i) => {
             while(item !== props.pathNames[index]) {
                 index += 1;
@@ -23,7 +23,7 @@ class LinkRect extends React.Component {
             index += 1
             coloredList.push(false)
         }
-        */
+*/
         this.state = {
             coloredList: coloredList,
             color: this.props.color
@@ -34,6 +34,17 @@ class LinkRect extends React.Component {
             color: Konva.Util.getRandomColor()
         });
     };
+    /*
+    componentDidMount() {
+        this.updateCanvas();
+    }
+    componentDidUpdate() {
+        this.updateCanvas();
+    }
+    updateCanvas() {
+        const ctx = this.props.canvas.getContext('2d');
+        ctx.fillRect(0, 0, 100, 100);
+    }*/
                     /*/
             {this.state.coloredList.map((boolean, i) => {if (boolean) { return(
             <Rect
@@ -53,7 +64,7 @@ class LinkRect extends React.Component {
                     x={this.props.x}
                     y={this.props.y}
                     width={this.props.width}
-                    height={this.props.pathNames.length}
+                    height={this.props.item.participants.length}
                     fill={this.state.color}
                 />
         );
