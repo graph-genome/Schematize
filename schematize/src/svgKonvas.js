@@ -25,7 +25,6 @@ class ComponentRect extends React.Component {
         width={this.props.width}
         height={this.props.height}
         fill={this.state.color}
-        shadowBlur={5}
         onClick={this.handleClick}
       />
     );
