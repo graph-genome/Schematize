@@ -36,15 +36,16 @@ class App extends Component {
     }, []);*/
     let binsPerPixel = 1;
     let paddingSize = 2;
+    let leftOffset = 10;
     const reducer = (accumulator, currentValue) => accumulator + currentValue;
-    let actualWidth = schematic.components.map(component => component.arrivals.length + component.departures.length + component.lastBin - component.firstBin + 1 + paddingSize).reduce(reducer) * binsPerPixel;
+    let actualWidth = leftOffset + schematic.components.map(component => component.arrivals.length + component.departures.length + component.lastBin - component.firstBin + 1 + paddingSize).reduce(reducer) * binsPerPixel;
     console.log(actualWidth);
     this.state = { 
       schematize: schematic.components, 
       pathNames: schematic.pathNames, 
       paddingSize: paddingSize,
       topOffset: 100,
-      leftOffset: 10,
+      leftOffset: leftOffset,
       binsPerPixel: binsPerPixel,
       pathsPerPixel: 2,
       actualWidth: actualWidth
