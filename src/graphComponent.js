@@ -13,7 +13,7 @@ class PangenomeSchematic {
 		// var jsonFile = require('./data/yeast_bin10k_7indiv_16chr.schematic.json'); // This cannot be a variable
 		var jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.json'); // This cannot be a variable
 
-		console.log(jsonFile)
+		console.log(jsonFile);
 		return(jsonFile)
 	}
 	processArray(jsonFile) {
