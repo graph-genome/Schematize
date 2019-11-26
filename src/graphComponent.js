@@ -20,10 +20,10 @@ class PangenomeSchematic {
 		var componentArray = [];
 		var offsetLength = 0;
 		for (var component in jsonFile.components) {
-			var componentItem = new Component(jsonFile.components[component], offsetLength)
+			var componentItem = new Component(jsonFile.components[component], offsetLength);
 			offsetLength += componentItem.arrivals.length + componentItem.departures.length;
 			componentArray.push(componentItem);
-			if(component > 20){break} // debugging: to limit input data
+			if(component > 2200){break} // debugging: to limit input data
 		}
 		this.components = componentArray;
 		this.pathNames = jsonFile.path_names;
