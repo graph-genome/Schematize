@@ -10,19 +10,20 @@ class PangenomeSchematic {
 	readFile() {
 		// console.log();
 		// var jsonFile = require('./data/Athaliana.bin100000.schematic.json'); // This cannot be a variable
-		var jsonFile = require('./data/yeast_bin10k_7indiv_16chr.schematic.json'); // This cannot be a variable
+		// var jsonFile = require('./data/yeast_bin10k_7indiv_16chr.schematic.json'); // This cannot be a variable
+		var jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.json'); // This cannot be a variable
 
-		console.log(jsonFile)
+		console.log(jsonFile);
 		return(jsonFile)
 	}
 	processArray(jsonFile) {
 		var componentArray = [];
 		var offsetLength = 0;
 		for (var component in jsonFile.components) {
-			var componentItem = new Component(jsonFile.components[component], offsetLength)
+			var componentItem = new Component(jsonFile.components[component], offsetLength);
 			offsetLength += componentItem.arrivals.length + componentItem.departures.length;
 			componentArray.push(componentItem);
-			//if(component > 20){break} // debugging: to limit input data
+			if(component > 2200){break} // debugging: to limit input data
 		}
 		this.components = componentArray;
 		this.pathNames = jsonFile.path_names;

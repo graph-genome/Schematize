@@ -47,7 +47,7 @@ class App extends Component {
       topOffset: 100,
       leftOffset: leftOffset,
       binsPerPixel: binsPerPixel,
-      pathsPerPixel: 2,
+      pathsPerPixel: 1,
       actualWidth: actualWidth
     }
   };
