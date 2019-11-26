@@ -16,20 +16,13 @@ class LinkRect extends React.Component {
     };*/
 
     dots() {
-        return this.state.coloredList.map((boolean, i) => {
+        let alpha = [];
+        for(const [i, boolean] of this.props.item.participants.entries()) {
             if (boolean) {
-                return (
-                    <Rect
-                        x={this.props.x}
-                        y={this.props.y + i}
-                        width={this.props.width}
-                        height={1}
-                        fill={this.props.color}
-                        // onClick={this.handleClick}
-                    />)
+                alpha.push(i)
             }
-        })
-
+        }
+        return alpha;
     }
     /**/
     componentDidMount() {
@@ -54,12 +47,21 @@ class LinkRect extends React.Component {
         ctx.fillRect(0, 0, 100, 100);
     }/**/
     render() {
-            /** /
+            /**/
+        const contents = this.dots();
         return (
-            <div>
-                {this.dots()}
-            </div>
-            );
+            <React.Fragment>
+                {contents.map((content, i) => {
+                    return (<Rect
+                    x={this.props.x}
+                    y={this.props.y + content}
+                    width={this.props.width}
+                    height={1}
+                    fill={this.props.color}
+                    // onClick={this.handleClick}
+                    />)})}
+            </React.Fragment>
+        );
             /*/
         return (
             <Rect
