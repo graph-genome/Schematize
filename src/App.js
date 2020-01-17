@@ -127,10 +127,10 @@ class App extends Component {
             {this.state.schematize.map((schematizeComponent, i)=> {
               return (
                   <React.Fragment>
-                    {schematizeComponent.departures.map((linkColumn, j) => {
+                    {schematizeComponent.arrivals.map((linkColumn, j) => {
 
-                      var xOffsetGrid = (linkColumn.upstream + (i * this.state.paddingSize) + schematizeComponent.offset +
-                          (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+j);
+                      var xOffsetGrid = (linkColumn.downstream + (i * this.state.paddingSize) + schematizeComponent.offset +
+                          (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + j) - .75;
 
                       return <ArrowRect
                             key={"arrow" + i+j}
@@ -138,17 +138,15 @@ class App extends Component {
                             x={1 + this.state.leftOffset + xOffsetGrid*this.state.binsPerPixel}
                             y={this.state.topOffset - 5}
                             //                    points={[this.state.departureDict[schematizeComponent.departures.downstream], this.state.topOffset - 2, this.state.arrivalDict[[schematizeComponent.departures.upstream], this.state.topOffset - 2]}
-                            points={[0,-5,
+                            points={[0,-15,
 //                    this.state.leftOffset + (schematizeComponent.lastBin + (i * this.state.paddingSize) + schematizeComponent.offset) * this.state.binsPerPixel,
 //                    this.state.leftOffset + (linkColumn.uptream + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length)*this.state.binsPerPixel,
 0,//                               this.state.leftOffset + (linkColumn.downtream + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length)*this.state.binsPerPixel,
 //                    this.state.leftOffset + (linkColumn.upstream + (linkColumn.upstream * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+j)*this.state.binsPerPixel,
-                              5]}
+                              0]}
                             //                    points={[this.state.leftOffset + (linkColumn.downstream + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1))*this.state.binsPerPixel, this.state.topOffset - 2, this.state.leftOffset + linkColumn.downstream, this.state.topOffset - 2]}
-                            strokewidth={3}
+                            width={this.state.binsPerPixel}
                             color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1))}
-                            pointerLength={5}
-                            pointerWidth={5}
                         />})}
                   </React.Fragment>
               )

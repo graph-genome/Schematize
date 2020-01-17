@@ -15,11 +15,11 @@ class ArrowRect extends React.Component {
         x={this.props.x}
         y={this.props.y}
 	    points={this.props.points}
-        strokewidth={this.props.width}
+        strokeWidth={this.props.width}
 	    fill={this.props.color}
-	    stroke={this.props.stroke}
-	    pointerLength={this.props.pointerLength}
-	    pointerWidth={this.props.pointerWidth}
+	    stroke={this.props.color}
+	    pointerLength={1}
+	    pointerWidth={1}
       />
     );
   }
