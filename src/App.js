@@ -1,29 +1,26 @@
-import Konva from 'konva';
-import logo from './logo.svg';
 import './App.css';
 import schematic from './graphComponent.js'
 import ComponentRect from './svgKonvas.js'
 import LinkRect from './LinkRect.js'
 
 import { render } from 'react-dom';
-import { Stage, Layer, Rect, Text } from 'react-konva';
+import { Stage, Layer } from 'react-konva';
 
 import React, { Component } from 'react';
-//import { SceneCanvas } from 'konva/types/Canvas';
 
 var stringToColour = function(str) {
-  str = str.toString()
+  str = str.toString();
   var hash = 0;
   for (var i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
   var colour = '#';
-  for (var i = 0; i < 3; i++) {
-    var value = (hash >> (i * 8)) & 0xFF;
+  for (var j = 0; j < 3; j++) {
+    var value = (hash >> (j * 8)) & 0xFF;
     colour += ('00' + value.toString(16)).substr(-2);
   }
   return colour;
-}
+};
 
 class App extends Component {
   layerRef = React.createRef();
@@ -34,7 +31,7 @@ class App extends Component {
     React.useEffect(() => {
       this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
     }, []);*/
-    let binsPerPixel = 1;
+    let binsPerPixel = 2;
     let paddingSize = 2;
     let leftOffset = 10;
     const reducer = (accumulator, currentValue) => accumulator + currentValue;
@@ -55,7 +52,7 @@ class App extends Component {
   componentDidMount = () => {
     /* attach listeners to google StreetView */
     this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
-  }
+  };
 
   render() {
     return (
@@ -117,18 +114,6 @@ class App extends Component {
           </Layer>
         </Stage>
       </React.Fragment>
-    );
-
-    // Stage is a div container
-    // Layer is actual canvas element (so you may have several canvases in the stage)
-    // And then we have canvas shapes inside the Layer
-    return (
-      <Stage width={window.innerWidth} height={window.innerHeight}>
-        <Layer>
-          <Text text="Try click on rect" />
-          <ComponentRect />
-        </Layer>
-      </Stage>
     );
   }
 }

@@ -1,8 +1,3 @@
-// import set from "set";
-//var Set = require('set');
-let fs = require('fs');
-
-
 class PangenomeSchematic {
 	constructor(fileName) {
 		this.jsonPath = fileName;
@@ -11,7 +6,7 @@ class PangenomeSchematic {
 		// console.log();
 		// var jsonFile = require('./data/Athaliana.bin100000.schematic.json'); // This cannot be a variable
 		// var jsonFile = require('./data/yeast_bin10k_7indiv_16chr.schematic.json'); // This cannot be a variable
-		var jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.json'); // This cannot be a variable
+		const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.json'); // This cannot be a variable
 
 		console.log(jsonFile);
 		return(jsonFile)
@@ -23,7 +18,7 @@ class PangenomeSchematic {
 			var componentItem = new Component(jsonFile.components[component], offsetLength);
 			offsetLength += componentItem.arrivals.length + componentItem.departures.length;
 			componentArray.push(componentItem);
-			if(component > 2200){break} // debugging: to limit input data
+			if(component > 2200){break} // TODO: this limit was set for debugging
 		}
 		this.components = componentArray;
 		this.pathNames = jsonFile.path_names;

@@ -1,19 +1,14 @@
-import React, { Component } from 'react';
-import { render } from 'react-dom';
-import { Stage, Layer, Rect, Text } from 'react-konva';
-import Konva from 'konva';
+import React from 'react';
+import { Rect } from 'react-konva';
 
 class ComponentRect extends React.Component {
-  constructor(props) {
-    super(props) 
-  };
   state = {
     color: 'lightgray'
   };
   handleClick = () => {
-      if (this.state.color == 'lightgray') {
+      if (this.state.color === 'lightgray') {
         this.setState({color: 'gray'});
-      } else if (this.state.color == 'gray') {
+      } else if (this.state.color === 'gray') {
         this.setState({color: 'lightgray'});
       }
   };

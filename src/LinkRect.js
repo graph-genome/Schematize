@@ -2,13 +2,7 @@ import React from 'react';
 import {Rect} from 'react-konva';
 
 class LinkRect extends React.Component {
-    constructor(props) {
-        super(props);
-        // this.updateCanvas = this.updateCanvas.bind(this);
-        let index = 0;
-
-
-    };/*
+    /*
     handleClick = () => {
         this.setState({
             color: Konva.Util.getRandomColor()
@@ -51,7 +45,7 @@ class LinkRect extends React.Component {
         const contents = this.dots();
         return (
             <React.Fragment>
-                {contents.map((content, i) => {
+                {contents.map((content) => {
                     return (<Rect
                     x={this.props.x}
                     y={this.props.y + content}
