@@ -8,18 +8,22 @@ import { Stage, Layer } from 'react-konva';
 
 import React, { Component } from 'react';
 
-var stringToColour = function(str) {
-  str = str.toString();
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+var stringToColour = function(str, linkId, highlightedLinkId) {
+  if (linkId === highlightedLinkId) {
+    return 'black';
+  } else {
+      str = str.toString();
+      var hash = 0;
+      for (var i = 0; i < str.length; i++) {
+          hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      var colour = '#';
+      for (var j = 0; j < 3; j++) {
+          var value = (hash >> (j * 8)) & 0xFF;
+          colour += ('00' + value.toString(16)).substr(-2);
+      }
+      return colour;
   }
-  var colour = '#';
-  for (var j = 0; j < 3; j++) {
-    var value = (hash >> (j * 8)) & 0xFF;
-    colour += ('00' + value.toString(16)).substr(-2);
-  }
-  return colour;
 };
 
 class App extends Component {
@@ -45,13 +49,19 @@ class App extends Component {
       leftOffset: leftOffset,
       binsPerPixel: binsPerPixel,
       pathsPerPixel: 1,
-      actualWidth: actualWidth
-    }
+      actualWidth: actualWidth,
+      highlightedLinkId: 0 // we will compare linkColumns
+    };
+    this.updateHighlightedNode = this.updateHighlightedNode.bind(this)
   };
 
   componentDidMount = () => {
     /* attach listeners to google StreetView */
     this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
+  };
+
+  updateHighlightedNode = (linkRect) => {
+      this.setState({highlightedLinkId: linkRect})
   };
 
   render() {
@@ -92,7 +102,8 @@ class App extends Component {
                       y={this.state.topOffset}
                       width={this.state.binsPerPixel}
                       number={(linkColumn.downstream + 1) * (linkColumn.upstream + 1)}
-                      color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1))}
+                      color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
+                      updateHighlightedNode={this.updateHighlightedNode}
                     />
                   )}
                   {schematizeComponent.departures.map((linkColumn, j) => 
@@ -104,8 +115,8 @@ class App extends Component {
                       pathsPerPixel={this.state.pathsPerPixel}
                       y={this.state.topOffset}
                       width={this.state.binsPerPixel}
-                      color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1))}
-
+                      color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
+                      updateHighlightedNode={this.updateHighlightedNode}
                     />
                   )}
                 </React.Fragment>

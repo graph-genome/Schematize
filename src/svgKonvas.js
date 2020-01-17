@@ -12,6 +12,12 @@ class ComponentRect extends React.Component {
         this.setState({color: 'lightgray'});
       }
   };
+  handleMouseOver = () => {
+    this.setState({color: 'gray'})
+  };
+  handleMouseOut = () => {
+    this.setState({color: 'lightgray'})
+  };
   render() {
     return (
       <Rect
@@ -21,6 +27,8 @@ class ComponentRect extends React.Component {
         height={this.props.height}
         fill={this.state.color}
         onClick={this.handleClick}
+        onMouseOver={this.handleMouseOver}
+        onMouseOut={this.handleMouseOut}
       />
     );
   }

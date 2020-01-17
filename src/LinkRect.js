@@ -29,7 +29,7 @@ class LinkRect extends React.Component {
         /**/
         this.setState({
             coloredList: coloredList,
-            color: this.props.color
+            color: this.props.color,
         } );
     }/** /
     componentDidUpdate() {
@@ -53,6 +53,8 @@ class LinkRect extends React.Component {
                     height={1}
                     fill={this.props.color}
                     // onClick={this.handleClick}
+                    onMouseOver={this.handleMouseOver}
+                    onMouseOut={this.handleMouseOut}
                     />)})}
             </React.Fragment>
         );
@@ -68,5 +70,11 @@ class LinkRect extends React.Component {
         );
         /**/
     }
+    handleMouseOver = () => {
+        this.props.updateHighlightedNode(this.props.linkRect)
+    };
+    handleMouseOut = () => {
+        this.props.updateHighlightedNode(null)
+    };
 }
 export default LinkRect;

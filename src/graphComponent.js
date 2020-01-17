@@ -8,7 +8,7 @@ class PangenomeSchematic {
 		// var jsonFile = require('./data/yeast_bin10k_7indiv_16chr.schematic.json'); // This cannot be a variable
 		const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.json'); // This cannot be a variable
 
-		console.log(jsonFile);
+		// console.log(jsonFile);
 		return(jsonFile)
 	}
 	processArray(jsonFile) {
@@ -18,7 +18,7 @@ class PangenomeSchematic {
 			var componentItem = new Component(jsonFile.components[component], offsetLength);
 			offsetLength += componentItem.arrivals.length + componentItem.departures.length;
 			componentArray.push(componentItem);
-			if(component > 2200){break} // TODO: this limit was set for debugging
+			if(component > 250){break} // TODO: this limit was set for debugging
 		}
 		this.components = componentArray;
 		this.pathNames = jsonFile.path_names;
@@ -57,4 +57,5 @@ var schematic = new PangenomeSchematic();
 
 var jsonFile = schematic.readFile();
 schematic.processArray(jsonFile);
+console.log(schematic.components);
 export default schematic
