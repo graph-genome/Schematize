@@ -10,14 +10,16 @@ class ArrowRect extends React.Component {
   render() {
     return (
       <Arrow
+        upstream={this.props.upstream}
+        downstream={this.props.downstream}
         x={this.props.x}
         y={this.props.y}
-	points={this.props.points}
+	    points={this.props.points}
         strokewidth={this.props.width}
-	fill={this.props.color}
-	stroke={this.props.stroke}
-	pointerLength={this.props.pointerLength}
-	pointerWidth={this.props.pointerWidth}
+	    fill={this.props.color}
+	    stroke={this.props.stroke}
+	    pointerLength={this.props.pointerLength}
+	    pointerWidth={this.props.pointerWidth}
       />
     );
   }
