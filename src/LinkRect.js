@@ -70,8 +70,13 @@ class LinkRect extends React.Component {
         );
         /**/
     }
+    constructor(props) {
+        super(props)
+        this.handleMouseOut = this.handleMouseOut.bind(this)
+        this.handleMouseOver = this.handleMouseOver.bind(this)
+    }
     handleMouseOver = () => {
-        this.props.updateHighlightedNode(this.props.linkRect)
+        this.props.updateHighlightedNode(this.props.item)
     };
     handleMouseOut = () => {
         this.props.updateHighlightedNode(null)

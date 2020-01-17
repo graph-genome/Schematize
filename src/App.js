@@ -8,21 +8,22 @@ import { Stage, Layer } from 'react-konva';
 
 import React, { Component } from 'react';
 
-var stringToColour = function(str, linkId, highlightedLinkId) {
-  if (linkId === highlightedLinkId) {
+var stringToColour = function(str, linkColumn, highlightedLinkColumn) {
+  if (highlightedLinkColumn && (linkColumn.downstream + 1) * (linkColumn.upstream + 1) 
+      === (highlightedLinkColumn.downstream + 1) * (highlightedLinkColumn.upstream + 1)) {
     return 'black';
   } else {
-      str = str.toString();
-      var hash = 0;
-      for (var i = 0; i < str.length; i++) {
-          hash = str.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      var colour = '#';
-      for (var j = 0; j < 3; j++) {
-          var value = (hash >> (j * 8)) & 0xFF;
-          colour += ('00' + value.toString(16)).substr(-2);
-      }
-      return colour;
+    str = str.toString();
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    var colour = '#';
+    for (var j = 0; j < 3; j++) {
+        var value = (hash >> (j * 8)) & 0xFF;
+        colour += ('00' + value.toString(16)).substr(-2);
+    }
+    return colour;
   }
 };
 
