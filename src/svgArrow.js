@@ -14,12 +14,15 @@ class ArrowRect extends React.Component {
         downstream={this.props.downstream}
         x={this.props.x}
         y={this.props.y}
+        bezier={false}
 	    points={this.props.points}
         strokeWidth={this.props.width}
 	    fill={this.props.color}
 	    stroke={this.props.color}
 	    pointerLength={1}
 	    pointerWidth={1}
+        tension={.4}
+        // lineCap={'round'}
       />
     );
   }

@@ -5,7 +5,7 @@ import LinkRect from './LinkRect.js'
 import ArrowRect from './svgArrow.js'
 
 import { render } from 'react-dom';
-import { Stage, Layer } from 'react-konva';
+import {Stage, Layer, Arrow} from 'react-konva';
 
 import React, { Component } from 'react';
 
@@ -138,12 +138,16 @@ class App extends Component {
                             x={1 + this.state.leftOffset + xOffsetGrid*this.state.binsPerPixel}
                             y={this.state.topOffset - 5}
                             //                    points={[this.state.departureDict[schematizeComponent.departures.downstream], this.state.topOffset - 2, this.state.arrivalDict[[schematizeComponent.departures.upstream], this.state.topOffset - 2]}
-                            points={[0,-15,
+                            points={[
+                              80,-15,
+                              10,-15,
+                              1.5,-13.5,
+                              0, -5,
 //                    this.state.leftOffset + (schematizeComponent.lastBin + (i * this.state.paddingSize) + schematizeComponent.offset) * this.state.binsPerPixel,
 //                    this.state.leftOffset + (linkColumn.uptream + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length)*this.state.binsPerPixel,
-0,//                               this.state.leftOffset + (linkColumn.downtream + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length)*this.state.binsPerPixel,
+//                               this.state.leftOffset + (linkColumn.downtream + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length)*this.state.binsPerPixel,
 //                    this.state.leftOffset + (linkColumn.upstream + (linkColumn.upstream * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+j)*this.state.binsPerPixel,
-                              0]}
+                              0,0]}
                             //                    points={[this.state.leftOffset + (linkColumn.downstream + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1))*this.state.binsPerPixel, this.state.topOffset - 2, this.state.leftOffset + linkColumn.downstream, this.state.topOffset - 2]}
                             width={this.state.binsPerPixel}
                             color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1))}
