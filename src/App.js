@@ -10,10 +10,10 @@ import {Stage, Layer} from 'react-konva';
 import React, { Component } from 'react';
 
 const stringToColour = function(str, linkColumn, highlightedLinkColumn) {
-/*  if (highlightedLinkColumn && (linkColumn.downstream + 1) * (linkColumn.upstream + 1)
+    if (highlightedLinkColumn && (linkColumn.downstream + 1) * (linkColumn.upstream + 1)
       === (highlightedLinkColumn.downstream + 1) * (highlightedLinkColumn.upstream + 1)) {
     return 'black';
-  } else {*/ // FIXME
+  } else {
     str = str.toString();
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -25,7 +25,21 @@ const stringToColour = function(str, linkColumn, highlightedLinkColumn) {
         colour += ('00' + value.toString(16)).substr(-2);
     }
     return colour;
-  //}
+  }
+};
+
+const stringToColourSave = function(str, linkColumn, highlightedLinkColumn) {
+    str = str.toString();
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    let colour = '#';
+    for (let j = 0; j < 3; j++) {
+        let value = (hash >> (j * 8)) & 0xFF;
+        colour += ('00' + value.toString(16)).substr(-2);
+    }
+    return colour;
 };
 
 /*
@@ -68,7 +82,7 @@ class App extends Component {
       for (let j = 0; j < schematizeComponent.arrivals.length; j++) {
         let arrival = schematizeComponent.arrivals[j];
         let xCoordArrival = this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + j) * this.state.binsPerPixel;
-        let localColor = stringToColour((arrival.downstream + 1) * (arrival.upstream + 1), arrival, this.state.highlightedLinkId);
+        let localColor = stringToColour((arrival.downstream + 1) * (arrival.upstream + 1));
         if (!(localColor in colToCoordMappingX)) {
           // we want that component to go as far left as possible
           colToCoordMappingX[localColor] = [xCoordArrival, this.state.actualWidth + 100]
@@ -81,7 +95,7 @@ class App extends Component {
       for (let k = 0; k < schematizeComponent.departures.length; k++) {
         let departure = schematizeComponent.departures[k];
         let xCoordDeparture = this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+k)*this.state.binsPerPixel;
-        let localColor = stringToColour((departure.downstream + 1) * (departure.upstream + 1), departure, this.state.highlightedLinkId);
+        let localColor = stringToColour((departure.downstream + 1) * (departure.upstream + 1));
         if (!(localColor in colToCoordMappingX)) {
           colToCoordMappingX[localColor] = [this.state.actualWidth + 100, xCoordDeparture]
         } else {
@@ -204,13 +218,15 @@ class App extends Component {
                         departure = this.state.schematize[1];
                       }
                       // const departureX = departure.offset + departure.arrivals.length;
-                      const localColor = stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId);
+                      const localColor = stringToColourSave((linkColumn.downstream + 1) * (linkColumn.upstream + 1));
                       let departureX = colToCoordMappingX[localColor][1];
 
                       const arrowXCoord =  1 + this.state.leftOffset + xOffsetGrid*this.state.binsPerPixel;
-                      console.log("x value of arrow: " + arrowXCoord);
 
                       departureX =  departureX - arrowXCoord + 2;
+
+                      const coorDiff = arrowXCoord - departureX;
+                      console.log("dpartreX: " + departureX);
 
                       const departOrigin = [departureX, 0];
                       const departCorner = [departureX - 2, elevation + 2];
