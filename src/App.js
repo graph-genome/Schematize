@@ -10,10 +10,10 @@ import {Stage, Layer} from 'react-konva';
 import React, { Component } from 'react';
 
 const stringToColour = function(str, linkColumn, highlightedLinkColumn) {
-  if (highlightedLinkColumn && (linkColumn.downstream + 1) * (linkColumn.upstream + 1) 
+/*  if (highlightedLinkColumn && (linkColumn.downstream + 1) * (linkColumn.upstream + 1)
       === (highlightedLinkColumn.downstream + 1) * (highlightedLinkColumn.upstream + 1)) {
     return 'black';
-  } else {
+  } else {*/ // FIXME
     str = str.toString();
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -25,8 +25,16 @@ const stringToColour = function(str, linkColumn, highlightedLinkColumn) {
         colour += ('00' + value.toString(16)).substr(-2);
     }
     return colour;
-  }
+  //}
 };
+
+/*
+In this dictionary the key is the global unique color string created by @stringToColor.
+The value is a list of size 2:
+1. Element: the x-coordinate of the arrival link column
+2. Element: the x-coordinate of the corresponding departure link column
+ */
+const colToCoordMappingX = {};
 
 class App extends Component {
   layerRef = React.createRef();
@@ -55,6 +63,34 @@ class App extends Component {
       highlightedLinkId: 0 // we will compare linkColumns
     };
     this.updateHighlightedNode = this.updateHighlightedNode.bind(this)
+    for (let i = 0; i < schematic.components.length; i++) {
+      let schematizeComponent = schematic.components[i];
+      for (let j = 0; j < schematizeComponent.arrivals.length; j++) {
+        let arrival = schematizeComponent.arrivals[j];
+        let xCoordArrival = this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + j) * this.state.binsPerPixel;
+        let localColor = stringToColour((arrival.downstream + 1) * (arrival.upstream + 1), arrival, this.state.highlightedLinkId);
+        if (!(localColor in colToCoordMappingX)) {
+          // we want that component to go as far left as possible
+          colToCoordMappingX[localColor] = [xCoordArrival, this.state.actualWidth + 100]
+        } else {
+          let colToCoordMappingXArray = colToCoordMappingX[localColor];
+          colToCoordMappingXArray[0] = xCoordArrival;
+          colToCoordMappingX[localColor] = colToCoordMappingXArray;
+        }
+      }
+      for (let k = 0; k < schematizeComponent.departures.length; k++) {
+        let departure = schematizeComponent.departures[k];
+        let xCoordDeparture = this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+k)*this.state.binsPerPixel;
+        let localColor = stringToColour((departure.downstream + 1) * (departure.upstream + 1), departure, this.state.highlightedLinkId);
+        if (!(localColor in colToCoordMappingX)) {
+          colToCoordMappingX[localColor] = [this.state.actualWidth + 100, xCoordDeparture]
+        } else {
+          let colToCoordMappingXArray = colToCoordMappingX[localColor];
+          colToCoordMappingXArray[1] = xCoordDeparture;
+          colToCoordMappingX[localColor] = colToCoordMappingXArray;
+        }
+      }
+    }
   };
 
   componentDidMount = () => {
@@ -94,7 +130,7 @@ class App extends Component {
                         onDragStart={this.handleDragStart}
                         onDragEnd={this.handleDragEnd}*/
                     />
-                    {schematizeComponent.arrivals.map((linkColumn, j) =>
+{/*                    {schematizeComponent.arrivals.map((linkColumn, j) =>
                         <LinkRect
                             key={"arrival" + i + j}
                             item={linkColumn}
@@ -107,8 +143,25 @@ class App extends Component {
                             color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
                             updateHighlightedNode={this.updateHighlightedNode}
                         />
-                    )}
-                    {schematizeComponent.departures.map((linkColumn, j) =>
+                    )}*/}
+                      {schematizeComponent.arrivals.map((linkColumn, j) => {
+                        let xCoordArrival = this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + j) * this.state.binsPerPixel;
+                        let localColor = stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId);
+                          return <LinkRect
+                              key={"arrival" + i + j}
+                              item={linkColumn}
+                              pathNames={this.state.pathNames}
+                              x={xCoordArrival}
+                              pathsPerPixel={this.state.pathsPerPixel}
+                              y={this.state.topOffset}
+                              width={this.state.binsPerPixel}
+                              number={(linkColumn.downstream + 1) * (linkColumn.upstream + 1)}
+                              color={localColor}
+                              updateHighlightedNode={this.updateHighlightedNode}
+                          />
+                          }
+                      )}
+                    {/*{schematizeComponent.departures.map((linkColumn, j) =>
                         <LinkRect
                             key={"departure" + i + j}
                             item={linkColumn}
@@ -120,7 +173,22 @@ class App extends Component {
                             color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
                             updateHighlightedNode={this.updateHighlightedNode}
                         />
-                    )}
+                    )}*/}
+                      {schematizeComponent.departures.map((linkColumn, j) => {
+                          let localColor = stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId);
+                            return  <LinkRect
+                                  key={"departure" + i + j}
+                                  item={linkColumn}
+                                  pathNames={this.state.pathNames}
+                                  x={this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+j)*this.state.binsPerPixel}
+                                  pathsPerPixel={this.state.pathsPerPixel}
+                                  y={this.state.topOffset}
+                                  width={this.state.binsPerPixel}
+                                  color={localColor}
+                                  updateHighlightedNode={this.updateHighlightedNode}
+                              />
+                      }
+                      )}
                   </React.Fragment>
               )}
             )}
@@ -135,7 +203,14 @@ class App extends Component {
                       if(departure === undefined){
                         departure = this.state.schematize[1];
                       }
-                      const departureX = departure.offset + departure.arrivals.length;
+                      // const departureX = departure.offset + departure.arrivals.length;
+                      const localColor = stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId);
+                      let departureX = colToCoordMappingX[localColor][1];
+
+                      const arrowXCoord =  1 + this.state.leftOffset + xOffsetGrid*this.state.binsPerPixel;
+                      console.log("x value of arrow: " + arrowXCoord);
+
+                      departureX =  departureX - arrowXCoord + 2;
 
                       const departOrigin = [departureX, 0];
                       const departCorner = [departureX - 2, elevation + 2];
@@ -145,7 +220,7 @@ class App extends Component {
                       const arriveCornerEnd = [0,-5];
                       return <ArrowRect
                             key={"arrow" + i+j}
-                            x={1 + this.state.leftOffset + xOffsetGrid*this.state.binsPerPixel}
+                            x={arrowXCoord}
                             y={this.state.topOffset - 5}
                             points={[
                               departOrigin[0], departOrigin[1],
@@ -169,5 +244,6 @@ class App extends Component {
 }
  
 render(<App />, document.getElementById('root'));
+console.log(colToCoordMappingX);
 
 export default App;
