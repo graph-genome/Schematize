@@ -48,8 +48,8 @@ The value is a list of size 2:
 1. Element: the x-coordinate of the arrival link column
 2. Element: the x-coordinate of the corresponding departure link column
  */
-const colToCoordMappingX = {};
 const linkToXmapping = {}; //(paddedKey): [arrivalX, departureX]
+const linksAlreadyRendered = {}; // set of links (padded Keys) which have already been rendered.
 
 class App extends Component {
     layerRef = React.createRef();
@@ -82,7 +82,6 @@ class App extends Component {
                 let arrival = schematizeComponent.arrivals[j];
                 let xCoordArrival = this.state.leftOffset +
                     (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + j) * this.state.binsPerPixel;
-                let localColor = stringToColor((arrival.downstream + 1) * (arrival.upstream + 1));
                 let paddedKey = edgeToKey(arrival.downstream, arrival.upstream);
                 if(!(paddedKey in linkToXmapping)){
                     //place holder value, go as far right as possible
@@ -90,17 +89,6 @@ class App extends Component {
                         xCoordArrival]
                 }else{
                     linkToXmapping[paddedKey][0] = xCoordArrival; // set with real value
-                }
-
-
-
-                if (!(localColor in colToCoordMappingX)) {
-                    // we want that component to go as far left as possible
-                    colToCoordMappingX[localColor] = [xCoordArrival, xCoordArrival]
-                } else {
-                    let xCoordinates = colToCoordMappingX[localColor];
-                    xCoordinates[0] = xCoordArrival;
-                    colToCoordMappingX[localColor] = xCoordinates;
                 }
             }
             for (let k = 0; k < schematizeComponent.departures.length; k++) {
@@ -112,16 +100,6 @@ class App extends Component {
                     linkToXmapping[paddedKey] = [xCoordDeparture, xCoordDeparture]
                 }else{
                     linkToXmapping[paddedKey][1] = xCoordDeparture; // set real value
-                }
-
-
-                let localColor = stringToColor((departure.downstream + 1) * (departure.upstream + 1));
-                if (!(localColor in colToCoordMappingX)) {
-                    colToCoordMappingX[localColor] = [xCoordDeparture, xCoordDeparture]
-                } else {
-                    let xCoordinates = colToCoordMappingX[localColor];
-                    xCoordinates[1] = xCoordDeparture;
-                    colToCoordMappingX[localColor] = xCoordinates;
                 }
             }
         }
@@ -180,54 +158,61 @@ class App extends Component {
         />
     }
 
-    allArrivalsForOneComponent(schematizeComponent, i) {
+    renderLinksForOneComponent(schematizeComponent, i) {
         if (i < 2){return <React.Fragment/>}  //debug: don't render telomeres
         return (
             <React.Fragment>
                 {schematizeComponent.arrivals.map((linkColumn, j) => {
-                    const elevation = -15 - (j * this.state.binsPerPixel);
-                    const xOffsetGrid = (linkColumn.downstream + (i * this.state.paddingSize) + schematizeComponent.offset +
-                        (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + j) - .75;
-                    // const departureX = departure.offset + departure.arrivals.length;
-                    const paddedKey = edgeToKey(linkColumn.downstream, linkColumn.upstream);
-                    const localColor = stringToColourSave((linkColumn.downstream + 1) * (linkColumn.upstream + 1));
-                    let departureX = colToCoordMappingX[localColor][1];
-                    departureX = linkToXmapping[paddedKey][1];
-
-                    const arrowXCoord = 1 + this.state.leftOffset + xOffsetGrid * this.state.binsPerPixel;
-
-                    departureX = departureX - arrowXCoord + 2;
-
-                    const departOrigin = [departureX, 0];
-                    const departCorner = [departureX - 2, elevation + 2];
-                    let departTop = [departureX - 10, elevation];
-                    let arriveTop = [10, elevation];
-                    let arriveCorner = [1.5, elevation + 1.5]; // 1.5 in from actual corner
-                    const arriveCornerEnd = [0, -5];
-                    // we ran into a minimal sized arrow
-                    if (departureX <= 12) {
-                        departTop = [0, elevation + 2];
-                        arriveTop = [10 - 10 + 4, elevation + 2];
-                        arriveCorner = [0, elevation + 1.5]; // 1.5 in from actual corner
-                    }
-                    return <ArrowRect
-                        key={"arrow" + i + j}
-                        x={arrowXCoord}
-                        y={this.state.topOffset - 5}
-                        points={[
-                            departOrigin[0], departOrigin[1],
-                            departCorner[0], departCorner[1],
-                            departTop[0], departTop[1],
-                            arriveTop[0], arriveTop[1],
-                            arriveCorner[0], arriveCorner[1],
-                            arriveCornerEnd[0], arriveCornerEnd[1],
-                            0, 0]}
-                        width={this.state.binsPerPixel}
-                        color={stringToColor((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
-                    />
+                    return this.renderLinks(j, linkColumn, i, schematizeComponent);
+                })}
+                {schematizeComponent.departures.map((linkColumn, k) => {
+                    return this.renderLinks(k, linkColumn, i, schematizeComponent);
                 })}
             </React.Fragment>
         )
+    }
+
+    renderLinks(j, linkColumn, i, schematizeComponent) {
+        const paddedKey = edgeToKey(linkColumn.downstream, linkColumn.upstream);
+        if(paddedKey in linksAlreadyRendered) {
+            // return <React.Fragment/> // don't render a duplicate if it's already been done.
+        }else{
+            linksAlreadyRendered[paddedKey] = paddedKey
+        }
+
+        const elevation = -15 - (j * this.state.binsPerPixel);
+        const xOffsetGrid = (linkColumn.downstream + (i * this.state.paddingSize) + schematizeComponent.offset +
+            (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + j) - .75;
+        let departureX = linkToXmapping[paddedKey][1];
+        const arrowXCoord = 1 + this.state.leftOffset + xOffsetGrid * this.state.binsPerPixel;
+        departureX = departureX - arrowXCoord + 2;
+        const departOrigin = [departureX, 0];
+        const departCorner = [departureX - 2, elevation + 2];
+        let departTop = [departureX - 10, elevation];
+        let arriveTop = [10, elevation];
+        let arriveCorner = [1.5, elevation + 1.5]; // 1.5 in from actual corner
+        const arriveCornerEnd = [0, -5];
+        // we ran into a minimal sized arrow
+        if (departureX <= 12) {
+            departTop = [0, elevation + 2];
+            arriveTop = [10 - 10 + 4, elevation + 2];
+            arriveCorner = [0, elevation + 1.5]; // 1.5 in from actual corner
+        }
+        return <ArrowRect
+            key={"arrow" + i + j}
+            x={arrowXCoord}
+            y={this.state.topOffset - 5}
+            points={[
+                departOrigin[0], departOrigin[1],
+                departCorner[0], departCorner[1],
+                departTop[0], departTop[1],
+                arriveTop[0], arriveTop[1],
+                arriveCorner[0], arriveCorner[1],
+                arriveCornerEnd[0], arriveCornerEnd[1],
+                0, 0]}
+            width={this.state.binsPerPixel}
+            color={stringToColor((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
+        />
     }
 
     render() {
@@ -243,7 +228,7 @@ class App extends Component {
                                     <React.Fragment>
                                         {/*These two lines could be in separate for loops if you want control over ordering*/}
                                         {this.renderComponent(schematizeComponent, i)}
-                                        {this.allArrivalsForOneComponent(schematizeComponent, i)}
+                                        {this.renderLinksForOneComponent(schematizeComponent, i)}
                                     </React.Fragment>
                                 )
                             }
@@ -257,6 +242,5 @@ class App extends Component {
 }
 
 render(<App />, document.getElementById('root'));
-console.log(colToCoordMappingX);
 
 export default App;
