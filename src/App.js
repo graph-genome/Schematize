@@ -213,10 +213,6 @@ class App extends Component {
                       const elevation = -15 - (j*this.state.binsPerPixel);
                       const xOffsetGrid = (linkColumn.downstream + (i * this.state.paddingSize) + schematizeComponent.offset +
                           (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + j) - .75;
-                      let departure = this.state.schematize[linkColumn.upstream];
-                      if(departure === undefined){
-                        departure = this.state.schematize[1];
-                      }
                       // const departureX = departure.offset + departure.arrivals.length;
                       const localColor = stringToColourSave((linkColumn.downstream + 1) * (linkColumn.upstream + 1));
                       let departureX = colToCoordMappingX[localColor][1];
@@ -225,15 +221,18 @@ class App extends Component {
 
                       departureX =  departureX - arrowXCoord + 2;
 
-                      const coorDiff = arrowXCoord - departureX;
-                      console.log("dpartreX: " + departureX);
-
-                      const departOrigin = [departureX, 0];
-                      const departCorner = [departureX - 2, elevation + 2];
-                      const departTop = [departureX-10, elevation];
-                      const arriveTop = [10, elevation];
-                      const arriveCorner = [1.5, elevation + 1.5]; // 1.5 in from actual corner
-                      const arriveCornerEnd = [0,-5];
+                        const departOrigin = [departureX, 0];
+                        const departCorner = [departureX - 2, elevation + 2];
+                        let departTop = [departureX-10, elevation];
+                        let arriveTop = [10, elevation];
+                        let arriveCorner = [1.5, elevation + 1.5]; // 1.5 in from actual corner
+                        const arriveCornerEnd = [0,-5];
+                        // we ran into a minimal sized arrow
+                      if (departureX <= 12) {
+                          departTop = [0, elevation + 2];
+                          arriveTop = [10 - 10 + 4, elevation + 2];
+                          arriveCorner = [0, elevation + 1.5]; // 1.5 in from actual corner
+                      }
                       return <ArrowRect
                             key={"arrow" + i+j}
                             x={arrowXCoord}
