@@ -14,21 +14,11 @@ const stringToColour = function(str, linkColumn, highlightedLinkColumn) {
       === (highlightedLinkColumn.downstream + 1) * (highlightedLinkColumn.upstream + 1)) {
     return 'black';
   } else {
-    str = str.toString();
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    let colour = '#';
-    for (let j = 0; j < 3; j++) {
-        let value = (hash >> (j * 8)) & 0xFF;
-        colour += ('00' + value.toString(16)).substr(-2);
-    }
-    return colour;
+    return stringToColourSave(str);
   }
 };
 
-const stringToColourSave = function(str, linkColumn, highlightedLinkColumn) {
+const stringToColourSave = function(str) {
     str = str.toString();
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -54,11 +44,6 @@ class App extends Component {
   layerRef = React.createRef();
   constructor(props) {
     super(props);
-/*
-    console.log({schematize})
-    React.useEffect(() => {
-      this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
-    }, []);*/
     let binsPerPixel = 4;
     let paddingSize = 2;
     let leftOffset = 10;
@@ -76,7 +61,8 @@ class App extends Component {
       actualWidth: actualWidth,
       highlightedLinkId: 0 // we will compare linkColumns
     };
-    this.updateHighlightedNode = this.updateHighlightedNode.bind(this)
+    this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
+
     for (let i = 0; i < schematic.components.length; i++) {
       let schematizeComponent = schematic.components[i];
       for (let j = 0; j < schematizeComponent.arrivals.length; j++) {
@@ -108,7 +94,6 @@ class App extends Component {
   };
 
   componentDidMount = () => {
-    /* attach listeners to google StreetView */
     this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
   };
 
