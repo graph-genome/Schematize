@@ -51,6 +51,10 @@ The value is a list of size 2:
 const linkToXmapping = {}; //(paddedKey): [arrivalX, departureX]
 const linksAlreadyRendered = {}; // set of links (padded Keys) which have already been rendered.
 
+function leftPadding(schematizeComponent) {
+    return (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length;
+}
+
 class App extends Component {
     layerRef = React.createRef();
     constructor(props) {
@@ -63,6 +67,10 @@ class App extends Component {
             component.arrivals.length + component.departures.length + (component.lastBin - component.firstBin) + 1 + paddingSize
         ).reduce(sum) * binsPerPixel;
         console.log(actualWidth);
+
+        schematic.components[2].departures[0].downstream = 24;//TODO: Debug code
+        schematic.components[12].arrivals[0].upstream = 4;//TODO: Debug code
+        console.log(schematic.components[2].departures[0].downstream);
         this.state = {
             schematize: schematic.components,
             pathNames: schematic.pathNames,
@@ -76,12 +84,12 @@ class App extends Component {
         };
         this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
 
-        for (let i = 0; i < schematic.components.length; i++) {
-            let schematizeComponent = schematic.components[i];
+        for (let i = 0; i < this.state.schematize.length; i++) {
+            let schematizeComponent = this.state.schematize[i];
             for (let j = 0; j < schematizeComponent.arrivals.length; j++) {
                 let arrival = schematizeComponent.arrivals[j];
                 let xCoordArrival = this.state.leftOffset +
-                    (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + j) * this.state.binsPerPixel;
+                    (this.leftXStart(schematizeComponent, i) + j) * this.state.binsPerPixel;
                 let paddedKey = edgeToKey(arrival.downstream, arrival.upstream);
                 if(!(paddedKey in linkToXmapping)){
                     //place holder value, go as far right as possible
@@ -93,7 +101,10 @@ class App extends Component {
             }
             for (let k = 0; k < schematizeComponent.departures.length; k++) {
                 let departure = schematizeComponent.departures[k];
-                let xCoordDeparture = this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length+k)*this.state.binsPerPixel;
+                let xCoordDeparture = this.state.leftOffset
+                    + (this.leftXStart(schematizeComponent, i)
+                    + leftPadding(schematizeComponent)
+                        + k ) * this.state.binsPerPixel;
                 let paddedKey = edgeToKey(departure.upstream, departure.downstream);
                 if(!(paddedKey in linkToXmapping)){
                     //place holder value, go as far left as possible
@@ -113,6 +124,10 @@ class App extends Component {
         this.setState({highlightedLinkId: linkRect})
     };
 
+    leftXStart(schematizeComponent, i) {
+        return schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset;
+    }
+
 
     renderComponent(schematizeComponent, i) {
         return (
@@ -120,22 +135,22 @@ class App extends Component {
                 <ComponentRect
                     item={schematizeComponent}
                     key={i}
-                    x={this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset) * this.state.binsPerPixel}
+                    x={this.state.leftOffset + (this.leftXStart(schematizeComponent, i)) * this.state.binsPerPixel}
                     y={this.state.topOffset}
                     height={this.state.pathNames.length * this.state.pathsPerPixel}
-                    width={((schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length + schematizeComponent.departures.length) * this.state.binsPerPixel}
+                    width={(leftPadding(schematizeComponent) + schematizeComponent.departures.length) * this.state.binsPerPixel}
                 />
 
                 {schematizeComponent.arrivals.map(
                     (linkColumn, j) => {
-                        let leftPadding = 0;
-                        return this.renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn);
+                        let leftPad = 0;
+                        return this.renderLinkColumn(schematizeComponent, i, leftPad, j, linkColumn);
                     }
                 )}
                 {schematizeComponent.departures.map(
                     (linkColumn, j) => {
-                        let leftPadding = (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length;
-                        return this.renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn);
+                        let leftPad = leftPadding(schematizeComponent);
+                        return this.renderLinkColumn(schematizeComponent, i, leftPad, j, linkColumn);
                     }
                 )}
             </React.Fragment>
@@ -143,7 +158,7 @@ class App extends Component {
     }
 
     renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn) {
-        let xCoordArrival = this.state.leftOffset + (schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset + leftPadding + j) * this.state.binsPerPixel;
+        let xCoordArrival = this.state.leftOffset + (this.leftXStart(schematizeComponent,i) + leftPadding + j) * this.state.binsPerPixel;
         let localColor = stringToColor((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId);
         return <LinkRect
             key={"departure" + i + j}
@@ -163,29 +178,25 @@ class App extends Component {
         return (
             <React.Fragment>
                 {schematizeComponent.arrivals.map((linkColumn, j) => {
-                    return this.renderLinks(j, linkColumn, i, schematizeComponent);
+                    return this.renderLinks(j, linkColumn, i, schematizeComponent, true);
                 })}
                 {schematizeComponent.departures.map((linkColumn, k) => {
-                    return this.renderLinks(k, linkColumn, i, schematizeComponent);
+                    return this.renderLinks(k, linkColumn, i, schematizeComponent, false);
                 })}
             </React.Fragment>
         )
     }
 
-    renderLinks(j, linkColumn, i, schematizeComponent) {
+    renderLinks(j, linkColumn, i, schematizeComponent, isArrivals) {
         const paddedKey = edgeToKey(linkColumn.downstream, linkColumn.upstream);
         if(paddedKey in linksAlreadyRendered) {
-            // return <React.Fragment/> // don't render a duplicate if it's already been done.
+            // return <React.Fragment/> // TODO: don't render a duplicate if it's already been done.
         }else{
             linksAlreadyRendered[paddedKey] = paddedKey
         }
-
         const elevation = -15 - (j * this.state.binsPerPixel);
-        const xOffsetGrid = (linkColumn.downstream + (i * this.state.paddingSize) + schematizeComponent.offset +
-            (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + j) - .75;
-        let departureX = linkToXmapping[paddedKey][1];
-        const arrowXCoord = 1 + this.state.leftOffset + xOffsetGrid * this.state.binsPerPixel;
-        departureX = departureX - arrowXCoord + 2;
+        let [arrowXCoord, departureX] = linkToXmapping[paddedKey];
+        departureX = departureX - arrowXCoord + 2; // put in relative coordinates to
         const departOrigin = [departureX, 0];
         const departCorner = [departureX - 2, elevation + 2];
         let departTop = [departureX - 10, elevation];
@@ -193,23 +204,26 @@ class App extends Component {
         let arriveCorner = [1.5, elevation + 1.5]; // 1.5 in from actual corner
         const arriveCornerEnd = [0, -5];
         // we ran into a minimal sized arrow
-        if (departureX <= 12) {
-            departTop = [0, elevation + 2];
-            arriveTop = [10 - 10 + 4, elevation + 2];
-            arriveCorner = [0, elevation + 1.5]; // 1.5 in from actual corner
+        let points = [
+            departOrigin[0], departOrigin[1],
+            departCorner[0], departCorner[1],
+            departTop[0], departTop[1],
+            arriveTop[0], arriveTop[1],
+            arriveCorner[0], arriveCorner[1],
+            arriveCornerEnd[0], arriveCornerEnd[1],
+            0, 0];
+        if (Math.abs(departureX) <= 12) {
+            points = [
+                departOrigin[0], departOrigin[1],
+                departCorner[0], departCorner[1],
+                arriveCorner[0], arriveCorner[1],
+                0, 0];
         }
         return <ArrowRect
             key={"arrow" + i + j}
             x={arrowXCoord}
             y={this.state.topOffset - 5}
-            points={[
-                departOrigin[0], departOrigin[1],
-                departCorner[0], departCorner[1],
-                departTop[0], departTop[1],
-                arriveTop[0], arriveTop[1],
-                arriveCorner[0], arriveCorner[1],
-                arriveCornerEnd[0], arriveCornerEnd[1],
-                0, 0]}
+            points={points}
             width={this.state.binsPerPixel}
             color={stringToColor((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
         />
