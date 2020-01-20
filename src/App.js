@@ -197,12 +197,14 @@ class App extends Component {
         const elevation = -15 - (j * this.state.binsPerPixel);
         let [arrowXCoord, departureX] = linkToXmapping[paddedKey];
         departureX = departureX - arrowXCoord + 2; // put in relative coordinates to
+        let arrX = 2;
+        let turnDirection = (departureX < 0)? -1.5 : 1.5;
         const departOrigin = [departureX, 0];
-        const departCorner = [departureX - 2, elevation + 2];
-        let departTop = [departureX - 10, elevation];
-        let arriveTop = [10, elevation];
-        let arriveCorner = [1.5, elevation + 1.5]; // 1.5 in from actual corner
-        const arriveCornerEnd = [0, -5];
+        const departCorner = [departureX - turnDirection, elevation + 2];
+        let departTop = [departureX - (turnDirection*6), elevation];
+        let arriveTop = [arrX + turnDirection*6, elevation];
+        let arriveCorner = [arrX + turnDirection, elevation + 2]; // 1.5 in from actual corner
+        const arriveCornerEnd = [arrX, -5];
         // we ran into a minimal sized arrow
         let points = [
             departOrigin[0], departOrigin[1],
@@ -211,13 +213,13 @@ class App extends Component {
             arriveTop[0], arriveTop[1],
             arriveCorner[0], arriveCorner[1],
             arriveCornerEnd[0], arriveCornerEnd[1],
-            0, 0];
-        if (Math.abs(departureX) <= 12) {
+            arrX, 0];
+        if (Math.abs(departureX) <= 12) { //Small distances, usually self loops
             points = [
                 departOrigin[0], departOrigin[1],
                 departCorner[0], departCorner[1],
                 arriveCorner[0], arriveCorner[1],
-                0, 0];
+                arrX, 0];
         }
         return <ArrowRect
             key={"arrow" + i + j}
