@@ -5,23 +5,23 @@ import LinkRect from './LinkRect.js'
 import ArrowRect from './svgArrow.js'
 
 import { render } from 'react-dom';
-import {Stage, Layer, Arrow} from 'react-konva';
+import {Stage, Layer} from 'react-konva';
 
 import React, { Component } from 'react';
 
-var stringToColour = function(str, linkColumn, highlightedLinkColumn) {
+const stringToColour = function(str, linkColumn, highlightedLinkColumn) {
   if (highlightedLinkColumn && (linkColumn.downstream + 1) * (linkColumn.upstream + 1) 
       === (highlightedLinkColumn.downstream + 1) * (highlightedLinkColumn.upstream + 1)) {
     return 'black';
   } else {
     str = str.toString();
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
-    var colour = '#';
-    for (var j = 0; j < 3; j++) {
-        var value = (hash >> (j * 8)) & 0xFF;
+    let colour = '#';
+    for (let j = 0; j < 3; j++) {
+        let value = (hash >> (j * 8)) & 0xFF;
         colour += ('00' + value.toString(16)).substr(-2);
     }
     return colour;
@@ -128,21 +128,21 @@ class App extends Component {
               return (
                   <React.Fragment>
                     {schematizeComponent.arrivals.map((linkColumn, j) => {
-                      var elevation = -15 - (j*this.state.binsPerPixel);
-                      var xOffsetGrid = (linkColumn.downstream + (i * this.state.paddingSize) + schematizeComponent.offset +
+                      const elevation = -15 - (j*this.state.binsPerPixel);
+                      const xOffsetGrid = (linkColumn.downstream + (i * this.state.paddingSize) + schematizeComponent.offset +
                           (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + j) - .75;
-                      var departure = this.state.schematize[linkColumn.upstream];
+                      let departure = this.state.schematize[linkColumn.upstream];
                       if(departure === undefined){
                         departure = this.state.schematize[1];
                       }
-                      var departureX = departure.offset + departure.arrivals.length;
+                      const departureX = departure.offset + departure.arrivals.length;
 
-                      var departOrigin = [departureX, 0];
-                      var departCorner = [departureX - 2, elevation + 2];
-                      var departTop = [departureX-10, elevation];
-                      var arriveTop = [10, elevation];
-                      var arriveCorner = [1.5, elevation + 1.5]; // 1.5 in from actual corner
-                      var arriveCornerEnd = [0,-5];
+                      const departOrigin = [departureX, 0];
+                      const departCorner = [departureX - 2, elevation + 2];
+                      const departTop = [departureX-10, elevation];
+                      const arriveTop = [10, elevation];
+                      const arriveCorner = [1.5, elevation + 1.5]; // 1.5 in from actual corner
+                      const arriveCornerEnd = [0,-5];
                       return <ArrowRect
                             key={"arrow" + i+j}
                             x={1 + this.state.leftOffset + xOffsetGrid*this.state.binsPerPixel}
@@ -156,7 +156,7 @@ class App extends Component {
                               arriveCornerEnd[0], arriveCornerEnd[1],
                               0,0]}
                             width={this.state.binsPerPixel}
-                            color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1))}
+                            color={stringToColour((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
                         />})}
                   </React.Fragment>
               )

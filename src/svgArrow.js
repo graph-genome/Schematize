@@ -1,12 +1,7 @@
-import React, { Component } from 'react';
-import { render } from 'react-dom';
-import { Stage, Layer, Rect, Text, Line, Arrow } from 'react-konva';
-import Konva from 'konva';
+import React  from 'react';
+import { Arrow } from 'react-konva';
 
 class ArrowRect extends React.Component {
-  constructor(props) {
-    super(props) 
-  };
   render() {
     return (
       <Arrow
@@ -21,7 +16,7 @@ class ArrowRect extends React.Component {
 	    stroke={this.props.color}
 	    pointerLength={1}
 	    pointerWidth={1}
-        tension={.4}
+        tension={1/3}
         // lineCap={'round'}
       />
     );
