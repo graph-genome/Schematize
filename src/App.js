@@ -36,7 +36,7 @@ class App extends Component {
     React.useEffect(() => {
       this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
     }, []);*/
-    let binsPerPixel = 2;
+    let binsPerPixel = 4;
     let paddingSize = 2;
     let leftOffset = 10;
     const reducer = (accumulator, currentValue) => accumulator + currentValue;
