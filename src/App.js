@@ -84,8 +84,13 @@ class App extends Component {
         };
         this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
 
+        /**
+         * calculate the x coordinates of all components
+         * calculate the x coordinates of all arrivals and departures
+         */
         for (let i = 0; i < this.state.schematize.length; i++) {
             let schematizeComponent = this.state.schematize[i];
+            schematizeComponent.x = this.state.leftOffset + (this.leftXStart(schematizeComponent, i)) * this.state.binsPerPixel;
             for (let j = 0; j < schematizeComponent.arrivals.length; j++) {
                 let arrival = schematizeComponent.arrivals[j];
                 let xCoordArrival = this.state.leftOffset +
@@ -139,7 +144,7 @@ class App extends Component {
                 <ComponentRect
                     item={schematizeComponent}
                     key={i}
-                    x={this.state.leftOffset + (this.leftXStart(schematizeComponent, i)) * this.state.binsPerPixel}
+                    x={this.state.schematize[i].x}
                     y={this.state.topOffset}
                     height={this.state.pathNames.length * this.state.pathsPerPixel}
                     width={(leftPadding(schematizeComponent) + schematizeComponent.departures.length) * this.state.binsPerPixel}
@@ -183,10 +188,10 @@ class App extends Component {
         return (
             <React.Fragment>
                 {schematizeComponent.arrivals.map((linkColumn, j) => {
-                    return this.renderLinks(j, linkColumn, i, schematizeComponent, true);
+                    return this.renderLinks(j, linkColumn, i);
                 })}
                 {schematizeComponent.departures.map((linkColumn, k) => {
-                    return this.renderLinks(k, linkColumn, i, schematizeComponent, false);
+                    return this.renderLinks(k, linkColumn, i);
                 })}
             </React.Fragment>
         )

@@ -49,7 +49,8 @@ class Component {
 		for (var departure in component.departures) {
 			this.departures.push(new LinkColumn(component.departures[departure]))
 		}
-		
+		// we do not know the x val for this component, yet
+		this.x = 0;
 	}
 }
 
