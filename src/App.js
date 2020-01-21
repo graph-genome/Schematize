@@ -68,9 +68,9 @@ class App extends Component {
         ).reduce(sum) * binsPerPixel;
         console.log(actualWidth);
 
-        schematic.components[2].departures[0].downstream = 24;//TODO: Debug code
-        schematic.components[12].arrivals[0].upstream = 4;//TODO: Debug code
-        console.log(schematic.components[2].departures[0].downstream);
+        //schematic.components[2].departures[0].downstream = 24;//TODO: Debug code
+        //schematic.components[12].arrivals[0].upstream = 4;//TODO: Debug code
+        // console.log(schematic.components[2].departures[0].downstream);
         this.state = {
             schematize: schematic.components,
             pathNames: schematic.pathNames,
@@ -94,7 +94,9 @@ class App extends Component {
                 if(!(paddedKey in linkToXmapping)){
                     //place holder value, go as far right as possible
                     linkToXmapping[paddedKey] = [xCoordArrival,
-                        xCoordArrival]
+                        this.state.actualWidth + 100]
+                    // TODO place holder value in the same place
+                    // linkToXmapping[paddedKey] = [xCoordArrival, xCoordArrival]
                 }else{
                     linkToXmapping[paddedKey][0] = xCoordArrival; // set with real value
                 }
@@ -108,7 +110,9 @@ class App extends Component {
                 let paddedKey = edgeToKey(departure.upstream, departure.downstream);
                 if(!(paddedKey in linkToXmapping)){
                     //place holder value, go as far left as possible
-                    linkToXmapping[paddedKey] = [xCoordDeparture, xCoordDeparture]
+                    linkToXmapping[paddedKey] = [this.state.actualWidth + 100, xCoordDeparture]
+                    // TODO place holder value in the same place
+                    // linkToXmapping[paddedKey] = [xCoordDeparture, xCoordDeparture]
                 }else{
                     linkToXmapping[paddedKey][1] = xCoordDeparture; // set real value
                 }
@@ -174,7 +178,8 @@ class App extends Component {
     }
 
     renderLinksForOneComponent(schematizeComponent, i) {
-        if (i < 2){return <React.Fragment/>}  //debug: don't render telomeres
+        // if (i < 2){return <React.Fragment/>}  //FIXME: don't render telomeres. Comment by @subwaystation: Disabling
+        // this does not bring back the rendering of the telomeres.
         return (
             <React.Fragment>
                 {schematizeComponent.arrivals.map((linkColumn, j) => {
@@ -187,10 +192,10 @@ class App extends Component {
         )
     }
 
-    renderLinks(j, linkColumn, i, schematizeComponent, isArrivals) {
+    renderLinks(j, linkColumn, i) {
         const paddedKey = edgeToKey(linkColumn.downstream, linkColumn.upstream);
         if(paddedKey in linksAlreadyRendered) {
-            // return <React.Fragment/> // TODO: don't render a duplicate if it's already been done.
+            // return <React.Fragment/> // TODO: don't render a duplicate if it's already been done. @Josiah: We should not run into any duplicates. If the hash function is not collision free, we have a design problem.
         }else{
             linksAlreadyRendered[paddedKey] = paddedKey
         }
@@ -205,7 +210,6 @@ class App extends Component {
         let arriveTop = [arrX + turnDirection*6, elevation];
         let arriveCorner = [arrX + turnDirection, elevation + 2]; // 1.5 in from actual corner
         const arriveCornerEnd = [arrX, -5];
-        // we ran into a minimal sized arrow
         let points = [
             departOrigin[0], departOrigin[1],
             departCorner[0], departCorner[1],
@@ -228,6 +232,7 @@ class App extends Component {
             points={points}
             width={this.state.binsPerPixel}
             color={stringToColor((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
+            updateHighlightedNode={this.updateHighlightedNode}
         />
     }
 

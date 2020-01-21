@@ -1,5 +1,5 @@
 import React  from 'react';
-import { Arrow } from 'react-konva';
+import {Arrow} from 'react-konva';
 
 class ArrowRect extends React.Component {
   render() {
@@ -17,10 +17,23 @@ class ArrowRect extends React.Component {
 	    pointerLength={1}
 	    pointerWidth={1}
         tension={1/3}
+        onMouseOver={this.handleMouseOver}
+        onMouseOut={this.handleMouseOut}
         // lineCap={'round'}
       />
     );
   }
+    constructor(props) {
+        super(props);
+        this.handleMouseOut = this.handleMouseOut.bind(this);
+        this.handleMouseOver = this.handleMouseOver.bind(this);
+    }
+    handleMouseOver = () => {
+        this.props.updateHighlightedNode(this.props.item)
+    };
+    handleMouseOut = () => {
+        this.props.updateHighlightedNode(null)
+    };
 }
 
 export default ArrowRect
