@@ -233,6 +233,7 @@ class App extends Component {
             width={this.state.binsPerPixel}
             color={stringToColor((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
             updateHighlightedNode={this.updateHighlightedNode}
+            item={linkColumn}
         />
     }
 
