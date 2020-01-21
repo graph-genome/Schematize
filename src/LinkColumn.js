@@ -1,7 +1,7 @@
 import React from 'react';
 import {Rect} from 'react-konva';
 
-class LinkRect extends React.Component {
+class LinkColumn extends React.Component {
     /*
     handleClick = () => {
         this.setState({
@@ -82,4 +82,4 @@ class LinkRect extends React.Component {
         this.props.updateHighlightedNode(null)
     };
 }
-export default LinkRect;
+export default LinkColumn;

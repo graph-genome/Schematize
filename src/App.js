@@ -1,8 +1,8 @@
 import './App.css';
-import PangenomeSchematic from './graphComponent.js'
-import ComponentRect from './svgKonvas.js'
-import LinkRect from './LinkRect.js'
-import ArrowRect from './svgArrow.js'
+import PangenomeSchematic from './PangenomeSchematic.js'
+import ComponentRect from './ComponentRect.js'
+import LinkColumn from './LinkColumn.js'
+import LinkArrow from './LinkArrow.js'
 
 import { render } from 'react-dom';
 import {Stage, Layer} from 'react-konva';
@@ -171,7 +171,7 @@ class App extends Component {
     renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn) {
         let xCoordArrival = this.props.leftOffset + (this.leftXStart(schematizeComponent,i) + leftPadding + j) * this.props.binsPerPixel;
         let localColor = stringToColor((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId);
-        return <LinkRect
+        return <LinkColumn
             key={"departure" + i + j}
             item={linkColumn}
             pathNames={this.state.pathNames}
@@ -239,7 +239,7 @@ class App extends Component {
                 arriveCorner[0], arriveCorner[1],
                 arrX, 0];
         }
-        return <ArrowRect
+        return <LinkArrow
             key={"arrow" + i + j}
             x={arrowXCoord}
             y={this.state.topOffset - 5}

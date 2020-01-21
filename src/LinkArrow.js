@@ -1,7 +1,7 @@
 import React  from 'react';
 import {Arrow} from 'react-konva';
 
-class ArrowRect extends React.Component {
+class LinkArrow extends React.Component {
   render() {
     return (
       <Arrow
@@ -36,4 +36,4 @@ class ArrowRect extends React.Component {
     };
 }
 
-export default ArrowRect
+export default LinkArrow
