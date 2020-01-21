@@ -44,8 +44,8 @@ function leftPadding(component) {
 
 class App extends Component {
     layerRef = React.createRef();
-    static defaultProps = {beginBin:2,
-        endBin:500,
+    static defaultProps = {beginBin:2000,
+        endBin:3000,
         binsPerPixel:6,
         paddingSize:2,
         leftOffset:10
@@ -59,7 +59,7 @@ class App extends Component {
             component.arrivals.length + component.departures.length + (component.lastBin - component.firstBin) + 1 + this.props.paddingSize
         ).reduce(sum) * this.props.binsPerPixel;
         console.log(actualWidth);
-        console.log(schematic.components);
+        // console.log(schematic.components);
 
         this.state = {
             schematize: schematic.components,
@@ -201,18 +201,18 @@ class App extends Component {
 
     renderLinks(j, linkColumn, i) {
         const paddedKey = edgeToKey(linkColumn.downstream, linkColumn.upstream);
-        if(paddedKey in this.linksAlreadyRendered) {
-            return <React.Fragment/>; // TODO: don't render a duplicate if it's already been done.
-            // @Josiah: We should not run into any duplicates.
-            // If the hash function is not collision free, we have a design problem.
+        //  Set().has( works "x in Y" does not.
+        if(this.linksAlreadyRendered.has(paddedKey)) {
+            return <React.Fragment/>; // don't render a duplicate if it's already been done.
         }else{
+            // console.log(paddedKey);
             this.linksAlreadyRendered.add(paddedKey);
         }
         if(!(paddedKey in this.linkToXmapping)) {
-            return <React.Fragment/>;
+            return <React.Fragment/>; //don't have information on this link, how did we get here?
         }
         let link = this.linkToXmapping[paddedKey];
-        console.log(link);
+        // console.log(link);
         const elevation = -15 - (j * this.props.binsPerPixel);
         let [arrowXCoord, departureX] = link;
         departureX = departureX - arrowXCoord + 2; // put in relative coordinates to
@@ -253,6 +253,7 @@ class App extends Component {
 
     render() {
         this.linksAlreadyRendered.clear(); // reset counters
+        console.log("Start render");
         return (
             <React.Fragment>
                 <Stage
