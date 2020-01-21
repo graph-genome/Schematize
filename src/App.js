@@ -1,5 +1,5 @@
 import './App.css';
-import schematic from './graphComponent.js'
+import PangenomeSchematic from './graphComponent.js'
 import ComponentRect from './svgKonvas.js'
 import LinkRect from './LinkRect.js'
 import ArrowRect from './svgArrow.js'
@@ -51,14 +51,15 @@ The value is a list of size 2:
 const linkToXmapping = {}; //(paddedKey): [arrivalX, departureX]
 const linksAlreadyRendered = {}; // set of links (padded Keys) which have already been rendered.
 
-function leftPadding(schematizeComponent) {
-    return (schematizeComponent.lastBin - schematizeComponent.firstBin + 1) + schematizeComponent.arrivals.length;
+function leftPadding(component) {
+    return (component.lastBin - component.firstBin + 1) + component.arrivals.length;
 }
 
 class App extends Component {
     layerRef = React.createRef();
     constructor(props) {
         super(props);
+        let schematic = new PangenomeSchematic({beginBin:250, endBin:500});
         let binsPerPixel = 4;
         let paddingSize = 2;
         let leftOffset = 10;
@@ -71,7 +72,10 @@ class App extends Component {
         // schematic.components[2].departures[0].downstream = 24;//FIXME: Debug code
         // schematic.components[12].arrivals[0].upstream = 4;//FIXME: Debug code
         // console.log(schematic.components[2].departures[0].downstream);
+
         this.state = {
+            beginBin:250,
+            endBin:500,
             schematize: schematic.components,
             pathNames: schematic.pathNames,
             paddingSize: paddingSize,
@@ -134,7 +138,7 @@ class App extends Component {
     };
 
     leftXStart(schematizeComponent, i) {
-        return schematizeComponent.firstBin + (i * this.state.paddingSize) + schematizeComponent.offset;
+        return (schematizeComponent.firstBin - this.state.beginBin) + (i * this.state.paddingSize) + schematizeComponent.offset;
     }
 
 

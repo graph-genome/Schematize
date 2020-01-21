@@ -1,8 +1,21 @@
-class PangenomeSchematic {
-	constructor(fileName) {
-		this.jsonPath = fileName; //currently file cannot be a variable because of require()
+import React from 'react';
+
+class PangenomeSchematic extends React.Component {
+	constructor(props) {
+		super(props);
+		// this.setState({
+		// 	beginBin: 0,
+		// 	endBin: 250,
+		// } );
+		// this.jsonPath = fileName; //currently file cannot be a variable because of require()
 		this.jsonData = this.readFile('');
 		this.pathNames = this.jsonData.path_names;
+		this.processArray(this.props.beginBin, this.props.endBin);
+	}
+ 	componentDidUpdate() {
+		this.processArray(this.props.beginBin, this.props.endBin);
+		// console.log(this.components);
+
 	}
 	readFile(ignored_fileName) {
 		// console.log();
@@ -56,7 +69,4 @@ class Component {
 	}
 }
 
-var schematic = new PangenomeSchematic();
-schematic.processArray(250, 500);
-console.log(schematic.components);
-export default schematic
+export default PangenomeSchematic
