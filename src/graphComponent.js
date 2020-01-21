@@ -3,18 +3,14 @@ import React from 'react';
 class PangenomeSchematic extends React.Component {
 	constructor(props) {
 		super(props);
-		// this.setState({
-		// 	beginBin: 0,
-		// 	endBin: 250,
-		// } );
-		// this.jsonPath = fileName; //currently file cannot be a variable because of require()
-		this.jsonData = this.readFile('');
+		// this.props.jsonPath //currently file cannot be a variable because of require()
+		this.jsonData = this.readFile('');// this.props.jsonPath
 		this.pathNames = this.jsonData.path_names;
 		this.processArray(this.props.beginBin, this.props.endBin);
 	}
  	componentDidUpdate() {
 		this.processArray(this.props.beginBin, this.props.endBin);
-		// console.log(this.components);
+		console.log(this.components);
 
 	}
 	readFile(ignored_fileName) {

@@ -35,21 +35,8 @@ const stringToColourSave = function(paddedKey) {
 const edgeToKey = function(downstream, upstream) {
     /**downstream and upstream are always in the same orientation regardless of if it is a
      * departing LinkColumn or an arriving LinkColumn.**/
-    if(upstream > downstream){  //makes the ordering deterministic.  We had some trouble with symmetry.
-        let tmp = upstream;  // I'm not sure why.
-        upstream = downstream;
-        downstream = tmp;
-    }
     return String(downstream).padStart(13, '0') + String(upstream).padStart(13, '0');
 };
-/*
-In this dictionary the key is the global unique color string created by @stringToColor.
-The value is a list of size 2:
-1. Element: the x-coordinate of the arrival link column
-2. Element: the x-coordinate of the corresponding departure link column
- */
-const linkToXmapping = {}; //(paddedKey): [arrivalX, departureX]
-const linksAlreadyRendered = {}; // set of links (padded Keys) which have already been rendered.
 
 function leftPadding(component) {
     return (component.lastBin - component.firstBin + 1) + component.arrivals.length;
@@ -57,77 +44,88 @@ function leftPadding(component) {
 
 class App extends Component {
     layerRef = React.createRef();
+    static defaultProps = {beginBin:2,
+        endBin:500,
+        binsPerPixel:6,
+        paddingSize:2,
+        leftOffset:10
+    };
     constructor(props) {
+        Object.assign(App.defaultProps, props);
         super(props);
-        let schematic = new PangenomeSchematic({beginBin:250, endBin:500});
-        let binsPerPixel = 4;
-        let paddingSize = 2;
-        let leftOffset = 10;
+        let schematic = new PangenomeSchematic(props);
         const sum = (accumulator, currentValue) => accumulator + currentValue;
-        let actualWidth = leftOffset + schematic.components.map(component =>
-            component.arrivals.length + component.departures.length + (component.lastBin - component.firstBin) + 1 + paddingSize
-        ).reduce(sum) * binsPerPixel;
+        let actualWidth = this.props.leftOffset + schematic.components.map(component =>
+            component.arrivals.length + component.departures.length + (component.lastBin - component.firstBin) + 1 + this.props.paddingSize
+        ).reduce(sum) * this.props.binsPerPixel;
         console.log(actualWidth);
-
-        // schematic.components[2].departures[0].downstream = 24;//FIXME: Debug code
-        // schematic.components[12].arrivals[0].upstream = 4;//FIXME: Debug code
-        // console.log(schematic.components[2].departures[0].downstream);
+        console.log(schematic.components);
 
         this.state = {
-            beginBin:250,
-            endBin:500,
             schematize: schematic.components,
             pathNames: schematic.pathNames,
-            paddingSize: paddingSize,
             topOffset: 100,
-            leftOffset: leftOffset,
-            binsPerPixel: binsPerPixel,
             pathsPerPixel: 1,
             actualWidth: actualWidth,
             highlightedLinkId: 0 // we will compare linkColumns
         };
         this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
 
+        this.calculateLinkCoordinates();
+
+    };
+
+    calculateLinkCoordinates() {
         /**
          * calculate the x coordinates of all components
          * calculate the x coordinates of all arrivals and departures
          */
+
+        /* In this dictionary the key is the global unique paddedKey created by @edgetoKey.
+        The value is a list of size 2:
+        1. Element: the x-coordinate of the arrival link column
+        2. Element: the x-coordinate of the corresponding departure link column */
+        this.linkToXmapping = {}; //(paddedKey): [arrivalX, departureX]
+        this.linksAlreadyRendered = new Set(); // set of links (padded Keys) which have already been rendered.
+
         for (let i = 0; i < this.state.schematize.length; i++) {
             let schematizeComponent = this.state.schematize[i];
-            schematizeComponent.x = this.state.leftOffset + (this.leftXStart(schematizeComponent, i)) * this.state.binsPerPixel;
+            schematizeComponent.x = this.props.leftOffset + (this.leftXStart(schematizeComponent, i)) * this.props.binsPerPixel;
+            //ARRIVALS: Calculate all X
             for (let j = 0; j < schematizeComponent.arrivals.length; j++) {
                 let arrival = schematizeComponent.arrivals[j];
-                let xCoordArrival = this.state.leftOffset +
-                    (this.leftXStart(schematizeComponent, i) + j) * this.state.binsPerPixel;
+                let xCoordArrival = this.props.leftOffset +
+                    (this.leftXStart(schematizeComponent, i) + j) * this.props.binsPerPixel;
                 let paddedKey = edgeToKey(arrival.downstream, arrival.upstream);
-                if(!(paddedKey in linkToXmapping)){
+                if (!(paddedKey in this.linkToXmapping)) {
                     //place holder value, go as far right as possible
-                    // linkToXmapping[paddedKey] = [xCoordArrival,
+                    // this.linkToXmapping[paddedKey] = [xCoordArrival,
                     //     this.state.actualWidth + 100]
                     // TODO place holder value in the same place
-                    linkToXmapping[paddedKey] = [xCoordArrival, xCoordArrival]
-                }else{
-                    linkToXmapping[paddedKey][0] = xCoordArrival; // set with real value
+                    this.linkToXmapping[paddedKey] = [xCoordArrival, xCoordArrival]
+                } else {
+                    this.linkToXmapping[paddedKey][0] = xCoordArrival; // set with real value
                 }
             }
+            //DEPARTURES: Calculate all X
             for (let k = 0; k < schematizeComponent.departures.length; k++) {
                 let departure = schematizeComponent.departures[k];
-                let xCoordDeparture = this.state.leftOffset
+                let xCoordDeparture = this.props.leftOffset
                     + (this.leftXStart(schematizeComponent, i)
-                    + leftPadding(schematizeComponent)
-                        + k ) * this.state.binsPerPixel;
-                let paddedKey = edgeToKey(departure.upstream, departure.downstream);
-                if(!(paddedKey in linkToXmapping)){
+                        + leftPadding(schematizeComponent)
+                        + k) * this.props.binsPerPixel;
+                let paddedKey = edgeToKey(departure.downstream, departure.upstream);
+                if (!(paddedKey in this.linkToXmapping)) {
                     //place holder value, go as far left as possible
-                    // linkToXmapping[paddedKey] = [this.state.actualWidth + 100, xCoordDeparture]
+                    // this.linkToXmapping[paddedKey] = [this.state.actualWidth + 100, xCoordDeparture]
                     // TODO place holder value in the same place
-                    linkToXmapping[paddedKey] = [xCoordDeparture, xCoordDeparture]
-                }else{
-                    linkToXmapping[paddedKey][1] = xCoordDeparture; // set real value
+                    this.linkToXmapping[paddedKey] = [xCoordDeparture, xCoordDeparture]
+                } else {
+                    this.linkToXmapping[paddedKey][1] = xCoordDeparture; // set real value
                 }
             }
         }
-    };
+    }
 
     componentDidMount = () => {
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
@@ -138,7 +136,7 @@ class App extends Component {
     };
 
     leftXStart(schematizeComponent, i) {
-        return (schematizeComponent.firstBin - this.state.beginBin) + (i * this.state.paddingSize) + schematizeComponent.offset;
+        return (schematizeComponent.firstBin - this.props.beginBin) + (i * this.props.paddingSize) + schematizeComponent.offset;
     }
 
 
@@ -151,7 +149,7 @@ class App extends Component {
                     x={this.state.schematize[i].x}
                     y={this.state.topOffset}
                     height={this.state.pathNames.length * this.state.pathsPerPixel}
-                    width={(leftPadding(schematizeComponent) + schematizeComponent.departures.length) * this.state.binsPerPixel}
+                    width={(leftPadding(schematizeComponent) + schematizeComponent.departures.length) * this.props.binsPerPixel}
                 />
 
                 {schematizeComponent.arrivals.map(
@@ -171,7 +169,7 @@ class App extends Component {
     }
 
     renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn) {
-        let xCoordArrival = this.state.leftOffset + (this.leftXStart(schematizeComponent,i) + leftPadding + j) * this.state.binsPerPixel;
+        let xCoordArrival = this.props.leftOffset + (this.leftXStart(schematizeComponent,i) + leftPadding + j) * this.props.binsPerPixel;
         let localColor = stringToColor((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId);
         return <LinkRect
             key={"departure" + i + j}
@@ -180,14 +178,14 @@ class App extends Component {
             x={xCoordArrival}
             pathsPerPixel={this.state.pathsPerPixel}
             y={this.state.topOffset}
-            width={this.state.binsPerPixel}
+            width={this.props.binsPerPixel}
             color={localColor}
             updateHighlightedNode={this.updateHighlightedNode}
         />
     }
 
     renderLinksForOneComponent(schematizeComponent, i) {
-        if (i < 2){return <React.Fragment/>}  //FIXME: don't render telomeres. Comment by @subwaystation: Disabling
+        // if (i < 2){return <React.Fragment/>}  //FIXME: don't render telomeres. Comment by @subwaystation: Disabling
         // this does not bring back the rendering of the telomeres.
         return (
             <React.Fragment>
@@ -203,13 +201,20 @@ class App extends Component {
 
     renderLinks(j, linkColumn, i) {
         const paddedKey = edgeToKey(linkColumn.downstream, linkColumn.upstream);
-        if(paddedKey in linksAlreadyRendered) {
-            // return <React.Fragment/> // TODO: don't render a duplicate if it's already been done. @Josiah: We should not run into any duplicates. If the hash function is not collision free, we have a design problem.
+        if(paddedKey in this.linksAlreadyRendered) {
+            return <React.Fragment/>; // TODO: don't render a duplicate if it's already been done.
+            // @Josiah: We should not run into any duplicates.
+            // If the hash function is not collision free, we have a design problem.
         }else{
-            linksAlreadyRendered[paddedKey] = paddedKey
+            this.linksAlreadyRendered.add(paddedKey);
         }
-        const elevation = -15 - (j * this.state.binsPerPixel);
-        let [arrowXCoord, departureX] = linkToXmapping[paddedKey];
+        if(!(paddedKey in this.linkToXmapping)) {
+            return <React.Fragment/>;
+        }
+        let link = this.linkToXmapping[paddedKey];
+        console.log(link);
+        const elevation = -15 - (j * this.props.binsPerPixel);
+        let [arrowXCoord, departureX] = link;
         departureX = departureX - arrowXCoord + 2; // put in relative coordinates to
         let arrX = 2;
         let turnDirection = (departureX < 0)? -1.5 : 1.5;
@@ -239,7 +244,7 @@ class App extends Component {
             x={arrowXCoord}
             y={this.state.topOffset - 5}
             points={points}
-            width={this.state.binsPerPixel}
+            width={this.props.binsPerPixel}
             color={stringToColor((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
             updateHighlightedNode={this.updateHighlightedNode}
             item={linkColumn}
@@ -247,6 +252,7 @@ class App extends Component {
     }
 
     render() {
+        this.linksAlreadyRendered.clear(); // reset counters
         return (
             <React.Fragment>
                 <Stage
