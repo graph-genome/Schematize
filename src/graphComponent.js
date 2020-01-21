@@ -1,27 +1,29 @@
 class PangenomeSchematic {
 	constructor(fileName) {
-		this.jsonPath = fileName;
+		this.jsonPath = fileName; //currently file cannot be a variable because of require()
+		this.jsonData = this.readFile('');
+		this.pathNames = this.jsonData.path_names;
 	}
-	readFile() {
+	readFile(ignored_fileName) {
 		// console.log();
 		// var jsonFile = require('./data/Athaliana.bin100000.schematic.json'); // This cannot be a variable
 		// var jsonFile = require('./data/yeast_bin10k_7indiv_16chr.schematic.json'); // This cannot be a variable
 		const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.json'); // This cannot be a variable
-
 		// console.log(jsonFile);
-		return(jsonFile)
+		return jsonFile
 	}
-	processArray(jsonFile) {
+	processArray(beginBin, endBin) {
 		var componentArray = [];
 		var offsetLength = 0;
-		for (var component in jsonFile.components) {
-			var componentItem = new Component(jsonFile.components[component], offsetLength);
-			offsetLength += componentItem.arrivals.length + componentItem.departures.length;
-			componentArray.push(componentItem);
-			if(component > 250){break} // TODO: this limit was set for debugging
+		for (var component of this.jsonData.components) {
+			if(component.first_bin >= beginBin){
+				var componentItem = new Component(component, offsetLength);
+				offsetLength += componentItem.arrivals.length + componentItem.departures.length;
+				componentArray.push(componentItem);
+				if(component.last_bin > endBin){break} // TODO: this limit was set for debugging
+			}
 		}
 		this.components = componentArray;
-		this.pathNames = jsonFile.path_names;
 		return (componentArray)
 	}
 }
@@ -55,8 +57,6 @@ class Component {
 }
 
 var schematic = new PangenomeSchematic();
-
-var jsonFile = schematic.readFile();
-schematic.processArray(jsonFile);
+schematic.processArray(250, 500);
 console.log(schematic.components);
 export default schematic

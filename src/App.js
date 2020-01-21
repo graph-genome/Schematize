@@ -68,8 +68,8 @@ class App extends Component {
         ).reduce(sum) * binsPerPixel;
         console.log(actualWidth);
 
-        //schematic.components[2].departures[0].downstream = 24;//TODO: Debug code
-        //schematic.components[12].arrivals[0].upstream = 4;//TODO: Debug code
+        // schematic.components[2].departures[0].downstream = 24;//FIXME: Debug code
+        // schematic.components[12].arrivals[0].upstream = 4;//FIXME: Debug code
         // console.log(schematic.components[2].departures[0].downstream);
         this.state = {
             schematize: schematic.components,
@@ -98,10 +98,10 @@ class App extends Component {
                 let paddedKey = edgeToKey(arrival.downstream, arrival.upstream);
                 if(!(paddedKey in linkToXmapping)){
                     //place holder value, go as far right as possible
-                    linkToXmapping[paddedKey] = [xCoordArrival,
-                        this.state.actualWidth + 100]
+                    // linkToXmapping[paddedKey] = [xCoordArrival,
+                    //     this.state.actualWidth + 100]
                     // TODO place holder value in the same place
-                    // linkToXmapping[paddedKey] = [xCoordArrival, xCoordArrival]
+                    linkToXmapping[paddedKey] = [xCoordArrival, xCoordArrival]
                 }else{
                     linkToXmapping[paddedKey][0] = xCoordArrival; // set with real value
                 }
@@ -115,9 +115,9 @@ class App extends Component {
                 let paddedKey = edgeToKey(departure.upstream, departure.downstream);
                 if(!(paddedKey in linkToXmapping)){
                     //place holder value, go as far left as possible
-                    linkToXmapping[paddedKey] = [this.state.actualWidth + 100, xCoordDeparture]
+                    // linkToXmapping[paddedKey] = [this.state.actualWidth + 100, xCoordDeparture]
                     // TODO place holder value in the same place
-                    // linkToXmapping[paddedKey] = [xCoordDeparture, xCoordDeparture]
+                    linkToXmapping[paddedKey] = [xCoordDeparture, xCoordDeparture]
                 }else{
                     linkToXmapping[paddedKey][1] = xCoordDeparture; // set real value
                 }
@@ -183,7 +183,7 @@ class App extends Component {
     }
 
     renderLinksForOneComponent(schematizeComponent, i) {
-        // if (i < 2){return <React.Fragment/>}  //FIXME: don't render telomeres. Comment by @subwaystation: Disabling
+        if (i < 2){return <React.Fragment/>}  //FIXME: don't render telomeres. Comment by @subwaystation: Disabling
         // this does not bring back the rendering of the telomeres.
         return (
             <React.Fragment>
