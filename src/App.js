@@ -64,7 +64,7 @@ class App extends Component {
         this.state = {
             schematize: schematic.components,
             pathNames: schematic.pathNames,
-            topOffset: 100,
+            topOffset: 400,
             pathsPerPixel: 1,
             actualWidth: actualWidth,
             highlightedLinkId: 0 // we will compare linkColumns
@@ -213,16 +213,19 @@ class App extends Component {
         }
         let link = this.linkToXmapping[paddedKey];
         // console.log(link);
-        const elevation = -15 - (j * this.props.binsPerPixel);
         let [arrowXCoord, departureX] = link;
+        const stacking = 15 + (j * this.props.binsPerPixel);
+        let distance = departureX - arrowXCoord || 1;
+        let elevation = stacking + Math.log2(Math.abs(distance)) * 10;
+        elevation = Math.min(this.state.topOffset-1, elevation);
         departureX = departureX - arrowXCoord + 2; // put in relative coordinates to
         let arrX = 2;
         let turnDirection = (departureX < 0)? -1.5 : 1.5;
         const departOrigin = [departureX, 0];
-        const departCorner = [departureX - turnDirection, elevation + 2];
-        let departTop = [departureX - (turnDirection*6), elevation];
-        let arriveTop = [arrX + turnDirection*6, elevation];
-        let arriveCorner = [arrX + turnDirection, elevation + 2]; // 1.5 in from actual corner
+        const departCorner = [departureX - turnDirection, -elevation + 2];
+        let departTop = [departureX - (turnDirection*6), -elevation];
+        let arriveTop = [arrX + turnDirection*6, -elevation];
+        let arriveCorner = [arrX + turnDirection, -elevation + 2]; // 1.5 in from actual corner
         const arriveCornerEnd = [arrX, -5];
         let points = [
             departOrigin[0], departOrigin[1],
