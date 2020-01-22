@@ -2,18 +2,6 @@ import React  from 'react';
 import {Arrow} from 'react-konva';
 
 
-export class LinkRecord {
-    constructor(linkColumn, xCoordArrival=0, xCoordDeparture=0){
-        this.linkColumn = linkColumn;
-        this.xArrival = xCoordArrival;
-        this.xDepart = xCoordDeparture;
-        this.elevation = 10;
-    }
-    distance(){
-        return Math.abs(this.xDepart - this.xArrival) || 1;
-    }
-}
-
 class LinkArrow extends React.Component {
     /** Serves as a contract to store visual layout information**/
     constructor(props) {

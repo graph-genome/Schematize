@@ -54,6 +54,9 @@ class Component {
 		// we do not know the x val for this component, yet
 		this.x = 0;
 	}
+	leftPadding() {
+		return (this.lastBin - this.firstBin + 1) + this.arrivals.length;
+	}
 }
 
 class LinkColumn {
@@ -67,6 +70,7 @@ class LinkColumn {
 		 * departing LinkColumn or an arriving LinkColumn.**/
 		return String(this.downstream).padStart(13, '0') + String(this.upstream).padStart(13, '0');
 	};
+
 }
 
 
