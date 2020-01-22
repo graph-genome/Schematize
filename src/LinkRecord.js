@@ -1,7 +1,7 @@
 
 
 export class LinkRecord {
-    constructor(linkColumn, xCoordArrival=0, xCoordDeparture=0){
+    constructor(linkColumn, xCoordArrival=0, xCoordDeparture=0, isArrival){
         this.linkColumn = linkColumn;
         if(linkColumn === undefined){
             console.log(linkColumn, xCoordArrival, xCoordDeparture);
@@ -9,6 +9,7 @@ export class LinkRecord {
         this.xArrival = xCoordArrival;
         this.xDepart = xCoordDeparture;
         this.elevation = 10;
+        this.isArrival = isArrival
     }
     distance(){
         return Math.abs(this.xDepart - this.xArrival) || 1;
@@ -41,7 +42,7 @@ export function calculateLinkCoordinates(schematic, binsPerPixel, topOffset,
                 // linkToXMapping[paddedKey] = [xCoordArrival,
                 //     this.state.actualWidth + 100]
                 // TODO place holder value in the same place
-                linkToXMapping[paddedKey] = new LinkRecord(arrival, xCoordArrival, xCoordArrival)
+                linkToXMapping[paddedKey] = new LinkRecord(arrival, xCoordArrival, xCoordArrival, true)
             } else {
                 linkToXMapping[paddedKey].xArrival = xCoordArrival; // set with real value
             }
@@ -56,7 +57,7 @@ export function calculateLinkCoordinates(schematic, binsPerPixel, topOffset,
             if (!(paddedKey in linkToXMapping)) {
                 //place holder value, go as far left as possible
                 // linkToXMapping[paddedKey] = [this.state.actualWidth + 100, xCoordDeparture]
-                linkToXMapping[paddedKey] = new LinkRecord(departure, xCoordDeparture, xCoordDeparture)
+                linkToXMapping[paddedKey] = new LinkRecord(departure, xCoordDeparture, xCoordDeparture, false)
             } else {
                 linkToXMapping[paddedKey].xDepart = xCoordDeparture; // set real value
             }

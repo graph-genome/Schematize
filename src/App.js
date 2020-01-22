@@ -88,7 +88,7 @@ class App extends Component {
                 <ComponentRect
                     item={schematizeComponent}
                     key={i}
-                    x={this.state.schematize[i].x}
+                    x={this.state.schematize[i].x + this.props.leftOffset}
                     y={this.state.topOffset}
                     height={this.state.pathNames.length * this.state.pathsPerPixel}
                     width={(schematizeComponent.leftPadding() + schematizeComponent.departures.length) * this.props.binsPerPixel}
@@ -127,13 +127,17 @@ class App extends Component {
     }
 
     renderLinks(link) {
-
+        /*Translates the LinkRecord coordinates into pixels and defines the curve shape.
+        * I've spent way too long fiddling with these numbers at different binsPerPixel
+        * I suggest you don't fiddle with them unless you plan on nesting the React
+        * Components to ensure that everything is relative coordinates.*/
         let [arrowXCoord, absDepartureX] = [link.xArrival, link.xDepart];
         // put in relative coordinates to arriving LinkColumn
         let departureX = absDepartureX - arrowXCoord + this.props.binsPerPixel/2;
-        let arrX = 2;
-        let turnDirection = (departureX < 0)? -1.5 : 1.5;
-        const departOrigin = [departureX, 0];
+        let arrX = this.props.binsPerPixel/2;
+        let bottom = -2;//-this.props.binsPerPixel;
+        let turnDirection = (departureX < 0)? -1 : 1;
+        const departOrigin = [departureX, this.props.binsPerPixel-2];
         const departCorner = [departureX - turnDirection, -link.elevation + 2];
         let departTop = [departureX - (turnDirection*6), -link.elevation];
         let arriveTop = [arrX + turnDirection*6, -link.elevation];
@@ -146,20 +150,25 @@ class App extends Component {
             arriveTop[0], arriveTop[1],
             arriveCorner[0], arriveCorner[1],
             arriveCornerEnd[0], arriveCornerEnd[1],
-            arrX, 0];
-        if (Math.abs(departureX) <= 12) { //Small distances, usually self loops
-            points = [
-                departOrigin[0], departOrigin[1],
-                departCorner[0], departCorner[1],
-                arriveCorner[0], arriveCorner[1],
-                arrX, 0];
+            arrX, -1];
+        if (Math.abs(departureX) <= this.props.binsPerPixel) { //Small distances, usually self loops
+            if(link.isArrival){
+                points = [
+                    arrX, -10,//-link.elevation - 4,
+                    arrX, bottom];
+            }else{
+                points = [
+                    departOrigin[0], bottom + this.props.binsPerPixel,
+                    departOrigin[0], -5];//-link.elevation-this.props.binsPerPixel*2,];
+            }
+
         }
         if(points.some(isNaN)){
             console.log(points);
         }
         return <LinkArrow
             key={"arrow" + link.linkColumn.edgeToKey()}
-            x={arrowXCoord}
+            x={arrowXCoord + this.props.leftOffset}
             y={this.state.topOffset - 5}
             points={points}
             width={this.props.binsPerPixel}
