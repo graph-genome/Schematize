@@ -32,16 +32,17 @@ class LinkColumn extends React.Component {
         const contents = this.dots();
         return (
             <React.Fragment>
-                {contents.map((content) => {
+                {contents.map((content, d) => {
                     return (<Rect
-                    x={this.props.x}
-                    y={this.props.y + content}
-                    width={this.props.width}
-                    height={1}
-                    fill={this.props.color}
-                    // onClick={this.handleClick}
-                    onMouseOver={this.handleMouseOver}
-                    onMouseOut={this.handleMouseOut}
+                        key={"dot" + d}
+                        x={this.props.x}
+                        y={this.props.y + content}
+                        width={this.props.width}
+                        height={1}
+                        fill={this.props.color}
+                        // onClick={this.handleClick}
+                        onMouseOver={this.handleMouseOver}
+                        onMouseOut={this.handleMouseOut}
                     />)})}
             </React.Fragment>
         );

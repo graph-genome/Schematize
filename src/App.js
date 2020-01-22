@@ -189,7 +189,7 @@ class App extends Component {
                         {this.state.schematize.map(
                             (schematizeComponent, i)=> {
                                 return (
-                                    <React.Fragment>
+                                    <React.Fragment key={"f" + i}>
                                         {/*These two lines could be in separate for loops if you want control over ordering*/}
                                         {this.renderComponent(schematizeComponent, i)}
                                     </React.Fragment>
@@ -197,8 +197,8 @@ class App extends Component {
                             }
                         )}
                         {this.distanceSortedLinks.map(
-                            (record) => {
-                                return (<React.Fragment>
+                            (record,i ) => {
+                                return (<React.Fragment key={'L'+ i}>
                                     {this.renderLinks(record)}
                                 </React.Fragment>)
                             }
