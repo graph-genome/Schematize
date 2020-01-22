@@ -9,18 +9,14 @@ const randomId = () => Math.floor(Math.random() * 1000).toString(36);
 const Todo = types
     .model({
         name: types.optional(types.string, ""),
-        done: types.optional(types.boolean, false)
+        label: types.optional(types.string, ""),
     })
     .actions(self => {
         function setName(newName) {
             self.name = newName;
         }
 
-        function toggle() {
-            self.done = !self.done;
-        }
-
-        return { setName, toggle };
+        return { setName };
     });
 
 const User = types.model({
@@ -33,61 +29,40 @@ const RootStore = types
         todos: types.map(Todo)
     })
     .views(self => ({
-        get pendingCount() {
-            return values(self.todos).filter(todo => !todo.done).length;
-        },
-        get completedCount() {
-            return values(self.todos).filter(todo => todo.done).length;
-        }
-    }))
-    .actions(self => {
-        function addTodo(id, name) {
-            self.todos.set(id, Todo.create({ name }));
-        }
-
-        return { addTodo };
-    });
+    }));
 
 export const store = RootStore.create({
     users: {},
     todos: {
         "1": {
-            name: "Eat a cake",
-            done: true
+            name: "2500",
+            label: "Begin Bin: "
+        },
+        "2": {
+            name: "2700",
+            label: "End Bin: "
         }
     }
 });
 
 const TodoView = observer(props => (
     <div>
-        <input
-            type="checkbox"
-            checked={props.todo.done}
-            onChange={e => props.todo.toggle()}
-        />
+        {props.todo.label}
         <input
             type="text"
             value={props.todo.name}
             onChange={e => props.todo.setName(e.target.value)}
+            aria-label={"Begin: "}
+            label={"Begin: "}
         />
-    </div>
-));
-
-const TodoCounterView = observer(props => (
-    <div>
-        {props.store.pendingCount} pending, {props.store.completedCount} completed
     </div>
 ));
 
 export const AppView = observer(props => (
     <div>
-        <button onClick={e => props.store.addTodo(randomId(), "New Task")}>
-            Add Task
-        </button>
         {values(props.store.todos).map(todo => (
             <TodoView todo={todo} />
         ))}
-        <TodoCounterView store={props.store} />
     </div>
 ));
 
