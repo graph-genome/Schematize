@@ -1,6 +1,6 @@
-import { render } from 'react-dom';
-import {Stage, Layer} from 'react-konva';
-import React, { Component } from 'react';
+import {render} from 'react-dom';
+import {Layer, Stage} from 'react-konva';
+import React, {Component} from 'react';
 
 import './App.css';
 import PangenomeSchematic from './PangenomeSchematic.js'
@@ -9,20 +9,21 @@ import LinkColumn from './LinkColumn.js'
 import LinkArrow from './LinkArrow.js'
 import {LinkRecord} from "./LinkArrow";
 
-const stringToColor = function(paddedKey, linkColumn, highlightedLinkColumn) {
-    if (highlightedLinkColumn && (linkColumn.downstream + 1) * (linkColumn.upstream + 1)
+function stringToColor(linkColumn, highlightedLinkColumn) {
+    let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
+    if (highlightedLinkColumn && colorKey
         === (highlightedLinkColumn.downstream + 1) * (highlightedLinkColumn.upstream + 1)) {
         return 'black';
     } else {
-        return stringToColourSave(paddedKey);
+        return stringToColourSave(colorKey);
     }
-};
+}
 
-const stringToColourSave = function(paddedKey) {
-    paddedKey = paddedKey.toString();
+const stringToColourSave = function(colorKey) {
+    colorKey = colorKey.toString();
     let hash = 0;
-    for (let i = 0; i < paddedKey.length; i++) {
-        hash = paddedKey.charCodeAt(i) + ((hash << 5) - hash);
+    for (let i = 0; i < colorKey.length; i++) {
+        hash = colorKey.charCodeAt(i) + ((hash << 5) - hash);
     }
     let colour = '#';
     for (let j = 0; j < 3; j++) {
@@ -61,19 +62,16 @@ class App extends Component {
             topOffset: 400,
             pathsPerPixel: 1,
             actualWidth: actualWidth,
-            highlightedLinkId: 0 // we will compare linkColumns
+            highlightedLink: 0 // we will compare linkColumns
         };
         this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
 
         this.calculateLinkCoordinates();
-
     };
 
     calculateLinkCoordinates() {
-        /**
-         * calculate the x coordinates of all components
-         * calculate the x coordinates of all arrivals and departures
-         */
+        /** calculate the x coordinates of all components
+         * calculate the x coordinates of all arrivals and departures */
 
         /* In this dictionary the key is the global unique paddedKey created by @edgetoKey.
         The value is a list of size 2:
@@ -96,7 +94,7 @@ class App extends Component {
                     // this.linkToXmapping[paddedKey] = [xCoordArrival,
                     //     this.state.actualWidth + 100]
                     // TODO place holder value in the same place
-                    this.linkToXmapping[paddedKey] = new LinkRecord(xCoordArrival, xCoordArrival)
+                    this.linkToXmapping[paddedKey] = new LinkRecord(arrival, xCoordArrival, xCoordArrival)
                 } else {
                     this.linkToXmapping[paddedKey].xArrival = xCoordArrival; // set with real value
                 }
@@ -112,13 +110,13 @@ class App extends Component {
                 if (!(paddedKey in this.linkToXmapping)) {
                     //place holder value, go as far left as possible
                     // this.linkToXmapping[paddedKey] = [this.state.actualWidth + 100, xCoordDeparture]
-                    this.linkToXmapping[paddedKey] = new LinkRecord(xCoordDeparture, xCoordDeparture)
+                    this.linkToXmapping[paddedKey] = new LinkRecord(departure, xCoordDeparture, xCoordDeparture)
                 } else {
                     this.linkToXmapping[paddedKey].xDepart = xCoordDeparture; // set real value
                 }
             }
         }
-        // this.calculateLinkElevations();
+        this.calculateLinkElevations();
     }
 
     calculateLinkElevations() {
@@ -126,23 +124,32 @@ class App extends Component {
          * As the links get bigger, you take the max() of the range of the link and add 1.
          * This claims the "air space" for that link to travel through without colliding with anything.
          * The longest link should end up on top.  We'll probably need a "link gutter" maximum to keep
-         * this from getting unreasonably tall.** /
-        this.distanceSortedLinks = [{linkColumn: fetchThis, arrivX: 5, departX: 2000, key:"arrow" + i + j}];//FIXME: populate
+         * this from getting unreasonably tall.**/
+        this.distanceSortedLinks = Object.values(this.linkToXmapping).sort(
+            (a,b)=> a.distance() - b.distance()
+        );
+        this.reserveElevationAirSpace();
+        // this.state.topOffset = Math.max(this.elevationOccupied);
+    }
 
-        //Set up an array of zeros, then gradually fill it with height stacking
-        //@Simon this section is largely done, it just needs a sorted distanceSortedLinks as input
+    reserveElevationAirSpace(){
+        /* Set up an array of zeros, then gradually fill it with height stacking
+        * @Simon this section is largely done, it just needs a sorted distanceSortedLinks as input*/
         let length = this.state.actualWidth; //this.props.endBin - this.props.beginBin;
-        this.elevationOccupied = new Array(length).fill(0);
-        for (var record of this.distanceSortedLinks) {
-            let linkBegin = Math.min(record.arrivX, record.departX);
-            let linkEnd = Math.max(record.arrivX, record.departX);
-            let elevation = Math.max(this.elevationOccupied.slice(linkBegin, linkEnd));
+        this.elevationOccupied = new Array(length).fill(10);
+        for (let record of this.distanceSortedLinks) {
+            let linkBegin = Math.min(record.xArrival, record.xDepart);
+            let linkEnd = Math.max(record.xArrival, record.xDepart);
+            let elevation = Math.max(...this.elevationOccupied.slice(linkBegin, linkEnd + 1));
+            if(isNaN(elevation)){
+                console.log(record, linkBegin, linkEnd);
+            }
             elevation += this.props.binsPerPixel;
             for (let x = linkBegin; x < linkEnd && x < this.elevationOccupied.length; x++) {
                 this.elevationOccupied[x] = elevation;
             }
+            record.elevation = elevation; //storing final value for render
         }
-         /**/
     }
 
     componentDidMount = () => {
@@ -150,7 +157,7 @@ class App extends Component {
     };
 
     updateHighlightedNode = (linkRect) => {
-        this.setState({highlightedLinkId: linkRect})
+        this.setState({highlightedLink: linkRect})
     };
 
     leftXStart(schematizeComponent, i) {
@@ -188,7 +195,7 @@ class App extends Component {
 
     renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn) {
         let xCoordArrival = this.props.leftOffset + (this.leftXStart(schematizeComponent,i) + leftPadding + j) * this.props.binsPerPixel;
-        let localColor = stringToColor((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId);
+        let localColor = stringToColor(linkColumn, this.state.highlightedLink);
         return <LinkColumn
             key={"departure" + i + j}
             item={linkColumn}
@@ -217,31 +224,18 @@ class App extends Component {
         )
     }
 
-    renderLinks(j, linkColumn, i) {
-        const paddedKey = linkColumn.edgeToKey();
-        //  Set().has( works "x in Y" does not.
-        if(this.linksAlreadyRendered.has(paddedKey)) {
-            return <React.Fragment/>; // don't render a duplicate if it's already been done.
-        }else{
-            this.linksAlreadyRendered.add(paddedKey);
-        }
-        if(!(paddedKey in this.linkToXmapping)) {
-            return <React.Fragment/>; //don't have information on this link, how did we get here?
-        }
-        let link = this.linkToXmapping[paddedKey];
-        let [arrowXCoord, departureX] = [link.xArrival, link.xDepart];
-        const stacking = 15 + (j * this.props.binsPerPixel);
-        let distance = departureX - arrowXCoord || 1;
-        let elevation = stacking + Math.log2(Math.abs(distance)) * 10;
-        elevation = Math.min(this.state.topOffset-1, elevation);
-        departureX = departureX - arrowXCoord + 2; // put in relative coordinates to
+    renderLinks(link) {
+
+        let [arrowXCoord, absDepartureX] = [link.xArrival, link.xDepart];
+        // put in relative coordinates to arriving LinkColumn
+        let departureX = absDepartureX - arrowXCoord + this.props.binsPerPixel/2;
         let arrX = 2;
         let turnDirection = (departureX < 0)? -1.5 : 1.5;
         const departOrigin = [departureX, 0];
-        const departCorner = [departureX - turnDirection, -elevation + 2];
-        let departTop = [departureX - (turnDirection*6), -elevation];
-        let arriveTop = [arrX + turnDirection*6, -elevation];
-        let arriveCorner = [arrX + turnDirection, -elevation + 2]; // 1.5 in from actual corner
+        const departCorner = [departureX - turnDirection, -link.elevation + 2];
+        let departTop = [departureX - (turnDirection*6), -link.elevation];
+        let arriveTop = [arrX + turnDirection*6, -link.elevation];
+        let arriveCorner = [arrX + turnDirection, -link.elevation + 2]; // 1.5 in from actual corner
         const arriveCornerEnd = [arrX, -5];
         let points = [
             departOrigin[0], departOrigin[1],
@@ -258,15 +252,18 @@ class App extends Component {
                 arriveCorner[0], arriveCorner[1],
                 arrX, 0];
         }
+        if(points.some(isNaN)){
+            console.log(points);
+        }
         return <LinkArrow
-            key={"arrow" + i + j}
+            key={"arrow" + link.linkColumn.edgeToKey()}
             x={arrowXCoord}
             y={this.state.topOffset - 5}
             points={points}
             width={this.props.binsPerPixel}
-            color={stringToColor((linkColumn.downstream + 1) * (linkColumn.upstream + 1), linkColumn, this.state.highlightedLinkId)}
+            color={stringToColor(link.linkColumn, this.state.highlightedLink)}
             updateHighlightedNode={this.updateHighlightedNode}
-            item={linkColumn}
+            item={link.linkColumn}
         />
     }
 
@@ -285,18 +282,18 @@ class App extends Component {
                                     <React.Fragment>
                                         {/*These two lines could be in separate for loops if you want control over ordering*/}
                                         {this.renderComponent(schematizeComponent, i)}
-                                        {this.renderLinksForOneComponent(schematizeComponent, i)}
+                                        {/*{this.renderLinksForOneComponent(schematizeComponent, i)}*/}
                                     </React.Fragment>
                                 )
                             }
                         )}
-                        {/*{this.distanceSortedLinks.map(*/}
-                        {/*    (record, k) => {*/}
-                        {/*        return (<React.Fragment>*/}
-                        {/*            {this.renderLinks(record.linkColumn, record.key)}*/}
-                        {/*        </React.Fragment>)*/}
-                        {/*    }*/}
-                        {/*)}*/}
+                        {this.distanceSortedLinks.map(
+                            (record, k) => {
+                                return (<React.Fragment>
+                                    {this.renderLinks(record)}
+                                </React.Fragment>)
+                            }
+                        )}
                     </Layer>
                 </Stage>
             </React.Fragment>

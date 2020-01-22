@@ -1,17 +1,13 @@
 import React  from 'react';
 import {Arrow} from 'react-konva';
 
-function edgeToKey(downstream, upstream) {
-    //FIXME: Check if this is being used
-    /**downstream and upstream are always in the same orientation regardless of if it is a
-     * departing LinkColumn or an arriving LinkColumn.**/
-    return String(downstream).padStart(13, '0') + String(upstream).padStart(13, '0');
-}
 
 export class LinkRecord {
-    constructor( xCoordArrival=0, xCoordDeparture=0){
+    constructor(linkColumn, xCoordArrival=0, xCoordDeparture=0){
+        this.linkColumn = linkColumn;
         this.xArrival = xCoordArrival;
         this.xDepart = xCoordDeparture;
+        this.elevation = 10;
     }
     distance(){
         return Math.abs(this.xDepart - this.xArrival) || 1;
