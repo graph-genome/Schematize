@@ -8,6 +8,8 @@ import ComponentRect from './ComponentRect'
 import LinkColumn from './LinkColumn'
 import LinkArrow from './LinkArrow'
 import {calculateLinkCoordinates} from "./LinkRecord";
+import  './ViewportInputs';
+import {AppView, store} from "./ViewportInputs";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -182,6 +184,7 @@ class App extends Component {
         console.log("Start render");
         return (
             <React.Fragment>
+                <AppView store={store} />
                 <Stage
                     width={this.state.actualWidth + 20}
                     height={this.state.topOffset + this.state.pathNames.length * this.state.pathsPerPixel}>
