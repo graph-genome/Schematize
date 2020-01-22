@@ -39,8 +39,8 @@ function leftPadding(component) {
 
 class App extends Component {
     layerRef = React.createRef();
-    static defaultProps = {beginBin:2000,
-        endBin:3000,
+    static defaultProps = {beginBin:2500,
+        endBin:2700,
         binsPerPixel:6,
         paddingSize:2,
         leftOffset:10
@@ -129,7 +129,7 @@ class App extends Component {
             (a,b)=> a.distance() - b.distance()
         );
         this.reserveElevationAirSpace();
-        // this.state.topOffset = Math.max(this.elevationOccupied);
+        this.state.topOffset = Math.max(...this.elevationOccupied) + this.props.binsPerPixel *3;
     }
 
     reserveElevationAirSpace(){
@@ -144,7 +144,8 @@ class App extends Component {
             if(isNaN(elevation)){
                 console.log(record, linkBegin, linkEnd);
             }
-            elevation += this.props.binsPerPixel;
+            var stillSmall = elevation < this.state.topOffset / 3;
+            elevation += stillSmall? this.props.binsPerPixel: this.props.binsPerPixel / 4;
             for (let x = linkBegin; x < linkEnd && x < this.elevationOccupied.length; x++) {
                 this.elevationOccupied[x] = elevation;
             }
