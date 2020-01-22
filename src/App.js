@@ -134,8 +134,10 @@ class App extends Component {
          * This claims the "air space" for that link to travel through without colliding with anything.
          * The longest link should end up on top.  We'll probably need a "link gutter" maximum to keep
          * this from getting unreasonably tall.**/
-        this.distanceSortedLinks = [{linkColumn: fetchThis, arrivX: 5, departX: 2000}];//FIXME: populate
+        this.distanceSortedLinks = [{linkColumn: fetchThis, arrivX: 5, departX: 2000, key:"arrow" + i + j}];//FIXME: populate
 
+        //Set up an array of zeros, then gradually fill it with height stacking
+        //@Simon this section is largely done, it just needs a sorted distanceSortedLinks as input
         let length = this.state.actualWidth; //this.props.endBin - this.props.beginBin;
         this.elevationOccupied = new Array(length).fill(0);
         for (var record of this.distanceSortedLinks) {
@@ -297,7 +299,7 @@ class App extends Component {
                         {this.distanceSortedLinks.map(
                             (record, k) => {
                                 return (<React.Fragment>
-                                    {this.renderLinksForOneComponent(record.linkColumn, k)}
+                                    {this.renderLinks(record.linkColumn, record.key)}
                                 </React.Fragment>)
                             }
                         )}
