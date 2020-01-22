@@ -125,6 +125,28 @@ class App extends Component {
                 }
             }
         }
+        this.calculateLinkElevations();
+    }
+
+    calculateLinkElevations() {
+        /**Starting with the shortest links, claim a spot of elevation to place the link in.
+         * As the links get bigger, you take the max() of the range of the link and add 1.
+         * This claims the "air space" for that link to travel through without colliding with anything.
+         * The longest link should end up on top.  We'll probably need a "link gutter" maximum to keep
+         * this from getting unreasonably tall.**/
+        this.distanceSortedLinks = [{linkColumn: fetchThis, arrivX: 5, departX: 2000}];//FIXME: populate
+
+        let length = this.state.actualWidth; //this.props.endBin - this.props.beginBin;
+        this.elevationOccupied = new Array(length).fill(0);
+        for (var record of this.distanceSortedLinks) {
+            let linkBegin = Math.min(record.arrivX, record.departX);
+            let linkEnd = Math.max(record.arrivX, record.departX);
+            let elevation = Math.max(this.elevationOccupied.slice(linkBegin, linkEnd));
+            elevation += this.props.binsPerPixel;
+            for (let x = linkBegin; x < linkEnd && x < this.elevationOccupied.length; x++) {
+                this.elevationOccupied[x] = elevation;
+            }
+        }
     }
 
     componentDidMount = () => {
@@ -205,7 +227,6 @@ class App extends Component {
         if(this.linksAlreadyRendered.has(paddedKey)) {
             return <React.Fragment/>; // don't render a duplicate if it's already been done.
         }else{
-            // console.log(paddedKey);
             this.linksAlreadyRendered.add(paddedKey);
         }
         if(!(paddedKey in this.linkToXmapping)) {
@@ -269,9 +290,15 @@ class App extends Component {
                                     <React.Fragment>
                                         {/*These two lines could be in separate for loops if you want control over ordering*/}
                                         {this.renderComponent(schematizeComponent, i)}
-                                        {this.renderLinksForOneComponent(schematizeComponent, i)}
                                     </React.Fragment>
                                 )
+                            }
+                        )}
+                        {this.distanceSortedLinks.map(
+                            (record, k) => {
+                                return (<React.Fragment>
+                                    {this.renderLinksForOneComponent(record.linkColumn, k)}
+                                </React.Fragment>)
                             }
                         )}
                     </Layer>
