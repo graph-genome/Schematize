@@ -37,15 +37,6 @@ class PangenomeSchematic extends React.Component {
 	}
 }
 
-
-class LinkColumn {
-	constructor(linkColumn) {
-		this.upstream = linkColumn.upstream;
-		this.downstream = linkColumn.downstream;
-		this.participants = (linkColumn.participants);//new Set
-	}
-}
-
 class Component {
 	constructor(component, offsetLength) {
 //firstBin, lastBin, arrivals, departures) {
@@ -53,16 +44,30 @@ class Component {
 		this.firstBin = component.first_bin;
 		this.lastBin = component.last_bin;
 		this.arrivals = [];
-		for (var arrival in component.arrivals) {
-			this.arrivals.push(new LinkColumn(component.arrivals[arrival]))
+		for (let arrival of component.arrivals) {
+			this.arrivals.push(new LinkColumn(arrival))
 		}
 		this.departures = [];
-		for (var departure in component.departures) {
-			this.departures.push(new LinkColumn(component.departures[departure]))
+		for (let departure of component.departures) {
+			this.departures.push(new LinkColumn(departure))
 		}
 		// we do not know the x val for this component, yet
 		this.x = 0;
 	}
 }
+
+class LinkColumn {
+	constructor(linkColumn) {
+		this.upstream = linkColumn.upstream;
+		this.downstream = linkColumn.downstream;
+		this.participants = (linkColumn.participants);//new Set
+	}
+	edgeToKey() {
+		/**downstream and upstream are always in the same orientation regardless of if it is a
+		 * departing LinkColumn or an arriving LinkColumn.**/
+		return String(this.downstream).padStart(13, '0') + String(this.upstream).padStart(13, '0');
+	};
+}
+
 
 export default PangenomeSchematic

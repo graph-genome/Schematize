@@ -1,13 +1,13 @@
+import { render } from 'react-dom';
+import {Stage, Layer} from 'react-konva';
+import React, { Component } from 'react';
+
 import './App.css';
 import PangenomeSchematic from './PangenomeSchematic.js'
 import ComponentRect from './ComponentRect.js'
 import LinkColumn from './LinkColumn.js'
 import LinkArrow from './LinkArrow.js'
-
-import { render } from 'react-dom';
-import {Stage, Layer} from 'react-konva';
-
-import React, { Component } from 'react';
+import {LinkRecord} from "./LinkArrow";
 
 const stringToColor = function(paddedKey, linkColumn, highlightedLinkColumn) {
     if (highlightedLinkColumn && (linkColumn.downstream + 1) * (linkColumn.upstream + 1)
@@ -30,12 +30,6 @@ const stringToColourSave = function(paddedKey) {
         colour += ('00' + value.toString(16)).substr(-2);
     }
     return colour;
-};
-
-const edgeToKey = function(downstream, upstream) {
-    /**downstream and upstream are always in the same orientation regardless of if it is a
-     * departing LinkColumn or an arriving LinkColumn.**/
-    return String(downstream).padStart(13, '0') + String(upstream).padStart(13, '0');
 };
 
 function leftPadding(component) {
@@ -96,15 +90,15 @@ class App extends Component {
                 let arrival = schematizeComponent.arrivals[j];
                 let xCoordArrival = this.props.leftOffset +
                     (this.leftXStart(schematizeComponent, i) + j) * this.props.binsPerPixel;
-                let paddedKey = edgeToKey(arrival.downstream, arrival.upstream);
+                let paddedKey = arrival.edgeToKey();
                 if (!(paddedKey in this.linkToXmapping)) {
                     //place holder value, go as far right as possible
                     // this.linkToXmapping[paddedKey] = [xCoordArrival,
                     //     this.state.actualWidth + 100]
                     // TODO place holder value in the same place
-                    this.linkToXmapping[paddedKey] = [xCoordArrival, xCoordArrival]
+                    this.linkToXmapping[paddedKey] = new LinkRecord(xCoordArrival, xCoordArrival)
                 } else {
-                    this.linkToXmapping[paddedKey][0] = xCoordArrival; // set with real value
+                    this.linkToXmapping[paddedKey].xArrival = xCoordArrival; // set with real value
                 }
             }
             //DEPARTURES: Calculate all X
@@ -114,18 +108,17 @@ class App extends Component {
                     + (this.leftXStart(schematizeComponent, i)
                         + leftPadding(schematizeComponent)
                         + k) * this.props.binsPerPixel;
-                let paddedKey = edgeToKey(departure.downstream, departure.upstream);
+                let paddedKey = departure.edgeToKey();
                 if (!(paddedKey in this.linkToXmapping)) {
                     //place holder value, go as far left as possible
                     // this.linkToXmapping[paddedKey] = [this.state.actualWidth + 100, xCoordDeparture]
-                    // TODO place holder value in the same place
-                    this.linkToXmapping[paddedKey] = [xCoordDeparture, xCoordDeparture]
+                    this.linkToXmapping[paddedKey] = new LinkRecord(xCoordDeparture, xCoordDeparture)
                 } else {
-                    this.linkToXmapping[paddedKey][1] = xCoordDeparture; // set real value
+                    this.linkToXmapping[paddedKey].xDepart = xCoordDeparture; // set real value
                 }
             }
         }
-        this.calculateLinkElevations();
+        // this.calculateLinkElevations();
     }
 
     calculateLinkElevations() {
@@ -133,7 +126,7 @@ class App extends Component {
          * As the links get bigger, you take the max() of the range of the link and add 1.
          * This claims the "air space" for that link to travel through without colliding with anything.
          * The longest link should end up on top.  We'll probably need a "link gutter" maximum to keep
-         * this from getting unreasonably tall.**/
+         * this from getting unreasonably tall.** /
         this.distanceSortedLinks = [{linkColumn: fetchThis, arrivX: 5, departX: 2000, key:"arrow" + i + j}];//FIXME: populate
 
         //Set up an array of zeros, then gradually fill it with height stacking
@@ -149,6 +142,7 @@ class App extends Component {
                 this.elevationOccupied[x] = elevation;
             }
         }
+         /**/
     }
 
     componentDidMount = () => {
@@ -224,7 +218,7 @@ class App extends Component {
     }
 
     renderLinks(j, linkColumn, i) {
-        const paddedKey = edgeToKey(linkColumn.downstream, linkColumn.upstream);
+        const paddedKey = linkColumn.edgeToKey();
         //  Set().has( works "x in Y" does not.
         if(this.linksAlreadyRendered.has(paddedKey)) {
             return <React.Fragment/>; // don't render a duplicate if it's already been done.
@@ -235,8 +229,7 @@ class App extends Component {
             return <React.Fragment/>; //don't have information on this link, how did we get here?
         }
         let link = this.linkToXmapping[paddedKey];
-        // console.log(link);
-        let [arrowXCoord, departureX] = link;
+        let [arrowXCoord, departureX] = [link.xArrival, link.xDepart];
         const stacking = 15 + (j * this.props.binsPerPixel);
         let distance = departureX - arrowXCoord || 1;
         let elevation = stacking + Math.log2(Math.abs(distance)) * 10;
@@ -292,17 +285,18 @@ class App extends Component {
                                     <React.Fragment>
                                         {/*These two lines could be in separate for loops if you want control over ordering*/}
                                         {this.renderComponent(schematizeComponent, i)}
+                                        {this.renderLinksForOneComponent(schematizeComponent, i)}
                                     </React.Fragment>
                                 )
                             }
                         )}
-                        {this.distanceSortedLinks.map(
-                            (record, k) => {
-                                return (<React.Fragment>
-                                    {this.renderLinks(record.linkColumn, record.key)}
-                                </React.Fragment>)
-                            }
-                        )}
+                        {/*{this.distanceSortedLinks.map(*/}
+                        {/*    (record, k) => {*/}
+                        {/*        return (<React.Fragment>*/}
+                        {/*            {this.renderLinks(record.linkColumn, record.key)}*/}
+                        {/*        </React.Fragment>)*/}
+                        {/*    }*/}
+                        {/*)}*/}
                     </Layer>
                 </Stage>
             </React.Fragment>
