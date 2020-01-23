@@ -169,7 +169,7 @@ class App extends Component {
             console.log(points);
         }
         return <LinkArrow
-            key={"arrow" + link.linkColumn.edgeToKey()}
+            key={"arrow" + link.linkColumn.key}
             x={arrowXCoord + this.props.leftOffset}
             y={this.state.topOffset - 5}
             points={points}

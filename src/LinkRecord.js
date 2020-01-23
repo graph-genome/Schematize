@@ -36,7 +36,7 @@ export function calculateLinkCoordinates(schematic, binsPerPixel, topOffset,
             let arrival = schematizeComponent.arrivals[j];
             let xCoordArrival =
                 (leftXStart(schematizeComponent, i) + j) * binsPerPixel;
-            let paddedKey = arrival.edgeToKey();
+            let paddedKey = arrival.key;
             if (!(paddedKey in linkToXMapping)) {
                 //place holder value, go as far right as possible
                 // linkToXMapping[paddedKey] = [xCoordArrival,
@@ -53,7 +53,7 @@ export function calculateLinkCoordinates(schematic, binsPerPixel, topOffset,
             let xCoordDeparture = (leftXStart(schematizeComponent, i)
                     + schematizeComponent.leftPadding()
                     + k) * binsPerPixel;
-            let paddedKey = departure.edgeToKey();
+            let paddedKey = departure.key;
             if (!(paddedKey in linkToXMapping)) {
                 //place holder value, go as far left as possible
                 // linkToXMapping[paddedKey] = [this.state.actualWidth + 100, xCoordDeparture]

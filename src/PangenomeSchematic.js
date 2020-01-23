@@ -29,7 +29,7 @@ class PangenomeSchematic extends React.Component {
 				var componentItem = new Component(component, offsetLength);
 				offsetLength += componentItem.arrivals.length + componentItem.departures.length;
 				componentArray.push(componentItem);
-				if(component.last_bin > endBin){break} // TODO: this limit was set for debugging
+				if(component.last_bin > endBin){break}
 			}
 		}
 		this.components = componentArray;
@@ -64,6 +64,7 @@ class LinkColumn {
 		this.upstream = linkColumn.upstream;
 		this.downstream = linkColumn.downstream;
 		this.participants = (linkColumn.participants);//new Set
+		this.key = this.edgeToKey()
 	}
 	edgeToKey() {
 		/**downstream and upstream are always in the same orientation regardless of if it is a
