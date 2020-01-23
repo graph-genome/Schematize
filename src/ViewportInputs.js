@@ -1,8 +1,9 @@
 import React from "react";
-import { render } from "react-dom";
 import { types, applySnapshot } from "mobx-state-tree";
 import { observer } from "mobx-react";
-import { values } from "mobx";
+import { values, configure } from "mobx";
+
+configure({enforceActions: "observed"});
 
 const Todo = types
     .model({
