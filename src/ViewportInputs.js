@@ -1,7 +1,9 @@
 import React from "react";
 import { types, applySnapshot } from "mobx-state-tree";
 import { observer } from "mobx-react";
-import { values } from "mobx";
+import { values, configure } from "mobx";
+
+configure({enforceActions: "observed"});
 
 const randomId = () => Math.floor(Math.random() * 1000).toString(36);
 
