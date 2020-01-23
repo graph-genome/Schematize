@@ -37,8 +37,8 @@ const stringToColourSave = function(colorKey) {
 
 class App extends Component {
     layerRef = React.createRef();
-    static defaultProps = {beginBin:2500,
-        endBin:2700,
+    static defaultProps = {beginBin:0,
+        endBin:525,
         binsPerPixel:6,
         paddingSize:2,
         leftOffset:10
@@ -47,6 +47,7 @@ class App extends Component {
         Object.assign(App.defaultProps, props);
         super(props);
         let schematic = new PangenomeSchematic(props);
+        console.log(schematic.pathNames.length);
         const sum = (accumulator, currentValue) => accumulator + currentValue;
         let actualWidth = this.props.leftOffset + schematic.components.map(component =>
             component.arrivals.length + component.departures.length + (component.lastBin - component.firstBin) + 1 + this.props.paddingSize
