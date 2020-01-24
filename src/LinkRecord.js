@@ -1,5 +1,3 @@
-
-
 export class LinkRecord {
     constructor(linkColumn, xCoordArrival=0, xCoordDeparture=0, isArrival){
         this.linkColumn = linkColumn;
@@ -51,8 +49,8 @@ export function calculateLinkCoordinates(schematic, binsPerPixel, topOffset,
         for (let k = 0; k < schematizeComponent.departures.length; k++) {
             let departure = schematizeComponent.departures[k];
             let xCoordDeparture = (leftXStart(schematizeComponent, i)
-                    + schematizeComponent.leftPadding()
-                    + k) * binsPerPixel;
+                + schematizeComponent.leftPadding()
+                + k) * binsPerPixel;
             let paddedKey = departure.key;
             if (!(paddedKey in linkToXMapping)) {
                 //place holder value, go as far left as possible

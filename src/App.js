@@ -37,7 +37,7 @@ const stringToColourSave = function(colorKey) {
 
 class App extends Component {
     layerRef = React.createRef();
-    static defaultProps = {beginBin:10,
+    static defaultProps = {beginBin:0,
         endBin:525,
         binsPerPixel:6,
         paddingSize:2,
@@ -215,6 +215,6 @@ class App extends Component {
 
 }
 
-render(<App />, document.getElementById('root'));
+// render(<App />, document.getElementById('root'));
 
 export default App;

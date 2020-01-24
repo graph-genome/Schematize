@@ -8,7 +8,7 @@ class PangenomeSchematic extends React.Component {
 		this.pathNames = this.jsonData.path_names;
 		this.processArray(this.props.beginBin, this.props.endBin);
 	}
- 	componentDidUpdate() {
+	componentDidUpdate() {
 		this.processArray(this.props.beginBin, this.props.endBin);
 		console.log(this.components);
 
@@ -17,8 +17,8 @@ class PangenomeSchematic extends React.Component {
 		// console.log();
 		// var jsonFile = require('./data/Athaliana.bin100000.schematic.json'); // This cannot be a variable
 		// var jsonFile = require('./data/yeast_bin10k_7indiv_16chr.schematic.json'); // This cannot be a variable
-		// const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.json'); // This cannot be a variable
-		const jsonFile = require('./data/run1.B1phi1.i1.seqwish.w100.schematic'); // ERIKS DATA FROM JANUARY
+		const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.json'); // This cannot be a variable
+		// const jsonFile = require('./data/run1.B1phi1.i1.seqwish.w100.schematic'); // ERIKS DATA FROM JANUARY
 		// console.log(jsonFile);
 		return jsonFile
 	}
@@ -74,6 +74,5 @@ class LinkColumn {
 	};
 
 }
-
 
 export default PangenomeSchematic
