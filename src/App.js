@@ -7,8 +7,6 @@ import ComponentRect from './ComponentRect'
 import LinkColumn from './LinkColumn'
 import LinkArrow from './LinkArrow'
 import {calculateLinkCoordinates} from "./LinkRecord";
-import  './ViewportInputs';
-import {AppView, store} from "./ViewportInputs";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -36,21 +34,15 @@ const stringToColourSave = function(colorKey) {
 
 class App extends Component {
     layerRef = React.createRef();
-    static defaultProps = {beginBin:2700,
-        endBin:3000,
-        binsPerPixel:6,
-        paddingSize:2,
-        leftOffset:10
-    };
     constructor(props) {
-        Object.assign(App.defaultProps, props);
         super(props);
-        let schematic = new PangenomeSchematic(props);
+        const {beginBin, endBin} = this.props.store;
+        let schematic = new PangenomeSchematic({beginBin, endBin});
         console.log(schematic.pathNames.length);
         const sum = (accumulator, currentValue) => accumulator + currentValue;
-        let actualWidth = this.props.leftOffset + schematic.components.map(component =>
-            component.arrivals.length + component.departures.length + (component.lastBin - component.firstBin) + 1 + this.props.paddingSize
-        ).reduce(sum) * this.props.binsPerPixel;
+        let actualWidth = this.props.store.leftOffset + schematic.components.map(component =>
+            component.arrivals.length + component.departures.length + (component.lastBin - component.firstBin) + 1 + this.props.store.paddingSize
+        ).reduce(sum) * this.props.store.binsPerPixel;
         console.log(actualWidth);
         // console.log(schematic.components);
 
@@ -65,7 +57,7 @@ class App extends Component {
         this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
 
         let [links, top] =
-            calculateLinkCoordinates(schematic.components, this.props.binsPerPixel, this.state.topOffset,
+            calculateLinkCoordinates(schematic.components, this.props.store.binsPerPixel, this.state.topOffset,
                 this.leftXStart.bind(this));
         this.distanceSortedLinks = links;
         this.state.topOffset = top;
@@ -80,7 +72,7 @@ class App extends Component {
     };
 
     leftXStart(schematizeComponent, i) {
-        return (schematizeComponent.firstBin - this.props.beginBin) + (i * this.props.paddingSize) + schematizeComponent.offset;
+        return (schematizeComponent.firstBin - this.props.store.beginBin) + (i * this.props.store.paddingSize) + schematizeComponent.offset;
     }
 
 
@@ -90,10 +82,10 @@ class App extends Component {
                 <ComponentRect
                     item={schematizeComponent}
                     key={i}
-                    x={this.state.schematize[i].x + this.props.leftOffset}
+                    x={this.state.schematize[i].x + this.props.store.leftOffset}
                     y={this.state.topOffset}
                     height={this.state.pathNames.length * this.state.pathsPerPixel}
-                    width={(schematizeComponent.leftPadding() + schematizeComponent.departures.length) * this.props.binsPerPixel}
+                    width={(schematizeComponent.leftPadding() + schematizeComponent.departures.length) * this.props.store.binsPerPixel}
                 />
 
                 {schematizeComponent.arrivals.map(
@@ -113,7 +105,7 @@ class App extends Component {
     }
 
     renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn) {
-        let xCoordArrival = this.props.leftOffset + (this.leftXStart(schematizeComponent,i) + leftPadding + j) * this.props.binsPerPixel;
+        let xCoordArrival = this.props.store.leftOffset + (this.leftXStart(schematizeComponent,i) + leftPadding + j) * this.props.store.binsPerPixel;
         let localColor = stringToColor(linkColumn, this.state.highlightedLink);
         return <LinkColumn
             key={"departure" + i + j}
@@ -122,7 +114,7 @@ class App extends Component {
             x={xCoordArrival}
             pathsPerPixel={this.state.pathsPerPixel}
             y={this.state.topOffset}
-            width={this.props.binsPerPixel}
+            width={this.props.store.binsPerPixel}
             color={localColor}
             updateHighlightedNode={this.updateHighlightedNode}
         />
@@ -135,11 +127,11 @@ class App extends Component {
         * Components to ensure that everything is relative coordinates.*/
         let [arrowXCoord, absDepartureX] = [link.xArrival, link.xDepart];
         // put in relative coordinates to arriving LinkColumn
-        let departureX = absDepartureX - arrowXCoord + this.props.binsPerPixel/2;
-        let arrX = this.props.binsPerPixel/2;
-        let bottom = -2;//-this.props.binsPerPixel;
+        let departureX = absDepartureX - arrowXCoord + this.props.store.binsPerPixel/2;
+        let arrX = this.props.store.binsPerPixel/2;
+        let bottom = -2;//-this.props.store.binsPerPixel;
         let turnDirection = (departureX < 0)? -1 : 1;
-        const departOrigin = [departureX, this.props.binsPerPixel-2];
+        const departOrigin = [departureX, this.props.store.binsPerPixel-2];
         const departCorner = [departureX - turnDirection, -link.elevation + 2];
         let departTop = [departureX - (turnDirection*6), -link.elevation];
         let arriveTop = [arrX + turnDirection*6, -link.elevation];
@@ -153,15 +145,15 @@ class App extends Component {
             arriveCorner[0], arriveCorner[1],
             arriveCornerEnd[0], arriveCornerEnd[1],
             arrX, -1];
-        if (Math.abs(departureX) <= this.props.binsPerPixel) { //Small distances, usually self loops
+        if (Math.abs(departureX) <= this.props.store.binsPerPixel) { //Small distances, usually self loops
             if(link.isArrival){
                 points = [
                     arrX, -10,//-link.elevation - 4,
                     arrX, bottom];
             }else{
                 points = [
-                    departOrigin[0], bottom + this.props.binsPerPixel,
-                    departOrigin[0], -5];//-link.elevation-this.props.binsPerPixel*2,];
+                    departOrigin[0], bottom + this.props.store.binsPerPixel,
+                    departOrigin[0], -5];//-link.elevation-this.props.store.binsPerPixel*2,];
             }
 
         }
@@ -170,10 +162,10 @@ class App extends Component {
         }
         return <LinkArrow
             key={"arrow" + link.linkColumn.key}
-            x={arrowXCoord + this.props.leftOffset}
+            x={arrowXCoord + this.props.store.leftOffset}
             y={this.state.topOffset - 5}
             points={points}
-            width={this.props.binsPerPixel}
+            width={this.props.store.binsPerPixel}
             color={stringToColor(link.linkColumn, this.state.highlightedLink)}
             updateHighlightedNode={this.updateHighlightedNode}
             item={link.linkColumn}
@@ -184,7 +176,6 @@ class App extends Component {
         console.log("Start render");
         return (
             <React.Fragment>
-                <AppView store={store} />
                 <Stage
                     width={this.state.actualWidth + 20}
                     height={this.state.topOffset + this.state.pathNames.length * this.state.pathsPerPixel}>
