@@ -1,4 +1,3 @@
-import {render} from 'react-dom';
 import {Layer, Stage} from 'react-konva';
 import React, {Component} from 'react';
 

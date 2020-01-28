@@ -66,3 +66,27 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+## JBrowse2 Integration
+The whole code in this repository is integrated as a submodule in [GMOD](http://gmod.org/wiki/Main_Page)'s
+ [JBrowse-Components](https://github.com/GMOD/jbrowse-components). 
+ We are currently stashing our code @https://github.com/graph-genome/jbrowse-components/tree/pangenome_group_testing.
+ 
+ In order to get the plugin in JBrowse-Web to run, execute the following
+ steps:
+ 
+ Clone the JBrowse-Components repository:
+ 
+ `git clone --recurse-submodules -b pangenome_group_testing git@github.com:graph-genome/jbrowse-components.git`
+
+Install dependencies:
+ 
+ `cd jbrowse-components/`
+ 
+ `yarn`
+ 
+ Start the development server (it takes some time until it is up...):
+ 
+ `(cd packages/jbrowse-web/ && yarn start)`
+ 
+ Navigate to `File` -> `New pangenome view`. Now you have a PangenomeView track running in JBrowse2!

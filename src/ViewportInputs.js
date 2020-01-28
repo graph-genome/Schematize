@@ -1,5 +1,5 @@
 import React from "react";
-import { types, applySnapshot } from "mobx-state-tree";
+import { types } from "mobx-state-tree";
 import { observer } from "mobx-react";
 import { values, configure } from "mobx";
 
