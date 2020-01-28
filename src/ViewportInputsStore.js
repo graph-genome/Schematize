@@ -9,7 +9,17 @@ export const RootStore = types
         endBin: 2700,
         binsPerPixel:6,
         paddingSize:2,
-        leftOffset:10
+        leftOffset:10,
+        topOffset: 400,
+    })
+    .actions(self => {
+        function updateTopOffset(newTopOffset) {
+            self.topOffset = newTopOffset;
+        }
+
+        return {
+            updateTopOffset
+        }
     })
     .views(self => ({
     }));
