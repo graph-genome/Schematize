@@ -58,7 +58,7 @@ class App extends Component {
             calculateLinkCoordinates(schematic.components, this.props.store.binsPerPixel, this.props.store.topOffset,
                 this.leftXStart.bind(this));
         this.distanceSortedLinks = links;
-        this.props.store.topOffset.updateTopOffset(top);
+        this.props.store.updateTopOffset(top);
     };
 
     componentDidMount = () => {
