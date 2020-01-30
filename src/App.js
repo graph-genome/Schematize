@@ -48,9 +48,7 @@ class App extends Component {
         this.state = {
             schematize: schematic.components,
             pathNames: schematic.pathNames,
-            pathsPerPixel: 1,
-            actualWidth: actualWidth,
-            highlightedLink: 0 // we will compare linkColumns
+            actualWidth: actualWidth
         };
         this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
 
@@ -66,7 +64,8 @@ class App extends Component {
     };
 
     updateHighlightedNode = (linkRect) => {
-        this.setState({highlightedLink: linkRect})
+        this.setState({highlightedLink: linkRect});
+        // this.props.store.updateHighlightedLink(linkRect); // TODO this does not work, ask Robert about it
     };
 
     leftXStart(schematizeComponent, i) {
@@ -82,7 +81,7 @@ class App extends Component {
                     key={i}
                     x={this.state.schematize[i].x + this.props.store.leftOffset}
                     y={this.props.store.topOffset}
-                    height={this.state.pathNames.length * this.state.pathsPerPixel}
+                    height={this.state.pathNames.length * this.props.store.pathsPerPixel}
                     width={(schematizeComponent.leftPadding() + schematizeComponent.departures.length) * this.props.store.binsPerPixel}
                 />
 
@@ -110,7 +109,7 @@ class App extends Component {
             item={linkColumn}
             pathNames={this.state.pathNames}
             x={xCoordArrival}
-            pathsPerPixel={this.state.pathsPerPixel}
+            pathsPerPixel={this.props.store.pathsPerPixel}
             y={this.props.store.topOffset}
             width={this.props.store.binsPerPixel}
             color={localColor}
@@ -176,7 +175,7 @@ class App extends Component {
             <React.Fragment>
                 <Stage
                     width={this.state.actualWidth + 20}
-                    height={this.props.store.topOffset + this.state.pathNames.length * this.state.pathsPerPixel}>
+                    height={this.props.store.topOffset + this.state.pathNames.length * this.props.store.pathsPerPixel}>
                     <Layer ref={this.layerRef}>
                         {this.state.schematize.map(
                             (schematizeComponent, i)=> {
