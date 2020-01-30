@@ -6,6 +6,7 @@ import PangenomeSchematic from './PangenomeSchematic'
 import ComponentRect from './ComponentRect'
 import LinkColumn from './LinkColumn'
 import LinkArrow from './LinkArrow'
+import ComponentConnectorRect from './ComponentConnectorRect'
 import {calculateLinkCoordinates} from "./LinkRecord";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
@@ -57,6 +58,7 @@ class App extends Component {
                 this.leftXStart.bind(this));
         this.distanceSortedLinks = links;
         this.props.store.updateTopOffset(top);
+        this.oneComponentConnector = ["1"] // FIXME this is for testing
     };
 
     componentDidMount = () => {
@@ -117,7 +119,7 @@ class App extends Component {
         />
     }
 
-    renderLinks(link) {
+    renderLink(link) {
         /*Translates the LinkRecord coordinates into pixels and defines the curve shape.
         * I've spent way too long fiddling with these numbers at different binsPerPixel
         * I suggest you don't fiddle with them unless you plan on nesting the React
@@ -142,7 +144,7 @@ class App extends Component {
             arriveCorner[0], arriveCorner[1],
             arriveCornerEnd[0], arriveCornerEnd[1],
             arrX, -1];
-        if (Math.abs(departureX) <= this.props.store.binsPerPixel) { //Small distances, usually self loops
+        if (Math.abs(departureX) <= this.props.store.binsPerPixel) { // FIXME Small distances, usually self loops
             if(link.isArrival){
                 points = [
                     arrX, -10,//-link.elevation - 4,
@@ -155,7 +157,7 @@ class App extends Component {
 
         }
         if(points.some(isNaN)){
-            console.log(points);
+            console.log("Some points are NaN: " + points);
         }
         return <LinkArrow
             key={"arrow" + link.linkColumn.key}
@@ -167,6 +169,15 @@ class App extends Component {
             updateHighlightedNode={this.updateHighlightedNode}
             item={link.linkColumn}
         />
+    }
+
+    renderComponentConnector(componentConnector) {
+        return <ComponentConnectorRect
+            x={10}
+            y={10}
+            width={20}
+            height={5}
+            />
     }
 
     render() {
@@ -190,7 +201,14 @@ class App extends Component {
                         {this.distanceSortedLinks.map(
                             (record,i ) => {
                                 return (<React.Fragment key={'L'+ i}>
-                                    {this.renderLinks(record)}
+                                    {this.renderLink(record)}
+                                </React.Fragment>)
+                            }
+                        )}
+                        {this.oneComponentConnector.map(
+                            (componentConnector, i) => {
+                                return (<React.Fragment key={"1st Component Connector Test"}>
+                                    {this.renderComponentConnector(componentConnector)}
                                 </React.Fragment>)
                             }
                         )}
