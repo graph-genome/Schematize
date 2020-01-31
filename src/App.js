@@ -120,13 +120,7 @@ class App extends Component {
                 width={this.props.store.binsPerPixel * 2}
             />
         } else {
-            return <ComponentConnectorRect
-                key={"occupant" + i + j}
-                x={0}
-                y={0}
-                width={0}
-                height={0}
-            />
+            return null
         }
 
     }
