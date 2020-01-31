@@ -31,7 +31,7 @@ class LinkColumn extends React.Component {
     render() {
         const contents = this.dots();
         return (
-            <React.Fragment>
+            <>
                 {contents.map((content, d) => {
                     return (<Rect
                         key={"dot" + d}
@@ -44,7 +44,7 @@ class LinkColumn extends React.Component {
                         onMouseOver={this.handleMouseOver}
                         onMouseOut={this.handleMouseOut}
                     />)})}
-            </React.Fragment>
+            </>
         );
     }
 }
