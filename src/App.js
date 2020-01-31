@@ -42,7 +42,7 @@ class App extends Component {
         console.log(schematic.pathNames.length);
         const sum = (accumulator, currentValue) => accumulator + currentValue;
         let actualWidth = this.props.store.leftOffset + schematic.components.map(component =>
-            component.arrivals.length + component.departures.length + (component.lastBin - component.firstBin) + 1 + this.props.store.paddingSize
+            component.arrivals.length + (component.departures.length-1) + (component.lastBin - component.firstBin) + 1 + this.props.store.paddingSize
         ).reduce(sum) * this.props.store.binsPerPixel;
         console.log(actualWidth);
         // console.log(schematic.components);
@@ -90,7 +90,7 @@ class App extends Component {
                     x={this.state.schematize[i].x + this.props.store.leftOffset}
                     y={this.props.store.topOffset}
                     height={this.visibleHeight()}
-                    width={(schematizeComponent.leftPadding() + schematizeComponent.departures.length)}
+                    width={(schematizeComponent.leftPadding() + (schematizeComponent.departures.length-1))}
                     binsPerPixel={this.props.store.binsPerPixel}
                     pathsPerPixel={this.props.store.pathsPerPixel}
                     compressed_row_mapping={this.compressed_row_mapping}
@@ -101,7 +101,7 @@ class App extends Component {
                         return this.renderLinkColumn(schematizeComponent, i, 0, j, linkColumn);
                     }
                 )}
-                {schematizeComponent.departures.map(
+                {schematizeComponent.departures.slice(0,-1).map(
                     (linkColumn, j) => {
                         let leftPad = schematizeComponent.leftPadding();
                         return this.renderLinkColumn(schematizeComponent, i, leftPad, j, linkColumn);
@@ -115,7 +115,7 @@ class App extends Component {
     renderComponentConnector(componentConnector, i , j) {
         // x is the (num_bins + num_arrivals + num_departures)*binsPerPixel
         const schema = this.state.schematize[i];
-        const x_val = this.props.store.leftOffset + schema.x + (schema.leftPadding() + schema.departures.length) * this.props.store.binsPerPixel;
+        const x_val = this.props.store.leftOffset + schema.x + (schema.leftPadding() + schema.departures.length-1) * this.props.store.binsPerPixel;
         if (componentConnector) {
             return <ComponentConnectorRect
                 key={"occupant" + i + j}

@@ -18,7 +18,10 @@ class LinkColumn extends React.Component {
         let alpha = [];
         for(const [i, boolean] of this.props.item.participants.entries()) {
             if (boolean) {
-                alpha.push(this.props.compressed_row_mapping[i]) //relative compressed Y coordinate
+                let row = this.props.compressed_row_mapping[i];
+                if(row !== undefined){ // it's possible a row didn't have enough coverage but still created a Link
+                    alpha.push(row) //relative compressed Y coordinate
+                }
             }
         }
         return alpha;
