@@ -52,7 +52,7 @@ class ComponentRect extends React.Component {
   renderOccupants(occupant, i, j) {
     const parent = this.props.item;
     const x_val = this.props.x + (parent.arrivals.length * this.props.binsPerPixel);
-    const width = parent.leftPadding() * this.props.binsPerPixel - (parent.arrivals.length * this.props.binsPerPixel);
+    const width = (parent.leftPadding() - parent.arrivals.length) * this.props.binsPerPixel;
     if (occupant) {
       return <ComponentConnectorRect
           key={"occupant" + i + j}
@@ -65,6 +65,38 @@ class ComponentRect extends React.Component {
       return null
     }
   };
+
+  renderAllConnectors(){
+    let connectorsColumn = this.props.item.departures.slice(-1)[0]
+    if(connectorsColumn !== undefined){
+      return (<>
+        {connectorsColumn.participants.map(
+            (entry, j) => {
+              return this.renderComponentConnector(entry, j)
+            }
+        )}
+      </>)
+    }else{
+      return null;
+    }
+  }
+
+  renderComponentConnector(useConnector, j) {
+    let component = this.props.item
+    // x is the (num_bins + num_arrivals + num_departures)*binsPerPixel
+    if (useConnector) {
+      const x_val = this.props.x + (component.leftPadding() + component.departures.length-1) * this.props.binsPerPixel;
+      return <ComponentConnectorRect
+          key={"occupant" + j}
+          x={x_val}
+          y={this.props.y + this.props.compressed_row_mapping[j]}
+          width={this.props.binsPerPixel * 2}
+          color={'#464646'}
+      />
+    } else {
+      return null
+    }
+  }
 
   render() {
     return (
@@ -84,6 +116,7 @@ class ComponentRect extends React.Component {
                 return this.renderOccupants(occupant, 'i', j);
               })
           }
+          {this.renderAllConnectors()}
         </>
     );
   }

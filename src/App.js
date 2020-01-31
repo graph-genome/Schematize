@@ -6,7 +6,6 @@ import PangenomeSchematic from './PangenomeSchematic'
 import ComponentRect, {compress_visible_rows} from './ComponentRect'
 import LinkColumn from './LinkColumn'
 import LinkArrow from './LinkArrow'
-import ComponentConnectorRect from './ComponentConnectorRect'
 import {calculateLinkCoordinates} from "./LinkRecord";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
@@ -107,42 +106,10 @@ class App extends Component {
                         return this.renderLinkColumn(schematizeComponent, i, leftPad, j, linkColumn);
                     }
                 )}
-                {this.renderAllConnectors(schematizeComponent)}
             </>
         )
     }
 
-    renderAllConnectors(component){
-        let connectorsColumn = component.departures.slice(-1)[0]
-        let leftPad = component.leftPadding() + component.departures.length-1;
-        if(connectorsColumn !== undefined){
-            return (<>
-                {connectorsColumn.participants.map(
-                    (entry, j) => {
-                        return this.renderComponentConnector(entry, component, j)
-                    }
-                )}
-                </>)
-        }else{
-            return null;
-        }
-    }
-
-    renderComponentConnector(useConnector, component , j) {
-        // x is the (num_bins + num_arrivals + num_departures)*binsPerPixel
-        if (useConnector) {
-            const x_val = this.props.store.leftOffset + component.x + (component.leftPadding() + component.departures.length-1) * this.props.store.binsPerPixel;
-            return <ComponentConnectorRect
-                key={"occupant" + j}
-                x={x_val}
-                y={this.props.store.topOffset + this.compressed_row_mapping[j]}
-                width={this.props.store.binsPerPixel * 2}
-                color={'#464646'}
-            />
-        } else {
-            return null
-        }
-    }
 
     renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn) {
         let xCoordArrival = this.props.store.leftOffset + (this.leftXStart(schematizeComponent,i) + leftPadding + j) * this.props.store.binsPerPixel;
