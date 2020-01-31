@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 
 import './App.css';
 import PangenomeSchematic from './PangenomeSchematic'
-import ComponentRect, {find_rows_visible_in_viewport} from './ComponentRect'
+import ComponentRect, {compress_visible_rows} from './ComponentRect'
 import LinkColumn from './LinkColumn'
 import LinkArrow from './LinkArrow'
 import ComponentConnectorRect from './ComponentConnectorRect'
@@ -59,9 +59,13 @@ class App extends Component {
         this.distanceSortedLinks = links;
         this.props.store.updateTopOffset(top);
 
-        this.compressed_row_mapping = find_rows_visible_in_viewport(schematic.components, this.props.store.beginBin, this.props.store.endBin);
+        this.compressed_row_mapping = compress_visible_rows(schematic.components);
         // TODO: with dynamic start and stop inputs this will move to componentDidUpdate()
     };
+
+    visibleHeight(){
+        return Object.keys(this.compressed_row_mapping).length;
+    }
 
     componentDidMount = () => {
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
@@ -85,10 +89,11 @@ class App extends Component {
                     key={i}
                     x={this.state.schematize[i].x + this.props.store.leftOffset}
                     y={this.props.store.topOffset}
-                    height={this.state.pathNames.length}
+                    height={this.visibleHeight()}
                     width={(schematizeComponent.leftPadding() + schematizeComponent.departures.length)}
                     binsPerPixel={this.props.store.binsPerPixel}
                     pathsPerPixel={this.props.store.pathsPerPixel}
+                    compressed_row_mapping={this.compressed_row_mapping}
                 />
 
                 {schematizeComponent.arrivals.map(
@@ -136,6 +141,7 @@ class App extends Component {
             width={this.props.store.binsPerPixel}
             color={localColor}
             updateHighlightedNode={this.updateHighlightedNode}
+            compressed_row_mapping={this.compressed_row_mapping}
         />
     }
 
@@ -197,7 +203,7 @@ class App extends Component {
             <>
                 <Stage
                     width={this.state.actualWidth + 20}
-                    height={this.props.store.topOffset + this.state.pathNames.length * this.props.store.pathsPerPixel}>
+                    height={this.props.store.topOffset + this.visibleHeight() * this.props.store.pathsPerPixel}>
                     <Layer ref={this.layerRef}>
                         {this.state.schematize.map(
                             (schematizeComponent, i)=> {
