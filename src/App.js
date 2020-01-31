@@ -100,12 +100,33 @@ class App extends Component {
                     }
                 )}
                 {schematizeComponent.occupants.map(
+                    (occupant, j) => {
+                        return this.renderOccupants(occupant, i, j);
+                    }
+                )}
+{/*                {schematizeComponent.occupants.map(
                     (componentConnector, j) => {
                         return this.renderComponentConnector(componentConnector, i, j);
                     }
-                )}
+                )}*/}
             </React.Fragment>
         )
+    }
+
+    renderOccupants(occupant, i, j) {
+        const schema = this.state.schematize[i];
+        const x_val = this.props.store.leftOffset + schema.x + (schema.arrivals.length * this.props.store.binsPerPixel);
+        const width = schema.leftPadding() * this.props.store.binsPerPixel - (schema.arrivals.length * this.props.store.binsPerPixel);
+        if (occupant) {
+            return <ComponentConnectorRect
+                key={"occupant" + i + j}
+                x={x_val}
+                y={this.props.store.topOffset + j}
+                width={width}
+            />
+        } else {
+            return null
+        }
     }
 
     renderComponentConnector(componentConnector, i , j) {
@@ -122,7 +143,6 @@ class App extends Component {
         } else {
             return null
         }
-
     }
 
     renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn) {

@@ -2,8 +2,8 @@ import { types } from "mobx-state-tree";
 
 export const RootStore = types
     .model({
-        beginBin: 2500,
-        endBin: 2700,
+        beginBin: 1,
+        endBin: 200,
         binsPerPixel:6,
         paddingSize:1,
         leftOffset:10,
