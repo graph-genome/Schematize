@@ -45,22 +45,18 @@ class App extends Component {
         ).reduce(sum) * this.props.store.binsPerPixel;
         console.log(actualWidth);
         // console.log(schematic.components);
-
         this.state = {
             schematize: schematic.components,
             pathNames: schematic.pathNames,
-            topOffset: 400,
-            pathsPerPixel: 1,
-            actualWidth: actualWidth,
-            highlightedLink: 0 // we will compare linkColumns
+            actualWidth: actualWidth
         };
         this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
 
         let [links, top] =
-            calculateLinkCoordinates(schematic.components, this.props.store.binsPerPixel, this.state.topOffset,
+            calculateLinkCoordinates(schematic.components, this.props.store.binsPerPixel, this.props.store.topOffset,
                 this.leftXStart.bind(this));
         this.distanceSortedLinks = links;
-        this.state.topOffset = top;
+        this.props.store.updateTopOffset(top);
     };
 
     componentDidMount = () => {
@@ -68,7 +64,8 @@ class App extends Component {
     };
 
     updateHighlightedNode = (linkRect) => {
-        this.setState({highlightedLink: linkRect})
+        this.setState({highlightedLink: linkRect});
+        // this.props.store.updateHighlightedLink(linkRect); // TODO this does not work, ask Robert about it
     };
 
     leftXStart(schematizeComponent, i) {
@@ -83,8 +80,8 @@ class App extends Component {
                     item={schematizeComponent}
                     key={i}
                     x={this.state.schematize[i].x + this.props.store.leftOffset}
-                    y={this.state.topOffset}
-                    height={this.state.pathNames.length * this.state.pathsPerPixel}
+                    y={this.props.store.topOffset}
+                    height={this.state.pathNames.length * this.props.store.pathsPerPixel}
                     width={(schematizeComponent.leftPadding() + schematizeComponent.departures.length) * this.props.store.binsPerPixel}
                 />
 
@@ -112,8 +109,8 @@ class App extends Component {
             item={linkColumn}
             pathNames={this.state.pathNames}
             x={xCoordArrival}
-            pathsPerPixel={this.state.pathsPerPixel}
-            y={this.state.topOffset}
+            pathsPerPixel={this.props.store.pathsPerPixel}
+            y={this.props.store.topOffset}
             width={this.props.store.binsPerPixel}
             color={localColor}
             updateHighlightedNode={this.updateHighlightedNode}
@@ -163,7 +160,7 @@ class App extends Component {
         return <LinkArrow
             key={"arrow" + link.linkColumn.key}
             x={arrowXCoord + this.props.store.leftOffset}
-            y={this.state.topOffset - 5}
+            y={this.props.store.topOffset - 5}
             points={points}
             width={this.props.store.binsPerPixel}
             color={stringToColor(link.linkColumn, this.state.highlightedLink)}
@@ -178,7 +175,7 @@ class App extends Component {
             <React.Fragment>
                 <Stage
                     width={this.state.actualWidth + 20}
-                    height={this.state.topOffset + this.state.pathNames.length * this.state.pathsPerPixel}>
+                    height={this.props.store.topOffset + this.state.pathNames.length * this.props.store.pathsPerPixel}>
                     <Layer ref={this.layerRef}>
                         {this.state.schematize.map(
                             (schematizeComponent, i)=> {
