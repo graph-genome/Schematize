@@ -11,7 +11,7 @@ class ComponentRect extends React.Component {
                 x={this.props.x}
                 y={this.props.y}
                 width={this.props.width}
-                height={this.props.height}
+                height={1}
                 fill={this.state.color}
             />
         );

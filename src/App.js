@@ -99,8 +99,36 @@ class App extends Component {
                         return this.renderLinkColumn(schematizeComponent, i, leftPad, j, linkColumn);
                     }
                 )}
+                {schematizeComponent.occupants.map(
+                    (componentConnector, j) => {
+                        return this.renderComponentConnector(componentConnector, i, j);
+                    }
+                )}
             </React.Fragment>
         )
+    }
+
+    renderComponentConnector(componentConnector, i , j) {
+        // x is the (num_bins + num_arrivals + num_departures)*binsPerPixel
+        const schema = this.state.schematize[i];
+        const x_val = this.props.store.leftOffset + schema.x + (schema.leftPadding() + schema.departures.length) * this.props.store.binsPerPixel;
+        if (componentConnector) {
+            return <ComponentConnectorRect
+                key={"occupant" + i + j}
+                x={x_val}
+                y={this.props.store.topOffset + j}
+                width={this.props.store.binsPerPixel * 2}
+            />
+        } else {
+            return <ComponentConnectorRect
+                key={"occupant" + i + j}
+                x={0}
+                y={0}
+                width={0}
+                height={0}
+            />
+        }
+
     }
 
     renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn) {
@@ -171,15 +199,6 @@ class App extends Component {
         />
     }
 
-    renderComponentConnector(componentConnector) {
-        return <ComponentConnectorRect
-            x={10}
-            y={10}
-            width={20}
-            height={5}
-            />
-    }
-
     render() {
         console.log("Start render");
         return (
@@ -202,13 +221,6 @@ class App extends Component {
                             (record,i ) => {
                                 return (<React.Fragment key={'L'+ i}>
                                     {this.renderLink(record)}
-                                </React.Fragment>)
-                            }
-                        )}
-                        {this.oneComponentConnector.map(
-                            (componentConnector, i) => {
-                                return (<React.Fragment key={"1st Component Connector Test"}>
-                                    {this.renderComponentConnector(componentConnector)}
                                 </React.Fragment>)
                             }
                         )}

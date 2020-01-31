@@ -54,9 +54,12 @@ class Component {
 		}
 		// we do not know the x val for this component, yet
 		this.x = 0;
+		// deep copy of occupants
+		this.occupants = Array.from(component.occupants);
+		this.num_bin = this.lastBin - this.firstBin + 1;
 	}
 	leftPadding() {
-		return (this.lastBin - this.firstBin + 1) + this.arrivals.length;
+		return (this.num_bin) + this.arrivals.length;
 	}
 }
 
