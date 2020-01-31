@@ -107,21 +107,37 @@ class App extends Component {
                         return this.renderLinkColumn(schematizeComponent, i, leftPad, j, linkColumn);
                     }
                 )}
+                {this.renderAllConnectors(schematizeComponent)}
             </>
         )
     }
 
+    renderAllConnectors(component){
+        let connectorsColumn = component.departures.slice(-1)[0]
+        let leftPad = component.leftPadding() + component.departures.length-1;
+        if(connectorsColumn !== undefined){
+            return (<>
+                {connectorsColumn.participants.map(
+                    (entry, j) => {
+                        return this.renderComponentConnector(entry, component, j)
+                    }
+                )}
+                </>)
+        }else{
+            return null;
+        }
+    }
 
-    renderComponentConnector(componentConnector, i , j) {
+    renderComponentConnector(useConnector, component , j) {
         // x is the (num_bins + num_arrivals + num_departures)*binsPerPixel
-        const schema = this.state.schematize[i];
-        const x_val = this.props.store.leftOffset + schema.x + (schema.leftPadding() + schema.departures.length-1) * this.props.store.binsPerPixel;
-        if (componentConnector) {
+        if (useConnector) {
+            const x_val = this.props.store.leftOffset + component.x + (component.leftPadding() + component.departures.length-1) * this.props.store.binsPerPixel;
             return <ComponentConnectorRect
-                key={"occupant" + i + j}
+                key={"occupant" + j}
                 x={x_val}
-                y={this.props.store.topOffset + j}
+                y={this.props.store.topOffset + this.compressed_row_mapping[j]}
                 width={this.props.store.binsPerPixel * 2}
+                color={'#464646'}
             />
         } else {
             return null

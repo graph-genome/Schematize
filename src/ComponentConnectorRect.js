@@ -3,7 +3,7 @@ import { Rect } from 'react-konva';
 
 class ComponentRect extends React.Component {
     state = {
-        color: 'darkslategrey'
+        color: this.props.color
     };
     render() {
         return (

@@ -59,6 +59,7 @@ class ComponentRect extends React.Component {
           x={x_val}
           y={this.props.compressed_row_mapping[j] + this.props.y}
           width={width}
+          color={'#838383'}
       />
     } else {
       return null
