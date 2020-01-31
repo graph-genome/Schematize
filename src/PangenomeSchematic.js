@@ -11,7 +11,6 @@ class PangenomeSchematic extends React.Component {
 	componentDidUpdate() {
 		this.processArray(this.props.beginBin, this.props.endBin);
 		console.log(this.components);
-
 	}
 	readFile(ignored_fileName) {
 		// console.log();
@@ -34,7 +33,6 @@ class PangenomeSchematic extends React.Component {
 			}
 		}
 		this.components = componentArray;
-		return (componentArray)
 	}
 }
 
