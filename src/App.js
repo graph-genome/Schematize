@@ -79,14 +79,6 @@ class App extends Component {
         return (schematizeComponent.firstBin - this.props.store.beginBin) + (i * this.props.store.paddingSize) + schematizeComponent.offset;
     }
 
-    valGreaterOne(val) {
-        if (val > 0) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
 
     renderComponent(schematizeComponent, i) {
         return (
@@ -97,7 +89,7 @@ class App extends Component {
                     x={this.state.schematize[i].x + this.props.store.leftOffset}
                     y={this.props.store.topOffset}
                     height={this.visibleHeight()}
-                    width={(schematizeComponent.leftPadding() + (schematizeComponent.departures.length - this.valGreaterOne(schematizeComponent.departures.length)))}
+                    width={(schematizeComponent.leftPadding() + (schematizeComponent.departures.length-1))}
                     binsPerPixel={this.props.store.binsPerPixel}
                     pathsPerPixel={this.props.store.pathsPerPixel}
                     compressed_row_mapping={this.compressed_row_mapping}
