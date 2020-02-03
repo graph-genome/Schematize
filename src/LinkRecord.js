@@ -15,7 +15,7 @@ export class LinkRecord {
 }
 
 
-export function calculateLinkCoordinates(schematic, binsPerPixel, topOffset,
+export function calculateLinkCoordinates(schematic, pixelsPerColumn, topOffset,
                                          leftXStart) { //leftXStart is necessary as a method at the moment
     /** calculate the x coordinates of all components
      * calculate the x coordinates of all arrivals and departures */
@@ -28,12 +28,12 @@ export function calculateLinkCoordinates(schematic, binsPerPixel, topOffset,
 
     for (let i = 0; i < schematic.length; i++) {
         let schematizeComponent = schematic[i];
-        schematizeComponent.x = (leftXStart(schematizeComponent, i)) * binsPerPixel;
+        schematizeComponent.x = (leftXStart(schematizeComponent, i)) * pixelsPerColumn;
         //ARRIVALS: Calculate all X
         for (let j = 0; j < schematizeComponent.arrivals.length; j++) {
             let arrival = schematizeComponent.arrivals[j];
             let xCoordArrival =
-                (leftXStart(schematizeComponent, i) + j) * binsPerPixel;
+                (leftXStart(schematizeComponent, i) + j) * pixelsPerColumn;
             let paddedKey = arrival.key;
             if (!(paddedKey in linkToXMapping)) {
                 //place holder value, go as far right as possible
@@ -50,7 +50,7 @@ export function calculateLinkCoordinates(schematic, binsPerPixel, topOffset,
             let departure = schematizeComponent.departures[k];
             let xCoordDeparture = (leftXStart(schematizeComponent, i)
                 + schematizeComponent.leftPadding()
-                + k) * binsPerPixel;
+                + k) * pixelsPerColumn;
             let paddedKey = departure.key;
             if (!(paddedKey in linkToXMapping)) {
                 //place holder value, go as far left as possible
@@ -61,10 +61,10 @@ export function calculateLinkCoordinates(schematic, binsPerPixel, topOffset,
             }
         }
     }
-    return calculateLinkElevations(linkToXMapping, binsPerPixel, topOffset);
+    return calculateLinkElevations(linkToXMapping, pixelsPerColumn, topOffset);
 }
 
-function calculateLinkElevations(linkToXmapping, binsPerPixel, topOffset) {
+function calculateLinkElevations(linkToXmapping, pixelsPerColumn, topOffset) {
     /**Starting with the shortest links, claim a spot of elevation to place the link in.
      * As the links get bigger, you take the max() of the range of the link and add 1.
      * This claims the "air space" for that link to travel through without colliding with anything.
@@ -73,12 +73,12 @@ function calculateLinkElevations(linkToXmapping, binsPerPixel, topOffset) {
     let distanceSortedLinks = Object.values(linkToXmapping).sort(
         (a,b)=> a.distance() - b.distance()
     );
-    let elevationOccupied = reserveElevationAirSpace(distanceSortedLinks, binsPerPixel, topOffset);
-    let top = Math.max(...elevationOccupied) + binsPerPixel *3;
+    let elevationOccupied = reserveElevationAirSpace(distanceSortedLinks, pixelsPerColumn, topOffset);
+    let top = Math.max(...elevationOccupied) + pixelsPerColumn *3;
     return [distanceSortedLinks, top]
 }
 
-function reserveElevationAirSpace(distanceSortedLinks, binsPerPixel, topOffset){
+function reserveElevationAirSpace(distanceSortedLinks, pixelsPerColumn, topOffset){
     /* Set up an array of zeros, then gradually fill it with height stacking
     * @Simon this section is largely done, it just needs a sorted distanceSortedLinks as input*/
     let length = Math.max(...distanceSortedLinks.map(x=> Math.max(x.xDepart, x.xArrival))); //this.props.endBin - this.props.beginBin;
@@ -92,7 +92,7 @@ function reserveElevationAirSpace(distanceSortedLinks, binsPerPixel, topOffset){
             console.log(record, linkBegin, linkEnd);
         }
         const stillSmall = elevation < topOffset / 3;
-        elevation += stillSmall? binsPerPixel: binsPerPixel / 4;
+        elevation += stillSmall? pixelsPerColumn: pixelsPerColumn / 4;
         for (let x = linkBegin; x < linkEnd && x < elevationOccupied.length; x++) {
             elevationOccupied[x] = elevation;
         }
