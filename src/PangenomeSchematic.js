@@ -11,36 +11,41 @@ class PangenomeSchematic extends React.Component {
 	componentDidUpdate() {
 		this.processArray(this.props.beginBin, this.props.endBin);
 		console.log(this.components);
-
 	}
 	readFile(ignored_fileName) {
 		// console.log();
 		// var jsonFile = require('./data/Athaliana.bin100000.schematic.json'); // This cannot be a variable
 		// var jsonFile = require('./data/yeast_bin10k_7indiv_16chr.schematic.json'); // This cannot be a variable
-		const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.json'); // This cannot be a variable
-		// const jsonFile = require('./data/run1.B1phi1.i1.seqwish.w100.schematic'); // ERIKS DATA FROM JANUARY
+		// const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.1D.json'); // This cannot be a variable
+		// const jsonFile = require('./data/Athaliana.Jan_sort.bin100000.schematic.json');
+		const jsonFile = require('./data/run1.B1phi1.i1.seqwish.w100.schematic.json'); // ERIKS DATA FROM JANUARY
 		// console.log(jsonFile);
 		return jsonFile
 	}
 	processArray(beginBin, endBin) {
+	    if(this.jsonData.json_version != 4){
+	        throw "Wrong Data JSON version: was expecting version 4, got " + this.jsonData.json_version + ".  " +
+            "This version added adjacent connectors as the last departure column.  " + // KEEP THIS UP TO DATE!
+            "Using a mismatched data file and renderer will cause unpredictable behavior," +
+            " instead generate a new data file using github.com/graph-genome/component_segmentation."
+        }
+
 		var componentArray = [];
 		var offsetLength = 0;
 		for (var component of this.jsonData.components) {
 			if(component.first_bin >= beginBin){
 				var componentItem = new Component(component, offsetLength);
-				offsetLength += componentItem.arrivals.length + componentItem.departures.length;
+				offsetLength += componentItem.arrivals.length + componentItem.departures.length-1;
 				componentArray.push(componentItem);
 				if(component.last_bin > endBin){break}
 			}
 		}
 		this.components = componentArray;
-		return (componentArray)
 	}
 }
 
 class Component {
 	constructor(component, offsetLength) {
-//firstBin, lastBin, arrivals, departures) {
 		this.offset = offsetLength;
 		this.firstBin = component.first_bin;
 		this.lastBin = component.last_bin;
@@ -49,14 +54,17 @@ class Component {
 			this.arrivals.push(new LinkColumn(arrival))
 		}
 		this.departures = [];
-		for (let departure of component.departures) {
+		for (let departure of component.departures) { //don't slice off adjacent here
 			this.departures.push(new LinkColumn(departure))
 		}
 		// we do not know the x val for this component, yet
 		this.x = 0;
+		// deep copy of occupants
+		this.occupants = Array.from(component.occupants);
+		this.num_bin = this.lastBin - this.firstBin + 1;
 	}
 	leftPadding() {
-		return (this.lastBin - this.firstBin + 1) + this.arrivals.length;
+		return (this.num_bin) + this.arrivals.length;
 	}
 }
 

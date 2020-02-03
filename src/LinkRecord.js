@@ -46,7 +46,7 @@ export function calculateLinkCoordinates(schematic, binsPerPixel, topOffset,
             }
         }
         //DEPARTURES: Calculate all X
-        for (let k = 0; k < schematizeComponent.departures.length; k++) {
+        for (let k = 0; k < schematizeComponent.departures.length-1; k++) {
             let departure = schematizeComponent.departures[k];
             let xCoordDeparture = (leftXStart(schematizeComponent, i)
                 + schematizeComponent.leftPadding()

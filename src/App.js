@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 
 import './App.css';
 import PangenomeSchematic from './PangenomeSchematic'
-import ComponentRect from './ComponentRect'
+import ComponentRect, {compress_visible_rows} from './ComponentRect'
 import LinkColumn from './LinkColumn'
 import LinkArrow from './LinkArrow'
 import {calculateLinkCoordinates} from "./LinkRecord";
@@ -41,7 +41,7 @@ class App extends Component {
         console.log(schematic.pathNames.length);
         const sum = (accumulator, currentValue) => accumulator + currentValue;
         let actualWidth = this.props.store.leftOffset + schematic.components.map(component =>
-            component.arrivals.length + component.departures.length + (component.lastBin - component.firstBin) + 1 + this.props.store.paddingSize
+            component.arrivals.length + (component.departures.length-1) + (component.lastBin - component.firstBin) + 1 + this.props.store.paddingSize
         ).reduce(sum) * this.props.store.binsPerPixel;
         console.log(actualWidth);
         // console.log(schematic.components);
@@ -57,7 +57,14 @@ class App extends Component {
                 this.leftXStart.bind(this));
         this.distanceSortedLinks = links;
         this.props.store.updateTopOffset(top);
+
+        this.compressed_row_mapping = compress_visible_rows(schematic.components);
+        // TODO: with dynamic start and stop inputs this will move to componentDidUpdate()
     };
+
+    visibleHeight(){
+        return Object.keys(this.compressed_row_mapping).length;
+    }
 
     componentDidMount = () => {
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
@@ -75,31 +82,35 @@ class App extends Component {
 
     renderComponent(schematizeComponent, i) {
         return (
-            <React.Fragment>
+            <>
                 <ComponentRect
                     item={schematizeComponent}
                     key={i}
                     x={this.state.schematize[i].x + this.props.store.leftOffset}
                     y={this.props.store.topOffset}
-                    height={this.state.pathNames.length * this.props.store.pathsPerPixel}
-                    width={(schematizeComponent.leftPadding() + schematizeComponent.departures.length) * this.props.store.binsPerPixel}
+                    height={this.visibleHeight()}
+                    width={(schematizeComponent.leftPadding() + (schematizeComponent.departures.length-1))}
+                    binsPerPixel={this.props.store.binsPerPixel}
+                    pathsPerPixel={this.props.store.pathsPerPixel}
+                    paddingSize={this.props.store.paddingSize}
+                    compressed_row_mapping={this.compressed_row_mapping}
                 />
 
                 {schematizeComponent.arrivals.map(
                     (linkColumn, j) => {
-                        let leftPad = 0;
-                        return this.renderLinkColumn(schematizeComponent, i, leftPad, j, linkColumn);
+                        return this.renderLinkColumn(schematizeComponent, i, 0, j, linkColumn);
                     }
                 )}
-                {schematizeComponent.departures.map(
+                {schematizeComponent.departures.slice(0,-1).map(
                     (linkColumn, j) => {
                         let leftPad = schematizeComponent.leftPadding();
                         return this.renderLinkColumn(schematizeComponent, i, leftPad, j, linkColumn);
                     }
                 )}
-            </React.Fragment>
+            </>
         )
     }
+
 
     renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn) {
         let xCoordArrival = this.props.store.leftOffset + (this.leftXStart(schematizeComponent,i) + leftPadding + j) * this.props.store.binsPerPixel;
@@ -114,10 +125,11 @@ class App extends Component {
             width={this.props.store.binsPerPixel}
             color={localColor}
             updateHighlightedNode={this.updateHighlightedNode}
+            compressed_row_mapping={this.compressed_row_mapping}
         />
     }
 
-    renderLinks(link) {
+    renderLink(link) {
         /*Translates the LinkRecord coordinates into pixels and defines the curve shape.
         * I've spent way too long fiddling with these numbers at different binsPerPixel
         * I suggest you don't fiddle with them unless you plan on nesting the React
@@ -142,7 +154,7 @@ class App extends Component {
             arriveCorner[0], arriveCorner[1],
             arriveCornerEnd[0], arriveCornerEnd[1],
             arrX, -1];
-        if (Math.abs(departureX) <= this.props.store.binsPerPixel) { //Small distances, usually self loops
+        if (Math.abs(departureX) <= this.props.store.binsPerPixel) { // FIXME Small distances, usually self loops
             if(link.isArrival){
                 points = [
                     arrX, -10,//-link.elevation - 4,
@@ -155,7 +167,7 @@ class App extends Component {
 
         }
         if(points.some(isNaN)){
-            console.log(points);
+            console.log("Some points are NaN: " + points);
         }
         return <LinkArrow
             key={"arrow" + link.linkColumn.key}
@@ -172,16 +184,15 @@ class App extends Component {
     render() {
         console.log("Start render");
         return (
-            <React.Fragment>
+            <>
                 <Stage
                     width={this.state.actualWidth + 20}
-                    height={this.props.store.topOffset + this.state.pathNames.length * this.props.store.pathsPerPixel}>
+                    height={this.props.store.topOffset + this.visibleHeight() * this.props.store.pathsPerPixel}>
                     <Layer ref={this.layerRef}>
                         {this.state.schematize.map(
                             (schematizeComponent, i)=> {
                                 return (
                                     <React.Fragment key={"f" + i}>
-                                        {/*These two lines could be in separate for loops if you want control over ordering*/}
                                         {this.renderComponent(schematizeComponent, i)}
                                     </React.Fragment>
                                 )
@@ -189,14 +200,12 @@ class App extends Component {
                         )}
                         {this.distanceSortedLinks.map(
                             (record,i ) => {
-                                return (<React.Fragment key={'L'+ i}>
-                                    {this.renderLinks(record)}
-                                </React.Fragment>)
+                                return this.renderLink(record)
                             }
                         )}
                     </Layer>
                 </Stage>
-            </React.Fragment>
+            </>
         );
     }
 
