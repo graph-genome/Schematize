@@ -63,7 +63,7 @@ class Component {
 		this.occupants = Array.from(component.occupants);
 		this.num_bin = this.lastBin - this.firstBin + 1;
 	}
-	leftPadding() {
+	firstDepartureColumn() {
 		return (this.num_bin) + this.arrivals.length;
 	}
 }

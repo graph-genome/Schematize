@@ -52,7 +52,7 @@ class ComponentRect extends React.Component {
   renderOccupants(occupant, i, j) {
     const parent = this.props.item;
     const x_val = this.props.x + (parent.arrivals.length * this.props.pixelsPerColumn);
-    const width = (parent.leftPadding() - parent.arrivals.length) * this.props.pixelsPerColumn;
+    const width = (parent.firstDepartureColumn() - parent.arrivals.length) * this.props.pixelsPerColumn;
     if (occupant) {
       return <ComponentConnectorRect
           key={"occupant" + i + j}
@@ -86,12 +86,12 @@ class ComponentRect extends React.Component {
     let component = this.props.item
     // x is the (num_bins + num_arrivals + num_departures)*pixelsPerColumn
     if (useConnector) {
-      const x_val = this.props.x + (component.leftPadding() + component.departures.length-1) * this.props.pixelsPerColumn;
+      const x_val = this.props.x + (component.firstDepartureColumn() + component.departures.length-1) * this.props.pixelsPerColumn;
       return <ComponentConnectorRect
           key={"occupant" + j}
           x={x_val}
           y={this.props.y + this.props.compressed_row_mapping[j] * this.props.pixelsPerRow}
-          width={this.props.paddingColumns * this.props.pixelsPerColumn} //Clarified and corrected adjacent connectors as based on paddingColumns width #9
+          width={this.props.pixelsBetween} //Clarified and corrected adjacent connectors as based on pixelsBetween width #9
           height={this.props.pixelsPerRow}
           color={'#464646'}
       />

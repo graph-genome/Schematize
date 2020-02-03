@@ -40,9 +40,14 @@ class App extends Component {
         let schematic = new PangenomeSchematic({beginBin, endBin});
         console.log(schematic.pathNames.length);
         const sum = (accumulator, currentValue) => accumulator + currentValue;
-        let actualWidth = this.props.store.leftOffset + schematic.components.map(component =>
-            component.arrivals.length + (component.departures.length-1) + (component.lastBin - component.firstBin) + 1 + this.props.store.paddingColumns
-        ).reduce(sum) * this.props.store.pixelsPerColumn;
+        let columnsInComponents = schematic.components.map(component =>
+            component.arrivals.length + (component.departures.length-1) +
+            (component.lastBin - component.firstBin) + 1
+        ).reduce(sum);
+        let paddingBetweenComponents = this.props.store.pixelsBetween * schematic.components.length;
+        let actualWidth = this.props.store.leftOffset +
+            columnsInComponents * this.props.store.pixelsPerColumn +
+            paddingBetweenComponents;
         console.log(actualWidth);
         // console.log(schematic.components);
         this.state = {
@@ -75,10 +80,12 @@ class App extends Component {
         // this.props.store.updateHighlightedLink(linkRect); // TODO this does not work, ask Robert about it
     };
 
-    leftXStart(schematizeComponent, i) {
-        return (schematizeComponent.firstBin - this.props.store.beginBin) + (i * this.props.store.paddingColumns) + schematizeComponent.offset;
+    leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
+        /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
+        let previousColumns = schematizeComponent.firstBin - this.props.store.beginBin + schematizeComponent.offset;
+        let pixelsFromColumns = (previousColumns + firstDepartureColumn + j) * this.props.store.pixelsPerColumn;
+        return this.props.store.leftOffset + pixelsFromColumns + (i * this.props.store.pixelsBetween);
     }
-
 
     renderComponent(schematizeComponent, i) {
         return (
@@ -89,10 +96,10 @@ class App extends Component {
                     x={this.state.schematize[i].x + this.props.store.leftOffset}
                     y={this.props.store.topOffset}
                     height={this.visibleHeight()}
-                    width={(schematizeComponent.leftPadding() + (schematizeComponent.departures.length-1))}
+                    width={(schematizeComponent.firstDepartureColumn() + (schematizeComponent.departures.length-1))}
                     pixelsPerColumn={this.props.store.pixelsPerColumn}
                     pixelsPerRow={this.props.store.pixelsPerRow}
-                    paddingColumns={this.props.store.paddingColumns}
+                    pixelsBetween={this.props.store.pixelsBetween}
                     compressed_row_mapping={this.compressed_row_mapping}
                 />
 
@@ -103,7 +110,7 @@ class App extends Component {
                 )}
                 {schematizeComponent.departures.slice(0,-1).map(
                     (linkColumn, j) => {
-                        let leftPad = schematizeComponent.leftPadding();
+                        let leftPad = schematizeComponent.firstDepartureColumn();
                         return this.renderLinkColumn(schematizeComponent, i, leftPad, j, linkColumn);
                     }
                 )}
@@ -112,8 +119,9 @@ class App extends Component {
     }
 
 
-    renderLinkColumn(schematizeComponent, i, leftPadding, j, linkColumn) {
-        let xCoordArrival = this.props.store.leftOffset + (this.leftXStart(schematizeComponent,i) + leftPadding + j) * this.props.store.pixelsPerColumn;
+    renderLinkColumn(schematizeComponent, i, firstDepartureColumn, j, linkColumn) {
+        let xCoordArrival = this.leftXStart(schematizeComponent,i, firstDepartureColumn, j) +
+            this.props.store.leftOffset;
         let localColor = stringToColor(linkColumn, this.state.highlightedLink);
         return <LinkColumn
             key={"departure" + i + j}

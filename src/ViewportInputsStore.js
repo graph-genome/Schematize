@@ -5,9 +5,9 @@ export const RootStore = types
         beginBin: 1,
         endBin: 200,
         pixelsPerColumn:6,
-        pixelsPerRow: 5,
-        paddingColumns:1,
-        leftOffset:10,
+        pixelsPerRow: 2,
+        pixelsBetween:5,
+        leftOffset:5,
         topOffset: 400,
         highlightedLink: 0 // we will compare linkColumns
     })

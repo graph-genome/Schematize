@@ -28,17 +28,14 @@ export function calculateLinkCoordinates(schematic, pixelsPerColumn, topOffset,
 
     for (let i = 0; i < schematic.length; i++) {
         let schematizeComponent = schematic[i];
-        schematizeComponent.x = (leftXStart(schematizeComponent, i)) * pixelsPerColumn;
+        schematizeComponent.x = leftXStart(schematizeComponent, i, 0, 0);
         //ARRIVALS: Calculate all X
         for (let j = 0; j < schematizeComponent.arrivals.length; j++) {
             let arrival = schematizeComponent.arrivals[j];
-            let xCoordArrival =
-                (leftXStart(schematizeComponent, i) + j) * pixelsPerColumn;
+            let xCoordArrival = leftXStart(schematizeComponent, i, 0, j);
             let paddedKey = arrival.key;
             if (!(paddedKey in linkToXMapping)) {
                 //place holder value, go as far right as possible
-                // linkToXMapping[paddedKey] = [xCoordArrival,
-                //     this.state.actualWidth + 100]
                 // TODO place holder value in the same place
                 linkToXMapping[paddedKey] = new LinkRecord(arrival, xCoordArrival, xCoordArrival, true)
             } else {
@@ -48,9 +45,8 @@ export function calculateLinkCoordinates(schematic, pixelsPerColumn, topOffset,
         //DEPARTURES: Calculate all X
         for (let k = 0; k < schematizeComponent.departures.length-1; k++) {
             let departure = schematizeComponent.departures[k];
-            let xCoordDeparture = (leftXStart(schematizeComponent, i)
-                + schematizeComponent.leftPadding()
-                + k) * pixelsPerColumn;
+            let xCoordDeparture = (leftXStart(schematizeComponent, i,
+                schematizeComponent.firstDepartureColumn(), k));
             let paddedKey = departure.key;
             if (!(paddedKey in linkToXMapping)) {
                 //place holder value, go as far left as possible
