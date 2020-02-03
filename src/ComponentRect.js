@@ -90,7 +90,7 @@ class ComponentRect extends React.Component {
           key={"occupant" + j}
           x={x_val}
           y={this.props.y + this.props.compressed_row_mapping[j]}
-          width={this.props.binsPerPixel * 2}
+          width={this.props.paddingSize * this.props.binsPerPixel} //Clarified and corrected adjacent connectors as based on paddingSize width #9
           color={'#464646'}
       />
     } else {

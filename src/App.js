@@ -92,6 +92,7 @@ class App extends Component {
                     width={(schematizeComponent.leftPadding() + (schematizeComponent.departures.length-1))}
                     binsPerPixel={this.props.store.binsPerPixel}
                     pathsPerPixel={this.props.store.pathsPerPixel}
+                    paddingSize={this.props.store.paddingSize}
                     compressed_row_mapping={this.compressed_row_mapping}
                 />
 
