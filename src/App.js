@@ -45,8 +45,7 @@ class App extends Component {
             (component.lastBin - component.firstBin) + 1
         ).reduce(sum);
         let paddingBetweenComponents = this.props.store.pixelsBetween * schematic.components.length;
-        let actualWidth = this.props.store.leftOffset +
-            columnsInComponents * this.props.store.pixelsPerColumn +
+        let actualWidth = columnsInComponents * this.props.store.pixelsPerColumn +
             paddingBetweenComponents;
         console.log(actualWidth);
         // console.log(schematic.components);
@@ -84,7 +83,7 @@ class App extends Component {
         /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
         let previousColumns = schematizeComponent.firstBin - this.props.store.beginBin + schematizeComponent.offset;
         let pixelsFromColumns = (previousColumns + firstDepartureColumn + j) * this.props.store.pixelsPerColumn;
-        return this.props.store.leftOffset + pixelsFromColumns + (i * this.props.store.pixelsBetween);
+        return pixelsFromColumns + (i * this.props.store.pixelsBetween);
     }
 
     renderComponent(schematizeComponent, i) {
@@ -93,7 +92,7 @@ class App extends Component {
                 <ComponentRect
                     item={schematizeComponent}
                     key={i}
-                    x={this.state.schematize[i].x + this.props.store.leftOffset}
+                    x={this.state.schematize[i].x}
                     y={this.props.store.topOffset}
                     height={this.visibleHeight()}
                     width={(schematizeComponent.firstDepartureColumn() + (schematizeComponent.departures.length-1))}
@@ -120,8 +119,7 @@ class App extends Component {
 
 
     renderLinkColumn(schematizeComponent, i, firstDepartureColumn, j, linkColumn) {
-        let xCoordArrival = this.leftXStart(schematizeComponent,i, firstDepartureColumn, j) +
-            this.props.store.leftOffset;
+        let xCoordArrival = this.leftXStart(schematizeComponent,i, firstDepartureColumn, j);
         let localColor = stringToColor(linkColumn, this.state.highlightedLink);
         return <LinkColumn
             key={"departure" + i + j}
@@ -179,7 +177,7 @@ class App extends Component {
         }
         return <LinkArrow
             key={"arrow" + link.linkColumn.key}
-            x={arrowXCoord + this.props.store.leftOffset}
+            x={arrowXCoord}
             y={this.props.store.topOffset - 5}
             points={points}
             width={this.props.store.pixelsPerColumn}
@@ -194,6 +192,7 @@ class App extends Component {
         return (
             <>
                 <Stage
+                    x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
                     width={this.state.actualWidth + 20}
                     height={this.props.store.topOffset + this.visibleHeight() * this.props.store.pixelsPerRow}>
                     <Layer ref={this.layerRef}>

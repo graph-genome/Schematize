@@ -7,7 +7,7 @@ export const RootStore = types
         pixelsPerColumn:6,
         pixelsPerRow: 2,
         pixelsBetween:5,
-        leftOffset:5,
+        leftOffset:25,
         topOffset: 400,
         highlightedLink: 0 // we will compare linkColumns
     })
