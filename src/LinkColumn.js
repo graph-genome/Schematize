@@ -18,7 +18,7 @@ class LinkColumn extends React.Component {
         let alpha = [];
         for(const [i, boolean] of this.props.item.participants.entries()) {
             if (boolean) {
-                let row = this.props.compressed_row_mapping[i] * this.props.pixelsPerRow;
+                let row = this.props.compressed_row_mapping[i] * this.props.store.pixelsPerRow;
                 if(row !== undefined){ // it's possible a row didn't have enough coverage but still created a Link
                     alpha.push(row) //relative compressed Y coordinate
                 }
@@ -39,9 +39,9 @@ class LinkColumn extends React.Component {
                     return (<Rect
                         key={"dot" + d}
                         x={this.props.x}
-                        y={this.props.y + y_coord}
+                        y={this.props.store.topOffset + y_coord}
                         width={this.props.width}
-                        height={this.props.pixelsPerRow}
+                        height={this.props.store.pixelsPerRow}
                         fill={this.props.color}
                         // onClick={this.handleClick}
                         onMouseOver={this.handleMouseOver}

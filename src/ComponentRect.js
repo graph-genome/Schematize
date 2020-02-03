@@ -51,15 +51,15 @@ class ComponentRect extends React.Component {
 
   renderOccupants(occupant, i, j) {
     const parent = this.props.item;
-    const x_val = this.props.x + (parent.arrivals.length * this.props.pixelsPerColumn);
-    const width = (parent.firstDepartureColumn() - parent.arrivals.length) * this.props.pixelsPerColumn;
+    const x_val = parent.x + (parent.arrivals.length * this.props.store.pixelsPerColumn);
+    const width = (parent.firstDepartureColumn() - parent.arrivals.length) * this.props.store.pixelsPerColumn;
     if (occupant) {
       return <ComponentConnectorRect
           key={"occupant" + i + j}
           x={x_val}
-          y={this.props.compressed_row_mapping[j] * this.props.pixelsPerRow + this.props.y}
+          y={this.props.compressed_row_mapping[j] * this.props.store.pixelsPerRow + this.props.store.topOffset}
           width={width}
-          height={this.props.pixelsPerRow}
+          height={this.props.store.pixelsPerRow}
           color={'#838383'}
       />
     } else {
@@ -81,18 +81,19 @@ class ComponentRect extends React.Component {
       return null;
     }
   }
-
   renderComponentConnector(useConnector, j) {
     let component = this.props.item
     // x is the (num_bins + num_arrivals + num_departures)*pixelsPerColumn
     if (useConnector) {
-      const x_val = this.props.x + (component.firstDepartureColumn() + component.departures.length-1) * this.props.pixelsPerColumn;
+      const x_val = component.x + (component.firstDepartureColumn() + component.departures.length-1) *
+          this.props.store.pixelsPerColumn;
       return <ComponentConnectorRect
           key={"occupant" + j}
           x={x_val}
-          y={this.props.y + this.props.compressed_row_mapping[j] * this.props.pixelsPerRow}
-          width={this.props.pixelsBetween} //Clarified and corrected adjacent connectors as based on pixelsBetween width #9
-          height={this.props.pixelsPerRow}
+          y={this.props.store.topOffset +
+          this.props.compressed_row_mapping[j] * this.props.store.pixelsPerRow}
+          width={this.props.store.pixelsBetween} //Clarified and corrected adjacent connectors as based on pixelsBetween width #9
+          height={this.props.store.pixelsPerRow}
           color={'#464646'}
       />
     } else {
@@ -104,10 +105,10 @@ class ComponentRect extends React.Component {
     return (
         <>
           <Rect
-              x={this.props.x}
-              y={this.props.y}
-              width={this.props.width * this.props.pixelsPerColumn}
-              height={this.props.height * this.props.pixelsPerRow} //TODO: change to compressed height
+              x={this.props.item.x}
+              y={this.props.store.topOffset}
+              width={this.props.width * this.props.store.pixelsPerColumn}
+              height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
               fill={this.state.color}
               onClick={this.handleClick}
               onMouseOver={this.handleMouseOver}

@@ -90,15 +90,11 @@ class App extends Component {
         return (
             <>
                 <ComponentRect
+                    store={this.props.store}
                     item={schematizeComponent}
                     key={i}
-                    x={this.state.schematize[i].x}
-                    y={this.props.store.topOffset}
                     height={this.visibleHeight()}
                     width={(schematizeComponent.firstDepartureColumn() + (schematizeComponent.departures.length-1))}
-                    pixelsPerColumn={this.props.store.pixelsPerColumn}
-                    pixelsPerRow={this.props.store.pixelsPerRow}
-                    pixelsBetween={this.props.store.pixelsBetween}
                     compressed_row_mapping={this.compressed_row_mapping}
                 />
 
@@ -122,12 +118,12 @@ class App extends Component {
         let xCoordArrival = this.leftXStart(schematizeComponent,i, firstDepartureColumn, j);
         let localColor = stringToColor(linkColumn, this.state.highlightedLink);
         return <LinkColumn
+            store={this.props.store}
             key={"departure" + i + j}
             item={linkColumn}
             pathNames={this.state.pathNames}
             x={xCoordArrival}
             pixelsPerRow={this.props.store.pixelsPerRow}
-            y={this.props.store.topOffset}
             width={this.props.store.pixelsPerColumn}
             color={localColor}
             updateHighlightedNode={this.updateHighlightedNode}
@@ -176,6 +172,7 @@ class App extends Component {
             console.log("Some points are NaN: " + points);
         }
         return <LinkArrow
+            store={this.props.store}
             key={"arrow" + link.linkColumn.key}
             x={arrowXCoord}
             y={this.props.store.topOffset - 5}
