@@ -26,8 +26,8 @@ function find_rows_visible_in_viewport(components){
   /*The only components passed to this method are the components on the screen.
   * This returns a boolean list of which rows are on the screen. */
   // let rows_present = new Array(components[0].occupants.length).fill(false);
-  let per_row = zip(...components.map((x)=> x.occupants))
-  let rows_present = per_row.map((row, i) => row.some(x=>x))
+  let per_row = zip(...components.map((x)=> x.occupants));
+  let rows_present = per_row.map((row, i) => row.some(x=>x));
   return rows_present;
 }
 
@@ -52,7 +52,7 @@ class ComponentRect extends React.Component {
   renderOccupants(occupant, i, j) {
     const parent = this.props.item;
     const x_val = this.props.x + (parent.arrivals.length * this.props.binsPerPixel);
-    const width = (parent.leftPadding() - parent.arrivals.length) * this.props.binsPerPixel;
+    const width = (parent.num_bin) * this.props.binsPerPixel;
     if (occupant) {
       return <ComponentConnectorRect
           key={"occupant" + i + j}
@@ -67,7 +67,7 @@ class ComponentRect extends React.Component {
   };
 
   renderAllConnectors(){
-    let connectorsColumn = this.props.item.departures.slice(-1)[0]
+    let connectorsColumn = this.props.item.departures.slice(-1)[0];
     if(connectorsColumn !== undefined){
       return (<>
         {connectorsColumn.participants.map(
@@ -82,7 +82,7 @@ class ComponentRect extends React.Component {
   }
 
   renderComponentConnector(useConnector, j) {
-    let component = this.props.item
+    let component = this.props.item;
     // x is the (num_bins + num_arrivals + num_departures)*binsPerPixel
     if (useConnector) {
       const x_val = this.props.x + (component.leftPadding() + component.departures.length-1) * this.props.binsPerPixel;
