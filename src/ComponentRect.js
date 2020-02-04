@@ -3,32 +3,32 @@ import {Rect} from 'react-konva';
 import ComponentConnectorRect from "./ComponentConnectorRect";
 
 const zip = (arr, ...arrs) => {
-  /*Credit: https://gist.github.com/renaudtertrais/25fc5a2e64fe5d0e86894094c6989e10*/
-  return arr.map((val, i) => arrs.reduce((a, arr) => [...a, arr[i]], [val]));
+    /*Credit: https://gist.github.com/renaudtertrais/25fc5a2e64fe5d0e86894094c6989e10*/
+    return arr.map((val, i) => arrs.reduce((a, arr) => [...a, arr[i]], [val]));
 }
 
 export function compress_visible_rows(components){
-  /*Returns a Map with key of the original row number and value of the new, compressed row number.
-  * Use this for y values of occupancy and LinkColumn cells.  */
-  let rows_present = find_rows_visible_in_viewport(components);
-  let row_mapping = {};
-  let rows_encountered = 0;
-  for (let i = 0; i < rows_present.length; i++) {
-    if(rows_present[i]){
-      row_mapping[i] = (rows_encountered);
-      rows_encountered++;
+    /*Returns a Map with key of the original row number and value of the new, compressed row number.
+    * Use this for y values of occupancy and LinkColumn cells.  */
+    let rows_present = find_rows_visible_in_viewport(components);
+    let row_mapping = {};
+    let rows_encountered = 0;
+    for (let i = 0; i < rows_present.length; i++) {
+        if(rows_present[i]){
+            row_mapping[i] = (rows_encountered);
+            rows_encountered++;
+        }
     }
-  }
-  return row_mapping;
+    return row_mapping;
 }
 
 function find_rows_visible_in_viewport(components){
-  /*The only components passed to this method are the components on the screen.
-  * This returns a boolean list of which rows are on the screen. */
-  // let rows_present = new Array(components[0].occupants.length).fill(false);
-  let per_row = zip(...components.map((x)=> x.occupants))
-  let rows_present = per_row.map((row, i) => row.some(x=>x))
-  return rows_present;
+    /*The only components passed to this method are the components on the screen.
+    * This returns a boolean list of which rows are on the screen. */
+    // let rows_present = new Array(components[0].occupants.length).fill(false);
+    let per_row = zip(...components.map((x)=> x.occupants))
+    let rows_present = per_row.map((row, i) => row.some(x=>x))
+    return rows_present;
 }
 
 function sum(a, b) {
@@ -36,117 +36,117 @@ function sum(a, b) {
 }
 
 class ComponentRect extends React.Component {
-  state = {
-    color: 'lightgray'
-  };
-  handleClick = () => {
-    if (this.state.color === 'lightgray') {
-      this.setState({color: 'gray'});
-    } else if (this.state.color === 'gray') {
-      this.setState({color: 'lightgray'});
+    state = {
+        color: 'lightgray'
+    };
+    handleClick = () => {
+        if (this.state.color === 'lightgray') {
+            this.setState({color: 'gray'});
+        } else if (this.state.color === 'gray') {
+            this.setState({color: 'lightgray'});
+        }
+    };
+    handleMouseOver = () => {
+        this.setState({color: 'gray'})
+    };
+    handleMouseOut = () => {
+        this.setState({color: 'lightgray'})
+    };
+
+    renderOccupants() {
+        let count = 1;
+        let parts = this.props.item.occupants.map(
+            (occupant, j) => {
+                if(occupant) {
+                    count++;
+                    return this.renderSingleOccupant(occupant, count, j);
+                }else{return null}
+            })
+        //TODO: Set max observed occupants in mobx store for render height
+        return (<>{parts}</>)
     }
-  };
-  handleMouseOver = () => {
-    this.setState({color: 'gray'})
-  };
-  handleMouseOut = () => {
-    this.setState({color: 'lightgray'})
-  };
 
-  renderOccupants() {
-    let count = 1;
-    let parts = this.props.item.occupants.map(
-        (occupant, j) => {
-          if(occupant) {
-            count++;
-            return this.renderSingleOccupant(occupant, count, j);
-          }else{return null}
-        })
-    //TODO: Set max observed occupants in mobx store for render height
-    return (<>{parts}</>)
-  }
+    renderSingleOccupant(occupant, count, j) {
+        const parent = this.props.item;
+        const x_val = parent.x + (parent.arrivals.length * this.props.store.pixelsPerColumn);
+        const width = (parent.firstDepartureColumn() - parent.arrivals.length) * this.props.store.pixelsPerColumn;
+        let this_y = count;
+        if( ! this.props.store.useVerticalCompression){
+            this_y = this.props.compressed_row_mapping[j];
+        }
+        return <ComponentConnectorRect
+            key={"occupant" + j}
+            x={x_val}
+            y={this_y * this.props.store.pixelsPerRow + this.props.store.topOffset}
+            width={width}
+            height={this.props.store.pixelsPerRow}
+            color={'#838383'}
+        />
+    };
 
-  renderSingleOccupant(occupant, count, j) {
-    const parent = this.props.item;
-    const x_val = parent.x + (parent.arrivals.length * this.props.store.pixelsPerColumn);
-    const width = (parent.firstDepartureColumn() - parent.arrivals.length) * this.props.store.pixelsPerColumn;
-    let this_y = count;
-    if( ! this.props.store.useVerticalCompression){
-      this_y = this.props.compressed_row_mapping[j];
+    renderAllConnectors(){
+        const departures = this.props.item.departures;
+        let connectorsColumn = departures.slice(-1)[0]
+        if(connectorsColumn !== undefined){
+            //count starts at the sum(sum(departure columns)) so that it's clear
+            // adjacent connectors are alternatives to LinkColumns
+            let count = 1;
+            if(departures.length > 1){
+                count += departures.slice(0,-1).map(
+                    (column)=>{return column.participants.reduce(sum)}
+                ).reduce(sum) // sum of trues in all columns
+            }
+            return (<>
+                {connectorsColumn.participants.map(
+                    (useConnector, j) => {
+                        if(useConnector) {
+                            count++;
+                            return this.renderComponentConnector(useConnector, count, j);
+                        }else{return null}
+                    }
+                )}
+            </>)
+        }else{
+            return null;
+        }
     }
-    return <ComponentConnectorRect
-        key={"occupant" + j}
-        x={x_val}
-        y={this_y * this.props.store.pixelsPerRow + this.props.store.topOffset}
-        width={width}
-        height={this.props.store.pixelsPerRow}
-        color={'#838383'}
-    />
-  };
-
-  renderAllConnectors(){
-      const departures = this.props.item.departures;
-      let connectorsColumn = departures.slice(-1)[0]
-      if(connectorsColumn !== undefined){
-          //count starts at the sum(sum(departure columns)) so that it's clear
-          // adjacent connectors are alternatives to LinkColumns
-          let count = 1;
-          if(departures.length > 1){
-            count += departures.slice(0,-1).map(
-                (column)=>{return column.participants.reduce(sum)}
-            ).reduce(sum) // sum of trues in all columns
-          }
-          return (<>
-              {connectorsColumn.participants.map(
-                  (useConnector, j) => {
-                      if(useConnector) {
-                          count++;
-                          return this.renderComponentConnector(useConnector, count, j);
-                      }else{return null}
-                  }
-              )}
-          </>)
-      }else{
-          return null;
-      }
-  }
-  renderComponentConnector(useConnector, count, j) {
-    let component = this.props.item
-    // x is the (num_bins + num_arrivals + num_departures)*pixelsPerColumn
-    const x_val = component.x + (component.firstDepartureColumn() + component.departures.length-1) *
-        this.props.store.pixelsPerColumn;
-    let this_y = count;
-    if( ! this.props.store.useVerticalCompression){
-      this_y = this.props.compressed_row_mapping[j];
+    renderComponentConnector(useConnector, count, j) {
+        let component = this.props.item
+        // x is the (num_bins + num_arrivals + num_departures)*pixelsPerColumn
+        const x_val = component.x + (component.firstDepartureColumn() + component.departures.length-1) *
+            this.props.store.pixelsPerColumn;
+        let this_y = count;
+        if( ! this.props.store.useVerticalCompression){
+            this_y = this.props.compressed_row_mapping[j];
+        }
+        return <ComponentConnectorRect
+            key={"occupant" + j}
+            x={x_val}
+            y={this.props.store.topOffset + this_y * this.props.store.pixelsPerRow}
+            width={this.props.store.pixelsBetween} //Clarified and corrected adjacent connectors as based on pixelsBetween width #9
+            height={this.props.store.pixelsPerRow}
+            color={'#464646'}
+        />
     }
-    return <ComponentConnectorRect
-        key={"occupant" + j}
-        x={x_val}
-        y={this.props.store.topOffset + this_y * this.props.store.pixelsPerRow}
-        width={this.props.store.pixelsBetween} //Clarified and corrected adjacent connectors as based on pixelsBetween width #9
-        height={this.props.store.pixelsPerRow}
-        color={'#464646'}
-    />
-  }
 
-  render() {
-    return (
-      <>
-        <Rect
-            x={this.props.item.x}
-            y={this.props.store.topOffset}
-            width={this.props.width * this.props.store.pixelsPerColumn}
-            height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
-            fill={this.state.color}
-            onClick={this.handleClick}
-            onMouseOver={this.handleMouseOver}
-            onMouseOut={this.handleMouseOut}>
-        </Rect>
-        {this.renderOccupants()}
-        {this.renderAllConnectors()}
-      </>
-    );
-  }
+    render() {
+        return (
+            <>
+                <Rect
+                    x={this.props.item.x}
+                    y={this.props.store.topOffset}
+                    width={this.props.width * this.props.store.pixelsPerColumn}
+                    height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
+                    fill={this.state.color}
+                    onClick={this.handleClick}
+                    onMouseOver={this.handleMouseOver}
+                    onMouseOut={this.handleMouseOut}>
+                </Rect>
+                {this.renderOccupants()}
+                {this.renderAllConnectors()}
+            </>
+        );
+    }
 
 }
 
