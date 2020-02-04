@@ -54,7 +54,7 @@ class ComponentRect extends React.Component {
     };
 
     renderOccupants() {
-        let count = 1;
+        let count = 0;
         let parts = this.props.item.occupants.map(
             (occupant, j) => {
                 if(occupant) {
@@ -62,7 +62,7 @@ class ComponentRect extends React.Component {
                     return this.renderSingleOccupant(occupant, count, j);
                 }else{return null}
             })
-        //TODO: Set max observed occupants in mobx store for render height
+        this.props.store.updateMaxHeight(count); //Set max observed occupants in mobx store for render height
         return (<>{parts}</>)
     }
 
@@ -90,7 +90,7 @@ class ComponentRect extends React.Component {
         if(connectorsColumn !== undefined){
             //count starts at the sum(sum(departure columns)) so that it's clear
             // adjacent connectors are alternatives to LinkColumns
-            let count = 1;
+            let count = 0;
             if(departures.length > 1){
                 count += departures.slice(0,-1).map(
                     (column)=>{return column.participants.reduce(sum)}

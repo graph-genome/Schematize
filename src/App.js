@@ -67,11 +67,17 @@ class App extends Component {
     };
 
     visibleHeight(){
-        return Object.keys(this.compressed_row_mapping).length;
+        if(this.props.store.useVerticalCompression){
+            return (this.props.store.maximumHeightThisFrame + 2) * this.props.store.pixelsPerRow;
+        }
+        return (Object.keys(this.compressed_row_mapping).length + 2) * this.props.store.pixelsPerRow;
     }
 
     componentDidMount = () => {
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
+        if(this.props.store.useVerticalCompression) {
+            this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
+        }
     };
 
     updateHighlightedNode = (linkRect) => {
@@ -191,7 +197,7 @@ class App extends Component {
                 <Stage
                     x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
                     width={this.state.actualWidth + 60}
-                    height={this.props.store.topOffset + this.visibleHeight() * this.props.store.pixelsPerRow}>
+                    height={this.props.store.topOffset + this.visibleHeight()}>
                     <Layer ref={this.layerRef}>
                         {this.state.schematize.map(
                             (schematizeComponent, i)=> {

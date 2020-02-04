@@ -16,7 +16,7 @@ class LinkColumn extends React.Component {
     }
     linkCells() {
         let alpha = [];
-        let count = 2; // Link columns appear to be 1 higher than occupants and conncetors
+        let count = 1; // Link columns appear to be 1 higher than occupants and conncetors
         for(const [i, isPresent] of this.props.item.participants.entries()) {
             if (isPresent) {
                 let this_y = count++;
