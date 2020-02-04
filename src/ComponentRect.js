@@ -49,31 +49,48 @@ class ComponentRect extends React.Component {
     this.setState({color: 'lightgray'})
   };
 
-  renderOccupants(occupant, i, j) {
+  renderOccupants() {
+    let count = 1;
+    let parts = this.props.item.occupants.map(
+        (occupant, j) => {
+          if(occupant) {
+            count++;
+            return this.renderSingleOccupant(occupant, count, j);
+          }
+        })
+    //TODO: Set max observed occupants in mobx store for render height
+    return (<>{parts}</>)
+  }
+
+  renderSingleOccupant(occupant, count, j) {
     const parent = this.props.item;
     const x_val = parent.x + (parent.arrivals.length * this.props.store.pixelsPerColumn);
     const width = (parent.firstDepartureColumn() - parent.arrivals.length) * this.props.store.pixelsPerColumn;
-    if (occupant) {
-      return <ComponentConnectorRect
-          key={"occupant" + i + j}
-          x={x_val}
-          y={this.props.compressed_row_mapping[j] * this.props.store.pixelsPerRow + this.props.store.topOffset}
-          width={width}
-          height={this.props.store.pixelsPerRow}
-          color={'#838383'}
-      />
-    } else {
-      return null
+    let this_y = count;
+    if( ! this.props.store.useVerticalCompression){
+      this_y = this.props.compressed_row_mapping[j];
     }
+    return <ComponentConnectorRect
+        key={"occupant" + j}
+        x={x_val}
+        y={this_y * this.props.store.pixelsPerRow + this.props.store.topOffset}
+        width={width}
+        height={this.props.store.pixelsPerRow}
+        color={'#838383'}
+    />
   };
 
   renderAllConnectors(){
     let connectorsColumn = this.props.item.departures.slice(-1)[0]
     if(connectorsColumn !== undefined){
+      let count = 1; //TODO this could start at the max(sum(departure columns))
       return (<>
         {connectorsColumn.participants.map(
-            (entry, j) => {
-              return this.renderComponentConnector(entry, j)
+            (useConnector, j) => {
+              if(useConnector) {
+                count++;
+                return this.renderComponentConnector(useConnector, count, j);
+              }
             }
         )}
       </>)
@@ -81,48 +98,44 @@ class ComponentRect extends React.Component {
       return null;
     }
   }
-  renderComponentConnector(useConnector, j) {
+  renderComponentConnector(useConnector, count, j) {
     let component = this.props.item
     // x is the (num_bins + num_arrivals + num_departures)*pixelsPerColumn
-    if (useConnector) {
-      const x_val = component.x + (component.firstDepartureColumn() + component.departures.length-1) *
-          this.props.store.pixelsPerColumn;
-      return <ComponentConnectorRect
-          key={"occupant" + j}
-          x={x_val}
-          y={this.props.store.topOffset +
-          this.props.compressed_row_mapping[j] * this.props.store.pixelsPerRow}
-          width={this.props.store.pixelsBetween} //Clarified and corrected adjacent connectors as based on pixelsBetween width #9
-          height={this.props.store.pixelsPerRow}
-          color={'#464646'}
-      />
-    } else {
-      return null
+    const x_val = component.x + (component.firstDepartureColumn() + component.departures.length-1) *
+        this.props.store.pixelsPerColumn;
+    let this_y = count;
+    if( ! this.props.store.useVerticalCompression){
+      this_y = this.props.compressed_row_mapping[j];
     }
+    return <ComponentConnectorRect
+        key={"occupant" + j}
+        x={x_val}
+        y={this.props.store.topOffset + this_y * this.props.store.pixelsPerRow}
+        width={this.props.store.pixelsBetween} //Clarified and corrected adjacent connectors as based on pixelsBetween width #9
+        height={this.props.store.pixelsPerRow}
+        color={'#464646'}
+    />
   }
 
   render() {
     return (
-        <>
-          <Rect
-              x={this.props.item.x}
-              y={this.props.store.topOffset}
-              width={this.props.width * this.props.store.pixelsPerColumn}
-              height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
-              fill={this.state.color}
-              onClick={this.handleClick}
-              onMouseOver={this.handleMouseOver}
-              onMouseOut={this.handleMouseOut}>
-          </Rect>
-          {this.props.item.occupants.map(
-              (occupant, j) => {
-                return this.renderOccupants(occupant, 'i', j);
-              })
-          }
-          {this.renderAllConnectors()}
-        </>
+      <>
+        <Rect
+            x={this.props.item.x}
+            y={this.props.store.topOffset}
+            width={this.props.width * this.props.store.pixelsPerColumn}
+            height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
+            fill={this.state.color}
+            onClick={this.handleClick}
+            onMouseOver={this.handleMouseOver}
+            onMouseOut={this.handleMouseOut}>
+        </Rect>
+        {this.renderOccupants()}
+        {this.renderAllConnectors()}
+      </>
     );
   }
+
 }
 
 export default ComponentRect

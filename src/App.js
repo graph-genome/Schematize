@@ -190,7 +190,7 @@ class App extends Component {
             <>
                 <Stage
                     x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
-                    width={this.state.actualWidth + 20}
+                    width={this.state.actualWidth + 60}
                     height={this.props.store.topOffset + this.visibleHeight() * this.props.store.pixelsPerRow}>
                     <Layer ref={this.layerRef}>
                         {this.state.schematize.map(
