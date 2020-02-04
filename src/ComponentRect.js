@@ -1,5 +1,5 @@
 import React from 'react';
-import { Rect } from 'react-konva';
+import {Rect} from 'react-konva';
 import ComponentConnectorRect from "./ComponentConnectorRect";
 
 const zip = (arr, ...arrs) => {
@@ -31,6 +31,10 @@ function find_rows_visible_in_viewport(components){
   return rows_present;
 }
 
+function sum(a, b) {
+    return a + b;
+}
+
 class ComponentRect extends React.Component {
   state = {
     color: 'lightgray'
@@ -56,7 +60,7 @@ class ComponentRect extends React.Component {
           if(occupant) {
             count++;
             return this.renderSingleOccupant(occupant, count, j);
-          }
+          }else{return null}
         })
     //TODO: Set max observed occupants in mobx store for render height
     return (<>{parts}</>)
@@ -81,22 +85,30 @@ class ComponentRect extends React.Component {
   };
 
   renderAllConnectors(){
-    let connectorsColumn = this.props.item.departures.slice(-1)[0]
-    if(connectorsColumn !== undefined){
-      let count = 1; //TODO this could start at the max(sum(departure columns))
-      return (<>
-        {connectorsColumn.participants.map(
-            (useConnector, j) => {
-              if(useConnector) {
-                count++;
-                return this.renderComponentConnector(useConnector, count, j);
-              }
-            }
-        )}
-      </>)
-    }else{
-      return null;
-    }
+      const departures = this.props.item.departures;
+      let connectorsColumn = departures.slice(-1)[0]
+      if(connectorsColumn !== undefined){
+          //count starts at the sum(sum(departure columns)) so that it's clear
+          // adjacent connectors are alternatives to LinkColumns
+          let count = 1;
+          if(departures.length > 1){
+            count += departures.slice(0,-1).map(
+                (column)=>{return column.participants.reduce(sum)}
+            ).reduce(sum) // sum of trues in all columns
+          }
+          return (<>
+              {connectorsColumn.participants.map(
+                  (useConnector, j) => {
+                      if(useConnector) {
+                          count++;
+                          return this.renderComponentConnector(useConnector, count, j);
+                      }else{return null}
+                  }
+              )}
+          </>)
+      }else{
+          return null;
+      }
   }
   renderComponentConnector(useConnector, count, j) {
     let component = this.props.item
