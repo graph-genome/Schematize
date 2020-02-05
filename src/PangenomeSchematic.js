@@ -23,8 +23,8 @@ class PangenomeSchematic extends React.Component {
 		return jsonFile
 	}
 	processArray(beginBin, endBin) {
-	    if(this.jsonData.json_version !== 4){
-	        throw MediaError("Wrong Data JSON version: was expecting version 4, got " + this.jsonData.json_version + ".  " +
+	    if(this.jsonData.json_version !== 5){
+	        throw MediaError("Wrong Data JSON version: was expecting version 5, got " + this.jsonData.json_version + ".  " +
             "This version added adjacent connectors as the last departure column.  " + // KEEP THIS UP TO DATE!
             "Using a mismatched data file and renderer will cause unpredictable behavior," +
             " instead generate a new data file using github.com/graph-genome/component_segmentation.")
@@ -61,6 +61,7 @@ class Component {
 		this.x = 0;
 		// deep copy of occupants
 		this.occupants = Array.from(component.occupants);
+		this.matrix = Array.from(component.matrix);
 		this.num_bin = this.lastBin - this.firstBin + 1;
 	}
 	firstDepartureColumn() {

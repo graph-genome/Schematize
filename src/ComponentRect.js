@@ -53,35 +53,36 @@ class ComponentRect extends React.Component {
         this.setState({color: 'lightgray'})
     };
 
-    renderOccupants() {
+    renderMatrix() {
         let count = 0;
-        let parts = this.props.item.occupants.map(
-            (occupant, j) => {
-                if(occupant) {
+        let parts = this.props.item.matrix.map(
+            (row, j) => {
+                if(row.length) {
                     count++;
-                    return this.renderSingleOccupant(occupant, count, j);
+                    return this.renderMatrixRow(row, count, j);
                 }else{return null}
             })
         this.props.store.updateMaxHeight(count); //Set max observed occupants in mobx store for render height
         return (<>{parts}</>)
     }
 
-    renderSingleOccupant(occupant, count, j) {
+    renderMatrixRow(row, count, j) {
         const parent = this.props.item;
         const x_val = parent.x + (parent.arrivals.length * this.props.store.pixelsPerColumn);
-        const width = (parent.firstDepartureColumn() - parent.arrivals.length) * this.props.store.pixelsPerColumn;
+        const width = 1 * this.props.store.pixelsPerColumn;
         let this_y = count;
         if( ! this.props.store.useVerticalCompression){
             this_y = this.props.compressed_row_mapping[j];
         }
-        return <ComponentConnectorRect
-            key={"occupant" + j}
-            x={x_val}
+        return row.map((row, x)=> {
+            return <ComponentConnectorRect
+            key={"occupant" + j + x}
+            x={x_val + x * this.props.store.pixelsPerColumn}
             y={this_y * this.props.store.pixelsPerRow + this.props.store.topOffset}
             width={width}
             height={this.props.store.pixelsPerRow}
             color={'#838383'}
-        />
+        />})
     };
 
     renderAllConnectors(){
@@ -142,7 +143,7 @@ class ComponentRect extends React.Component {
                     onMouseOver={this.handleMouseOver}
                     onMouseOut={this.handleMouseOut}>
                 </Rect>
-                {this.renderOccupants()}
+                {this.renderMatrix()}
                 {this.renderAllConnectors()}
             </>
         );
