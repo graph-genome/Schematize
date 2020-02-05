@@ -74,15 +74,17 @@ class ComponentRect extends React.Component {
         if( ! this.props.store.useVerticalCompression){
             this_y = this.props.compressed_row_mapping[j];
         }
-        return row.map((row, x)=> {
-            return <ComponentConnectorRect
-            key={"occupant" + j + x}
-            x={x_val + x * this.props.store.pixelsPerColumn}
-            y={this_y * this.props.store.pixelsPerRow + this.props.store.topOffset}
-            width={width}
-            height={this.props.store.pixelsPerRow}
-            color={'#838383'}
-        />})
+        return row.map((cell, x)=> {
+            if(cell.length){
+                return <ComponentConnectorRect
+                key={"occupant" + j + x}
+                x={x_val + x * this.props.store.pixelsPerColumn}
+                y={this_y * this.props.store.pixelsPerRow + this.props.store.topOffset}
+                width={width}
+                height={this.props.store.pixelsPerRow}
+                color={'#838383'}
+            />}else{return null}
+            })
     };
 
     renderAllConnectors(){
