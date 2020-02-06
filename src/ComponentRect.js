@@ -72,6 +72,9 @@ class ComponentRect extends React.Component {
         const width = 1 * this.props.store.pixelsPerColumn;
         let this_y = count;
         if( ! this.props.store.useVerticalCompression){
+            if(! this.props.compressed_row_mapping.hasOwnProperty(j)){
+                return null; // we need compressed_y and we don't have it.  give up
+            }
             this_y = this.props.compressed_row_mapping[j];
         }
         return row.map((cell, x)=> {
