@@ -7,6 +7,7 @@ import ComponentRect, {compress_visible_rows} from './ComponentRect'
 import LinkColumn from './LinkColumn'
 import LinkArrow from './LinkArrow'
 import {calculateLinkCoordinates} from "./LinkRecord";
+import NucleotideTooltip from "./NucleotideTooltip";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -215,6 +216,7 @@ class App extends Component {
                         )}
                     </Layer>
                 </Stage>
+                <NucleotideTooltip store={this.props.store}/>
             </>
         );
     }

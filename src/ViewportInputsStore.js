@@ -11,7 +11,8 @@ export const RootStore = types
         leftOffset:25,
         topOffset: 400,
         highlightedLink: 0, // we will compare linkColumns
-        maximumHeightThisFrame: 150
+        maximumHeightThisFrame: 150,
+        toolTipContents: ''
     })
     .actions(self => {
         function updateTopOffset(newTopOffset) {
@@ -26,12 +27,16 @@ export const RootStore = types
         function resetRenderStats(){
             self.maximumHeightThisFrame = 1;
         }
+        function updateTooltip(newContents){
+            self.toolTipContents = String(newContents)
+        }
 
         return {
             updateTopOffset,
             updateHighlightedLink,
             updateMaxHeight,
-            resetRenderStats
+            resetRenderStats,
+            updateTooltip
         }
     })
     .views(self => ({

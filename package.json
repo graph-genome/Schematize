@@ -10,7 +10,8 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-konva": "^16.12.0-0",
-    "react-scripts": "3.2.0"
+    "react-scripts": "3.2.0",
+    "react-sticky-mouse-tooltip": "0.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

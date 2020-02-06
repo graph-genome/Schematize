@@ -76,6 +76,7 @@ class ComponentRect extends React.Component {
                 return <MatrixCell
                 key={"occupant" + j + x}
                 item={cell}
+                store={this.props.store}
                 x={x_val + x * this.props.store.pixelsPerColumn}
                 y={this_y * this.props.store.pixelsPerRow + this.props.store.topOffset}
                 width={width}
