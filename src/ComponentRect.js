@@ -1,6 +1,6 @@
 import React from 'react';
 import {Rect} from 'react-konva';
-import ComponentConnectorRect from "./ComponentConnectorRect";
+import {MatrixCell, ConnectorRect} from "./ComponentConnectorRect";
 
 const zip = (arr, ...arrs) => {
     /*Credit: https://gist.github.com/renaudtertrais/25fc5a2e64fe5d0e86894094c6989e10*/
@@ -41,16 +41,10 @@ class ComponentRect extends React.Component {
     };
     handleClick = () => {
         if (this.state.color === 'lightgray') {
-            this.setState({color: 'gray'});
-        } else if (this.state.color === 'gray') {
+            this.setState({color: 'lightblue'});
+        } else if (this.state.color === 'lightblue') {
             this.setState({color: 'lightgray'});
         }
-    };
-    handleMouseOver = () => {
-        this.setState({color: 'gray'})
-    };
-    handleMouseOut = () => {
-        this.setState({color: 'lightgray'})
     };
 
     renderMatrix() {
@@ -79,8 +73,9 @@ class ComponentRect extends React.Component {
         }
         return row.map((cell, x)=> {
             if(cell.length){
-                return <ComponentConnectorRect
+                return <MatrixCell
                 key={"occupant" + j + x}
+                item={cell}
                 x={x_val + x * this.props.store.pixelsPerColumn}
                 y={this_y * this.props.store.pixelsPerRow + this.props.store.topOffset}
                 width={width}
@@ -125,8 +120,8 @@ class ComponentRect extends React.Component {
         if( ! this.props.store.useVerticalCompression){
             this_y = this.props.compressed_row_mapping[j];
         }
-        return <ComponentConnectorRect
-            key={"occupant" + j}
+        return <ConnectorRect
+            key={"connector" + j}
             x={x_val}
             y={this.props.store.topOffset + this_y * this.props.store.pixelsPerRow}
             width={this.props.store.pixelsBetween} //Clarified and corrected adjacent connectors as based on pixelsBetween width #9
@@ -144,9 +139,7 @@ class ComponentRect extends React.Component {
                     width={this.props.width * this.props.store.pixelsPerColumn}
                     height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
                     fill={this.state.color}
-                    onClick={this.handleClick}
-                    onMouseOver={this.handleMouseOver}
-                    onMouseOut={this.handleMouseOut}>
+                    onClick={this.handleClick}>
                 </Rect>
                 {this.renderMatrix()}
                 {this.renderAllConnectors()}
