@@ -77,7 +77,7 @@ function calculateLinkElevations(linkToXmapping, pixelsPerColumn, topOffset) {
 function reserveElevationAirSpace(distanceSortedLinks, pixelsPerColumn, topOffset){
     /* Set up an array of zeros, then gradually fill it with height stacking
     * @Simon this section is largely done, it just needs a sorted distanceSortedLinks as input*/
-    let length = Math.max(...distanceSortedLinks.map(x=> Math.max(x.xDepart, x.xArrival))); //this.props.endBin - this.props.beginBin;
+    let length = Math.max(0, ...distanceSortedLinks.map(x=> Math.max(x.xDepart, x.xArrival))); //this.props.endBin - this.props.beginBin;
     let elevationOccupied = new Array(length).fill(15);
     for (let record of distanceSortedLinks) {
         let linkBegin = Math.min(record.xArrival, record.xDepart);
