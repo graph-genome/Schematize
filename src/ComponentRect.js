@@ -77,6 +77,7 @@ class ComponentRect extends React.Component {
                 key={"occupant" + row_n + x}
                 item={cell}
                 store={this.props.store}
+                pathName={this.props.pathNames[row_n]}
                 x={x_val + x * this.props.store.pixelsPerColumn}
                 y={this_y * this.props.store.pixelsPerRow + this.props.store.topOffset}
                 row_number={row_n}

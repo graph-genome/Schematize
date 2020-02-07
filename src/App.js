@@ -96,7 +96,7 @@ class App extends Component {
         return pixelsFromColumns + (i * this.props.store.pixelsBetween);
     }
 
-    renderComponent(schematizeComponent, i) {
+    renderComponent(schematizeComponent, i, pathNames) {
         return (
             <>
                 <ComponentRect
@@ -106,6 +106,7 @@ class App extends Component {
                     height={this.visibleHeight()}
                     width={(schematizeComponent.firstDepartureColumn() + (schematizeComponent.departures.length-1))}
                     compressed_row_mapping={this.compressed_row_mapping}
+                    pathNames={pathNames}
                 />
 
                 {schematizeComponent.arrivals.map(
@@ -208,7 +209,7 @@ class App extends Component {
                             (schematizeComponent, i)=> {
                                 return (
                                     <React.Fragment key={"f" + i}>
-                                        {this.renderComponent(schematizeComponent, i)}
+                                        {this.renderComponent(schematizeComponent, i, this.state.pathNames)}
                                     </React.Fragment>
                                 )
                             }

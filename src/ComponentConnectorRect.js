@@ -24,7 +24,7 @@ export class MatrixCell extends React.Component {
         //tooltip: this.props.item.mean_pos
         this.props.store.updateCellTooltipVisibility(true);
         this.props.store.updateCellTooltipContent(
-            '"'+ this.props.row_number + '": '+ this.props.item[2]) //[2] is mean_pos
+            '"'+ this.props.pathName + '": '+ this.props.item[2]) //[2] is mean_pos
     }
     onLeave(){
         this.props.store.updateCellTooltipVisibility(false);
