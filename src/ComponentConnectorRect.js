@@ -24,6 +24,9 @@ export class MatrixCell extends React.Component {
         //tooltip: this.props.item.mean_pos
         this.props.store.updateTooltip(this.props.item[2]) //[2] is mean_pos
     }
+    onLeave(){
+        this.props.store.updateTooltip("") // we don't want any tooltip displayed if we leave the cell
+    }
     render() {
         return (
             <Rect
@@ -33,6 +36,7 @@ export class MatrixCell extends React.Component {
                 height={this.props.height || 1}
                 fill={this.props.color}
                 onMouseEnter={this.onHover.bind(this)}
+                onMouseLeave={this.onLeave.bind(this)}
             />
         );
     }
