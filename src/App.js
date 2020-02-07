@@ -8,6 +8,7 @@ import LinkColumn from './LinkColumn'
 import LinkArrow from './LinkArrow'
 import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
+import CompressedViewSwitch from "./ToggleCompressedView";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -39,7 +40,9 @@ class App extends Component {
         super(props);
         const {beginBin, endBin} = this.props.store;
         let schematic = new PangenomeSchematic({beginBin, endBin});
-        console.log(schematic.pathNames.length);
+        console.log("#paths: " + schematic.pathNames.length);
+        console.log("#components: " + schematic.components.length);
+        console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
         const sum = (accumulator, currentValue) => accumulator + currentValue;
         let columnsInComponents = schematic.components.map(component =>
             component.arrivals.length + (component.departures.length-1) +
@@ -195,6 +198,7 @@ class App extends Component {
         console.log("Start render");
         return (
             <>
+                {/*<CompressedViewSwitch store={this.props.store}/> TODO*/}
                 <Stage
                     x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
                     width={this.state.actualWidth + 60}
