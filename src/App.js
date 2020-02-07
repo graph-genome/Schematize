@@ -198,7 +198,7 @@ class App extends Component {
         console.log("Start render");
         return (
             <>
-                {/*<CompressedViewSwitch store={this.props.store}/> TODO*/}
+                <CompressedViewSwitch store={this.props.store}/>
                 <Stage
                     x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
                     width={this.state.actualWidth + 60}

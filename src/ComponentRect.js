@@ -50,35 +50,36 @@ class ComponentRect extends React.Component {
     renderMatrix() {
         let count = 0;
         let parts = this.props.item.matrix.map(
-            (row, j) => {
+            (row, row_n) => {
                 if(row.length) {
                     count++;
-                    return this.renderMatrixRow(row, count, j);
+                    return this.renderMatrixRow(row, count, row_n);
                 }else{return null}
             })
         this.props.store.updateMaxHeight(count); //Set max observed occupants in mobx store for render height
         return (<>{parts}</>)
     }
 
-    renderMatrixRow(row, count, j) {
+    renderMatrixRow(row, count, row_n) {
         const parent = this.props.item;
         const x_val = parent.x + (parent.arrivals.length * this.props.store.pixelsPerColumn);
         const width = 1 * this.props.store.pixelsPerColumn;
         let this_y = count;
         if( ! this.props.store.useVerticalCompression){
-            if(! this.props.compressed_row_mapping.hasOwnProperty(j)){
+            if(! this.props.compressed_row_mapping.hasOwnProperty(row_n)){
                 return null; // we need compressed_y and we don't have it.  give up
             }
-            this_y = this.props.compressed_row_mapping[j];
+            this_y = this.props.compressed_row_mapping[row_n];
         }
         return row.map((cell, x)=> {
             if(cell.length){
                 return <MatrixCell
-                key={"occupant" + j + x}
+                key={"occupant" + row_n + x}
                 item={cell}
                 store={this.props.store}
                 x={x_val + x * this.props.store.pixelsPerColumn}
                 y={this_y * this.props.store.pixelsPerRow + this.props.store.topOffset}
+                row_number={row_n}
                 width={width}
                 height={this.props.store.pixelsPerRow}
                 color={'#838383'}

@@ -4,8 +4,8 @@ export let RootStore;
 RootStore = types
     .model({
         useVerticalCompression: false,
-        beginBin: 1,
-        endBin: 100,
+        beginBin: 20,
+        endBin: 40,
         pixelsPerColumn: 6,
         pixelsPerRow: 4,
         pixelsBetween: 5,
