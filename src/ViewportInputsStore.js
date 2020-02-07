@@ -4,7 +4,7 @@ export const RootStore = types
     .model({
         useVerticalCompression: false,
         beginBin: 1,
-        endBin: 20,
+        endBin: 200,
         pixelsPerColumn:6,
         pixelsPerRow: 4,
         pixelsBetween:5,
