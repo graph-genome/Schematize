@@ -5,7 +5,7 @@ import {MatrixCell, ConnectorRect} from "./ComponentConnectorRect";
 const zip = (arr, ...arrs) => {
     /*Credit: https://gist.github.com/renaudtertrais/25fc5a2e64fe5d0e86894094c6989e10*/
     return arr.map((val, i) => arrs.reduce((a, arr) => [...a, arr[i]], [val]));
-}
+};
 
 export function compress_visible_rows(components){
     /*Returns a Map with key of the original row number and value of the new, compressed row number.
@@ -26,8 +26,8 @@ function find_rows_visible_in_viewport(components){
     /*The only components passed to this method are the components on the screen.
     * This returns a boolean list of which rows are on the screen. */
     // let rows_present = new Array(components[0].occupants.length).fill(false);
-    let per_row = zip(...components.map((x)=> x.occupants))
-    let rows_present = per_row.map((row, i) => row.some(x=>x))
+    let per_row = zip(...components.map((x)=> x.occupants));
+    let rows_present = per_row.map((row, i) => row.some(x=>x));
     return rows_present;
 }
 

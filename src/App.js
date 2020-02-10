@@ -68,20 +68,35 @@ class App extends Component {
 
         this.compressed_row_mapping = compress_visible_rows(schematic.components);
         // TODO: with dynamic start and stop inputs this will move to componentDidUpdate()
+        this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(schematic.components) // TODO add this to mobx-state-tree
     };
 
-    visibleHeight(){
-        if(this.props.store.useVerticalCompression){
-            return (this.props.store.maximumHeightThisFrame + 2) * this.props.store.pixelsPerRow;
+    calcMaxNumRowsAcrossComponents(components) {
+        let maxNumberRowsInOneComponent = 0;
+        for (let i = 0; i < components.length; i++) {
+            let component = components[i];
+            let occupants = component.occupants;
+            let numberOccupants = occupants.filter(Boolean).length;
+            maxNumberRowsInOneComponent = Math.max(numberOccupants, maxNumberRowsInOneComponent)
         }
-        return (Object.keys(this.compressed_row_mapping).length + 2) * this.props.store.pixelsPerRow;
+        return maxNumberRowsInOneComponent;
+    }
+
+    visibleHeight(){
+        if (this.props.store.useVerticalCompression) {
+            // this.state.schematize.forEach(value => Math.max(value.occupants.filter(Boolean).length, maxNumberRowsInOneComponent));
+            console.log("Max number of rows across components: " + this.maxNumRowsAcrossComponents);
+            return (this.maxNumRowsAcrossComponents + 2.5) * this.props.store.pixelsPerRow;
+        } else {
+            return (Object.keys(this.compressed_row_mapping).length + 0.25) * this.props.store.pixelsPerRow;
+        }
     }
 
     componentDidMount = () => {
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
-        if(this.props.store.useVerticalCompression) {
+/*        if(this.props.store.useVerticalCompression) {
             this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
-        }
+        }*/
     };
 
     updateHighlightedNode = (linkRect) => {
