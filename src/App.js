@@ -8,6 +8,7 @@ import LinkColumn from './LinkColumn'
 import LinkArrow from './LinkArrow'
 import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
+import CompressedViewSwitch from "./ToggleCompressedView";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -39,7 +40,9 @@ class App extends Component {
         super(props);
         const {beginBin, endBin} = this.props.store;
         let schematic = new PangenomeSchematic({beginBin, endBin});
-        console.log(schematic.pathNames.length);
+        console.log("#paths: " + schematic.pathNames.length);
+        console.log("#components: " + schematic.components.length);
+        console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
         const sum = (accumulator, currentValue) => accumulator + currentValue;
         let columnsInComponents = schematic.components.map(component =>
             component.arrivals.length + (component.departures.length-1) +
@@ -65,20 +68,35 @@ class App extends Component {
 
         this.compressed_row_mapping = compress_visible_rows(schematic.components);
         // TODO: with dynamic start and stop inputs this will move to componentDidUpdate()
+        this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(schematic.components) // TODO add this to mobx-state-tree
     };
 
-    visibleHeight(){
-        if(this.props.store.useVerticalCompression){
-            return (this.props.store.maximumHeightThisFrame + 2) * this.props.store.pixelsPerRow;
+    calcMaxNumRowsAcrossComponents(components) {
+        let maxNumberRowsInOneComponent = 0;
+        for (let i = 0; i < components.length; i++) {
+            let component = components[i];
+            let occupants = component.occupants;
+            let numberOccupants = occupants.filter(Boolean).length;
+            maxNumberRowsInOneComponent = Math.max(numberOccupants, maxNumberRowsInOneComponent)
         }
-        return (Object.keys(this.compressed_row_mapping).length + 2) * this.props.store.pixelsPerRow;
+        return maxNumberRowsInOneComponent;
+    }
+
+    visibleHeight(){
+        if (this.props.store.useVerticalCompression) {
+            // this.state.schematize.forEach(value => Math.max(value.occupants.filter(Boolean).length, maxNumberRowsInOneComponent));
+            console.log("Max number of rows across components: " + this.maxNumRowsAcrossComponents);
+            return (this.maxNumRowsAcrossComponents + 2.5) * this.props.store.pixelsPerRow;
+        } else {
+            return (Object.keys(this.compressed_row_mapping).length + 0.25) * this.props.store.pixelsPerRow;
+        }
     }
 
     componentDidMount = () => {
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
-        if(this.props.store.useVerticalCompression) {
+/*        if(this.props.store.useVerticalCompression) {
             this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
-        }
+        }*/
     };
 
     updateHighlightedNode = (linkRect) => {
@@ -93,7 +111,7 @@ class App extends Component {
         return pixelsFromColumns + (i * this.props.store.pixelsBetween);
     }
 
-    renderComponent(schematizeComponent, i) {
+    renderComponent(schematizeComponent, i, pathNames) {
         return (
             <>
                 <ComponentRect
@@ -103,6 +121,7 @@ class App extends Component {
                     height={this.visibleHeight()}
                     width={(schematizeComponent.firstDepartureColumn() + (schematizeComponent.departures.length-1))}
                     compressed_row_mapping={this.compressed_row_mapping}
+                    pathNames={pathNames}
                 />
 
                 {schematizeComponent.arrivals.map(
@@ -195,6 +214,7 @@ class App extends Component {
         console.log("Start render");
         return (
             <>
+                <CompressedViewSwitch store={this.props.store}/>
                 <Stage
                     x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
                     width={this.state.actualWidth + 60}
@@ -204,7 +224,7 @@ class App extends Component {
                             (schematizeComponent, i)=> {
                                 return (
                                     <React.Fragment key={"f" + i}>
-                                        {this.renderComponent(schematizeComponent, i)}
+                                        {this.renderComponent(schematizeComponent, i, this.state.pathNames)}
                                     </React.Fragment>
                                 )
                             }

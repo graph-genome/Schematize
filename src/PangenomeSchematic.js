@@ -10,7 +10,7 @@ class PangenomeSchematic extends React.Component {
 	}
 	componentDidUpdate() {
 		this.processArray(this.props.beginBin, this.props.endBin);
-		console.log(this.components);
+		console.log("#components: " + this.components);
 	}
 	readFile(ignored_fileName) {
 		// console.log();
@@ -29,7 +29,6 @@ class PangenomeSchematic extends React.Component {
             "Using a mismatched data file and renderer will cause unpredictable behavior," +
             " instead generate a new data file using github.com/graph-genome/component_segmentation.")
         }
-
 		var componentArray = [];
 		var offsetLength = 0;
 		for (var component of this.jsonData.components) {
@@ -37,7 +36,7 @@ class PangenomeSchematic extends React.Component {
 				var componentItem = new Component(component, offsetLength);
 				offsetLength += componentItem.arrivals.length + componentItem.departures.length-1;
 				componentArray.push(componentItem);
-				if(component.last_bin > endBin){break}
+				if(component.last_bin > endBin && componentArray.length > 1){break}
 			}
 		}
 		this.components = componentArray;
