@@ -18,7 +18,6 @@ RootStore = types
     })
     .actions(self => {
         function updateStart(event){
-            console.log("!!!!", event.target.value)
             self.beginBin = Number(event.target.value);
         }
         function updateEnd(event){

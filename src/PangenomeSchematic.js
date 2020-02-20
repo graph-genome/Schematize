@@ -2,6 +2,9 @@ import React from 'react';
 
 class PangenomeSchematic extends React.Component {
 	constructor(props) {
+		/*Only plain objects will be made observable. For non-plain objects it is considered the
+		 responsibility of the constructor to initialize the observable properties. Either use
+		 the @observable annotation or the extendObservable function.*/
 		super(props);
 		// this.props.jsonPath //currently file cannot be a variable because of require()
 		this.jsonData = this.readFile('');// this.props.jsonPath

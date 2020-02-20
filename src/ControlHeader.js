@@ -20,19 +20,6 @@ class ControlHeader extends React.Component{
     }
 }
 
-
-class BoundNumberInput extends React.Component {
-    handleChange = (e) => {
-        this.props.appState.myValue = e.target.value;
-    };
-    render() {
-        const { appState } = this.props;
-        return (
-            <input  type="number" value={appState.myValue} onChange={this.handleChange} />
-        );
-    }
-}
-
 class CompressedViewSwitch extends React.Component {
     onToggle() {
         this.props.store.toggleUseVerticalCompression();

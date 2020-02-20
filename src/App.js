@@ -9,6 +9,7 @@ import LinkArrow from './LinkArrow'
 import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
+import {observe} from "mobx";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -38,8 +39,21 @@ class App extends Component {
     layerRef = React.createRef();
     constructor(props) {
         super(props);
+        this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
+        this.state = {
+            schematize: [],
+            pathNames: [],
+            actualWidth: 1
+        };
+        const prompter = observe(this.props.store, "beginBin", this.updateSchematicMetadata.bind(this));
+        const prompte2 = observe(this.props.store, "endBin", this.updateSchematicMetadata.bind(this));
+    };
+
+    updateSchematicMetadata() {
+        console.log("Updating schematic state")
         const {beginBin, endBin} = this.props.store;
         let schematic = new PangenomeSchematic({beginBin, endBin});
+
         console.log("#paths: " + schematic.pathNames.length);
         console.log("#components: " + schematic.components.length);
         console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
@@ -53,13 +67,11 @@ class App extends Component {
             paddingBetweenComponents;
         console.log(actualWidth);
         // console.log(schematic.components);
-        this.state = {
+        this.setState({
             schematize: schematic.components,
             pathNames: schematic.pathNames,
             actualWidth: actualWidth
-        };
-        this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
-
+        });
         let [links, top] =
             calculateLinkCoordinates(schematic.components, this.props.store.pixelsPerColumn, this.props.store.topOffset,
                 this.leftXStart.bind(this));
@@ -67,9 +79,14 @@ class App extends Component {
         this.props.store.updateTopOffset(top);
 
         this.compressed_row_mapping = compress_visible_rows(schematic.components);
-        // TODO: with dynamic start and stop inputs this will move to componentDidUpdate()
         this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(schematic.components) // TODO add this to mobx-state-tree
-    };
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(this.props.store.beginBin !== prevProps.store.beginBin || this.props.store.endBin !== prevProps.store.endBin){
+            this.updateSchematicMetadata();
+        }
+    }
 
     calcMaxNumRowsAcrossComponents(components) {
         let maxNumberRowsInOneComponent = 0;
@@ -83,13 +100,16 @@ class App extends Component {
     }
 
     visibleHeight(){
-        if (this.props.store.useVerticalCompression) {
+        if (this.props.store.useVerticalCompression || !this.compressed_row_mapping) {
             // this.state.schematize.forEach(value => Math.max(value.occupants.filter(Boolean).length, maxNumberRowsInOneComponent));
             console.log("Max number of rows across components: " + this.maxNumRowsAcrossComponents);
             return (this.maxNumRowsAcrossComponents + 2.5) * this.props.store.pixelsPerRow;
         } else {
             return (Object.keys(this.compressed_row_mapping).length + 0.25) * this.props.store.pixelsPerRow;
         }
+    }
+    UNSAFE_componentWillMount() {
+        this.updateSchematicMetadata();
     }
 
     componentDidMount = () => {
