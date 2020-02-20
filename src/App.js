@@ -8,7 +8,7 @@ import LinkColumn from './LinkColumn'
 import LinkArrow from './LinkArrow'
 import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
-import CompressedViewSwitch from "./ToggleCompressedView";
+import ControlHeader from "./ToggleCompressedView";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -214,7 +214,7 @@ class App extends Component {
         console.log("Start render");
         return (
             <>
-                <CompressedViewSwitch store={this.props.store}/>
+                <ControlHeader store={this.props.store}/>
                 <Stage
                     x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
                     width={this.state.actualWidth + 60}

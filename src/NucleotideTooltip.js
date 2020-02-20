@@ -13,7 +13,7 @@ export default class NucleotideTooltip extends React.Component {
 
     render() {
         return <MouseTooltip
-            visible={<Observer>{() => this.props.store.cellToolTipContent.length > 0}</Observer>}//
+            visible={true}
             offsetX={15}
             offsetY={10}
             style={{'background':'white'}}>
