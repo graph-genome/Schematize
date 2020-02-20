@@ -17,9 +17,8 @@ class PangenomeSchematic extends React.Component {
 		// var jsonFile = require('./data/Athaliana.bin100000.schematic.json'); // This cannot be a variable
 		// var jsonFile = require('./data/yeast_bin10k_7indiv_16chr.schematic.json'); // This cannot be a variable
 		// const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.1D.json'); // This cannot be a variable
-		// const jsonFile = require('./data/Athaliana.Jan_sort.bin100000.schematic.json');
-		const jsonFile = require('./data/run1.B1phi1.i1.seqwish.w100.schematic.json'); // ERIKS DATA FROM JANUARY
-		// const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.json');
+		const jsonFile = require('./data/Athaliana.Jan_sort.bin100000.schematic.json');
+		// const jsonFile = require('./data/run1.B1phi1.i1.seqwish.w100.schematic.json'); // ERIKS DATA FROM JANUARY
 		// console.log(jsonFile);
 		return jsonFile
 	}
