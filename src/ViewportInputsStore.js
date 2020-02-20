@@ -17,31 +17,35 @@ RootStore = types
         isCellToolTipVisible: true,
     })
     .actions(self => {
+        function updateStart(event){
+            console.log("!!!!", event.target.value)
+            self.beginBin = Number(event.target.value);
+        }
+        function updateEnd(event){
+            self.endBin = Number(event.target.value);
+        }
         function updateTopOffset(newTopOffset) {
             self.topOffset = newTopOffset;
         }
-
         function updateHighlightedLink(linkRect) {
             self.highlightedLink = linkRect;
         }
-
         function updateMaxHeight(latestHeight) {
             self.maximumHeightThisFrame = Math.max(self.maximumHeightThisFrame, latestHeight);
         }
-
         function resetRenderStats() {
             self.maximumHeightThisFrame = 1;
         }
-
         function updateCellTooltipContent(newContents) {
             self.cellToolTipContent = String(newContents);
         }
-
         function toggleUseVerticalCompression() {
             self.useVerticalCompression = !self.useVerticalCompression;
         }
 
         return {
+            updateStart,
+            updateEnd,
             updateTopOffset,
             updateHighlightedLink,
             updateMaxHeight,

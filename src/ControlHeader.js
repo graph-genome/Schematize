@@ -10,14 +10,28 @@ class ControlHeader extends React.Component{
                 <CompressedViewSwitch store={this.props.store}/>
             </span>
             <span> Pangenome Position:
-                <input type="number"/> -
-                <input type="number"/>
+                <input type="number" defaultValue={this.props.store.beginBin}
+                       onChange={this.props.store.updateStart}/>-
+                <input type="number" defaultValue={this.props.store.endBin}
+                       onChange={this.props.store.updateEnd}/>
             </span>
         </div>
         )
     }
 }
 
+
+class BoundNumberInput extends React.Component {
+    handleChange = (e) => {
+        this.props.appState.myValue = e.target.value;
+    };
+    render() {
+        const { appState } = this.props;
+        return (
+            <input  type="number" value={appState.myValue} onChange={this.handleChange} />
+        );
+    }
+}
 
 class CompressedViewSwitch extends React.Component {
     onToggle() {
