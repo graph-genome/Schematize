@@ -45,41 +45,40 @@ class App extends Component {
             pathNames: [],
             actualWidth: 1
         };
-        const prompter = observe(this.props.store, "beginBin", this.updateSchematicMetadata.bind(this));
-        const prompte2 = observe(this.props.store, "endBin", this.updateSchematicMetadata.bind(this));
+        this.schematic = new PangenomeSchematic({store: this.props.store}); //Read file, parse nothing
+        observe(this.props.store, "beginBin", this.updateSchematicMetadata.bind(this));
+        observe(this.props.store, "endBin", this.updateSchematicMetadata.bind(this));
     };
 
     updateSchematicMetadata() {
         console.log("Updating schematic state")
-        const {beginBin, endBin} = this.props.store;
-        let schematic = new PangenomeSchematic({beginBin, endBin});
-
-        console.log("#paths: " + schematic.pathNames.length);
-        console.log("#components: " + schematic.components.length);
+        this.schematic.processArray(); //parses beginBin to endBin range
+        console.log("#paths: " + this.schematic.pathNames.length);
+        console.log("#components: " + this.schematic.components.length);
         console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
         const sum = (accumulator, currentValue) => accumulator + currentValue;
-        let columnsInComponents = schematic.components.map(component =>
+        let columnsInComponents = this.schematic.components.map(component =>
             component.arrivals.length + (component.departures.length-1) +
             (component.lastBin - component.firstBin) + 1
         ).reduce(sum);
-        let paddingBetweenComponents = this.props.store.pixelsBetween * schematic.components.length;
+        let paddingBetweenComponents = this.props.store.pixelsBetween * this.schematic.components.length;
         let actualWidth = columnsInComponents * this.props.store.pixelsPerColumn +
             paddingBetweenComponents;
         console.log(actualWidth);
-        // console.log(schematic.components);
+        // console.log(this.schematic.components);
         this.setState({
-            schematize: schematic.components,
-            pathNames: schematic.pathNames,
+            schematize: this.schematic.components,
+            pathNames: this.schematic.pathNames,
             actualWidth: actualWidth
         });
         let [links, top] =
-            calculateLinkCoordinates(schematic.components, this.props.store.pixelsPerColumn, this.props.store.topOffset,
+            calculateLinkCoordinates(this.schematic.components, this.props.store.pixelsPerColumn, this.props.store.topOffset,
                 this.leftXStart.bind(this));
         this.distanceSortedLinks = links;
         this.props.store.updateTopOffset(top);
 
-        this.compressed_row_mapping = compress_visible_rows(schematic.components);
-        this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(schematic.components) // TODO add this to mobx-state-tree
+        this.compressed_row_mapping = compress_visible_rows(this.schematic.components);
+        this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(this.schematic.components) // TODO add this to mobx-state-tree
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {

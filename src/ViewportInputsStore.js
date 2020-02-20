@@ -21,7 +21,7 @@ RootStore = types
             self.beginBin = Number(event.target.value);
         }
         function updateEnd(event){
-            self.endBin = Number(event.target.value);
+            self.endBin = Math.max(self.beginBin +1 , Number(event.target.value));
         }
         function updateTopOffset(newTopOffset) {
             self.topOffset = newTopOffset;
