@@ -11,9 +11,18 @@ class ControlHeader extends React.Component{
             </span>
             <span> Pangenome Position:
                 <input type="number" defaultValue={this.props.store.beginBin}
-                       onChange={this.props.store.updateStart}/>-
+                       onChange={this.props.store.updateStart} style={{width: '80px'}}/>-
                 <input type="number" defaultValue={this.props.store.endBin}
-                       onChange={this.props.store.updateEnd}/>
+                       onChange={this.props.store.updateEnd} style={{width: '80px'}}/>
+            </span>
+            <span> Row Height:
+                <input type="number" defaultValue={this.props.store.pixelsPerRow}
+                       onChange={this.props.store.updateHeight} style={{width: '30px'}}/>
+            </span>
+            <span> Column Width:
+                <input type="number" defaultValue={this.props.store.pixelsPerColumn}
+                       onChange={this.props.store.updateWidth} style={{width: '30px'}}/>
+
             </span>
         </div>
         )

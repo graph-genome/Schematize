@@ -48,6 +48,8 @@ class App extends Component {
         this.schematic = new PangenomeSchematic({store: this.props.store}); //Read file, parse nothing
         observe(this.props.store, "beginBin", this.updateSchematicMetadata.bind(this));
         observe(this.props.store, "endBin", this.updateSchematicMetadata.bind(this));
+        observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
+        observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
     };
 
     updateSchematicMetadata() {
@@ -56,19 +58,27 @@ class App extends Component {
         console.log("#paths: " + this.schematic.pathNames.length);
         console.log("#components: " + this.schematic.components.length);
         console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
+
+        // console.log(this.schematic.components);
+        this.setState({
+            schematize: this.schematic.components,
+            pathNames: this.schematic.pathNames,
+        });
+        this.recalcXLayout();
+        this.compressed_row_mapping = compress_visible_rows(this.schematic.components);
+        this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(this.schematic.components) // TODO add this to mobx-state-tree
+    }
+
+    recalcXLayout(){
         const sum = (accumulator, currentValue) => accumulator + currentValue;
         let columnsInComponents = this.schematic.components.map(component =>
             component.arrivals.length + (component.departures.length-1) +
             (component.lastBin - component.firstBin) + 1
         ).reduce(sum);
-        let paddingBetweenComponents = this.props.store.pixelsBetween * this.schematic.components.length;
+        let paddingBetweenComponents = this.props.store.pixelsPerColumn * this.schematic.components.length;
         let actualWidth = columnsInComponents * this.props.store.pixelsPerColumn +
             paddingBetweenComponents;
-        console.log(actualWidth);
-        // console.log(this.schematic.components);
         this.setState({
-            schematize: this.schematic.components,
-            pathNames: this.schematic.pathNames,
             actualWidth: actualWidth
         });
         let [links, top] =
@@ -76,9 +86,11 @@ class App extends Component {
                 this.leftXStart.bind(this));
         this.distanceSortedLinks = links;
         this.props.store.updateTopOffset(top);
+    }
 
-        this.compressed_row_mapping = compress_visible_rows(this.schematic.components);
-        this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(this.schematic.components) // TODO add this to mobx-state-tree
+    recalcY(){
+        //forceUpdate() doesn't work with callback function
+        this.setState({highlightedLink: null}); //nothing code to force update.
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -127,7 +139,7 @@ class App extends Component {
         /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
         let previousColumns = schematizeComponent.firstBin - this.props.store.beginBin + schematizeComponent.offset;
         let pixelsFromColumns = (previousColumns + firstDepartureColumn + j) * this.props.store.pixelsPerColumn;
-        return pixelsFromColumns + (i * this.props.store.pixelsBetween);
+        return pixelsFromColumns + (i * this.props.store.pixelsPerColumn);
     }
 
     renderComponent(schematizeComponent, i, pathNames) {

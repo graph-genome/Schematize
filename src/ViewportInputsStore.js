@@ -6,15 +6,13 @@ RootStore = types
         useVerticalCompression: false,
         beginBin: 800,
         endBin: 900,
-        pixelsPerColumn: 2,
-        pixelsPerRow: 10,
-        pixelsBetween: 5,
+        pixelsPerColumn: 7,
+        pixelsPerRow: 7,
         leftOffset: 25,
         topOffset: 400,
         highlightedLink: 0, // we will compare linkColumns
         maximumHeightThisFrame: 150,
         cellToolTipContent: "",
-        isCellToolTipVisible: true,
     })
     .actions(self => {
         function updateStart(event){
@@ -41,16 +39,21 @@ RootStore = types
         function toggleUseVerticalCompression() {
             self.useVerticalCompression = !self.useVerticalCompression;
         }
-
+        function updateHeight(event){
+            self.pixelsPerRow = Number(event.target.value);
+        }
+        function updateWidth(event){
+            self.pixelsPerColumn = Number(event.target.value);
+        }
         return {
-            updateStart,
-            updateEnd,
+            updateStart, updateEnd,
             updateTopOffset,
             updateHighlightedLink,
             updateMaxHeight,
             resetRenderStats,
             updateCellTooltipContent,
-            toggleUseVerticalCompression
+            toggleUseVerticalCompression,
+            updateHeight,updateWidth
         }
     })
     .views(self => ({}));
