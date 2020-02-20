@@ -19,16 +19,21 @@ class PangenomeSchematic extends React.Component {
 		// const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.1D.json'); // This cannot be a variable
 		// const jsonFile = require('./data/Athaliana.Jan_sort.bin100000.schematic.json');
 		const jsonFile = require('./data/run1.B1phi1.i1.seqwish.w100.schematic.json'); // ERIKS DATA FROM JANUARY
+		// const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.json');
 		// console.log(jsonFile);
 		return jsonFile
 	}
 	processArray(beginBin, endBin) {
-	    if(this.jsonData.json_version !== 7){
-	        throw MediaError("Wrong Data JSON version: was expecting version 7, got " + this.jsonData.json_version + ".  " +
-            "This version introduced mean_pos for each bin/path.  " + // KEEP THIS UP TO DATE!
+	    if(this.jsonData.json_version !== 8){
+	        throw MediaError("Wrong Data JSON version: was expecting version 8, got " + this.jsonData.json_version + ".  " +
+            "This version introduced first and last nucleotide for each bin/path.  " + // KEEP THIS UP TO DATE!
             "Using a mismatched data file and renderer will cause unpredictable behavior," +
             " instead generate a new data file using github.com/graph-genome/component_segmentation.")
         }
+		// while(wrongFile){
+		// 	getNextFileName()
+		// }
+		// let data = getJSONData(filename);
 		var componentArray = [];
 		var offsetLength = 0;
 		for (var component of this.jsonData.components) {

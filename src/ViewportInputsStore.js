@@ -4,17 +4,17 @@ export let RootStore;
 RootStore = types
     .model({
         useVerticalCompression: false,
-        beginBin: 20,
-        endBin: 40,
-        pixelsPerColumn: 6,
-        pixelsPerRow: 4,
+        beginBin: 400,
+        endBin: 800,
+        pixelsPerColumn: 2,
+        pixelsPerRow: 10,
         pixelsBetween: 5,
         leftOffset: 25,
         topOffset: 400,
         highlightedLink: 0, // we will compare linkColumns
         maximumHeightThisFrame: 150,
         cellToolTipContent: "",
-        isCellToolTipVisible: false,
+        isCellToolTipVisible: true,
     })
     .actions(self => {
         function updateTopOffset(newTopOffset) {
@@ -37,10 +37,6 @@ RootStore = types
             self.cellToolTipContent = String(newContents);
         }
 
-        function updateCellTooltipVisibility(isVisible) {
-            self.isCellToolTipVisible = isVisible;
-        }
-
         function toggleUseVerticalCompression() {
             self.useVerticalCompression = !self.useVerticalCompression;
         }
@@ -51,7 +47,6 @@ RootStore = types
             updateMaxHeight,
             resetRenderStats,
             updateCellTooltipContent,
-            updateCellTooltipVisibility,
             toggleUseVerticalCompression
         }
     })

@@ -22,12 +22,11 @@ export class ConnectorRect extends React.Component {
 export class MatrixCell extends React.Component {
     onHover(){
         //tooltip: this.props.item.mean_pos
-        this.props.store.updateCellTooltipVisibility(true);
         this.props.store.updateCellTooltipContent(
-            '"'+ this.props.pathName + '": '+ this.props.item[2]) //[2] is mean_pos
+            '"'+ this.props.pathName + '": '+ this.props.item[2] +
+             ' - '+ this.props.item[3]) //[2] is first, [3] last
     }
     onLeave(){
-        this.props.store.updateCellTooltipVisibility(false);
         this.props.store.updateCellTooltipContent("") // we don't want any tooltip displayed if we leave the cell
     }
     render() {
