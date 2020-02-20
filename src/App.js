@@ -8,7 +8,7 @@ import LinkColumn from './LinkColumn'
 import LinkArrow from './LinkArrow'
 import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
-import ControlHeader from "./ToggleCompressedView";
+import ControlHeader from "./ControlHeader";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
