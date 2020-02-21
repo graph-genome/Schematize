@@ -26,9 +26,13 @@ function find_rows_visible_in_viewport(components){
     /*The only components passed to this method are the components on the screen.
     * This returns a boolean list of which rows are on the screen. */
     // let rows_present = new Array(components[0].occupants.length).fill(false);
-    let per_row = zip(...components.map((x)=> x.occupants));
-    let rows_present = per_row.map((row, i) => row.some(x=>x));
-    return rows_present;
+    if(components.length) {
+        let per_row = zip(...components.map((x) => x.occupants));
+        let rows_present = per_row.map((row, i) => row.some(x => x));
+        return rows_present;
+    }else{
+        return [false];
+    }
 }
 
 function sum(a, b) {

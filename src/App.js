@@ -74,7 +74,7 @@ class App extends Component {
         let columnsInComponents = this.schematic.components.map(component =>
             component.arrivals.length + (component.departures.length-1) +
             (component.lastBin - component.firstBin) + 1
-        ).reduce(sum);
+        ).reduce(sum, 0);
         let paddingBetweenComponents = this.props.store.pixelsPerColumn * this.schematic.components.length;
         let actualWidth = columnsInComponents * this.props.store.pixelsPerColumn +
             paddingBetweenComponents;

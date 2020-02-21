@@ -6,24 +6,39 @@ class PangenomeSchematic extends React.Component {
 		 responsibility of the constructor to initialize the observable properties. Either use
 		 the @observable annotation or the extendObservable function.*/
 		super(props);
-		// this.props.jsonPath //currently file cannot be a variable because of require()
-		this.jsonData = this.readFile('');// this.props.jsonPath
-		this.pathNames = this.jsonData.path_names;
+		this.readFile('./data/run1.B1phi1.i1.seqwish.w100.schematic.json');// this.props.jsonPath
 	}
 	componentDidUpdate() {
 		this.processArray();
-		console.log("#components: " + this.components);
+		// console.log("#components: " + this.components);
 	}
 	readFile(ignored_fileName) {
-		// console.log();
-		// var jsonFile = require('./data/Athaliana.bin100000.schematic.json'); // This cannot be a variable
-		// var jsonFile = require('./data/yeast_bin10k_7indiv_16chr.schematic.json'); // This cannot be a variable
-		// const jsonFile = require('./data/sebastian.Athaliana.all.50000.w100000.schematic.1D.json'); // This cannot be a variable
-		const jsonFile = require('./data/Athaliana.Jan_sort.bin100000.schematic.json');
-		// const jsonFile = require('./data/run1.B1phi1.i1.seqwish.w100.schematic.json'); // ERIKS DATA FROM JANUARY
-		// console.log(jsonFile);
-		return jsonFile
+		// 'data/Athaliana.bin100000.schematic.json'
+		// 'data/yeast_bin10k_7indiv_16chr.schematic.json'
+		// 'data/Athaliana.Jan_sort.bin100000.schematic.json'
+		// 'data/run1.B1phi1.i1.seqwish.w100.schematic.json'
+
+		this.getJSON("data/Athaliana.Jan_sort.bin100000.schematic.json", this.loadJSON.bind(this));
 	}
+	getJSON(filepath, callback) {
+		var xobj = new XMLHttpRequest();
+		xobj.overrideMimeType("application/json");
+        // not async because there's nothing to render without the file
+		xobj.open('GET', process.env.PUBLIC_URL + filepath, false);
+		xobj.onreadystatechange = function () {
+			if (xobj.readyState == 4 && xobj.status == "200") {
+				// Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+				callback(xobj.responseText);
+			}
+		};
+		xobj.send(null);
+	}
+	loadJSON(data){
+		console.log(data);
+		this.jsonData = JSON.parse(data);
+		this.pathNames = this.jsonData.path_names;
+	}
+
 	processArray() {
 		let [beginBin, endBin] = [this.props.store.beginBin, this.props.store.endBin];
 	    if(this.jsonData.json_version !== 8){
