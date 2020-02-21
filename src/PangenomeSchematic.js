@@ -6,19 +6,15 @@ class PangenomeSchematic extends React.Component {
 		 responsibility of the constructor to initialize the observable properties. Either use
 		 the @observable annotation or the extendObservable function.*/
 		super(props);
-		this.readFile('./data/run1.B1phi1.i1.seqwish.w100.schematic.json');// this.props.jsonPath
-	}
+		this.readFile(this.props.store.jsonName);
+    }
 	componentDidUpdate() {
 		this.processArray();
 		// console.log("#components: " + this.components);
 	}
-	readFile(ignored_fileName) {
-		// 'data/Athaliana.bin100000.schematic.json'
-		// 'data/yeast_bin10k_7indiv_16chr.schematic.json'
-		// 'data/Athaliana.Jan_sort.bin100000.schematic.json'
-		// 'data/run1.B1phi1.i1.seqwish.w100.schematic.json'
-
-		this.getJSON("data/Athaliana.Jan_sort.bin100000.schematic.json", this.loadJSON.bind(this));
+	readFile(jsonFilename) {
+	    console.log("Reading", jsonFilename);
+		this.getJSON('data/' + jsonFilename, this.loadJSON.bind(this));
 	}
 	getJSON(filepath, callback) {
 		var xobj = new XMLHttpRequest();
@@ -26,7 +22,7 @@ class PangenomeSchematic extends React.Component {
         // not async because there's nothing to render without the file
 		xobj.open('GET', process.env.PUBLIC_URL + filepath, false);
 		xobj.onreadystatechange = function () {
-			if (xobj.readyState == 4 && xobj.status == "200") {
+			if (xobj.readyState === 4 && xobj.status === 200) {
 				// Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
 				callback(xobj.responseText);
 			}
@@ -34,7 +30,6 @@ class PangenomeSchematic extends React.Component {
 		xobj.send(null);
 	}
 	loadJSON(data){
-		console.log(data);
 		this.jsonData = JSON.parse(data);
 		this.pathNames = this.jsonData.path_names;
 	}

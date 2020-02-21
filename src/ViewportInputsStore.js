@@ -1,5 +1,13 @@
 import { types } from "mobx-state-tree";
 
+function urlExists(dataName) {
+    //source: https://stackoverflow.com/a/22011478/3067894
+    var http=new XMLHttpRequest();
+    http.open('HEAD', process.env.PUBLIC_URL + 'data/' + dataName, false);
+    http.send();
+    return http.status !== 404;
+}
+
 export let RootStore;
 RootStore = types
     .model({
@@ -13,6 +21,7 @@ RootStore = types
         highlightedLink: 0, // we will compare linkColumns
         maximumHeightThisFrame: 150,
         cellToolTipContent: "",
+        jsonName: 'run1.B1phi1.i1.seqwish.w100.schematic.json'
     })
     .actions(self => {
         function updateStart(event){
@@ -40,10 +49,15 @@ RootStore = types
             self.useVerticalCompression = !self.useVerticalCompression;
         }
         function updateHeight(event){
-            self.pixelsPerRow = Number(event.target.value);
+            self.pixelsPerRow = Math.max(1, Number(event.target.value));
         }
         function updateWidth(event){
             self.pixelsPerColumn = Number(event.target.value);
+        }
+        function tryJSONpath(event){
+            if(urlExists(event.target.value)){
+                self.jsonName = event.target.value;
+            }
         }
         return {
             updateStart, updateEnd,
@@ -53,7 +67,8 @@ RootStore = types
             resetRenderStats,
             updateCellTooltipContent,
             toggleUseVerticalCompression,
-            updateHeight,updateWidth
+            updateHeight,updateWidth,
+            tryJSONpath
         }
     })
     .views(self => ({}));
