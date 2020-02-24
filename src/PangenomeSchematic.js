@@ -1,4 +1,5 @@
 import React from 'react';
+import * as $ from 'jquery';
 
 class PangenomeSchematic extends React.Component {
 	constructor(props) {
@@ -9,7 +10,6 @@ class PangenomeSchematic extends React.Component {
 		this.readFile(this.props.store.jsonName);
     }
 	componentDidUpdate() {
-		this.processArray();
 		// console.log("#components: " + this.components);
 	}
 	readFile(jsonFilename) {
@@ -32,11 +32,15 @@ class PangenomeSchematic extends React.Component {
 	loadJSON(data){
 		this.jsonData = JSON.parse(data);
 		this.pathNames = this.jsonData.path_names;
+		this.processArray();
 	}
 
 	processArray() {
+		if(!this.jsonData){
+			return false;
+		}
 		let [beginBin, endBin] = [this.props.store.beginBin, this.props.store.endBin];
-	    if(this.jsonData.json_version !== 8){
+	    if(this.jsonData.json_version !== 9){
 	        throw MediaError("Wrong Data JSON version: was expecting version 8, got " + this.jsonData.json_version + ".  " +
             "This version introduced first and last nucleotide for each bin/path.  " + // KEEP THIS UP TO DATE!
             "Using a mismatched data file and renderer will cause unpredictable behavior," +
