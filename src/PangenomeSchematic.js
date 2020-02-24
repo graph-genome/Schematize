@@ -8,22 +8,27 @@ class PangenomeSchematic extends React.Component {
 		 responsibility of the constructor to initialize the observable properties. Either use
 		 the @observable annotation or the extendObservable function.*/
 		super(props);
-        this.pathNames = []
-        this.components = []
-        this.getJSON(this.props.store.currentChunkURL, this.loadJSON.bind(this));
-    }
+		this.pathNames = []
+		this.components = []
+		this.getJSON(this.props.store.currentChunkURL, this.loadJSON.bind(this));
+		//whenever jsonName changes,
+		observe(this.props.store, "jsonName", () => {
+			this.loadIndexFile(this.props.store.jsonName)});
+		console.log("public ", process.env.PUBLIC_URL )
+	}
 	componentDidUpdate() {
 		// console.log("#components: " + this.components);
+	}
+	openRelevantChunk(chunk_index){
+		let currentChunk = chunk_index["files"][0]["file"];
+		//will trigger chunk update in App.nextChunk() which calls this.getJSON
+		this.props.store.switchChunkFile(
+			process.env.PUBLIC_URL + 'data/' + this.props.store.jsonName + '/' + currentChunk)
 	}
 	loadIndexFile(jsonFilename){
 		let indexPath = process.env.PUBLIC_URL + 'data/' + jsonFilename + '/bin2file.json'
 		console.log("Reading", indexPath);
-		$.getJSON(indexPath, function(contents){
-			let currentChunk = contents["files"][0]["file"];
-			//will trigger chunk update in App.nextChunk() which calls this.getJSON
-			this.props.store.switchChunkFile(
-				process.env.PUBLIC_URL + 'data/' + this.props.store.jsonName + '/' + currentChunk)
-		}).fail(function() {
+		$.getJSON(indexPath, this.openRelevantChunk.bind(this)).fail(function() {
 			alert( "error" );
 		})
 	}
