@@ -1,11 +1,15 @@
 import { types } from "mobx-state-tree";
 
 function urlExists(dataName) {
-    //source: https://stackoverflow.com/a/22011478/3067894
-    var http=new XMLHttpRequest();
-    http.open('HEAD', process.env.PUBLIC_URL + 'data/' + dataName, false);
-    http.send();
-    return http.status !== 404;
+    if (dataName === "") {
+        return false
+    } else {
+        //source: https://stackoverflow.com/a/22011478/3067894
+        var http=new XMLHttpRequest();
+        http.open('HEAD', process.env.PUBLIC_URL + 'data/' + dataName, false);
+        http.send();
+        return http.status !== 404;
+    }
 }
 
 export let RootStore;
