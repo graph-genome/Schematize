@@ -1,0 +1,19 @@
+{
+    "bin_size": "100000",
+    "json_version": 9,
+    "last_bin": 4065,
+    "files": [
+        {
+            "first_bin": 0,
+            "file": "chunk0_bin100000.schematic.json"
+        },
+        {
+            "first_bin": 1668,
+            "file": "chunk1_bin100000.schematic.json"
+        },
+        {
+            "first_bin": 3335,
+            "file": "chunk2_bin100000.schematic.json"
+        }
+    ]
+}

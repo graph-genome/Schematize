@@ -1,0 +1,55 @@
+{
+    "bin_size": "100",
+    "json_version": 9,
+    "last_bin": 525,
+    "files": [
+        {
+            "first_bin": 0,
+            "file": "chunk0_bin100.schematic.json"
+        },
+        {
+            "first_bin": 47,
+            "file": "chunk1_bin100.schematic.json"
+        },
+        {
+            "first_bin": 54,
+            "file": "chunk2_bin100.schematic.json"
+        },
+        {
+            "first_bin": 130,
+            "file": "chunk3_bin100.schematic.json"
+        },
+        {
+            "first_bin": 180,
+            "file": "chunk4_bin100.schematic.json"
+        },
+        {
+            "first_bin": 215,
+            "file": "chunk5_bin100.schematic.json"
+        },
+        {
+            "first_bin": 260,
+            "file": "chunk6_bin100.schematic.json"
+        },
+        {
+            "first_bin": 290,
+            "file": "chunk7_bin100.schematic.json"
+        },
+        {
+            "first_bin": 363,
+            "file": "chunk8_bin100.schematic.json"
+        },
+        {
+            "first_bin": 426,
+            "file": "chunk9_bin100.schematic.json"
+        },
+        {
+            "first_bin": 441,
+            "file": "chunk10_bin100.schematic.json"
+        },
+        {
+            "first_bin": 497,
+            "file": "chunk11_bin100.schematic.json"
+        }
+    ]
+}
