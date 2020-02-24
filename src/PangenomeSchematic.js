@@ -1,4 +1,5 @@
 import React from 'react';
+import {observe} from "mobx";
 import * as $ from 'jquery';
 
 class PangenomeSchematic extends React.Component {
@@ -7,14 +8,24 @@ class PangenomeSchematic extends React.Component {
 		 responsibility of the constructor to initialize the observable properties. Either use
 		 the @observable annotation or the extendObservable function.*/
 		super(props);
-		this.readFile(this.props.store.jsonName);
+        this.pathNames = []
+        this.components = []
+        this.getJSON(this.props.store.currentChunkURL, this.loadJSON.bind(this));
     }
 	componentDidUpdate() {
 		// console.log("#components: " + this.components);
 	}
-	readFile(jsonFilename) {
-	    console.log("Reading", jsonFilename);
-		this.getJSON('data/' + jsonFilename, this.loadJSON.bind(this));
+	loadIndexFile(jsonFilename){
+		let indexPath = process.env.PUBLIC_URL + 'data/' + jsonFilename + '/bin2file.json'
+		console.log("Reading", indexPath);
+		$.getJSON(indexPath, function(contents){
+			let currentChunk = contents["files"][0]["file"];
+			//will trigger chunk update in App.nextChunk() which calls this.getJSON
+			this.props.store.switchChunkFile(
+				process.env.PUBLIC_URL + 'data/' + this.props.store.jsonName + '/' + currentChunk)
+		}).fail(function() {
+			alert( "error" );
+		})
 	}
 	getJSON(filepath, callback) {
 		var xobj = new XMLHttpRequest();
@@ -41,8 +52,8 @@ class PangenomeSchematic extends React.Component {
 		}
 		let [beginBin, endBin] = [this.props.store.beginBin, this.props.store.endBin];
 	    if(this.jsonData.json_version !== 9){
-	        throw MediaError("Wrong Data JSON version: was expecting version 8, got " + this.jsonData.json_version + ".  " +
-            "This version introduced first and last nucleotide for each bin/path.  " + // KEEP THIS UP TO DATE!
+	        throw MediaError("Wrong Data JSON version: was expecting version 9, got " + this.jsonData.json_version + ".  " +
+            "This version migrated data into folders with chunks.  " + // KEEP THIS UP TO DATE!
             "Using a mismatched data file and renderer will cause unpredictable behavior," +
             " instead generate a new data file using github.com/graph-genome/component_segmentation.")
         }

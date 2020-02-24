@@ -6,7 +6,7 @@ function urlExists(dataName) {
     } else {
         //source: https://stackoverflow.com/a/22011478/3067894
         var http=new XMLHttpRequest();
-        http.open('HEAD', process.env.PUBLIC_URL + 'data/' + dataName, false);
+        http.open('HEAD', process.env.PUBLIC_URL + 'data/' + dataName + '/bin2file.json', false);
         http.send();
         return http.status !== 404;
     }
@@ -25,7 +25,8 @@ RootStore = types
         highlightedLink: 0, // we will compare linkColumns
         maximumHeightThisFrame: 150,
         cellToolTipContent: "",
-        jsonName: 'run1.B1phi1.i1.seqwish.w100/chunk0_bin100.schematic.json'
+        jsonName: 'run1.B1phi1.i1.seqwish.w100',
+        currentChunkURL: 'data/run1.B1phi1.i1.seqwish.w100/chunk0_bin100.schematic.json'
     })
     .actions(self => {
         function updateStart(event){
@@ -63,6 +64,9 @@ RootStore = types
                 self.jsonName = event.target.value;
             }
         }
+        function switchChunkFile(newFile){
+            self.currentChunkURL = newFile; // not user visible
+        }
         return {
             updateStart, updateEnd,
             updateTopOffset,
@@ -72,7 +76,8 @@ RootStore = types
             updateCellTooltipContent,
             toggleUseVerticalCompression,
             updateHeight,updateWidth,
-            tryJSONpath
+            tryJSONpath,
+            switchChunkFile
         }
     })
     .views(self => ({}));

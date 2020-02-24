@@ -50,10 +50,10 @@ class App extends Component {
         observe(this.props.store, "endBin", this.updateSchematicMetadata.bind(this));
         observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
         observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
-        observe(this.props.store, "jsonName", this.updateFile.bind(this));
+        observe(this.props.store, "currentChunkURL", this.nextChunk.bind(this));
     };
-    updateFile(){
-        this.schematic.readFile(this.props.store.jsonName);
+    nextChunk(){
+        this.schematic.getJSON(this.props.store.currentChunkURL, this.schematic.loadJSON.bind(this.schematic));
         this.updateSchematicMetadata();
     }
     updateSchematicMetadata() {

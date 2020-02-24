@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "jquery": "^3.4.1",
     "konva": "^4.1.2",
     "mobx": "^5.15.2",
     "mobx-react": "^6.1.4",
