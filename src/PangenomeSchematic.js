@@ -25,10 +25,10 @@ class PangenomeSchematic extends React.Component {
 		this.props.store.updateEnd(Math.min(chunk_index["last_bin"], this.props.store.endBin));
 		//will trigger chunk update in App.nextChunk() which calls this.getJSON
 		this.props.store.switchChunkFile(
-			process.env.PUBLIC_URL + 'data/' + this.props.store.jsonName + '/' + currentChunk)
+			process.env.PUBLIC_URL + 'test_data/' + this.props.store.jsonName + '/' + currentChunk)
 	}
 	loadIndexFile(jsonFilename){
-		let indexPath = process.env.PUBLIC_URL + 'data/' + jsonFilename + '/bin2file.json'
+		let indexPath = process.env.PUBLIC_URL + 'test_data/' + jsonFilename + '/bin2file.json'
 		console.log("Reading", indexPath);
 		$.getJSON(indexPath, this.openRelevantChunk.bind(this)).fail(function() {
 			alert( "error" );

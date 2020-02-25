@@ -6,7 +6,7 @@ function urlExists(dataName) {
     } else {
         //source: https://stackoverflow.com/a/22011478/3067894
         var http=new XMLHttpRequest();
-        http.open('HEAD', process.env.PUBLIC_URL + 'data/' + dataName + '/bin2file.json', false);
+        http.open('HEAD', process.env.PUBLIC_URL + 'test_data/' + dataName + '/bin2file.json', false);
         http.send();
         return http.status !== 404;
     }
