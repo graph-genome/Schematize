@@ -26,7 +26,8 @@ RootStore = types
         maximumHeightThisFrame: 150,
         cellToolTipContent: "",
         jsonName: 'run1.B1phi1.i1.seqwish.w100',
-        currentChunkURL: 'test_data/run1.B1phi1.i1.seqwish.w100/chunk0_bin100.schematic.json'
+        startChunkURL: 'test_data/run1.B1phi1.i1.seqwish.w100/chunk0_bin100.schematic.json',
+        endChunkURL: 'test_data/run1.B1phi1.i1.seqwish.w100/chunk1_bin100.schematic.json'
     })
     .actions(self => {
         function updateStart(value){
@@ -72,8 +73,9 @@ RootStore = types
                 self.jsonName = event.target.value;
             }
         }
-        function switchChunkFile(newFile){
-            self.currentChunkURL = newFile; // not user visible
+        function switchChunkFiles(startFile, endFile){
+            self.startChunkURL = startFile; // not user visible
+            self.endChunkURL = endFile; // not user visible
         }
         return {
             updateStart, updateEnd,
@@ -85,7 +87,7 @@ RootStore = types
             toggleUseVerticalCompression,
             updateHeight,updateWidth,
             tryJSONpath,
-            switchChunkFile
+            switchChunkFiles
         }
     })
     .views(self => ({}));

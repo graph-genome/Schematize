@@ -11,7 +11,7 @@ class PangenomeSchematic extends React.Component {
 		this.pathNames = []
 		this.components = []
 		this.loadIndexFile(this.props.store.jsonName); //initializes this.chunk_index
-		this.getJSON(this.props.store.currentChunkURL, this.loadJSON.bind(this));
+		this.getJSON(this.props.store.startChunkURL, this.loadJSON.bind(this));
 		//whenever jsonName changes,
 		observe(this.props.store, "jsonName", () => {
 			this.loadIndexFile(this.props.store.jsonName)});
@@ -23,19 +23,24 @@ class PangenomeSchematic extends React.Component {
 	openRelevantChunk(chunk_index){
 		this.chunk_index = chunk_index;
 		//only do a new chunk scan if it's needed
-		let currentChunk = chunk_index["files"][0]["file"];
-		for(let chunk of chunk_index["files"]){ //linear scan for the right chunk
+		let startFile = chunk_index["files"][0]["file"];
+		let nextChunk = null;
+		for(let i=0; i < chunk_index["files"].length; ++i){ //linear scan for the right chunk
+			let chunk = chunk_index["files"][i];
 			if(chunk["last_bin"] >= this.props.store.beginBin && chunk["first_bin"] <= this.props.store.beginBin){
-				currentChunk = chunk["file"]; // retrieve file name
-				console.log("Opening chunk", currentChunk)
+				startFile = chunk["file"]; // retrieve file name
+				nextChunk = chunk;  // fallback: if it's last chunk in series
+				if(i+1 < chunk_index["files"].length){nextChunk = chunk_index["files"][i+1];}
+				console.log("Opening chunk", startFile, nextChunk["file"])
 				//restrict end position to end of the new chunk
-				this.props.store.updateEnd(Math.min(chunk["last_bin"], this.props.store.endBin));
+				this.props.store.updateEnd(Math.min(nextChunk["last_bin"], this.props.store.endBin));
 				break; // done scanning
 			}
 		}
 		//will trigger chunk update in App.nextChunk() which calls this.loadJSON
-		this.props.store.switchChunkFile(
-			process.env.PUBLIC_URL + 'test_data/' + this.props.store.jsonName + '/' + currentChunk);
+		this.props.store.switchChunkFiles(
+			process.env.PUBLIC_URL + 'test_data/' + this.props.store.jsonName + '/' + startFile,
+			process.env.PUBLIC_URL + 'test_data/' + this.props.store.jsonName + '/' + nextChunk["file"]);
 	}
 	loadIndexFile(jsonFilename){
 		let indexPath = process.env.PUBLIC_URL + 'test_data/' + jsonFilename + '/bin2file.json'
