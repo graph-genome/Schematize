@@ -52,12 +52,13 @@ class App extends Component {
         observe(this.props.store, "useVerticalCompression", this.recalcY.bind(this));
         observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
         observe(this.props.store, "startChunkURL", this.nextChunk.bind(this));
+        this.nextChunk();
     };
     nextChunk(){
-        this.schematic.getJSON(this.props.store.startChunkURL, this.queueUpdate.bind(this));
+        this.schematic.blockingJsonFetch(this.props.store.startChunkURL, this.queueUpdate.bind(this));
     }
     queueUpdate(data){
-        this.schematic.loadJSON(data);
+        this.schematic.loadFirstJSON(data);
         this.updateSchematicMetadata(true);
     }
     updateSchematicMetadata(processingDone = false) {
@@ -260,7 +261,7 @@ class App extends Component {
                     width={this.state.actualWidth + 60}
                     height={this.props.store.topOffset + this.visibleHeight()}>
                     <Layer ref={this.layerRef}>
-                        {this.state.schematize.map(
+                        {this.schematic.components.map(
                             (schematizeComponent, i)=> {
                                 return (
                                     <React.Fragment key={"f" + i}>

@@ -74,8 +74,8 @@ RootStore = types
             }
         }
         function switchChunkFiles(startFile, endFile){
+            self.endChunkURL = endFile; // CRITICAL ORDER!: doesn't cause an update
             self.startChunkURL = startFile; // not user visible
-            self.endChunkURL = endFile; // not user visible
         }
         return {
             updateStart, updateEnd,

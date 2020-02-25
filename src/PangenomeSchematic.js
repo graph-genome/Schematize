@@ -11,7 +11,7 @@ class PangenomeSchematic extends React.Component {
 		this.pathNames = []
 		this.components = []
 		this.loadIndexFile(this.props.store.jsonName); //initializes this.chunk_index
-		this.getJSON(this.props.store.startChunkURL, this.loadJSON.bind(this));
+		this.blockingJsonFetch(this.props.store.startChunkURL, this.loadFirstJSON.bind(this));
 		//whenever jsonName changes,
 		observe(this.props.store, "jsonName", () => {
 			this.loadIndexFile(this.props.store.jsonName)});
@@ -24,7 +24,7 @@ class PangenomeSchematic extends React.Component {
 		this.chunk_index = chunk_index;
 		//only do a new chunk scan if it's needed
 		let startFile = chunk_index["files"][0]["file"];
-		let nextChunk = null;
+		let nextChunk = chunk_index["files"][0];
 		for(let i=0; i < chunk_index["files"].length; ++i){ //linear scan for the right chunk
 			let chunk = chunk_index["files"][i];
 			if(chunk["last_bin"] >= this.props.store.beginBin && chunk["first_bin"] <= this.props.store.beginBin){
@@ -45,11 +45,11 @@ class PangenomeSchematic extends React.Component {
 	loadIndexFile(jsonFilename){
 		let indexPath = process.env.PUBLIC_URL + 'test_data/' + jsonFilename + '/bin2file.json'
 		console.log("Reading", indexPath);
-		$.getJSON(indexPath, this.openRelevantChunk.bind(this)).fail(function() {
-			alert( "error" );
-		})
+		$.getJSON(indexPath, this.openRelevantChunk.bind(this)).fail(function(e) {
+			alert("error" + e);
+		});
 	}
-	getJSON(filepath, callback) {
+	blockingJsonFetch(filepath, callback) {
 		console.log("Fetching", filepath);
 		var xobj = new XMLHttpRequest();
 		xobj.overrideMimeType("application/json");
@@ -58,17 +58,29 @@ class PangenomeSchematic extends React.Component {
 		xobj.onreadystatechange = function () {
 			if (xobj.readyState === 4 && xobj.status === 200) {
 				// Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-				callback(xobj.responseText);
+				callback(JSON.parse(xobj.responseText));
 			}
 		};
 		xobj.send(null);
 	}
-	loadJSON(data){
-		this.jsonData = JSON.parse(data);
+	loadFirstJSON(data){
+		this.jsonData = data;
 		this.pathNames = this.jsonData.path_names;
+		if(this.props.store.startChunkURL === this.props.store.endChunkURL){
+			this.processArray();
+		}else{
+			this.blockingJsonFetch(this.props.store.endChunkURL, this.loadSecondJSON.bind(this));
+		}
+	}
+	loadSecondJSON(secondChunkContents){
+		if(this.jsonData.last_bin < secondChunkContents.last_bin){
+			this.jsonData.last_bin = secondChunkContents.last_bin;
+			this.jsonData.components.push(...secondChunkContents.components)
+		}else{
+			console.error("Second chunk was earlier than the first.  Check the order you set store.endChunkURL")
+		}
 		this.processArray();
 	}
-
 	processArray() {
 		/*parses beginBin to endBin range, returns false if new file needed*/
 		if(!this.jsonData){
