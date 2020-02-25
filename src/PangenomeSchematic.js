@@ -14,7 +14,7 @@ class PangenomeSchematic extends React.Component {
 		//whenever jsonName changes,
 		observe(this.props.store, "jsonName", () => {
 			this.loadIndexFile(this.props.store.jsonName)});
-		console.log("public ", process.env.PUBLIC_URL )
+		// console.log("public ", process.env.PUBLIC_URL ) //PUBLIC_URL is empty
 	}
 	componentDidUpdate() {
 		// console.log("#components: " + this.components);

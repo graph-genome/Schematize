@@ -26,7 +26,7 @@ RootStore = types
         maximumHeightThisFrame: 150,
         cellToolTipContent: "",
         jsonName: 'run1.B1phi1.i1.seqwish.w100',
-        currentChunkURL: 'data/run1.B1phi1.i1.seqwish.w100/chunk0_bin100.schematic.json'
+        currentChunkURL: 'test_data/run1.B1phi1.i1.seqwish.w100/chunk0_bin100.schematic.json'
     })
     .actions(self => {
         function updateStart(event){
