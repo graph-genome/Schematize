@@ -53,7 +53,10 @@ class App extends Component {
         observe(this.props.store, "currentChunkURL", this.nextChunk.bind(this));
     };
     nextChunk(){
-        this.schematic.getJSON(this.props.store.currentChunkURL, this.schematic.loadJSON.bind(this.schematic));
+        this.schematic.getJSON(this.props.store.currentChunkURL, this.queueUpdate.bind(this));
+    }
+    queueUpdate(data){
+        this.schematic.loadJSON(data);
         this.updateSchematicMetadata();
     }
     updateSchematicMetadata() {

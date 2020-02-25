@@ -32,8 +32,16 @@ RootStore = types
         function updateStart(event){
             self.beginBin = Number(event.target.value);
         }
-        function updateEnd(event){
-            self.endBin = Math.max(self.beginBin +1 , Number(event.target.value));
+        function updateEnd(value){
+            if(value.hasOwnProperty("target")){ //event object
+                value = Number(value.target.value);
+            }
+            let val = //Math.min(self.last_bin, //TODO: cap at graph genome size
+                Math.max(1, value);
+            if(val < self.beginBin){ //crush beginBin
+                self.beginBin = val - 1;
+            }
+            self.endBin = val;
         }
         function updateTopOffset(newTopOffset) {
             self.topOffset = newTopOffset;

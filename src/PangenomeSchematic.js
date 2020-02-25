@@ -21,6 +21,8 @@ class PangenomeSchematic extends React.Component {
 	}
 	openRelevantChunk(chunk_index){
 		let currentChunk = chunk_index["files"][0]["file"];
+        //if the new file is shorter, drop the end position.
+		this.props.store.updateEnd(Math.min(chunk_index["last_bin"], this.props.store.endBin));
 		//will trigger chunk update in App.nextChunk() which calls this.getJSON
 		this.props.store.switchChunkFile(
 			process.env.PUBLIC_URL + 'data/' + this.props.store.jsonName + '/' + currentChunk)
