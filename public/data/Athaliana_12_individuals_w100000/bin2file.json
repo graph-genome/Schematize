@@ -1,5 +1,5 @@
 {
-    "bin_size": "100000",
+    "bin_width": "100000",
     "json_version": 9,
     "last_bin": 4065,
     "files": [

@@ -1,6 +1,6 @@
 {
   "json_version": 9,
-  "bin_size": "100",
+  "bin_width": "100",
   "first_bin": 180,
   "last_bin": 214,
   "components": [
