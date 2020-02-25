@@ -58,23 +58,24 @@ class App extends Component {
     }
     queueUpdate(data){
         this.schematic.loadJSON(data);
-        this.updateSchematicMetadata();
+        this.updateSchematicMetadata(true);
     }
-    updateSchematicMetadata() {
-        console.log("Updating schematic state")
-        this.schematic.processArray(); //parses beginBin to endBin range
-        console.log("#paths: " + this.schematic.pathNames.length);
-        console.log("#components: " + this.schematic.components.length);
-        console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
+    updateSchematicMetadata(processingDone = false) {
+        if(this.schematic.processArray()){ //parses beginBin to endBin range, returns false if new file needed
+            // console.log("#paths: " + this.schematic.pathNames.length);
+            // console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
+            console.log("#components: " + this.schematic.components.length);
 
-        // console.log(this.schematic.components);
-        this.setState({
-            schematize: this.schematic.components,
-            pathNames: this.schematic.pathNames,
-        });
-        this.recalcXLayout();
-        this.compressed_row_mapping = compress_visible_rows(this.schematic.components);
-        this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(this.schematic.components) // TODO add this to mobx-state-tree
+            // console.log(this.schematic.components);
+            this.setState({
+                schematize: this.schematic.components,
+                pathNames: this.schematic.pathNames,
+            });
+            this.recalcXLayout();
+            this.compressed_row_mapping = compress_visible_rows(this.schematic.components);
+            this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(this.schematic.components) // TODO add this to mobx-state-tree
+        }
+
     }
 
     recalcXLayout(){

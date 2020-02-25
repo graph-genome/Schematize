@@ -10,6 +10,7 @@ class PangenomeSchematic extends React.Component {
 		super(props);
 		this.pathNames = []
 		this.components = []
+		this.loadIndexFile(this.props.store.jsonName); //initializes this.chunk_index
 		this.getJSON(this.props.store.currentChunkURL, this.loadJSON.bind(this));
 		//whenever jsonName changes,
 		observe(this.props.store, "jsonName", () => {
@@ -20,12 +21,21 @@ class PangenomeSchematic extends React.Component {
 		// console.log("#components: " + this.components);
 	}
 	openRelevantChunk(chunk_index){
+		this.chunk_index = chunk_index;
+		//only do a new chunk scan if it's needed
 		let currentChunk = chunk_index["files"][0]["file"];
-        //if the new file is shorter, drop the end position.
-		this.props.store.updateEnd(Math.min(chunk_index["last_bin"], this.props.store.endBin));
-		//will trigger chunk update in App.nextChunk() which calls this.getJSON
+		for(let chunk of chunk_index["files"]){ //linear scan for the right chunk
+			if(chunk["last_bin"] >= this.props.store.beginBin && chunk["first_bin"] <= this.props.store.beginBin){
+				currentChunk = chunk["file"]; // retrieve file name
+				console.log("Opening chunk", currentChunk)
+				//restrict end position to end of the new chunk
+				this.props.store.updateEnd(Math.min(chunk["last_bin"], this.props.store.endBin));
+				break; // done scanning
+			}
+		}
+		//will trigger chunk update in App.nextChunk() which calls this.loadJSON
 		this.props.store.switchChunkFile(
-			process.env.PUBLIC_URL + 'test_data/' + this.props.store.jsonName + '/' + currentChunk)
+			process.env.PUBLIC_URL + 'test_data/' + this.props.store.jsonName + '/' + currentChunk);
 	}
 	loadIndexFile(jsonFilename){
 		let indexPath = process.env.PUBLIC_URL + 'test_data/' + jsonFilename + '/bin2file.json'
@@ -35,6 +45,7 @@ class PangenomeSchematic extends React.Component {
 		})
 	}
 	getJSON(filepath, callback) {
+		console.log("Fetching", filepath);
 		var xobj = new XMLHttpRequest();
 		xobj.overrideMimeType("application/json");
         // not async because there's nothing to render without the file
@@ -54,33 +65,40 @@ class PangenomeSchematic extends React.Component {
 	}
 
 	processArray() {
+		/*parses beginBin to endBin range, returns false if new file needed*/
 		if(!this.jsonData){
 			return false;
 		}
 		let [beginBin, endBin] = [this.props.store.beginBin, this.props.store.endBin];
-	    if(this.jsonData.json_version !== 9){
-	        throw MediaError("Wrong Data JSON version: was expecting version 9, got " + this.jsonData.json_version + ".  " +
-            "This version migrated data into folders with chunks.  " + // KEEP THIS UP TO DATE!
+	    if(this.jsonData.json_version !== 10){
+	        throw MediaError("Wrong Data JSON version: was expecting version 10, got " + this.jsonData.json_version + ".  " +
+            "This version added last_bin to data chunk index.  " + // KEEP THIS UP TO DATE!
             "Using a mismatched data file and renderer will cause unpredictable behavior," +
             " instead generate a new data file using github.com/graph-genome/component_segmentation.")
         }
 		console.log("Parsing components ", beginBin, " - ", endBin);
 
-		// while(wrongFile){
-		// 	getNextFileName()
-		// }
-		// let data = getJSONData(filename);
-		var componentArray = [];
-		var offsetLength = 0;
-		for (var component of this.jsonData.components) {
-			if(component.last_bin >= beginBin){
-				var componentItem = new Component(component, offsetLength);
-				offsetLength += componentItem.arrivals.length + componentItem.departures.length-1;
-				componentArray.push(componentItem);
-				if(component.first_bin > endBin && componentArray.length > 1){break}
+		if(this.props.store.beginBin > this.jsonData.components.slice(-1)[0].last_bin ||
+			this.props.store.beginBin < this.jsonData.components[0].first_bin) {
+			//only do a new chunk scan if it's needed
+			this.openRelevantChunk(this.chunk_index); // this will trigger a second update cycle
+			return false;
+		}else {
+			var componentArray = [];
+			var offsetLength = 0;
+			for (var component of this.jsonData.components) {
+				if (component.last_bin >= beginBin) {
+					var componentItem = new Component(component, offsetLength);
+					offsetLength += componentItem.arrivals.length + componentItem.departures.length - 1;
+					componentArray.push(componentItem);
+					if (component.first_bin > endBin && componentArray.length > 1) {
+						break
+					}
+				}
 			}
+			this.components = componentArray;
+			return true;
 		}
-		this.components = componentArray;
 	}
 }
 

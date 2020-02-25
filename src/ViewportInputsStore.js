@@ -17,7 +17,7 @@ RootStore = types
     .model({
         useVerticalCompression: false,
         beginBin: 1,
-        endBin: 100,
+        endBin: 40,
         pixelsPerColumn: 7,
         pixelsPerRow: 7,
         leftOffset: 25,
