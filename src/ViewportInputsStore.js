@@ -29,8 +29,8 @@ RootStore = types
         currentChunkURL: 'test_data/run1.B1phi1.i1.seqwish.w100/chunk0_bin100.schematic.json'
     })
     .actions(self => {
-        function updateStart(event){
-            self.beginBin = Number(event.target.value);
+        function updateStart(value){
+            self.beginBin = Number(value);
         }
         function updateEnd(value){
             if(value.hasOwnProperty("target")){ //event object
