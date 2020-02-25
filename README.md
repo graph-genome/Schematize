@@ -90,3 +90,7 @@ Install dependencies:
  `(cd packages/jbrowse-web/ && yarn start)`
  
  Navigate to `File` -> `New pangenome view`. Now you have a PangenomeView track running in JBrowse2!
+ 
+ ### Developer Notes
+ All test files must be copied to `jbrowse-components/packages/jbrowse-web/test_data`. 
+ In `jbrowse-components/packages/pangenome-view/src/PangenomeView/components/prototype/src/PangenomeSchematic.js` change path `data` to path `test_data` so that we point to the currect folder for our data to load.
