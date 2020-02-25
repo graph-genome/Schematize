@@ -39,7 +39,7 @@ class CompressedViewSwitch extends React.Component {
         return (
             <input
                 type="checkbox"
-                checked={<Observer>{() => this.props.store.useVerticalCompression}</Observer>}
+                value={<Observer>{() => this.props.store.useVerticalCompression}</Observer>}
                 onChange={this.onToggle.bind(this)}
             />
         );
