@@ -1,4 +1,5 @@
 import { types } from "mobx-state-tree";
+import {action} from "mobx";
 
 function urlExists(dataName) {
     if (dataName === "") {
@@ -30,19 +31,16 @@ RootStore = types
         endChunkURL: 'test_data/run1.B1phi1.i1.seqwish.w100/chunk1_bin100.schematic.json'
     })
     .actions(self => {
-        function updateStart(value){
-            self.beginBin = Number(value);
-        }
-        function updateEnd(value){
-            if(value.hasOwnProperty("target")){ //event object
-                value = Number(value.target.value);
+        function updateStartAndEnd(newStart, newEnd){
+            /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
+            newStart = Math.max(1,Number(newStart));
+            newEnd = Math.max(1, Number(newEnd));
+            if(newEnd < newStart){ //crush newStart
+                newStart = newEnd - 1;
             }
-            let val = //Math.min(self.last_bin, //TODO: cap at graph genome size
-                Math.max(1, value);
-            if(val < self.beginBin){ //crush beginBin
-                self.beginBin = val - 1;
-            }
-            self.endBin = val;
+            self.endBin = newEnd; //doesn't cause an update?
+            self.beginBin = Number(newStart); // triggers updates
+            console.log("Viewport set", self.beginBin, "-", self.endBin);
         }
         function updateTopOffset(newTopOffset) {
             self.topOffset = newTopOffset;
@@ -78,7 +76,7 @@ RootStore = types
             self.startChunkURL = startFile; // not user visible
         }
         return {
-            updateStart, updateEnd,
+            updateStartAndEnd,
             updateTopOffset,
             updateHighlightedLink,
             updateMaxHeight,

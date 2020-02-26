@@ -33,7 +33,8 @@ class PangenomeSchematic extends React.Component {
 				if(i+1 < chunk_index["files"].length){nextChunk = chunk_index["files"][i+1];}
 				console.log("Opening chunk", startFile, nextChunk["file"])
 				//restrict end position to end of the new chunk
-				this.props.store.updateEnd(Math.min(nextChunk["last_bin"], this.props.store.endBin));
+				this.props.store.updateStartAndEnd(this.props.store.beginBin,
+					Math.min(nextChunk["last_bin"], this.props.store.endBin));
 				break; // done scanning
 			}
 		}
@@ -114,6 +115,7 @@ class PangenomeSchematic extends React.Component {
 				}
 			}
 			this.components = componentArray;
+			console.log("processArray", this.jsonData.first_bin, this.jsonData.last_bin)
 			return true;
 		}
 	}

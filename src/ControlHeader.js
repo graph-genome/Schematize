@@ -3,8 +3,8 @@ import {Observer} from 'mobx-react';
 
 class ControlHeader extends React.Component{
     shift(diff){
-        this.props.store.updateStart(this.props.store.beginBin + diff)
-        this.props.store.updateEnd(this.props.store.endBin + diff)
+        this.props.store.updateStartAndEnd(this.props.store.beginBin + diff,
+            this.props.store.endBin + diff);
     }
     render() {
         return (
@@ -16,10 +16,16 @@ class ControlHeader extends React.Component{
                 <button className="button" onClick={()=>this.shift(-20)}>⮜</button>
                 <button className="button" onClick={()=>this.shift(-10)}>⮘</button>
                 Pangenome Position:
+                <Observer>{() => (
                 <input type="number" value={this.props.store.beginBin}
-                       onChange={(event)=>this.props.store.updateStart(event.target.value)} style={{width: '80px'}}/>-
+                       onChange={(event)=>this.props.store.updateStartAndEnd(event.target.value, this.props.store.endBin)}
+                       style={{width: '80px'}}/>
+                )}</Observer>-
+                <Observer>{() => (
                 <input type="number" value={this.props.store.endBin}
-                       onChange={(event)=>this.props.store.updateEnd(event.target.value)} style={{width: '80px'}}/>
+                       onChange={(event)=>this.props.store.updateStartAndEnd(this.props.store.beginBin,event.target.value)}
+                       style={{width: '80px'}}/>
+                )}</Observer>
                 <button className="button" onClick={()=>this.shift(10)}>⮚</button>
                 <button className="button" onClick={()=>this.shift(20)}>⮞</button>
             </span>

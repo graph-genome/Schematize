@@ -47,6 +47,7 @@ class App extends Component {
         };
         this.schematic = new PangenomeSchematic({store: this.props.store}); //Read file, parse nothing
         observe(this.props.store, "beginBin", this.updateSchematicMetadata.bind(this));
+        //TODO: endBin observer is still double triggering on shift() buttons. wait for beginBin event?
         observe(this.props.store, "endBin", this.updateSchematicMetadata.bind(this));
         observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
         observe(this.props.store, "useVerticalCompression", this.recalcY.bind(this));
@@ -55,9 +56,11 @@ class App extends Component {
         this.nextChunk();
     };
     nextChunk(){
+        console.log("nextChunk", this.props.store.startChunkURL);
         this.schematic.blockingJsonFetch(this.props.store.startChunkURL, this.queueUpdate.bind(this));
     }
     queueUpdate(data){
+        console.log("queueUpdate", this.props.store.startChunkURL);
         this.schematic.loadFirstJSON(data);
         this.updateSchematicMetadata(true);
     }
@@ -65,7 +68,7 @@ class App extends Component {
         if(this.schematic.processArray()){ //parses beginBin to endBin range, returns false if new file needed
             // console.log("#paths: " + this.schematic.pathNames.length);
             // console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
-            console.log("#components: " + this.schematic.components.length);
+            console.log("updateSchematicMetadata #components: " + this.schematic.components.length);
 
             // console.log(this.schematic.components);
             this.setState({
@@ -76,10 +79,9 @@ class App extends Component {
             this.compressed_row_mapping = compress_visible_rows(this.schematic.components);
             this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(this.schematic.components) // TODO add this to mobx-state-tree
         }
-
     }
-
     recalcXLayout(){
+        console.log("recalcXLayout")
         const sum = (accumulator, currentValue) => accumulator + currentValue;
         let columnsInComponents = this.schematic.components.map(component =>
             component.arrivals.length + (component.departures.length-1) +
