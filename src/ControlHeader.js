@@ -16,16 +16,14 @@ class ControlHeader extends React.Component{
                 <button className="button" onClick={()=>this.shift(-20)}>⮜</button>
                 <button className="button" onClick={()=>this.shift(-10)}>⮘</button>
                 Pangenome Position:
-                <Observer>{() => (
+                <Observer>{() => <>
                 <input type="number" value={this.props.store.beginBin}
                        onChange={(event)=>this.props.store.updateStartAndEnd(event.target.value, this.props.store.endBin)}
-                       style={{width: '80px'}}/>
-                )}</Observer>-
-                <Observer>{() => (
+                       style={{width: '80px'}}/>-
                 <input type="number" value={this.props.store.endBin}
                        onChange={(event)=>this.props.store.updateStartAndEnd(this.props.store.beginBin,event.target.value)}
                        style={{width: '80px'}}/>
-                )}</Observer>
+                </>}</Observer>
                 <button className="button" onClick={()=>this.shift(10)}>⮚</button>
                 <button className="button" onClick={()=>this.shift(20)}>⮞</button>
             </span>

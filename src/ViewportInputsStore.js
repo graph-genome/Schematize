@@ -35,6 +35,10 @@ RootStore = types
             /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
             newStart = Math.max(1,Number(newStart));
             newEnd = Math.max(1, Number(newEnd));
+            if(newEnd === self.endBin){ //end has not changed
+                let diff = self.endBin - self.beginBin;
+                newEnd = newStart + diff; //Allows start to push End to new chunks
+            }
             if(newEnd < newStart){ //crush newStart
                 newStart = newEnd - 1;
             }

@@ -67,6 +67,7 @@ class PangenomeSchematic extends React.Component {
 	loadFirstJSON(data){
 		this.jsonData = data;
 		this.pathNames = this.jsonData.path_names;
+        this.jsonData.mid_bin = data.last_bin; //placeholder
 		if(this.props.store.startChunkURL === this.props.store.endChunkURL){
 			this.processArray();
 		}else{
@@ -75,6 +76,7 @@ class PangenomeSchematic extends React.Component {
 	}
 	loadSecondJSON(secondChunkContents){
 		if(this.jsonData.last_bin < secondChunkContents.last_bin){
+            this.jsonData.mid_bin = this.jsonData.last_bin; //boundary between two files
 			this.jsonData.last_bin = secondChunkContents.last_bin;
 			this.jsonData.components.push(...secondChunkContents.components)
 		}else{
@@ -95,9 +97,9 @@ class PangenomeSchematic extends React.Component {
             " instead generate a new data file using github.com/graph-genome/component_segmentation.")
         }
 		console.log("Parsing components ", beginBin, " - ", endBin);
-
-		if(this.props.store.beginBin > this.jsonData.components.slice(-1)[0].last_bin ||
-			this.props.store.beginBin < this.jsonData.components[0].first_bin) {
+        //Fetch the next file when viewport no longer needs the first file.
+		if(this.props.store.beginBin > this.jsonData.mid_bin ||
+			this.props.store.beginBin < this.jsonData.first_bin) {
 			//only do a new chunk scan if it's needed
 			this.openRelevantChunk(this.chunk_index); // this will trigger a second update cycle
 			return false;

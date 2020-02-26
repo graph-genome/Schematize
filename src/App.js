@@ -53,7 +53,7 @@ class App extends Component {
         observe(this.props.store, "useVerticalCompression", this.recalcY.bind(this));
         observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
         observe(this.props.store, "startChunkURL", this.nextChunk.bind(this));
-        this.nextChunk();
+        // this.nextChunk();
     };
     nextChunk(){
         console.log("nextChunk", this.props.store.startChunkURL);
