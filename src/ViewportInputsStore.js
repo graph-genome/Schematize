@@ -26,9 +26,9 @@ RootStore = types
         highlightedLink: 0, // we will compare linkColumns
         maximumHeightThisFrame: 150,
         cellToolTipContent: "",
-        jsonName: 'run1.B1phi1.i1.seqwish.w100',
-        startChunkURL: 'test_data/run1.B1phi1.i1.seqwish.w100/chunk0_bin100.schematic.json',
-        endChunkURL: 'test_data/run1.B1phi1.i1.seqwish.w100/chunk1_bin100.schematic.json'
+        jsonName: 'Athaliana_12_individuals_w100000',
+        startChunkURL: 'test_data/Athaliana_12_individuals_w100000/chunk0_bin100000.schematic.json',
+        endChunkURL: 'test_data/Athaliana_12_individuals_w100000/chunk1_bin100000.schematic.json'
     })
     .actions(self => {
         function updateStartAndEnd(newStart, newEnd){

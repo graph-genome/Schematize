@@ -119,13 +119,14 @@ class App extends Component {
             let numberOccupants = occupants.filter(Boolean).length;
             maxNumberRowsInOneComponent = Math.max(numberOccupants, maxNumberRowsInOneComponent)
         }
+        console.log("Max number of rows across components: " + maxNumberRowsInOneComponent);
+
         return maxNumberRowsInOneComponent;
     }
 
     visibleHeight(){
         if (this.props.store.useVerticalCompression || !this.compressed_row_mapping) {
             // this.state.schematize.forEach(value => Math.max(value.occupants.filter(Boolean).length, maxNumberRowsInOneComponent));
-            console.log("Max number of rows across components: " + this.maxNumRowsAcrossComponents);
             return (this.maxNumRowsAcrossComponents + 2.5) * this.props.store.pixelsPerRow;
         } else {
             return (Object.keys(this.compressed_row_mapping).length + 0.25) * this.props.store.pixelsPerRow;
@@ -201,55 +202,12 @@ class App extends Component {
     }
 
     renderLink(link) {
-        /*Translates the LinkRecord coordinates into pixels and defines the curve shape.
-        * I've spent way too long fiddling with these numbers at different pixelsPerColumn
-        * I suggest you don't fiddle with them unless you plan on nesting the React
-        * Components to ensure that everything is relative coordinates.*/
-        let [arrowXCoord, absDepartureX] = [link.xArrival, link.xDepart];
-        // put in relative coordinates to arriving LinkColumn
-        let departureX = absDepartureX - arrowXCoord + this.props.store.pixelsPerColumn/2;
-        let arrX = this.props.store.pixelsPerColumn/2;
-        let bottom = -2;//-this.props.store.pixelsPerColumn;
-        let turnDirection = (departureX < 0)? -1 : 1;
-        const departOrigin = [departureX, this.props.store.pixelsPerColumn-2];
-        const departCorner = [departureX - turnDirection, -link.elevation + 2];
-        let departTop = [departureX - (turnDirection*6), -link.elevation];
-        let arriveTop = [arrX + turnDirection*6, -link.elevation];
-        let arriveCorner = [arrX + turnDirection, -link.elevation + 2]; // 1.5 in from actual corner
-        const arriveCornerEnd = [arrX, -5];
-        let points = [
-            departOrigin[0], departOrigin[1],
-            departCorner[0], departCorner[1],
-            departTop[0], departTop[1],
-            arriveTop[0], arriveTop[1],
-            arriveCorner[0], arriveCorner[1],
-            arriveCornerEnd[0], arriveCornerEnd[1],
-            arrX, -1];
-        if (Math.abs(departureX) <= this.props.store.pixelsPerColumn) { // FIXME Small distances, usually self loops
-            if(link.isArrival){
-                points = [
-                    arrX, -10,//-link.elevation - 4,
-                    arrX, bottom];
-            }else{
-                points = [
-                    departOrigin[0], bottom + this.props.store.pixelsPerColumn,
-                    departOrigin[0], -5];//-link.elevation-this.props.store.pixelsPerColumn*2,];
-            }
-
-        }
-        if(points.some(isNaN)){
-            console.log("Some points are NaN: " + points);
-        }
         return <LinkArrow
             store={this.props.store}
             key={"arrow" + link.linkColumn.key}
-            x={arrowXCoord}
-            y={this.props.store.topOffset - 5}
-            points={points}
-            width={this.props.store.pixelsPerColumn}
+            link={link}
             color={stringToColor(link.linkColumn, this.state.highlightedLink)}
             updateHighlightedNode={this.updateHighlightedNode}
-            item={link.linkColumn}
         />
     }
 
