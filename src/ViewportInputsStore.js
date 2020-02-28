@@ -46,7 +46,9 @@ RootStore = types
             console.log("Viewport set", self.beginBin, "-", self.endBin);
         }
         function updateTopOffset(newTopOffset) {
-            self.topOffset = newTopOffset;
+            if(Number.isFinite(newTopOffset) && Number.isSafeInteger(newTopOffset)){
+                self.topOffset = newTopOffset;
+            }
         }
         function updateHighlightedLink(linkRect) {
             self.highlightedLink = linkRect;
