@@ -1,6 +1,9 @@
 import React  from 'react';
 import {Arrow} from 'react-konva';
 
+function isInfinity(n){
+    return !Number.isFinite(n);
+}
 
 class LinkArrow extends React.Component {
     /** Serves as a contract to store visual layout information**/
@@ -54,7 +57,7 @@ class LinkArrow extends React.Component {
             }
 
         }
-        if(this.points.some(isNaN)){
+        if(this.points.some(isNaN) || this.points.some(isInfinity)){
             console.log("Some points are NaN: " + this.points);
         }
     }

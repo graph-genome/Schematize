@@ -2,7 +2,9 @@ import React from 'react';
 import {Observer} from 'mobx-react';
 
 class ControlHeader extends React.Component{
-    shift(diff){
+    shift(percentage){
+        let size = this.props.store.endBin - this.props.store.beginBin;
+        let diff = ~~(size * (percentage / 100))
         this.props.store.updateStartAndEnd(this.props.store.beginBin + diff,
             this.props.store.endBin + diff);
     }
@@ -13,8 +15,8 @@ class ControlHeader extends React.Component{
             <input type="text" defaultValue={this.props.store.jsonName} style={{width: '330px'}}
                 onChange={this.props.store.tryJSONpath} title={"File:"}/>
             <span style={{'marginLeft': '30px'}}>
-                <button className="button" onClick={()=>this.shift(-20)}>⮜</button>
-                <button className="button" onClick={()=>this.shift(-10)}>⮘</button>
+                <button className="button" onClick={()=>this.shift(-100)}>⮜</button>
+                <button className="button" onClick={()=>this.shift(-50)}>⮘</button>
                 Pangenome Position:
                 <Observer>{() => <>
                 <input type="number" value={this.props.store.beginBin}
@@ -24,8 +26,8 @@ class ControlHeader extends React.Component{
                        onChange={(event)=>this.props.store.updateStartAndEnd(this.props.store.beginBin,event.target.value)}
                        style={{width: '80px'}}/>
                 </>}</Observer>
-                <button className="button" onClick={()=>this.shift(10)}>⮚</button>
-                <button className="button" onClick={()=>this.shift(20)}>⮞</button>
+                <button className="button" onClick={()=>this.shift(50)}>⮚</button>
+                <button className="button" onClick={()=>this.shift(100)}>⮞</button>
             </span>
             <div className={'row'}>
                 <span> Use Vertical Compression:

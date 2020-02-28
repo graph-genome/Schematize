@@ -80,12 +80,12 @@ function reserveElevationAirSpace(distanceSortedLinks, pixelsPerColumn, topOffse
     let length = Math.max(0, ...distanceSortedLinks.map(x=> Math.max(x.xDepart, x.xArrival))); //this.props.endBin - this.props.beginBin;
     let elevationOccupied = new Array(length).fill(15);
     for (let record of distanceSortedLinks) {
-        let linkBegin = Math.min(record.xArrival, record.xDepart);
-        let linkEnd = Math.max(record.xArrival, record.xDepart);
+        let linkBegin = Math.max(0, Math.min(record.xArrival, record.xDepart));
+        let linkEnd = Math.max(record.xArrival, record.xDepart, linkBegin + 1);
         let range = elevationOccupied.slice(linkBegin, linkEnd + 1);
-        let elevation = Math.max(...range);
-        if(isNaN(elevation)){
-            console.log(record, linkBegin, linkEnd);
+        let elevation = range.length? Math.max(...range) : 10;
+        if(isNaN(elevation) || !Number.isFinite(elevation)){
+            console.log("Bad elevation", record, linkBegin, linkEnd, range, elevationOccupied);
         }
         const stillSmall = elevation < topOffset / 3;
         elevation += stillSmall? pixelsPerColumn: pixelsPerColumn / 4;

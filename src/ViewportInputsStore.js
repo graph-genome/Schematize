@@ -1,5 +1,4 @@
 import { types } from "mobx-state-tree";
-import {action} from "mobx";
 
 function urlExists(dataName) {
     if (dataName === "") {
@@ -27,8 +26,8 @@ RootStore = types
         maximumHeightThisFrame: 150,
         cellToolTipContent: "",
         jsonName: 'Athaliana_12_individuals_w100000',
-        startChunkURL: 'test_data/Athaliana_12_individuals_w100000/chunk0_bin100000.schematic.json',
-        endChunkURL: 'test_data/Athaliana_12_individuals_w100000/chunk1_bin100000.schematic.json'
+        startChunkURL: 'test_data/Athaliana_12_individuals_w100000/chunk00_bin100000.schematic.json',
+        endChunkURL: 'test_data/Athaliana_12_individuals_w100000/chunk01_bin100000.schematic.json'
     })
     .actions(self => {
         function updateStartAndEnd(newStart, newEnd){

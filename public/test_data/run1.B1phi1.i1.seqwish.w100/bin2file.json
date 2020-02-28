@@ -6,35 +6,40 @@
         {
             "file": "chunk0_bin100.schematic.json",
             "first_bin": 0,
-            "last_bin": 42
+            "last_bin": 39
         },
         {
             "file": "chunk1_bin100.schematic.json",
-            "first_bin": 43,
-            "last_bin": 122
+            "first_bin": 40,
+            "last_bin": 53
         },
         {
             "file": "chunk2_bin100.schematic.json",
-            "first_bin": 123,
-            "last_bin": 179
+            "first_bin": 54,
+            "last_bin": 165
         },
         {
             "file": "chunk3_bin100.schematic.json",
-            "first_bin": 180,
-            "last_bin": 289
+            "first_bin": 166,
+            "last_bin": 214
         },
         {
             "file": "chunk4_bin100.schematic.json",
-            "first_bin": 290,
-            "last_bin": 362
+            "first_bin": 215,
+            "last_bin": 289
         },
         {
             "file": "chunk5_bin100.schematic.json",
-            "first_bin": 363,
-            "last_bin": 496
+            "first_bin": 290,
+            "last_bin": 426
         },
         {
             "file": "chunk6_bin100.schematic.json",
+            "first_bin": 427,
+            "last_bin": 496
+        },
+        {
+            "file": "chunk7_bin100.schematic.json",
             "first_bin": 497,
             "last_bin": 525
         }
