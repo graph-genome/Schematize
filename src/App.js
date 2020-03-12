@@ -10,6 +10,7 @@ import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import {observe} from "mobx";
+import {observer} from "mobx-react";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -46,9 +47,8 @@ class App extends Component {
             actualWidth: 1
         };
         this.schematic = new PangenomeSchematic({store: this.props.store}); //Read file, parse nothing
-        observe(this.props.store, "beginBin", this.updateSchematicMetadata.bind(this));
+        observe(this.props.store, "beginEndBin", this.updateSchematicMetadata.bind(this));
         //TODO: endBin observer is still double triggering on shift() buttons. wait for beginBin event?
-        observe(this.props.store, "endBin", this.updateSchematicMetadata.bind(this));
         observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
         observe(this.props.store, "useVerticalCompression", this.recalcY.bind(this));
         observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
@@ -106,7 +106,7 @@ class App extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if(this.props.store.beginBin !== prevProps.store.beginBin || this.props.store.endBin !== prevProps.store.endBin){
+        if(this.props.store.getBeginBin() !== prevProps.store.getBeginBin() || this.props.store.getEndBin() !== prevProps.store.getEndBin()){
             this.updateSchematicMetadata();
         }
     }
@@ -150,7 +150,7 @@ class App extends Component {
 
     leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
         /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
-        let previousColumns = schematizeComponent.firstBin - this.props.store.beginBin + schematizeComponent.offset;
+        let previousColumns = schematizeComponent.firstBin - this.props.store.getBeginBin() + schematizeComponent.offset;
         let pixelsFromColumns = (previousColumns + firstDepartureColumn + j) * this.props.store.pixelsPerColumn;
         return pixelsFromColumns + (i * this.props.store.pixelsPerColumn);
     }

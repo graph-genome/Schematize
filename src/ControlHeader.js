@@ -3,11 +3,13 @@ import {Observer} from 'mobx-react';
 
 class ControlHeader extends React.Component{
     shift(percentage){
-        let size = this.props.store.endBin - this.props.store.beginBin;
+        const beginBin = this.props.store.getBeginBin();
+        const endBin = this.props.store.getEndBin();
+        let size = endBin - beginBin;
         let diff = Math.floor(size * (percentage / 100));
         console.log("Diff: " + diff);
-        this.props.store.updateStartAndEnd(this.props.store.beginBin + diff,
-            this.props.store.endBin + diff);
+        this.props.store.updateBeginEndBin(beginBin + diff,
+            endBin + diff);
     }
     render() {
         return (
@@ -22,13 +24,13 @@ class ControlHeader extends React.Component{
                 <button className="button" onClick={()=>this.shift(-50)}>
                     &lt;
                 </button>
-                Pangenome Position:
+                Pangenome Bin Position:
                 <Observer>{() => <>
-                <input type="number" value={this.props.store.beginBin}
-                       onChange={(event)=>this.props.store.updateStartAndEnd(event.target.value, this.props.store.endBin)}
+                <input type="number" value={this.props.store.beginEndBin[0]} // TODO Get methods don't work here, but I don't know why. Need to ask Robert Buels.
+                       onChange={(event)=>this.props.store.updateBeginEndBin(event.target.value, this.props.store.getEndBin())}
                        style={{width: '80px'}}/>-
-                <input type="number" value={this.props.store.endBin}
-                       onChange={(event)=>this.props.store.updateStartAndEnd(this.props.store.beginBin,event.target.value)}
+                <input type="number" value={this.props.store.beginEndBin[1]}
+                       onChange={(event)=>this.props.store.updateBeginEndBin(this.props.store.getBeginBin(),event.target.value)}
                        style={{width: '80px'}}/>
                 </>}</Observer>
                 <button className="button" onClick={()=>this.shift(50)}>
