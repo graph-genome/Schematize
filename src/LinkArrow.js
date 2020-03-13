@@ -110,7 +110,7 @@ class LinkArrow extends React.Component {
         let destination_bin = end_closer ? this.props.link.linkColumn.downstream : this.props.link.linkColumn.upstream;
         //calculate beginBin that will place distant end in middle of viewport
         let newStart = ~~(destination_bin - width/2);
-        this.props.store.updateStartAndEnd(newStart, newStart + width);
+        this.props.store.updateBeginEndBin(newStart, newStart + width);
         //set beginBin.
     }
 }

@@ -48,21 +48,6 @@ RootStore = types
             console.log("updateBeginEnd: " + newBegin + " " + newEnd);
             console.log("updatedBeginEnd: " + self.beginEndBin[0] + " " + self.beginEndBin[1]);
         }
-        function updateStartAndEnd(newStart, newEnd){
-            /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
-            newStart = Math.max(1,Number(newStart));
-            newEnd = Math.max(1, Number(newEnd));
-            if(newEnd === self.endBin){ //end has not changed
-                let diff = self.endBin - self.beginBin;
-                newEnd = newStart + diff; //Allows start to push End to new chunks
-            }
-            if(newEnd < newStart){ //crush newStart
-                newStart = newEnd - 1;
-            }
-            self.endBin = newEnd; //doesn't cause an update?
-            self.beginBin = Number(newStart); // triggers updates
-            console.log("Viewport set", self.beginBin, "-", self.endBin);
-        }
         function updateTopOffset(newTopOffset) {
             if(Number.isFinite(newTopOffset) && Number.isSafeInteger(newTopOffset)){
                 self.topOffset = newTopOffset;
@@ -101,12 +86,6 @@ RootStore = types
         function getBeginEndBin() {
             return self.beginEndBin;
         }
-        function setBeginBin(newBeginBin) {
-            self.beginEndBin[0] = newBeginBin;
-        }
-        function setEndBin(newEndBin) {
-            self.beginEndBin[1] = newEndBin;
-        }
         function getBeginBin() {
             return getBeginEndBin()[0];
         }
@@ -128,11 +107,8 @@ RootStore = types
             tryJSONpath,
             switchChunkFiles,
             getBeginEndBin,
-            setBeginEndBin,
             getBeginBin,
-            setBeginBin,
             getEndBin,
-            setEndBin,
         }
     })
     .views(self => ({}));

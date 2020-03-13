@@ -47,7 +47,7 @@ class App extends Component {
             actualWidth: 1
         };
         this.schematic = new PangenomeSchematic({store: this.props.store}); //Read file, parse nothing
-        observe(this.props.store, "beginEndBin", this.updateSchematicMetadata.bind(this));
+        observe(this.props.store.beginEndBin, this.updateSchematicMetadata.bind(this));
         //TODO: endBin observer is still double triggering on shift() buttons. wait for beginBin event?
         observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
         observe(this.props.store, "useVerticalCompression", this.recalcY.bind(this));
