@@ -8,8 +8,8 @@ class PangenomeSchematic extends React.Component {
 		 responsibility of the constructor to initialize the observable properties. Either use
 		 the @observable annotation or the extendObservable function.*/
 		super(props);
-		this.pathNames = []
-		this.components = []
+		this.pathNames = [];
+		this.components = [];
 		this.loadIndexFile(this.props.store.jsonName); //initializes this.chunk_index
 		this.blockingJsonFetch(this.props.store.startChunkURL, this.loadFirstJSON.bind(this));
 		//whenever jsonName changes,
@@ -22,19 +22,21 @@ class PangenomeSchematic extends React.Component {
 	}
 	openRelevantChunk(chunk_index){
 		this.chunk_index = chunk_index;
+		const beginBin = this.props.store.getBeginBin();
+		const endBin = this.props.store.getEndBin();
 		//only do a new chunk scan if it's needed
 		let startFile = chunk_index["files"][0]["file"];
 		let nextChunk = chunk_index["files"][0];
 		for(let i=0; i < chunk_index["files"].length; ++i){ //linear scan for the right chunk
 			let chunk = chunk_index["files"][i];
-			if(chunk["last_bin"] >= this.props.store.beginBin && chunk["first_bin"] <= this.props.store.beginBin){
+			if(chunk["last_bin"] >= beginBin && chunk["first_bin"] <= beginBin){
 				startFile = chunk["file"]; // retrieve file name
 				nextChunk = chunk;  // fallback: if it's last chunk in series
 				if(i+1 < chunk_index["files"].length){nextChunk = chunk_index["files"][i+1];}
-				console.log("Opening chunk", startFile, nextChunk["file"])
+				console.log("Opening chunk", startFile, nextChunk["file"]);
 				//restrict end position to end of the new chunk
-				this.props.store.updateStartAndEnd(this.props.store.beginBin,
-					Math.min(nextChunk["last_bin"], this.props.store.endBin));
+				this.props.store.updateBeginEndBin(beginBin,
+					Math.min(nextChunk["last_bin"], endBin));
 				break; // done scanning
 			}
 		}
@@ -89,7 +91,7 @@ class PangenomeSchematic extends React.Component {
 		if(!this.jsonData){
 			return false;
 		}
-		let [beginBin, endBin] = [this.props.store.beginBin, this.props.store.endBin];
+		let [beginBin, endBin] = [this.props.store.getBeginBin(), this.props.store.getEndBin()];
 	    if(this.jsonData.json_version !== 10){
 	        throw MediaError("Wrong Data JSON version: was expecting version 10, got " + this.jsonData.json_version + ".  " +
             "This version added last_bin to data chunk index.  " + // KEEP THIS UP TO DATE!
@@ -98,8 +100,8 @@ class PangenomeSchematic extends React.Component {
         }
 		console.log("Parsing components ", beginBin, " - ", endBin);
         //Fetch the next file when viewport no longer needs the first file.
-		if(this.props.store.beginBin > this.jsonData.mid_bin ||
-			this.props.store.beginBin < this.jsonData.first_bin) {
+		if(beginBin > this.jsonData.mid_bin ||
+			beginBin < this.jsonData.first_bin) {
 			//only do a new chunk scan if it's needed
 			this.openRelevantChunk(this.chunk_index); // this will trigger a second update cycle
 			return false;
@@ -117,7 +119,7 @@ class PangenomeSchematic extends React.Component {
 				}
 			}
 			this.components = componentArray;
-			console.log("processArray", this.jsonData.first_bin, this.jsonData.last_bin)
+			console.log("processArray", this.jsonData.first_bin, this.jsonData.last_bin);
 			return true;
 		}
 	}

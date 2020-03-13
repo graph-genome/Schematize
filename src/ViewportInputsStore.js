@@ -12,12 +12,13 @@ function urlExists(dataName) {
     }
 }
 
+const BeginEndBin = types.optional(types.array(types.integer), [1,40]);
+
 export let RootStore;
 RootStore = types
     .model({
         useVerticalCompression: false,
-        beginBin: 1,
-        endBin: 40,
+        beginEndBin: BeginEndBin,
         pixelsPerColumn: 7,
         pixelsPerRow: 7,
         leftOffset: 25,
@@ -30,20 +31,22 @@ RootStore = types
         endChunkURL: 'test_data/Athaliana_12_individuals_w100000/chunk01_bin100000.schematic.json'
     })
     .actions(self => {
-        function updateStartAndEnd(newStart, newEnd){
+        function updateBeginEndBin(newBegin, newEnd) {
             /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
-            newStart = Math.max(1,Number(newStart));
+            newBegin = Math.max(1, Number(newBegin));
             newEnd = Math.max(1, Number(newEnd));
-            if(newEnd === self.endBin){ //end has not changed
-                let diff = self.endBin - self.beginBin;
-                newEnd = newStart + diff; //Allows start to push End to new chunks
+            const beginBin = getBeginBin();
+            const endBin = getEndBin();
+            if(newEnd === endBin){ //end has not changed
+                let diff = endBin - beginBin;
+                newEnd = newBegin + diff; //Allows start to push End to new chunks
             }
-            if(newEnd < newStart){ //crush newStart
-                newStart = newEnd - 1;
+            if(newEnd < newBegin){ //crush newStart
+                newBegin = newEnd - 1;
             }
-            self.endBin = newEnd; //doesn't cause an update?
-            self.beginBin = Number(newStart); // triggers updates
-            console.log("Viewport set", self.beginBin, "-", self.endBin);
+            setBeginEndBin(newBegin, newEnd);
+            console.log("updateBeginEnd: " + newBegin + " " + newEnd);
+            console.log("updatedBeginEnd: " + self.beginEndBin[0] + " " + self.beginEndBin[1]);
         }
         function updateTopOffset(newTopOffset) {
             if(Number.isFinite(newTopOffset) && Number.isSafeInteger(newTopOffset)){
@@ -80,8 +83,20 @@ RootStore = types
             self.endChunkURL = endFile; // CRITICAL ORDER!: doesn't cause an update
             self.startChunkURL = startFile; // not user visible
         }
+        function getBeginEndBin() {
+            return self.beginEndBin;
+        }
+        function getBeginBin() {
+            return getBeginEndBin()[0];
+        }
+        function getEndBin() {
+            return getBeginEndBin()[1];
+        }
+        function setBeginEndBin(newBeginBin, newEndBin) {
+            self.beginEndBin = [newBeginBin, newEndBin];
+        }
         return {
-            updateStartAndEnd,
+            updateBeginEndBin,
             updateTopOffset,
             updateHighlightedLink,
             updateMaxHeight,
@@ -90,7 +105,10 @@ RootStore = types
             toggleUseVerticalCompression,
             updateHeight,updateWidth,
             tryJSONpath,
-            switchChunkFiles
+            switchChunkFiles,
+            getBeginEndBin,
+            getBeginBin,
+            getEndBin,
         }
     })
     .views(self => ({}));

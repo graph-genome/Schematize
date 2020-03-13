@@ -101,8 +101,8 @@ class LinkArrow extends React.Component {
         jumps to the other side. TODO: Still needs visual highlighting at destination.*/
         console.log("Click", event, this.props.link)
         //find middle position of viewport
-        let width = this.props.store.endBin - this.props.store.beginBin;
-        let mid_bin = this.props.store.beginBin + width /2;
+        let width = this.props.store.getEndBin() - this.props.store.getBeginBin();
+        let mid_bin = this.props.store.getBeginBin() + width /2;
         //compare with ends of arrow coordinates
         let end_closer = Math.abs(this.props.link.linkColumn.upstream - mid_bin) <
             Math.abs(this.props.link.linkColumn.downstream - mid_bin);
@@ -110,7 +110,7 @@ class LinkArrow extends React.Component {
         let destination_bin = end_closer ? this.props.link.linkColumn.downstream : this.props.link.linkColumn.upstream;
         //calculate beginBin that will place distant end in middle of viewport
         let newStart = ~~(destination_bin - width/2);
-        this.props.store.updateStartAndEnd(newStart, newStart + width);
+        this.props.store.updateBeginEndBin(newStart, newStart + width);
         //set beginBin.
     }
 }
