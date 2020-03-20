@@ -6,51 +6,56 @@
         {
             "file": "chunk00_bin100000.schematic.json",
             "first_bin": 0,
-            "last_bin": 383
+            "last_bin": 378
         },
         {
             "file": "chunk01_bin100000.schematic.json",
-            "first_bin": 384,
-            "last_bin": 715
+            "first_bin": 379,
+            "last_bin": 697
         },
         {
             "file": "chunk02_bin100000.schematic.json",
-            "first_bin": 716,
-            "last_bin": 1221
+            "first_bin": 698,
+            "last_bin": 1161
         },
         {
             "file": "chunk03_bin100000.schematic.json",
-            "first_bin": 1222,
-            "last_bin": 1803
+            "first_bin": 1162,
+            "last_bin": 1774
         },
         {
             "file": "chunk04_bin100000.schematic.json",
-            "first_bin": 1804,
-            "last_bin": 2173
+            "first_bin": 1775,
+            "last_bin": 2129
         },
         {
             "file": "chunk05_bin100000.schematic.json",
-            "first_bin": 2174,
-            "last_bin": 2607
+            "first_bin": 2130,
+            "last_bin": 2575
         },
         {
             "file": "chunk06_bin100000.schematic.json",
-            "first_bin": 2608,
-            "last_bin": 2794
+            "first_bin": 2576,
+            "last_bin": 2736
         },
         {
             "file": "chunk07_bin100000.schematic.json",
-            "first_bin": 2795,
-            "last_bin": 3127
+            "first_bin": 2737,
+            "last_bin": 2982
         },
         {
             "file": "chunk08_bin100000.schematic.json",
-            "first_bin": 3128,
-            "last_bin": 3586
+            "first_bin": 2983,
+            "last_bin": 3506
         },
         {
             "file": "chunk09_bin100000.schematic.json",
-            "first_bin": 3587,
+            "first_bin": 3507,
+            "last_bin": 3953
+        },
+        {
+            "file": "chunk10_bin100000.schematic.json",
+            "first_bin": 3954,
             "last_bin": 4065
         }
     ]

@@ -4,43 +4,53 @@
     "last_bin": 525,
     "files": [
         {
-            "file": "chunk0_bin100.schematic.json",
+            "file": "chunk00_bin100.schematic.json",
             "first_bin": 0,
-            "last_bin": 39
+            "last_bin": 34
         },
         {
-            "file": "chunk1_bin100.schematic.json",
-            "first_bin": 40,
+            "file": "chunk01_bin100.schematic.json",
+            "first_bin": 35,
+            "last_bin": 50
+        },
+        {
+            "file": "chunk02_bin100.schematic.json",
+            "first_bin": 51,
             "last_bin": 53
         },
         {
-            "file": "chunk2_bin100.schematic.json",
+            "file": "chunk03_bin100.schematic.json",
             "first_bin": 54,
             "last_bin": 165
         },
         {
-            "file": "chunk3_bin100.schematic.json",
+            "file": "chunk04_bin100.schematic.json",
             "first_bin": 166,
             "last_bin": 214
         },
         {
-            "file": "chunk4_bin100.schematic.json",
+            "file": "chunk05_bin100.schematic.json",
             "first_bin": 215,
-            "last_bin": 289
+            "last_bin": 286
         },
         {
-            "file": "chunk5_bin100.schematic.json",
-            "first_bin": 290,
+            "file": "chunk06_bin100.schematic.json",
+            "first_bin": 287,
+            "last_bin": 359
+        },
+        {
+            "file": "chunk07_bin100.schematic.json",
+            "first_bin": 360,
             "last_bin": 426
         },
         {
-            "file": "chunk6_bin100.schematic.json",
+            "file": "chunk08_bin100.schematic.json",
             "first_bin": 427,
-            "last_bin": 496
+            "last_bin": 485
         },
         {
-            "file": "chunk7_bin100.schematic.json",
-            "first_bin": 497,
+            "file": "chunk09_bin100.schematic.json",
+            "first_bin": 486,
             "last_bin": 525
         }
     ]
