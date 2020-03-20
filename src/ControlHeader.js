@@ -11,6 +11,10 @@ class ControlHeader extends React.Component{
         this.props.store.updateBeginEndBin(beginBin + diff,
             endBin + diff);
     }
+
+    handleJump() {
+        console.log(this.props.store.getPath() + this.props.store.getNucPos());
+    }
     render() {
         return (
         <div style={{'marginBottom':'15px'}}>
@@ -40,6 +44,18 @@ class ControlHeader extends React.Component{
                     &gt;&gt;
                 </button>
             </span>
+            <div className={'row'}>
+                Jump to path at nucleotide position:
+                <input type="string" placeholder={"path"}
+                       style={{width: '80px'}}/>-
+                <input type="number" placeholder={"position"}
+                       style={{width: '80px'}}/>
+                <span style={{'marginLeft': '2px'}}>
+                    <button className="button" onClick={() => this.handleJump()}>
+                    Jump
+                    </button>
+                </span>
+            </div>
             <div className={'row'}>
                 <span> Use Vertical Compression:
                     <CompressedViewSwitch store={this.props.store}/>
