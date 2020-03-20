@@ -12,8 +12,28 @@ class ControlHeader extends React.Component{
             endBin + diff);
     }
 
+    httpGetAsync(theUrl, callback) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+            if (xmlHttp.readyState === 4 && xmlHttp.status === 200)
+                callback(xmlHttp.responseText);
+        };
+        xmlHttp.open("GET", theUrl, true); // true for asynchronous
+        xmlHttp.send(null);
+    }
+
     handleJump() {
-        console.log(this.props.store.getPath() + this.props.store.getNucPos());
+        console.log("JUMP: path name: " + this.props.store.getPath() + " nucleotide position: " + this.props.store.getNucPos());
+
+        fetch("http://193.196.29.24:3010/hi").then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            console.log(data);
+        }).catch(function() {
+            console.log("Booo");
+        });
+        const response = this.httpGetAsync("http://193.196.29.24:3010/hi");
+        console.log("RESPONSE: " + response);
     }
     render() {
         return (
@@ -46,9 +66,15 @@ class ControlHeader extends React.Component{
             </span>
             <div className={'row'}>
                 Jump to path at nucleotide position:
-                <input type="string" placeholder={"path"}
-                       style={{width: '80px'}}/>-
-                <input type="number" placeholder={"position"}
+                <input type="string"
+                       placeholder={"path"}
+                       onChange={(event)=>this.props.store.updatePathNucPos(event.target.value, this.props.store.getNucPos())}
+                       style={{width: '80px'}}/>
+                -
+
+                <input type="number"
+                       placeholder={"position"}
+                       onChange={(event)=>this.props.store.updatePathNucPos(this.props.store.getPath(), event.target.value)}
                        style={{width: '80px'}}/>
                 <span style={{'marginLeft': '2px'}}>
                     <button className="button" onClick={() => this.handleJump()}>

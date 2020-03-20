@@ -15,7 +15,7 @@ function urlExists(dataName) {
 const BeginEndBin = types.optional(types.array(types.integer), [1,40]);
 const PathNucPos = types.model("PathNucPos", {
     path: types.string,
-    nuc_pos: types.integer
+    nucPos: types.integer
 });
 
 export let RootStore;
@@ -33,7 +33,7 @@ RootStore = types
         jsonName: 'Athaliana_12_individuals_w100000',
         startChunkURL: 'test_data/Athaliana_12_individuals_w100000/chunk00_bin100000.schematic.json',
         endChunkURL: 'test_data/Athaliana_12_individuals_w100000/chunk01_bin100000.schematic.json',
-        pathNucPos: types.optional(PathNucPos, {path: "path", nuc_pos: 0}) // OR: types.maybe(PathNucPos)
+        pathNucPos: types.optional(PathNucPos, {path: "path", nucPos: 0}) // OR: types.maybe(PathNucPos)
     })
     .actions(self => {
         function updateBeginEndBin(newBegin, newEnd) {
@@ -103,6 +103,16 @@ RootStore = types
         function getPath() {
             return self.pathNucPos.path;
         }
+        function getNucPos() {
+            return self.pathNucPos.nucPos;
+        }
+        function getPathNucPos() {
+            return self.pathNucPos;
+        }
+        function updatePathNucPos(path, nucPos) {
+            nucPos = parseInt(nucPos);
+            self.pathNucPos = {path: path, nucPos: nucPos};
+        }
         return {
             updateBeginEndBin,
             updateTopOffset,
@@ -117,11 +127,15 @@ RootStore = types
             getBeginEndBin,
             getBeginBin,
             getEndBin,
+            getPath,
+            getNucPos,
+            getPathNucPos,
+            updatePathNucPos
         }
     })
     .views(self => ({}));
 
 export const store = RootStore.create({
-    // pathNucPos: {path: "path", nuc_pos: 0}
+
 });
 
