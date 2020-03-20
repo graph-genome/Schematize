@@ -12,29 +12,26 @@ class ControlHeader extends React.Component{
             endBin + diff);
     }
 
-    httpGetAsync(theUrl, callback) {
+    async httpGetAsync(theUrl, callback) {
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = function() {
             if (xmlHttp.readyState === 4 && xmlHttp.status === 200)
-                callback(xmlHttp.responseText);
+                console.log(xmlHttp.responseText);
+                // TODO set the pangenome position if it is !== 0
         };
-        xmlHttp.open("GET", theUrl, true); // true for asynchronous
+        await xmlHttp.open("GET", theUrl, true); // true for asynchronous
         xmlHttp.send(null);
     }
 
     handleJump() {
         console.log("JUMP: path name: " + this.props.store.getPath() + " nucleotide position: " + this.props.store.getNucPos());
-
-        fetch("http://193.196.29.24:3010/hi").then(function(response) {
-            return response.json();
-        }).then(function(data) {
-            console.log(data);
-        }).catch(function() {
-            console.log("Booo");
-        });
-        const response = this.httpGetAsync("http://193.196.29.24:3010/hi");
-        console.log("RESPONSE: " + response);
+        // I don't know why, but in order for the CORS headers to exchange we need to make a first GET request to "/hi" which will not return anything
+        // TODO we need to make this call early on so that all our other requests go through
+        this.httpGetAsync("http://localhost:3010/hi");
+        this.httpGetAsync("http://localhost:3010/5/1");
+        this.httpGetAsync("http://localhost:3010/4/3");
     }
+
     render() {
         return (
         <div style={{'marginBottom':'15px'}}>
