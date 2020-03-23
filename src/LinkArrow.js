@@ -99,7 +99,7 @@ class LinkArrow extends React.Component {
     handleClick = (event) => {
         /*Jump on Link click rough draft. Detects which end is closest to the view and
         jumps to the other side. TODO: Still needs visual highlighting at destination.*/
-        console.log("Click", event, this.props.link)
+        console.log("Click", event, this.props.link);
         //find middle position of viewport
         let width = this.props.store.getEndBin() - this.props.store.getBeginBin();
         let mid_bin = this.props.store.getBeginBin() + width /2;

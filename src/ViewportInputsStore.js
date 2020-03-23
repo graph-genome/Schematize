@@ -1,16 +1,5 @@
 import { types } from "mobx-state-tree";
-
-function urlExists(dataName) {
-    if (dataName === "") {
-        return false
-    } else {
-        //source: https://stackoverflow.com/a/22011478/3067894
-        var http=new XMLHttpRequest();
-        http.open('HEAD', process.env.PUBLIC_URL + 'test_data/' + dataName + '/bin2file.json', false);
-        http.send();
-        return http.status !== 404;
-    }
-}
+import { urlExists } from "./URL"
 
 const BeginEndBin = types.optional(types.array(types.integer), [1,40]);
 const PathNucPos = types.model("PathNucPos", {
@@ -30,10 +19,12 @@ RootStore = types
         highlightedLink: 0, // we will compare linkColumns
         maximumHeightThisFrame: 150,
         cellToolTipContent: "",
-        jsonName: 'Athaliana_12_individuals_w100000',
-        startChunkURL: 'test_data/Athaliana_12_individuals_w100000/chunk00_bin100000.schematic.json',
-        endChunkURL: 'test_data/Athaliana_12_individuals_w100000/chunk01_bin100000.schematic.json',
-        pathNucPos: types.optional(PathNucPos, {path: "path", nucPos: 0}) // OR: types.maybe(PathNucPos)
+        jsonName: 'run1.B1phi1.i1.seqwish.w100',
+        startChunkURL: 'test_data/run1.B1phi1.i1.seqwish.w100/chunk0_bin100.schematic.json',
+        endChunkURL: 'test_data/run1.B1phi1.i1.seqwish.w100/chunk1_bin100.schematic.json',
+        pathNucPos: types.optional(PathNucPos, {path: "path", nucPos: 0}), // OR: types.maybe(PathNucPos)
+        pathIndexServerAddress: 'http://193.196.29.24:3010/',
+        binWidth: 100
     })
     .actions(self => {
         function updateBeginEndBin(newBegin, newEnd) {
@@ -80,7 +71,8 @@ RootStore = types
             self.pixelsPerColumn = Number(event.target.value);
         }
         function tryJSONpath(event){
-            if(urlExists(event.target.value)){
+            const url = process.env.PUBLIC_URL + 'test_data/' + event.target.value + '/bin2file.json';
+            if(urlExists(url)){
                 self.jsonName = event.target.value;
             }
         }
@@ -110,8 +102,15 @@ RootStore = types
             return self.pathNucPos;
         }
         function updatePathNucPos(path, nucPos) {
-            nucPos = parseInt(nucPos);
+            if (nucPos) {
+                nucPos = parseInt(nucPos);
+            } else {
+                nucPos = 0;
+            }
             self.pathNucPos = {path: path, nucPos: nucPos};
+        }
+        function setBinWidth(binWidth) {
+            self.binWidth = binWidth;
         }
         return {
             updateBeginEndBin,
@@ -130,7 +129,8 @@ RootStore = types
             getPath,
             getNucPos,
             getPathNucPos,
-            updatePathNucPos
+            updatePathNucPos,
+            setBinWidth
         }
     })
     .views(self => ({}));
