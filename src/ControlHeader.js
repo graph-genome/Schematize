@@ -26,13 +26,14 @@ class ControlHeader extends React.Component{
         function handleOdgiServerResponse(result) {
             if (result === "0") {
                 alert("The jump query returned 0. Either your path does not exist or your position in the path is wrong. Please try again.")
+            } else {
+                console.log(result);
+                // go from nucleotide position to bin
+                result = parseInt(result);
+                const newBeginBin = Math.ceil(result / binWidth);
+                console.log(newBeginBin);
+                store.updateBeginEndBin(newBeginBin, store.getEndBin());
             }
-            console.log(result);
-            // go from nucleotide position to bin
-            result = parseInt(result);
-            const newBeginBin = Math.ceil(result / binWidth);
-            console.log(newBeginBin);
-            store.updateBeginEndBin(newBeginBin, store.getEndBin());
         }
         // httpGetAsync(addr + "hi", printResult);
         // httpGetAsync(addr + "5/1", printResult);
