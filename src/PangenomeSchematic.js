@@ -46,7 +46,7 @@ class PangenomeSchematic extends React.Component {
 			process.env.PUBLIC_URL + 'test_data/' + this.props.store.jsonName + '/' + nextChunk["file"]);
 	}
 	loadIndexFile(jsonFilename){
-		let indexPath = process.env.PUBLIC_URL + 'test_data/' + jsonFilename + '/bin2file.json'
+		let indexPath = process.env.PUBLIC_URL + 'test_data/' + jsonFilename + '/bin2file.json';
 		console.log("Reading", indexPath);
 		$.getJSON(indexPath, this.openRelevantChunk.bind(this)).fail(function(e) {
 			alert("error" + e);
@@ -98,6 +98,7 @@ class PangenomeSchematic extends React.Component {
             "Using a mismatched data file and renderer will cause unpredictable behavior," +
             " instead generate a new data file using github.com/graph-genome/component_segmentation.")
         }
+	    this.props.store.setBinWidth(parseInt(this.jsonData.bin_width));
 		console.log("Parsing components ", beginBin, " - ", endBin);
         //Fetch the next file when viewport no longer needs the first file.
 		if(beginBin > this.jsonData.mid_bin ||
