@@ -37,6 +37,7 @@ const stringToColourSave = function(colorKey) {
 
 class App extends Component {
     layerRef = React.createRef();
+    layerRef2 = React.createRef(null);
     constructor(props) {
         super(props);
         this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
@@ -137,6 +138,9 @@ class App extends Component {
 
     componentDidMount = () => {
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
+        this.layerRef2.current.getCanvas()._canvas.id = 'arrow';
+        this.layerRef2.current.getCanvas()._canvas.style.position = 'fixed';
+        this.layerRef2.current.getCanvas()._canvas.style.top = '50px';
 /*        if(this.props.store.useVerticalCompression) {
             this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
         }*/
@@ -229,13 +233,18 @@ class App extends Component {
                                 )
                             }
                         )}
-                        {this.distanceSortedLinks.map(
-                            (record,i ) => {
-                                return this.renderLink(record)
-                            }
-                        )}
                     </Layer>
                 </Stage>
+                <Stage
+                    x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
+                    width={this.state.actualWidth + 60}
+                    height={this.props.store.topOffset}>
+                        <Layer ref={this.layerRef2}>
+                            {this.distanceSortedLinks.map((record, i) => {
+                              return this.renderLink(record);
+                            })}
+                        </Layer>
+                  </Stage>
                 <NucleotideTooltip store={this.props.store}/>
             </>
         );
