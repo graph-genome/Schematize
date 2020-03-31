@@ -10,6 +10,8 @@ import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import {observe} from "mobx";
+import {Text} from "react-konva";
+
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -43,6 +45,7 @@ class App extends Component {
         this.state = {
             schematize: [],
             pathNames: [],
+            loading: true,
             actualWidth: 1
         };
         this.schematic = new PangenomeSchematic({store: this.props.store}); //Read file, parse nothing
@@ -56,7 +59,12 @@ class App extends Component {
     };
     nextChunk(){
         console.log("nextChunk", this.props.store.startChunkURL);
-        this.schematic.blockingJsonFetch(this.props.store.startChunkURL, this.queueUpdate.bind(this));
+        if (!this.props.store.startChunkURL) {
+            console.log("no")
+            return
+        }
+        this.schematic.jsonFetch(this.props.store.startChunkURL)
+            .then(this.queueUpdate.bind(this))
     }
     queueUpdate(data){
         console.log("queueUpdate", this.props.store.startChunkURL);
@@ -73,10 +81,13 @@ class App extends Component {
             this.setState({
                 schematize: this.schematic.components,
                 pathNames: this.schematic.pathNames,
+            }, () => {
+                this.recalcXLayout();
+                this.compressed_row_mapping = compress_visible_rows(this.schematic.components);
+                this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(this.schematic.components) // TODO add this to mobx-state-tree
+                this.setState({loading: false})
+
             });
-            this.recalcXLayout();
-            this.compressed_row_mapping = compress_visible_rows(this.schematic.components);
-            this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(this.schematic.components) // TODO add this to mobx-state-tree
         }
     }
     recalcXLayout(){
@@ -210,6 +221,36 @@ class App extends Component {
         />
     }
 
+    renderSchematic = () => {
+        if (this.state.loading) {
+            return <Text 
+                text="Loading..."
+                fontSize={60}
+            />
+        }
+        return this.schematic.components.map(
+            (schematizeComponent, i)=> {
+                return (
+                    <React.Fragment key={"f" + i}>
+                        {this.renderComponent.call(this, schematizeComponent, i, this.state.pathNames)}
+                    </React.Fragment>
+                )
+            }
+        )
+    }
+
+    renderSortedLinks = () => {
+        if (this.state.loading) {
+            return
+        }
+
+        return this.distanceSortedLinks.map(
+            (record,i ) => {
+                return this.renderLink(record)
+            }
+        )
+    }
+
     render() {
         console.log("Start render");
         return (
@@ -220,20 +261,8 @@ class App extends Component {
                     width={this.state.actualWidth + 60}
                     height={this.props.store.topOffset + this.visibleHeight()}>
                     <Layer ref={this.layerRef}>
-                        {this.schematic.components.map(
-                            (schematizeComponent, i)=> {
-                                return (
-                                    <React.Fragment key={"f" + i}>
-                                        {this.renderComponent(schematizeComponent, i, this.state.pathNames)}
-                                    </React.Fragment>
-                                )
-                            }
-                        )}
-                        {this.distanceSortedLinks.map(
-                            (record,i ) => {
-                                return this.renderLink(record)
-                            }
-                        )}
+                        {this.renderSchematic()}
+                        {this.renderSortedLinks()}
                     </Layer>
                 </Stage>
                 <NucleotideTooltip store={this.props.store}/>
