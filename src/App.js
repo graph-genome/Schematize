@@ -10,6 +10,7 @@ import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import {observe} from "mobx";
+import {Rect} from 'react-konva';
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -140,7 +141,7 @@ class App extends Component {
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
         this.layerRef2.current.getCanvas()._canvas.id = 'arrow';
         this.layerRef2.current.getCanvas()._canvas.style.position = 'fixed';
-        this.layerRef2.current.getCanvas()._canvas.style.top = '50px';
+        this.layerRef2.current.getCanvas()._canvas.style.top = '95px';
 /*        if(this.props.store.useVerticalCompression) {
             this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
         }*/
@@ -216,11 +217,13 @@ class App extends Component {
 
     render() {
         console.log("Start render");
+        console.log(this.props.store)
         return (
             <>
                 <ControlHeader store={this.props.store}/>
                 <Stage
-                    x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
+                    x={this.props.store.leftOffset}
+                    y={95} //removed leftOffset to simplify code.  Relative coordinates are always better.
                     width={this.state.actualWidth + 60}
                     height={this.props.store.topOffset + this.visibleHeight()}>
                     <Layer ref={this.layerRef}>
@@ -236,10 +239,19 @@ class App extends Component {
                     </Layer>
                 </Stage>
                 <Stage
-                    x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
+                    x={this.props.store.leftOffset} 
+                    y={this.props.topOffset}//removed leftOffset to simplify code.  Relative coordinates are always better.
                     width={this.state.actualWidth + 60}
-                    height={this.props.store.topOffset}>
+                    height={this.props.store.topOffset+20}
+                    >
                         <Layer ref={this.layerRef2}>
+                          <Rect
+                              x={-20}
+                              y={-95}
+                              width={this.state.actualWidth+20}
+                              height={this.props.store.topOffset+95}
+                              fill="white"
+                              />
                             {this.distanceSortedLinks.map((record, i) => {
                               return this.renderLink(record);
                             })}
