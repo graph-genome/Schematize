@@ -53,6 +53,8 @@ class PangenomeSchematic extends React.Component {
 		});
 	}
 	blockingJsonFetch(filepath, callback) {
+		if (!filepath) throw new Error("No filepath given. Ensure chunknames in bin2file.json are correct.")
+
 		console.log("Fetching", filepath);
 		var xobj = new XMLHttpRequest();
 		xobj.overrideMimeType("application/json");
