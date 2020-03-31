@@ -45,7 +45,8 @@ class App extends Component {
         this.state = {
             schematize: [],
             pathNames: [],
-            actualWidth: 1
+            actualWidth: 1,
+            buttonsHeight:0
         };
         this.schematic = new PangenomeSchematic({store: this.props.store}); //Read file, parse nothing
         observe(this.props.store.beginEndBin, this.updateSchematicMetadata.bind(this));
@@ -137,7 +138,9 @@ class App extends Component {
         this.updateSchematicMetadata();
     }
 
-    componentDidMount = () => {
+    componentDidMount = () => {        
+        var clientHeight = document.getElementById('button-container').clientHeight;
+        this.setState({buttonsHeight: clientHeight})
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
         this.layerRef2.current.getCanvas()._canvas.id = 'arrow';
         this.layerRef2.current.getCanvas()._canvas.style.position = 'fixed';
@@ -217,13 +220,12 @@ class App extends Component {
 
     render() {
         console.log("Start render");
-        console.log(this.props.store)
         return (
             <>
                 <ControlHeader store={this.props.store}/>
                 <Stage
                     x={this.props.store.leftOffset}
-                    y={95} //removed leftOffset to simplify code.  Relative coordinates are always better.
+                    y={this.state.buttonsHeight} //removed leftOffset to simplify code.  Relative coordinates are always better.
                     width={this.state.actualWidth + 60}
                     height={this.props.store.topOffset + this.visibleHeight()}>
                     <Layer ref={this.layerRef}>
@@ -240,16 +242,16 @@ class App extends Component {
                 </Stage>
                 <Stage
                     x={this.props.store.leftOffset} 
-                    y={this.props.topOffset}//removed leftOffset to simplify code.  Relative coordinates are always better.
+                    y={this.props.topOffset}
                     width={this.state.actualWidth + 60}
-                    height={this.props.store.topOffset+20}
+                    height={this.props.store.topOffset}
                     >
                         <Layer ref={this.layerRef2}>
                           <Rect
                               x={-20}
-                              y={-95}
+                              y={-this.state.buttonsHeight+15}
                               width={this.state.actualWidth+20}
-                              height={this.props.store.topOffset+95}
+                              height={this.props.store.topOffset+this.state.buttonsHeight}
                               fill="white"
                               />
                             {this.distanceSortedLinks.map((record, i) => {

@@ -43,7 +43,7 @@ class ControlHeader extends React.Component{
 
     render() {
         return (
-        <div id='button-container' style={{'marginBottom':'15px', position:'fixed', top:0, zIndex:'1', backgroundColor:'white', paddingBottom:'20px'}}>
+        <div id='button-container' style={{'marginBottom':'15px', position:'fixed', top:0, zIndex:'1', backgroundColor:'white', height:'95px'}}>
             <button className="button" id="btn-download">Save Image</button>
             <input type="text" defaultValue={this.props.store.jsonName} style={{width: '330px'}}
                 onChange={this.props.store.tryJSONpath} title={"File:"}/>
