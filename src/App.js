@@ -10,6 +10,7 @@ import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import {observe} from "mobx";
+import {Rect} from 'react-konva';
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -37,13 +38,15 @@ const stringToColourSave = function(colorKey) {
 
 class App extends Component {
     layerRef = React.createRef();
+    layerRef2 = React.createRef(null);
     constructor(props) {
         super(props);
         this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
         this.state = {
             schematize: [],
             pathNames: [],
-            actualWidth: 1
+            actualWidth: 1,
+            buttonsHeight:0
         };
         this.schematic = new PangenomeSchematic({store: this.props.store}); //Read file, parse nothing
         observe(this.props.store.beginEndBin, this.updateSchematicMetadata.bind(this));
@@ -135,8 +138,13 @@ class App extends Component {
         this.updateSchematicMetadata();
     }
 
-    componentDidMount = () => {
+    componentDidMount = () => {        
+        var clientHeight = document.getElementById('button-container').clientHeight;
+        this.setState({buttonsHeight: clientHeight})
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
+        this.layerRef2.current.getCanvas()._canvas.id = 'arrow';
+        this.layerRef2.current.getCanvas()._canvas.style.position = 'fixed';
+        this.layerRef2.current.getCanvas()._canvas.style.top = '95px';
 /*        if(this.props.store.useVerticalCompression) {
             this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
         }*/
@@ -216,7 +224,8 @@ class App extends Component {
             <>
                 <ControlHeader store={this.props.store}/>
                 <Stage
-                    x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
+                    x={this.props.store.leftOffset}
+                    y={this.state.buttonsHeight} //removed leftOffset to simplify code.  Relative coordinates are always better.
                     width={this.state.actualWidth + 60}
                     height={this.props.store.topOffset + this.visibleHeight()}>
                     <Layer ref={this.layerRef}>
@@ -229,13 +238,27 @@ class App extends Component {
                                 )
                             }
                         )}
-                        {this.distanceSortedLinks.map(
-                            (record,i ) => {
-                                return this.renderLink(record)
-                            }
-                        )}
                     </Layer>
                 </Stage>
+                <Stage
+                    x={this.props.store.leftOffset} 
+                    y={this.props.topOffset}
+                    width={this.state.actualWidth + 60}
+                    height={this.props.store.topOffset}
+                    >
+                        <Layer ref={this.layerRef2}>
+                          <Rect
+                              x={-20}
+                              y={-this.state.buttonsHeight+15}
+                              width={this.state.actualWidth+20}
+                              height={this.props.store.topOffset+this.state.buttonsHeight}
+                              fill="white"
+                              />
+                            {this.distanceSortedLinks.map((record, i) => {
+                              return this.renderLink(record);
+                            })}
+                        </Layer>
+                  </Stage>
                 <NucleotideTooltip store={this.props.store}/>
             </>
         );
