@@ -56,7 +56,7 @@ class App extends Component {
         observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
         observe(this.props.store, "startChunkURL", this.nextChunk.bind(this));
         // this.nextChunk();
-    };
+    }
     nextChunk(){
         console.log("nextChunk", this.props.store.startChunkURL);
         this.schematic.blockingJsonFetch(this.props.store.startChunkURL, this.queueUpdate.bind(this));

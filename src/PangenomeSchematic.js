@@ -162,7 +162,7 @@ class LinkColumn {
 		/**downstream and upstream are always in the same orientation regardless of if it is a
 		 * departing LinkColumn or an arriving LinkColumn.**/
 		return String(this.downstream).padStart(13, '0') + String(this.upstream).padStart(13, '0');
-	};
+	}
 
 }
 

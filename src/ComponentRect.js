@@ -90,7 +90,7 @@ class ComponentRect extends React.Component {
                 color={'#838383'}
             />}else{return null}
             })
-    };
+    }
 
     renderAllConnectors(){
         const departures = this.props.item.departures;
