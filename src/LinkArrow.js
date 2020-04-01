@@ -1,5 +1,6 @@
 import React  from 'react';
 import {Arrow} from 'react-konva';
+import PropTypes from 'prop-types';
 
 function isInfinity(n){
     return !Number.isFinite(n);
@@ -113,6 +114,13 @@ class LinkArrow extends React.Component {
         this.props.store.updateBeginEndBin(newStart, newStart + width);
         //set beginBin.
     }
+}
+
+LinkArrow.propTypes = {
+  store: PropTypes.node,
+  link: PropTypes.node,
+  color: PropTypes.node,
+  updateHighlightedNode: PropTypes.node
 }
 
 export default LinkArrow

@@ -1,6 +1,7 @@
 import React from 'react';
 import {Rect} from 'react-konva';
 import {MatrixCell, ConnectorRect} from "./ComponentConnectorRect";
+import PropTypes from 'prop-types';
 
 const zip = (arr, ...arrs) => {
     /*Credit: https://gist.github.com/renaudtertrais/25fc5a2e64fe5d0e86894094c6989e10*/
@@ -28,7 +29,7 @@ function find_rows_visible_in_viewport(components){
     // let rows_present = new Array(components[0].occupants.length).fill(false);
     if(components.length) {
         let per_row = zip(...components.map((x) => x.occupants));
-        let rows_present = per_row.map((row, i) => row.some(x => x));
+        let rows_present = per_row.map((row) => row.some(x => x));
         return rows_present;
     }else{
         return [false];
@@ -155,6 +156,15 @@ class ComponentRect extends React.Component {
         );
     }
 
+}
+
+ComponentRect.propTypes = {
+  store: PropTypes.node,
+  item: PropTypes.node,
+  compressed_row_mapping: PropTypes.node,
+  width: PropTypes.node,
+  height: PropTypes.node,
+  pathNames: PropTypes.node,
 }
 
 export default ComponentRect

@@ -11,6 +11,7 @@ import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import {observe} from "mobx";
 import {Rect} from 'react-konva';
+import PropTypes from 'prop-types';
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -260,5 +261,9 @@ class App extends Component {
 
 }
 
+App.propTypes = {
+  store: PropTypes.node,
+  topOffset: PropTypes.node
+}
 
 export default App;

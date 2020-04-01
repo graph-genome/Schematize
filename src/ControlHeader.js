@@ -1,8 +1,9 @@
 import React from 'react';
 import {Observer} from 'mobx-react';
 import {httpGetAsync} from './URL';
+import PropTypes from 'prop-types';
 
-class ControlHeader extends React.Component{
+class ControlHeader extends React.Component {
     shift(percentage){
         const beginBin = this.props.store.getBeginBin();
         const endBin = this.props.store.getEndBin();
@@ -106,6 +107,11 @@ class ControlHeader extends React.Component{
     }
 }
 
+ControlHeader.propTypes = {
+  store: PropTypes.node
+}
+
+
 class CompressedViewSwitch extends React.Component {
     render() {
         return (
@@ -118,4 +124,7 @@ class CompressedViewSwitch extends React.Component {
     }
 }
 
+CompressedViewSwitch.propTypes = {
+  store: PropTypes.node
+}
 export default ControlHeader

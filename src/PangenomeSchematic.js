@@ -1,6 +1,7 @@
 import React from 'react';
 import {observe} from "mobx";
 import * as $ from 'jquery';
+import PropTypes from 'prop-types';
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
@@ -124,6 +125,10 @@ class PangenomeSchematic extends React.Component {
       return true;
     }
   }
+}
+
+PangenomeSchematic.propTypes = {
+  store: PropTypes.node
 }
 
 class Component {

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Rect} from 'react-konva';
-
+import PropTypes from 'prop-types';
 
 class LinkColumn extends React.Component {
     constructor(props) {
@@ -57,4 +57,15 @@ class LinkColumn extends React.Component {
         );
     }
 }
+
+LinkColumn.propTypes = {
+  store: PropTypes.node,
+  item: PropTypes.node,
+  updateHighlightedNode: PropTypes.node,
+  compressed_row_mapping: PropTypes.node,
+  x: PropTypes.node,
+  column: PropTypes.node,
+  color: PropTypes.node
+}
+
 export default LinkColumn;

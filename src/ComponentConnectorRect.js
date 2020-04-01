@@ -1,5 +1,6 @@
 import React from 'react';
 import { Rect } from 'react-konva';
+import PropTypes from 'prop-types';
 
 export class ConnectorRect extends React.Component {
     state = {
@@ -18,6 +19,14 @@ export class ConnectorRect extends React.Component {
     }
 }
 
+ConnectorRect.propTypes = {
+  x: PropTypes.number,
+  y: PropTypes.number,
+  width: PropTypes.number,
+  height: PropTypes.number,
+  store: PropTypes.node,
+  color: PropTypes.node,
+}
 
 export class MatrixCell extends React.Component {
     onHover(){
@@ -44,3 +53,13 @@ export class MatrixCell extends React.Component {
     }
 }
 
+MatrixCell.propTypes = {
+  store: PropTypes.node,
+  item: PropTypes.node,
+  x: PropTypes.number,
+  y: PropTypes.number,
+  width: PropTypes.number,
+  height: PropTypes.number,
+  color: PropTypes.node,
+  pathName: PropTypes.node
+}
