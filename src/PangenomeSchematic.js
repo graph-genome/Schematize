@@ -74,9 +74,9 @@ class PangenomeSchematic extends React.Component {
 		this.jsonData = data;
 		this.pathNames = this.jsonData.path_names;
         this.jsonData.mid_bin = data.last_bin; //placeholder
-		if(this.props.store.startChunkURL === this.props.store.endChunkURL){
+		if (this.props.store.startChunkURL === this.props.store.endChunkURL) {
 			this.processArray();
-		}else{
+		} else {
 			this.jsonFetch(this.props.store.endChunkURL)
 				.then(this.loadSecondJSON.bind(this));
 		}

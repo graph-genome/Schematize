@@ -10,8 +10,7 @@ import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import {observe} from "mobx";
-import {Text} from "react-konva";
-
+import {Rect, Text} from 'react-konva';
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
     let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -39,6 +38,7 @@ const stringToColourSave = function(colorKey) {
 
 class App extends Component {
     layerRef = React.createRef();
+    layerRef2 = React.createRef(null);
     constructor(props) {
         super(props);
         this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
@@ -46,7 +46,8 @@ class App extends Component {
             schematize: [],
             pathNames: [],
             loading: true,
-            actualWidth: 1
+            actualWidth: 1,
+            buttonsHeight:0
         };
         this.schematic = new PangenomeSchematic({store: this.props.store}); //Read file, parse nothing
         observe(this.props.store.beginEndBin, this.updateSchematicMetadata.bind(this));
@@ -146,8 +147,13 @@ class App extends Component {
         this.updateSchematicMetadata();
     }
 
-    componentDidMount = () => {
+    componentDidMount = () => {        
+        var clientHeight = document.getElementById('button-container').clientHeight;
+        this.setState({buttonsHeight: clientHeight})
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
+        this.layerRef2.current.getCanvas()._canvas.id = 'arrow';
+        this.layerRef2.current.getCanvas()._canvas.style.position = 'fixed';
+        this.layerRef2.current.getCanvas()._canvas.style.top = '95px';
 /*        if(this.props.store.useVerticalCompression) {
             this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
         }*/
@@ -232,7 +238,7 @@ class App extends Component {
             (schematizeComponent, i)=> {
                 return (
                     <React.Fragment key={"f" + i}>
-                        {this.renderComponent.call(this, schematizeComponent, i, this.state.pathNames)}
+                        {this.renderComponent(schematizeComponent, i, this.state.pathNames)}
                     </React.Fragment>
                 )
             }
@@ -257,14 +263,31 @@ class App extends Component {
             <>
                 <ControlHeader store={this.props.store}/>
                 <Stage
-                    x={this.props.store.leftOffset} //removed leftOffset to simplify code.  Relative coordinates are always better.
+                    x={this.props.store.leftOffset}
+                    y={this.state.buttonsHeight} //removed leftOffset to simplify code.  Relative coordinates are always better.
                     width={this.state.actualWidth + 60}
                     height={this.props.store.topOffset + this.visibleHeight()}>
                     <Layer ref={this.layerRef}>
                         {this.renderSchematic()}
-                        {this.renderSortedLinks()}
                     </Layer>
                 </Stage>
+                <Stage
+                    x={this.props.store.leftOffset} 
+                    y={this.props.topOffset}
+                    width={this.state.actualWidth + 60}
+                    height={this.props.store.topOffset}
+                    >
+                        <Layer ref={this.layerRef2}>
+                          <Rect
+                              x={-20}
+                              y={-this.state.buttonsHeight+15}
+                              width={this.state.actualWidth+20}
+                              height={this.props.store.topOffset+this.state.buttonsHeight}
+                              fill="white"
+                              />
+                            {this.renderSortedLinks()}
+                        </Layer>
+                  </Stage>
                 <NucleotideTooltip store={this.props.store}/>
             </>
         );
