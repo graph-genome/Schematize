@@ -68,11 +68,6 @@ class App extends Component {
     }
     updateSchematicMetadata(processingDone = false) {
         if(this.schematic.processArray()){ //parses beginBin to endBin range, returns false if new file needed
-            // console.log("#paths: " + this.schematic.pathNames.length);
-            // console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
-            console.log("updateSchematicMetadata #components: " + this.schematic.components.length);
-
-            // console.log(this.schematic.components);
             this.setState({
                 schematize: this.schematic.components,
                 pathNames: this.schematic.pathNames,
@@ -83,7 +78,6 @@ class App extends Component {
         }
     }
     recalcXLayout(){
-        console.log("recalcXLayout")
         const sum = (accumulator, currentValue) => accumulator + currentValue;
         let columnsInComponents = this.schematic.components.map(component =>
             component.arrivals.length + (component.departures.length-1) +
@@ -266,6 +260,5 @@ class App extends Component {
 
 }
 
-// render(<App />, document.getElementById('root'));
 
 export default App;

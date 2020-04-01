@@ -43,6 +43,7 @@ class ComponentRect extends React.Component {
     state = {
         color: 'lightgray'
     };
+  
     handleClick = () => {
         if (this.state.color === 'lightgray') {
             this.setState({color: 'lightblue'});
