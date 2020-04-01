@@ -14,7 +14,7 @@ class LinkArrow extends React.Component {
         this.handleMouseOut = this.handleMouseOut.bind(this);
         this.handleMouseOver = this.handleMouseOver.bind(this);
     }
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate() {
         this.calculatePoints();
     }
 

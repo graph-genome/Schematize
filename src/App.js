@@ -66,7 +66,7 @@ class App extends Component {
         this.schematic.loadFirstJSON(data);
         this.updateSchematicMetadata(true);
     }
-    updateSchematicMetadata(processingDone = false) {
+    updateSchematicMetadata() {
         if(this.schematic.processArray()){ //parses beginBin to endBin range, returns false if new file needed
             this.setState({
                 schematize: this.schematic.components,
@@ -101,7 +101,7 @@ class App extends Component {
         this.setState({highlightedLink: null}); //nothing code to force update.
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate(prevProps) {
         if(this.props.store.getBeginBin() !== prevProps.store.getBeginBin() || this.props.store.getEndBin() !== prevProps.store.getEndBin()){
             this.updateSchematicMetadata();
         }
