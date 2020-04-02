@@ -140,6 +140,9 @@ class App extends Component {
 
     componentDidMount = () => {        
         var clientHeight = document.getElementById('button-container').clientHeight;
+        const arrowsDiv = document.getElementsByClassName('konvajs-content')[1]
+        arrowsDiv.style.position = 'fixed'
+        arrowsDiv.style.top = '95px'
         this.setState({buttonsHeight: clientHeight})
         this.layerRef.current.getCanvas()._canvas.id = 'cnvs';
         this.layerRef2.current.getCanvas()._canvas.id = 'arrow';
