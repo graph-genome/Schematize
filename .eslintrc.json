@@ -5,7 +5,9 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended"
+    "google",
+    "plugin:react/recommended",
+    "plugin:prettier/recommended"
   ],
   "plugins": [
     "react"
