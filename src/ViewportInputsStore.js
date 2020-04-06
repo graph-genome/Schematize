@@ -81,6 +81,9 @@ RootStore = types
             self.endChunkURL = endFile; // CRITICAL ORDER!: doesn't cause an update
             self.startChunkURL = startFile; // not user visible
         }
+        function switchChunkURL(){
+            [self.startEndChunkURL[0], self.startEndChunkURL[1]] = [self.startEndChunkURL[1], self.startEndChunkURL[0]];
+        }
         function getStartEndChunkURL() {
             return self.startEndChunkURL;
         }
