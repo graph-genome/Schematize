@@ -20,8 +20,6 @@ RootStore = types
         maximumHeightThisFrame: 150,
         cellToolTipContent: "",
         jsonName: 'run1.B1phi1.i1.seqwish.w100',
-        startChunkURL: '',
-        endChunkURL: '',
         startEndChunkURL: ['',''],
         pathNucPos: types.optional(PathNucPos, {path: "path", nucPos: 0}), // OR: types.maybe(PathNucPos)
         pathIndexServerAddress: 'http://193.196.29.24:3010/',
@@ -76,10 +74,6 @@ RootStore = types
             if(urlExists(url)){
                 self.jsonName = event.target.value;
             }
-        }
-        function switchChunkFiles(startFile, endFile){
-            self.endChunkURL = endFile; // CRITICAL ORDER!: doesn't cause an update
-            self.startChunkURL = startFile; // not user visible
         }
         function switchChunkURL(startFile, endFile){
             [self.startEndChunkURL[0], self.startEndChunkURL[1]] = [startFile, endFile];
@@ -138,7 +132,7 @@ RootStore = types
             toggleUseVerticalCompression,
             updateHeight,updateWidth,
             tryJSONpath,
-            switchChunkFiles,
+            switchChunkURL,
             getBeginEndBin,
             getBeginBin,
             getEndBin,
