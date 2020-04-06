@@ -93,7 +93,7 @@ RootStore = types
         function getEndChunkURL() {
             return self.getStartEndChunkURL()[1];
         }
-        function setStartChunkURL(newStartChunkURL, newEndChunkURL) {
+        function setStartEndChunkURL(newStartChunkURL, newEndChunkURL) {
             self.startEndChunkURL = [newStartChunkURL, newEndChunkURL];
         }
         function getBeginEndBin() {
