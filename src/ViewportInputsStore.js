@@ -22,6 +22,7 @@ RootStore = types
         jsonName: 'run1.B1phi1.i1.seqwish.w100',
         startChunkURL: '',
         endChunkURL: '',
+        startEndChunkURL: ['',''],
         pathNucPos: types.optional(PathNucPos, {path: "path", nucPos: 0}), // OR: types.maybe(PathNucPos)
         pathIndexServerAddress: 'http://193.196.29.24:3010/',
         binWidth: 100
@@ -79,6 +80,18 @@ RootStore = types
         function switchChunkFiles(startFile, endFile){
             self.endChunkURL = endFile; // CRITICAL ORDER!: doesn't cause an update
             self.startChunkURL = startFile; // not user visible
+        }
+        function getStartEndChunkURL() {
+            return self.startEndChunkURL;
+        }
+        function getStartChunkURL() {
+            return self.getStartEndChunkURL()[0];
+        }
+        function getEndChunkURL() {
+            return self.getStartEndChunkURL()[1];
+        }
+        function setStartChunkURL(newStartChunkURL, newEndChunkURL) {
+            self.startEndChunkURL = [newStartChunkURL, newEndChunkURL];
         }
         function getBeginEndBin() {
             return self.beginEndBin;
