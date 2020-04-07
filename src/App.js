@@ -55,20 +55,20 @@ class App extends Component {
         observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
         observe(this.props.store, "useVerticalCompression", this.recalcY.bind(this));
         observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
-        observe(this.props.store.startEndChunkURL, this.nextChunk.bind(this));
+        observe(this.props.store.chunkURLs, this.nextChunk.bind(this));
         // this.nextChunk();
     };
     nextChunk(){
-        console.log("nextChunk", this.props.store.getStartChunkURL());
-        if (!this.props.store.getStartChunkURL()) {
+        console.log("nextChunk", this.props.store.getChunkURLs()[0]);
+        if (!this.props.store.getChunkURLs()[0]) {
             console.log("no")
             return
         }
-        this.schematic.jsonFetch(this.props.store.getStartChunkURL())
+        this.schematic.jsonFetch(this.props.store.getChunkURLs()[0])
             .then(this.queueUpdate.bind(this))
     }
     queueUpdate(data){
-        console.log("queueUpdate", this.props.store.getStartChunkURL());
+        console.log("queueUpdate", this.props.store.getChunkURLs()[0]);
         this.schematic.loadFirstJSON(data);
         this.updateSchematicMetadata(true);
     }

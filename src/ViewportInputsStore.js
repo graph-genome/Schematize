@@ -2,7 +2,7 @@ import { types } from "mobx-state-tree";
 import { urlExists } from "./URL"
 
 const BeginEndBin = types.optional(types.array(types.integer), [1,40]);
-const StartEndChunkURL = types.optional(types.array(types.string), ['','']);
+const ChunkURLs = types.optional(types.array(types.string), ['','']);
 const PathNucPos = types.model("PathNucPos", {
     path: types.string,
     nucPos: types.integer
@@ -21,7 +21,7 @@ RootStore = types
         maximumHeightThisFrame: 150,
         cellToolTipContent: "",
         jsonName: 'run1.B1phi1.i1.seqwish.w100',
-        startEndChunkURL: StartEndChunkURL,
+        chunkURLs: ChunkURLs,
         pathNucPos: types.optional(PathNucPos, {path: "path", nucPos: 0}), // OR: types.maybe(PathNucPos)
         pathIndexServerAddress: 'http://193.196.29.24:3010/',
         binWidth: 100
@@ -76,20 +76,11 @@ RootStore = types
                 self.jsonName = event.target.value;
             }
         }
-        function switchChunkURL(startFile, endFile){
-            [self.startEndChunkURL[0], self.startEndChunkURL[1]] = [startFile, endFile];
+        function switchChunkURLs(startFile, endFile){
+            self.chunkURLs = [startFile, endFile];
         }
-        function getStartEndChunkURL() {
-            return self.startEndChunkURL;
-        }
-        function getStartChunkURL() {
-            return self.getStartEndChunkURL()[0];
-        }
-        function getEndChunkURL() {
-            return self.getStartEndChunkURL()[1];
-        }
-        function setStartEndChunkURL(newStartChunkURL, newEndChunkURL) {
-            self.startEndChunkURL = [newStartChunkURL, newEndChunkURL];
+        function getChunkURLs() {
+            return self.chunkURLs;
         }
         function getBeginEndBin() {
             return self.beginEndBin;
@@ -133,10 +124,8 @@ RootStore = types
             toggleUseVerticalCompression,
             updateHeight,updateWidth,
             tryJSONpath,
-            switchChunkURL,
-            getStartEndChunkURL,
-            getStartChunkURL,
-            getEndChunkURL,
+            switchChunkURLs,
+            getChunkURLs,
             getBeginEndBin,
             getBeginBin,
             getEndBin,
