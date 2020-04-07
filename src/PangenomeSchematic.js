@@ -1,21 +1,18 @@
 import React from "react";
 import { observe } from "mobx";
-import * as $ from "jquery";
-import PropTypes from "prop-types";
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
     /*Only plain objects will be made observable. For non-plain objects it is considered the
-      responsibility of the constructor to initialize the observable properties. Either use
-      the @observable annotation or the extendObservable function.*/
+		 responsibility of the constructor to initialize the observable properties. Either use
+		 the @observable annotation or the extendObservable function.*/
     super(props);
     this.pathNames = [];
     this.components = [];
-    this.loadIndexFile(this.props.store.jsonName); //initializes this.chunk_index
-    this.blockingJsonFetch(
-      this.props.store.startChunkURL,
-      this.loadFirstJSON.bind(this)
-    );
+
+    this.loadIndexFile(this.props.store.jsonName) //initializes this.chunk_index
+      .then(() => this.jsonFetch(this.props.store.startChunkURL))
+      .then(this.loadFirstJSON.bind(this));
     //whenever jsonName changes,
     observe(this.props.store, "jsonName", () => {
       this.loadIndexFile(this.props.store.jsonName);
@@ -68,23 +65,28 @@ class PangenomeSchematic extends React.Component {
     let indexPath =
       process.env.PUBLIC_URL + "test_data/" + jsonFilename + "/bin2file.json";
     console.log("Reading", indexPath);
-    $.getJSON(indexPath, this.openRelevantChunk.bind(this)).fail(function (e) {
-      alert("error" + e);
-    });
+    return fetch(indexPath)
+      .then((res) => res.json())
+      .then((json) => {
+        if (!this.props.store.startChunkURL) {
+          // Initial state
+          this.props.store.switchChunkFiles(
+            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][0]["file"]}`,
+            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][1]["file"]}`
+          );
+        }
+        this.openRelevantChunk.call(this, json);
+      });
   }
-  blockingJsonFetch(filepath, callback) {
+  jsonFetch(filepath) {
+    if (!filepath)
+      throw new Error(
+        "No filepath given. Ensure chunknames in bin2file.json are correct."
+      );
+
     console.log("Fetching", filepath);
-    var xobj = new XMLHttpRequest();
-    xobj.overrideMimeType("application/json");
-    // not async because there's nothing to render without the file
-    xobj.open("GET", process.env.PUBLIC_URL + filepath, false);
-    xobj.onreadystatechange = function () {
-      if (xobj.readyState === 4 && xobj.status === 200) {
-        // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-        callback(JSON.parse(xobj.responseText));
-      }
-    };
-    xobj.send(null);
+
+    return fetch(process.env.PUBLIC_URL + filepath).then((res) => res.json());
   }
   loadFirstJSON(data) {
     this.jsonData = data;
@@ -93,8 +95,7 @@ class PangenomeSchematic extends React.Component {
     if (this.props.store.startChunkURL === this.props.store.endChunkURL) {
       this.processArray();
     } else {
-      this.blockingJsonFetch(
-        this.props.store.endChunkURL,
+      this.jsonFetch(this.props.store.endChunkURL).then(
         this.loadSecondJSON.bind(this)
       );
     }
@@ -164,10 +165,6 @@ class PangenomeSchematic extends React.Component {
     }
   }
 }
-
-PangenomeSchematic.propTypes = {
-  store: PropTypes.node,
-};
 
 class Component {
   constructor(component, offsetLength) {

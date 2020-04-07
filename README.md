@@ -5,7 +5,7 @@ This [project](https://graph-genome.github.io//project.html#teamwork-documents) 
 ## Available Scripts
 
 In the project directory, you can run:  
-`npm install` (First time only)
+`npm install` (First time only, ignore security warnings)
 
 ### `npm start`
 

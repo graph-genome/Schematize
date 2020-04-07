@@ -10,8 +10,7 @@ import { calculateLinkCoordinates } from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import { observe } from "mobx";
-import { Rect } from "react-konva";
-import PropTypes from "prop-types";
+import { Rect, Text } from "react-konva";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
   let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -50,6 +49,7 @@ class App extends Component {
     this.state = {
       schematize: [],
       pathNames: [],
+      loading: true,
       actualWidth: 1,
       buttonsHeight: 0,
     };
@@ -71,33 +71,50 @@ class App extends Component {
   }
   nextChunk() {
     console.log("nextChunk", this.props.store.startChunkURL);
-    this.schematic.blockingJsonFetch(
-      this.props.store.startChunkURL,
-      this.queueUpdate.bind(this)
-    );
+    if (!this.props.store.startChunkURL) {
+      console.log("no");
+      return;
+    }
+    this.schematic
+      .jsonFetch(this.props.store.startChunkURL)
+      .then(this.queueUpdate.bind(this));
   }
   queueUpdate(data) {
     console.log("queueUpdate", this.props.store.startChunkURL);
     this.schematic.loadFirstJSON(data);
     this.updateSchematicMetadata(true);
   }
-  updateSchematicMetadata() {
+  updateSchematicMetadata(processingDone = false) {
     if (this.schematic.processArray()) {
       //parses beginBin to endBin range, returns false if new file needed
-      this.setState({
-        schematize: this.schematic.components,
-        pathNames: this.schematic.pathNames,
-      });
-      this.recalcXLayout();
-      this.compressed_row_mapping = compress_visible_rows(
-        this.schematic.components
+      // console.log("#paths: " + this.schematic.pathNames.length);
+      // console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
+      console.log(
+        "updateSchematicMetadata #components: " +
+          this.schematic.components.length
       );
-      this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
-        this.schematic.components
-      ); // TODO add this to mobx-state-tree
+
+      // console.log(this.schematic.components);
+      this.setState(
+        {
+          schematize: this.schematic.components,
+          pathNames: this.schematic.pathNames,
+        },
+        () => {
+          this.recalcXLayout();
+          this.compressed_row_mapping = compress_visible_rows(
+            this.schematic.components
+          );
+          this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
+            this.schematic.components
+          ); // TODO add this to mobx-state-tree
+          this.setState({ loading: false });
+        }
+      );
     }
   }
   recalcXLayout() {
+    console.log("recalcXLayout");
     const sum = (accumulator, currentValue) => accumulator + currentValue;
     let columnsInComponents = this.schematic.components
       .map(
@@ -131,7 +148,7 @@ class App extends Component {
     this.setState({ highlightedLink: null }); //nothing code to force update.
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState, snapshot) {
     if (
       this.props.store.getBeginBin() !== prevProps.store.getBeginBin() ||
       this.props.store.getEndBin() !== prevProps.store.getEndBin()
@@ -180,6 +197,9 @@ class App extends Component {
 
   componentDidMount = () => {
     var clientHeight = document.getElementById("button-container").clientHeight;
+    const arrowsDiv = document.getElementsByClassName("konvajs-content")[1];
+    arrowsDiv.style.position = "fixed";
+    arrowsDiv.style.top = "95px";
     this.setState({ buttonsHeight: clientHeight });
     this.layerRef.current.getCanvas()._canvas.id = "cnvs";
     this.layerRef2.current.getCanvas()._canvas.id = "arrow";
@@ -288,6 +308,29 @@ class App extends Component {
     );
   }
 
+  renderSchematic = () => {
+    if (this.state.loading) {
+      return <Text text="Loading..." fontSize={60} />;
+    }
+    return this.schematic.components.map((schematizeComponent, i) => {
+      return (
+        <React.Fragment key={"f" + i}>
+          {this.renderComponent(schematizeComponent, i, this.state.pathNames)}
+        </React.Fragment>
+      );
+    });
+  };
+
+  renderSortedLinks = () => {
+    if (this.state.loading) {
+      return;
+    }
+
+    return this.distanceSortedLinks.map((record, i) => {
+      return this.renderLink(record);
+    });
+  };
+
   render() {
     console.log("Start render");
     return (
@@ -299,19 +342,7 @@ class App extends Component {
           width={this.state.actualWidth + 60}
           height={this.props.store.topOffset + this.visibleHeight()}
         >
-          <Layer ref={this.layerRef}>
-            {this.schematic.components.map((schematizeComponent, i) => {
-              return (
-                <React.Fragment key={"f" + i}>
-                  {this.renderComponent(
-                    schematizeComponent,
-                    i,
-                    this.state.pathNames
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </Layer>
+          <Layer ref={this.layerRef}>{this.renderSchematic()}</Layer>
         </Stage>
         <Stage
           x={this.props.store.leftOffset}
@@ -327,9 +358,7 @@ class App extends Component {
               height={this.props.store.topOffset + this.state.buttonsHeight}
               fill="white"
             />
-            {this.distanceSortedLinks.map((record, i) => {
-              return this.renderLink(record);
-            })}
+            {this.renderSortedLinks()}
           </Layer>
         </Stage>
         <NucleotideTooltip store={this.props.store} />
@@ -338,9 +367,6 @@ class App extends Component {
   }
 }
 
-App.propTypes = {
-  store: PropTypes.node,
-  topOffset: PropTypes.node,
-};
+// render(<App />, document.getElementById('root'));
 
 export default App;
