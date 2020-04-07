@@ -83,7 +83,7 @@ class PangenomeSchematic extends React.Component {
 		}
 	}
 	loadSecondJSON(secondChunkContents){
-		if(this.jsonData.last_bin < secondChunkContents.last_bin){
+		if(this.jsonData.last_bin <= secondChunkContents.last_bin){
             this.jsonData.mid_bin = this.jsonData.last_bin; //boundary between two files
 			this.jsonData.last_bin = secondChunkContents.last_bin;
 			this.jsonData.components.push(...secondChunkContents.components)
