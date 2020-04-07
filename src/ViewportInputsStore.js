@@ -77,7 +77,7 @@ RootStore = types
             }
         }
         function switchChunkURL(startFile, endFile){
-            [self.StartEndChunkURL[0], self.startEndChunkURL[1]] = [startFile, endFile];
+            [self.startEndChunkURL[0], self.startEndChunkURL[1]] = [startFile, endFile];
         }
         function getStartEndChunkURL() {
             return self.startEndChunkURL;
