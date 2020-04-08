@@ -177,9 +177,9 @@ class ComponentRect extends React.Component {
 }
 
 ComponentRect.propTypes = {
-  store: PropTypes.node,
-  item: PropTypes.node,
-  compressed_row_mapping: PropTypes.node,
+  store: PropTypes.object,
+  item: PropTypes.object,
+  compressed_row_mapping: PropTypes.object,
   width: PropTypes.node,
   height: PropTypes.node,
   pathNames: PropTypes.node,
