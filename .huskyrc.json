@@ -1,0 +1,5 @@
+{
+  "hooks": {
+    "pre-commit": "unset GIT_LITERAL_PATHSPECS && lint-staged"
+  }
+}
