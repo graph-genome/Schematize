@@ -19,7 +19,7 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "nonconsecutive_chunks",
+    jsonName: "run1.B1phi1.i1.seqwish.w100",
     startChunkURL: "",
     endChunkURL: "",
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
