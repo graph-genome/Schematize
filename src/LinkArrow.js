@@ -135,10 +135,10 @@ class LinkArrow extends React.Component {
 }
 
 LinkArrow.propTypes = {
-  store: PropTypes.node,
-  link: PropTypes.node,
+  store: PropTypes.object,
+  link: PropTypes.object,
   color: PropTypes.node,
-  updateHighlightedNode: PropTypes.node,
+  updateHighlightedNode: PropTypes.func,
 };
 
 export default LinkArrow;
