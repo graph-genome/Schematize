@@ -59,7 +59,7 @@ export class MatrixCell extends React.Component {
 }
 
 MatrixCell.propTypes = {
-  store: PropTypes.node,
+  store: PropTypes.object,
   item: PropTypes.node,
   x: PropTypes.number,
   y: PropTypes.number,

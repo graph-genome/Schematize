@@ -6,12 +6,13 @@ class PangenomeSchematic extends React.Component {
     /*Only plain objects will be made observable. For non-plain objects it is considered the
 		 responsibility of the constructor to initialize the observable properties. Either use
 		 the @observable annotation or the extendObservable function.*/
+
     super(props);
     this.pathNames = [];
     this.components = [];
 
     this.loadIndexFile(this.props.store.jsonName) //initializes this.chunk_index
-      .then(() => this.jsonFetch(this.props.store.startChunkURL))
+      .then(() => this.jsonFetch(this.props.store.getChunkURLs()[0]))
       .then(this.loadFirstJSON.bind(this));
     //whenever jsonName changes,
     observe(this.props.store, "jsonName", () => {
@@ -48,7 +49,7 @@ class PangenomeSchematic extends React.Component {
       }
     }
     //will trigger chunk update in App.nextChunk() which calls this.loadJSON
-    this.props.store.switchChunkFiles(
+    this.props.store.switchChunkURLs(
       process.env.PUBLIC_URL +
         "test_data/" +
         this.props.store.jsonName +
@@ -68,10 +69,10 @@ class PangenomeSchematic extends React.Component {
     return fetch(indexPath)
       .then((res) => res.json())
       .then((json) => {
-        if (!this.props.store.startChunkURL) {
+				if (!this.props.store.getChunkURLs()[0]) {
           // Initial state
-          this.props.store.switchChunkFiles(
-            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][0]["file"]}`,
+          this.props.store.switchChunkURLs(
+						`${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][0]["file"]}`,
             `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][1]["file"]}`
           );
         }
@@ -92,10 +93,11 @@ class PangenomeSchematic extends React.Component {
     this.jsonData = data;
     this.pathNames = this.jsonData.path_names;
     this.jsonData.mid_bin = data.last_bin; //placeholder
-    if (this.props.store.startChunkURL === this.props.store.endChunkURL) {
+    let lastChunkURLIndex = this.props.store.chunkURLs.length - 1;
+    if (this.props.store.getChunkURLs()[0] === this.props.store.getChunkURLs()[lastChunkURLIndex]) {
       this.processArray();
     } else {
-      this.jsonFetch(this.props.store.endChunkURL).then(
+      this.jsonFetch(this.props.store.getChunkURLs()[lastChunkURLIndex]).then(
         this.loadSecondJSON.bind(this)
       );
     }
@@ -107,7 +109,7 @@ class PangenomeSchematic extends React.Component {
       this.jsonData.components.push(...secondChunkContents.components);
     } else {
       console.error(
-        "Second chunk was earlier than the first.  Check the order you set store.endChunkURL"
+        "Second chunk was earlier than the first.  Check the order you set store.chunkURLs"
       );
     }
     this.processArray();

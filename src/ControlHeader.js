@@ -187,7 +187,7 @@ class ControlHeader extends React.Component {
 }
 
 ControlHeader.propTypes = {
-  store: PropTypes.node,
+  store: PropTypes.object,
 };
 
 class CompressedViewSwitch extends React.Component {
@@ -205,6 +205,6 @@ class CompressedViewSwitch extends React.Component {
 }
 
 CompressedViewSwitch.propTypes = {
-  store: PropTypes.node,
+  store: PropTypes.object,
 };
 export default ControlHeader;

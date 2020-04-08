@@ -62,10 +62,10 @@ class LinkColumn extends React.Component {
 }
 
 LinkColumn.propTypes = {
-  store: PropTypes.node,
-  item: PropTypes.node,
-  updateHighlightedNode: PropTypes.node,
-  compressed_row_mapping: PropTypes.node,
+  store: PropTypes.object,
+  item: PropTypes.object,
+  updateHighlightedNode: PropTypes.func,
+  compressed_row_mapping: PropTypes.object,
   x: PropTypes.node,
   column: PropTypes.node,
   color: PropTypes.node,
