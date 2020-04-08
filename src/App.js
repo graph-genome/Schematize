@@ -335,7 +335,7 @@ class App extends Component {
     console.log("Start render");
     return (
       <>
-        <ControlHeader store={this.props.store} />
+        <ControlHeader store={this.props.store} schematic={this.schematic} />
         <Stage
           x={this.props.store.leftOffset}
           y={this.state.buttonsHeight} //removed leftOffset to simplify code.  Relative coordinates are always better.

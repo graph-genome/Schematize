@@ -119,6 +119,7 @@ class ControlHeader extends React.Component {
           Jump to path at nucleotide position:
           <input
             type="string"
+            list="path"
             placeholder={"path"}
             onChange={(event) =>
               this.props.store.updatePathNucPos(
@@ -128,6 +129,11 @@ class ControlHeader extends React.Component {
             }
             style={{ width: "80px" }}
           />
+          <datalist id="path">
+            {this.props.schematic.pathNames.map((item, key) => (
+              <option key={key} value={item} />
+            ))}
+          </datalist>
           -
           <input
             type="number"
