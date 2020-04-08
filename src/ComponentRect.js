@@ -169,7 +169,7 @@ class ComponentRect extends React.Component {
           fill={this.state.color}
           onClick={this.handleClick}
         ></Rect>
-        {this.renderMatrix()}
+        {this.props.store.useRenderMatrix ? this.renderMatrix() : null}
         {this.renderAllConnectors()}
       </>
     );

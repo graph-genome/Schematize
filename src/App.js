@@ -332,7 +332,7 @@ class App extends Component {
   };
 
   render() {
-    console.log("Start render");
+    console.log("Start render", this.props.store);
     return (
       <>
         <ControlHeader store={this.props.store} />

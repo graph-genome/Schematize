@@ -11,6 +11,7 @@ export let RootStore;
 RootStore = types
   .model({
     useVerticalCompression: false,
+    useRenderMatrix: true,
     beginEndBin: BeginEndBin,
     pixelsPerColumn: 7,
     pixelsPerRow: 7,
@@ -70,6 +71,9 @@ RootStore = types
     }
     function toggleUseVerticalCompression() {
       self.useVerticalCompression = !self.useVerticalCompression;
+    }
+    function toggleUseRenderMatrix() {
+      self.useRenderMatrix = !self.useRenderMatrix;
     }
     function updateHeight(event) {
       self.pixelsPerRow = Math.max(1, Number(event.target.value));
@@ -131,6 +135,7 @@ RootStore = types
       resetRenderStats,
       updateCellTooltipContent,
       toggleUseVerticalCompression,
+      toggleUseRenderMatrix,
       updateHeight,
       updateWidth,
       tryJSONpath,

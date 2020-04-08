@@ -154,6 +154,11 @@ class ControlHeader extends React.Component {
           </span>
           <span>
             {" "}
+            Use Render Matrix:
+            <RenderMatrixSwitch store={this.props.store} />
+          </span>
+          <span>
+            {" "}
             Row Height:
             <input
               type="number"
@@ -187,13 +192,15 @@ ControlHeader.propTypes = {
 class CompressedViewSwitch extends React.Component {
   render() {
     return (
-      <input
-        type="checkbox"
-        value={
-          <Observer>{() => this.props.store.useVerticalCompression}</Observer>
-        }
-        onChange={this.props.store.toggleUseVerticalCompression}
-      />
+      <Observer>
+        {() => (
+          <input
+            type="checkbox"
+            checked={this.props.store.useVerticalCompression}
+            onChange={this.props.store.toggleUseVerticalCompression}
+          />
+        )}
+      </Observer>
     );
   }
 }
@@ -201,4 +208,25 @@ class CompressedViewSwitch extends React.Component {
 CompressedViewSwitch.propTypes = {
   store: PropTypes.node,
 };
+
+class RenderMatrixSwitch extends React.Component {
+  render() {
+    return (
+      <Observer>
+        {() => (
+          <input
+            type="checkbox"
+            checked={this.props.store.useRenderMatrix}
+            onChange={this.props.store.toggleUseRenderMatrix}
+          />
+        )}
+      </Observer>
+    );
+  }
+}
+
+RenderMatrixSwitch.propTypes = {
+  store: PropTypes.object,
+};
+
 export default ControlHeader;
