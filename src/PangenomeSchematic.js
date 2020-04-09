@@ -86,6 +86,33 @@ class PangenomeSchematic extends React.Component {
 
     return fetch(process.env.PUBLIC_URL + filepath).then((res) => res.json());
   }
+  loadJSONs(data) {
+    // This assumes that URLs are in order
+    this.jsonData = data;
+    this.pathNames = this.jsonData.path_names;
+
+    const lastChunkURLIndex = this.props.store.chunkURLs.length - 1;
+    let currentURLIndex = 0;
+
+    while (!(currentURLIndex === lastChunkURLIndex)) {
+      currentURLIndex += 1;
+      this.jsonFetch(this.props.store.getChunkURLs()[currentURLIndex]).then(
+        this.loadAdditionalJSON.bind(this)
+      );
+    }
+
+    this.processArray();
+  }
+  loadAdditionalJSON(otherChunkContents) {
+    if (this.jsonData.last_bin < otherChunkContents.last_bin) {
+      this.jsonData.last_bin = otherChunkContents.last_bin;
+      this.jsonData.components.push(...otherChunkContents.components);
+    } else {
+      console.warn(
+        "Additional chunk has .last_bin smaller than the previous one. Check the order you set store.chunkURLs"
+      );
+    }
+  }
   loadFirstJSON(data) {
     this.jsonData = data;
     this.pathNames = this.jsonData.path_names;
@@ -139,6 +166,7 @@ class PangenomeSchematic extends React.Component {
     if (
       beginBin > this.jsonData.mid_bin ||
       beginBin < this.jsonData.first_bin
+      //TODO: add checks for beginBin vs .first_bin & endBin vs .last_bin too
     ) {
       //only do a new chunk scan if it's needed
       this.openRelevantChunk(this.chunk_index); // this will trigger a second update cycle
