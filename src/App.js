@@ -41,7 +41,6 @@ const stringToColourSave = function (colorKey) {
 };
 
 class App extends Component {
-
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
   constructor(props) {
@@ -213,6 +212,7 @@ class App extends Component {
 
   updateHighlightedNode = (linkRect) => {
     this.setState({ highlightedLink: linkRect });
+    this.recalcXLayout();
     // this.props.store.updateHighlightedLink(linkRect); // TODO this does not work, ask Robert about it
   };
 
