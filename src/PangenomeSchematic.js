@@ -1,6 +1,10 @@
 import React from "react";
 import { observe } from "mobx";
 
+function range(start, end) {
+  return [...Array(1 + end - start).keys()].map((v) => start + v);
+}
+
 class PangenomeSchematic extends React.Component {
   constructor(props) {
     /*Only plain objects will be made observable. For non-plain objects it is considered the
@@ -27,39 +31,23 @@ class PangenomeSchematic extends React.Component {
     this.chunk_index = chunk_index;
     const beginBin = this.props.store.getBeginBin();
     const endBin = this.props.store.getEndBin();
-    const endPangenome = chunk_index["last_bin"];
-    const minBin = Math.min(endPangenome, endBin);
-    //only do a new chunk scan if it's needed
-    let startFile = chunk_index["files"][0]["file"];
-    let nextChunk = chunk_index["files"][0];
-    for (let i = 0; i < chunk_index["files"].length; ++i) {
-      //linear scan for the right chunk
-      let chunk = chunk_index["files"][i];
-      if (chunk["last_bin"] >= beginBin && chunk["first_bin"] <= beginBin) {
-        startFile = chunk["file"]; // retrieve file name
-        nextChunk = chunk; // fallback: if it's last chunk in series
-        if (i + 1 < chunk_index["files"].length) {
-          nextChunk = chunk_index["files"][i + 1];
-        }
-        console.log("Opening chunk", startFile, nextChunk["file"]);
-        //restrict end position to end of the new chunk
-        this.props.store.updateBeginEndBin(beginBin, minBin);
-        break; // done scanning
-      }
+
+    const findBegin = (entry) => entry["last_bin"] >= beginBin;
+    const findEnd = (entry) => entry["first_bin"] >= endBin;
+    let beginIndex = chunk_index["files"].findIndex(findBegin);
+    let endIndex = chunk_index["files"].findIndex(findEnd);
+
+    if (-1 === beginIndex || -1 === endIndex) {
+      endIndex = this.props.store.pangenomelast_bin;
     }
+
     //will trigger chunk update in App.nextChunk() which calls this.loadJSON
-    let fileArray = [
-      process.env.PUBLIC_URL +
-        "test_data/" +
-        this.props.store.jsonName +
-        "/" +
-        startFile,
-      process.env.PUBLIC_URL +
-        "test_data/" +
-        this.props.store.jsonName +
-        "/" +
-        nextChunk["file"],
-    ];
+    let URLprefix =
+      process.env.PUBLIC_URL + "test_data/" + this.props.store.jsonName + "/";
+    let fileArray = range(beginIndex, endIndex + 1).map((index) => {
+      return URLprefix + chunk_index["files"][index]["file"];
+    });
+
     this.props.store.switchChunkURLs(fileArray);
   }
   loadIndexFile(jsonFilename) {

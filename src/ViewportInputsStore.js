@@ -26,6 +26,8 @@ RootStore = types
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
     binWidth: 100,
+    pangenomelast_bin: -1,
+    // TODO: Set when bin2file is read
   })
   .actions((self) => {
     function updateBeginEndBin(newBegin, newEnd) {
