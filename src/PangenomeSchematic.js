@@ -1,3 +1,8 @@
+/* eslint-disable no-var */
+/* eslint-disable prefer-const */
+/* eslint-disable react/prop-types */
+/* eslint-disable spaced-comment */
+/* eslint-disable require-jsdoc */
 import React from "react";
 import { observe } from "mobx";
 
@@ -10,6 +15,7 @@ class PangenomeSchematic extends React.Component {
     super(props);
     this.pathNames = [];
     this.components = [];
+    this.nucleotides = [];
 
     this.loadIndexFile(this.props.store.jsonName) //initializes this.chunk_index
       .then(() => this.jsonFetch(this.props.store.getChunkURLs()[0]))
@@ -69,13 +75,14 @@ class PangenomeSchematic extends React.Component {
     return fetch(indexPath)
       .then((res) => res.json())
       .then((json) => {
-				if (!this.props.store.getChunkURLs()[0]) {
+        if (!this.props.store.getChunkURLs()[0]) {
           // Initial state
           this.props.store.switchChunkURLs(
-						`${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][0]["file"]}`,
+            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][0]["file"]}`,
             `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][1]["file"]}`
           );
         }
+        this.loadFasta();
         this.openRelevantChunk.call(this, json);
       });
   }
@@ -94,7 +101,10 @@ class PangenomeSchematic extends React.Component {
     this.pathNames = this.jsonData.path_names;
     this.jsonData.mid_bin = data.last_bin; //placeholder
     let lastChunkURLIndex = this.props.store.chunkURLs.length - 1;
-    if (this.props.store.getChunkURLs()[0] === this.props.store.getChunkURLs()[lastChunkURLIndex]) {
+    if (
+      this.props.store.getChunkURLs()[0] ===
+      this.props.store.getChunkURLs()[lastChunkURLIndex]
+    ) {
       this.processArray();
     } else {
       this.jsonFetch(this.props.store.getChunkURLs()[lastChunkURLIndex]).then(
@@ -114,11 +124,41 @@ class PangenomeSchematic extends React.Component {
       );
     }
   }
+  loadFasta() {
+    //find a way to make this less fragile
+    //probably move it elsewhere
+    const chunkNo = parseInt(
+      this.props.store.getChunkURLs()[0].split("chunk")[1].split("_")[0]
+    );
+    const fastaFileName = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/seq_chunk0${chunkNo}_bin1.fa`;
+    fetch(fastaFileName)
+      .then((response) => {
+        return response.text();
+      })
+      .then((text) => {
+        //we should check that the bins match in here
+
+        //remove first line
+        const splitText = text.replace(/.*/, "").substr(1);
+        const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
+        const nucelotides = noLinebreaks.split("");
+        //split into array of nucelotides
+        this.nucleotides = nucelotides;
+        return;
+      });
+    //work out which fasta. Get Json chuck and find chunk number (split on _, take [0], split on k take [0] find file with name with filter(?), parse int for matching)
+    //fetch fa (either promises or xhr but need to decide). Needs to be response.text. check bins match json bins. Load rest of text
+    //split on first line and turn rest of file into array
+    //in process array create bin nucleotide. Display nucleotide below arrows
+    //arrows will need raiding by height of text (probably)
+    //render text last so it appears on top of arrows and can be seen (might have to change arrow colours)
+  }
   processArray() {
     /*parses beginBin to endBin range, returns false if new file needed*/
     if (!this.jsonData) {
       return false;
     }
+    // eslint-disable-next-line prefer-const
     let [beginBin, endBin] = [
       this.props.store.getBeginBin(),
       this.props.store.getEndBin(),

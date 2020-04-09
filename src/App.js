@@ -1,3 +1,9 @@
+/* eslint-disable no-invalid-this */
+/* eslint-disable no-var */
+/* eslint-disable spaced-comment */
+/* eslint-disable prefer-const */
+/* eslint-disable react/prop-types */
+/* eslint-disable require-jsdoc */
 import { Layer, Stage } from "react-konva";
 import React, { Component } from "react";
 
@@ -41,7 +47,6 @@ const stringToColourSave = function (colorKey) {
 };
 
 class App extends Component {
-
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
   constructor(props) {
@@ -59,7 +64,7 @@ class App extends Component {
       this.props.store.beginEndBin,
       this.updateSchematicMetadata.bind(this)
     );
-    //TODO: endBin observer is still double triggering on shift() buttons. wait for beginBin event?
+    // TODO: endBin observer is still double triggering on shift() buttons. wait for beginBin event?
     observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
     observe(
       this.props.store,
@@ -242,6 +247,7 @@ class App extends Component {
           }
           compressed_row_mapping={this.compressed_row_mapping}
           pathNames={pathNames}
+          nucleotides={this.schematic.nucleotides}
         />
 
         {schematizeComponent.arrivals.map((linkColumn, j) => {

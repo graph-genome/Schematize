@@ -1,9 +1,8 @@
 import { types } from "mobx-state-tree";
 import { urlExists } from "./URL";
 
-
 const BeginEndBin = types.optional(types.array(types.integer), [1, 40]);
-const ChunkURLs = types.optional(types.array(types.string), ['', '']);
+const ChunkURLs = types.optional(types.array(types.string), ["", ""]);
 
 const PathNucPos = types.model("PathNucPos", {
   path: types.string,
@@ -22,7 +21,7 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "run1.B1phi1.i1.seqwish.w100",
+    jsonName: "run1.B1phi1.i1.seqwish.w1",
     chunkURLs: ChunkURLs,
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
@@ -89,7 +88,7 @@ RootStore = types
         self.jsonName = event.target.value;
       }
     }
-    function switchChunkURLs(startFile, endFile){
+    function switchChunkURLs(startFile, endFile) {
       self.chunkURLs = [startFile, endFile];
     }
     function getChunkURLs() {

@@ -1,5 +1,6 @@
+/* eslint-disable require-jsdoc */
 import React from "react";
-import { Rect } from "react-konva";
+import { Rect, Text } from "react-konva";
 import { MatrixCell, ConnectorRect } from "./ComponentConnectorRect";
 import PropTypes from "prop-types";
 
@@ -80,23 +81,33 @@ class ComponentRect extends React.Component {
       this_y = this.props.compressed_row_mapping[row_n];
     }
     return row.map((cell, x) => {
+      console.log(this.props.nucleotides[x]);
       if (cell.length) {
         return (
-          <MatrixCell
-            key={"occupant" + row_n + x}
-            item={cell}
-            store={this.props.store}
-            pathName={this.props.pathNames[row_n]}
-            x={x_val + x * this.props.store.pixelsPerColumn}
-            y={
-              this_y * this.props.store.pixelsPerRow +
-              this.props.store.topOffset
-            }
-            row_number={row_n}
-            width={width}
-            height={this.props.store.pixelsPerRow}
-            color={"#838383"}
-          />
+          <>
+            <Text
+              x={x_val + x * this.props.store.pixelsPerColumn}
+              y={this.props.store.topOffset}
+              text="a"
+              align="center"
+              width={width}
+            />
+            <MatrixCell
+              key={"occupant" + row_n + x}
+              item={cell}
+              store={this.props.store}
+              pathName={this.props.pathNames[row_n]}
+              x={x_val + x * this.props.store.pixelsPerColumn}
+              y={
+                this_y * this.props.store.pixelsPerRow +
+                this.props.store.topOffset
+              }
+              row_number={row_n}
+              width={width}
+              height={this.props.store.pixelsPerRow}
+              color={"#838383"}
+            />
+          </>
         );
       } else {
         return null;
