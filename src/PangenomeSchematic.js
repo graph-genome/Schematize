@@ -146,9 +146,9 @@ class PangenomeSchematic extends React.Component {
     } else {
       var componentArray = [];
       var offsetLength = 0;
-      for (var component of this.jsonData.components) {
+      for (let [index, component] of this.jsonData.components.entries()) {
         if (component.last_bin >= beginBin) {
-          var componentItem = new Component(component, offsetLength);
+          var componentItem = new Component(component, offsetLength, index);
           offsetLength +=
             componentItem.arrivals.length + componentItem.departures.length - 1;
           componentArray.push(componentItem);
@@ -169,8 +169,9 @@ class PangenomeSchematic extends React.Component {
 }
 
 class Component {
-  constructor(component, offsetLength) {
+  constructor(component, offsetLength, index) {
     this.offset = offsetLength;
+    this.index = index;
     this.firstBin = component.first_bin;
     this.lastBin = component.last_bin;
     this.arrivals = [];

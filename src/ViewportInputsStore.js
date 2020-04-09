@@ -15,6 +15,8 @@ RootStore = types
   .model({
     useVerticalCompression: false,
     useRenderMatrix: true,
+    useWidthCompression: false,
+    useConnector: true,
     beginEndBin: BeginEndBin,
     pixelsPerColumn: 7,
     pixelsPerRow: 7,
@@ -76,6 +78,12 @@ RootStore = types
     }
     function toggleUseRenderMatrix() {
       self.useRenderMatrix = !self.useRenderMatrix;
+    }
+    function toggleUseWidthCompression() {
+      self.useWidthCompression = !self.useWidthCompression;
+    }
+    function toggleUseConnector() {
+      self.useConnector = !self.useConnector;
     }
     function updateHeight(event) {
       self.pixelsPerRow = Math.max(1, Number(event.target.value));
@@ -140,6 +148,8 @@ RootStore = types
       updateCellTooltipContent,
       toggleUseVerticalCompression,
       toggleUseRenderMatrix,
+      toggleUseWidthCompression,
+      toggleUseConnector,
       updateHeight,
       updateWidth,
       tryJSONpath,

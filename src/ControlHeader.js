@@ -156,12 +156,17 @@ class ControlHeader extends React.Component {
           <span>
             {" "}
             Use Vertical Compression:
-            <CompressedViewSwitch store={this.props.store} />
+            <VerticalCompressedViewSwitch store={this.props.store} />
           </span>
           <span>
             {" "}
-            Use Render Matrix:
-            <RenderMatrixSwitch store={this.props.store} />
+            Use Width Compression:
+            <WidthCompressedViewSwitch store={this.props.store} />
+          </span>
+          <span>
+            {" "}
+            Render Connectors:
+            <RenderConnectorSwitch store={this.props.store} />
           </span>
           <span>
             {" "}
@@ -195,7 +200,7 @@ ControlHeader.propTypes = {
   store: PropTypes.object,
 };
 
-class CompressedViewSwitch extends React.Component {
+class VerticalCompressedViewSwitch extends React.Component {
   render() {
     return (
       <Observer>
@@ -211,7 +216,7 @@ class CompressedViewSwitch extends React.Component {
   }
 }
 
-CompressedViewSwitch.propTypes = {
+VerticalCompressedViewSwitch.propTypes = {
   store: PropTypes.object,
 };
 
@@ -234,5 +239,46 @@ class RenderMatrixSwitch extends React.Component {
 RenderMatrixSwitch.propTypes = {
   store: PropTypes.object,
 };
+
+class RenderConnectorSwitch extends React.Component {
+  render() {
+    return (
+      <Observer>
+        {() => (
+          <input
+            type="checkbox"
+            checked={this.props.store.useConnector}
+            onChange={this.props.store.toggleUseConnector}
+          />
+        )}
+      </Observer>
+    );
+  }
+}
+
+RenderConnectorSwitch.propTypes = {
+  store: PropTypes.object,
+};
+
+class WidthCompressedViewSwitch extends React.Component {
+  render() {
+    return (
+      <Observer>
+        {() => (
+          <input
+            type="checkbox"
+            checked={this.props.store.useWidthCompression}
+            onChange={this.props.store.toggleUseWidthCompression}
+          />
+        )}
+      </Observer>
+    );
+  }
+}
+
+WidthCompressedViewSwitch.propTypes = {
+  store: PropTypes.object,
+};
+
 
 export default ControlHeader;
