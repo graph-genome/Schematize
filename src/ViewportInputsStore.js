@@ -1,9 +1,8 @@
 import { types } from "mobx-state-tree";
 import { urlExists } from "./URL";
 
-
 const BeginEndBin = types.optional(types.array(types.integer), [1, 40]);
-const ChunkURLs = types.optional(types.array(types.string), ['', '']);
+const ChunkURLs = types.optional(types.array(types.string), ["", ""]);
 
 const PathNucPos = types.model("PathNucPos", {
   path: types.string,
@@ -14,7 +13,6 @@ export let RootStore;
 RootStore = types
   .model({
     useVerticalCompression: false,
-    useRenderMatrix: true,
     useWidthCompression: false,
     useConnector: true,
     beginEndBin: BeginEndBin,
@@ -76,9 +74,6 @@ RootStore = types
     function toggleUseVerticalCompression() {
       self.useVerticalCompression = !self.useVerticalCompression;
     }
-    function toggleUseRenderMatrix() {
-      self.useRenderMatrix = !self.useRenderMatrix;
-    }
     function toggleUseWidthCompression() {
       self.useWidthCompression = !self.useWidthCompression;
     }
@@ -101,7 +96,7 @@ RootStore = types
         self.jsonName = event.target.value;
       }
     }
-    function switchChunkURLs(startFile, endFile){
+    function switchChunkURLs(startFile, endFile) {
       self.chunkURLs = [startFile, endFile];
     }
     function getChunkURLs() {
@@ -147,7 +142,6 @@ RootStore = types
       resetRenderStats,
       updateCellTooltipContent,
       toggleUseVerticalCompression,
-      toggleUseRenderMatrix,
       toggleUseWidthCompression,
       toggleUseConnector,
       updateHeight,

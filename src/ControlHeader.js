@@ -220,26 +220,6 @@ VerticalCompressedViewSwitch.propTypes = {
   store: PropTypes.object,
 };
 
-class RenderMatrixSwitch extends React.Component {
-  render() {
-    return (
-      <Observer>
-        {() => (
-          <input
-            type="checkbox"
-            checked={this.props.store.useRenderMatrix}
-            onChange={this.props.store.toggleUseRenderMatrix}
-          />
-        )}
-      </Observer>
-    );
-  }
-}
-
-RenderMatrixSwitch.propTypes = {
-  store: PropTypes.object,
-};
-
 class RenderConnectorSwitch extends React.Component {
   render() {
     return (
@@ -279,6 +259,5 @@ class WidthCompressedViewSwitch extends React.Component {
 WidthCompressedViewSwitch.propTypes = {
   store: PropTypes.object,
 };
-
 
 export default ControlHeader;
