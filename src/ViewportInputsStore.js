@@ -14,6 +14,7 @@ RootStore = types
   .model({
     useVerticalCompression: false,
     useWidthCompression: false,
+    binScalingFactor: 3,
     useConnector: true,
     beginEndBin: BeginEndBin,
     pixelsPerColumn: 7,
@@ -55,6 +56,10 @@ RootStore = types
       if (Number.isFinite(newTopOffset) && Number.isSafeInteger(newTopOffset)) {
         self.topOffset = newTopOffset;
       }
+    }
+    function updateBinScalingFactor(event) {
+      let newFactor = event.target.value;
+      self.binScalingFactor = Math.max(1, Number(newFactor));
     }
     function updateHighlightedLink(linkRect) {
       self.highlightedLink = linkRect;
@@ -141,6 +146,7 @@ RootStore = types
       updateMaxHeight,
       resetRenderStats,
       updateCellTooltipContent,
+      updateBinScalingFactor,
       toggleUseVerticalCompression,
       toggleUseWidthCompression,
       toggleUseConnector,

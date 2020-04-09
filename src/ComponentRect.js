@@ -141,7 +141,9 @@ class ComponentRect extends React.Component {
     const x_val =
       component.x +
       (component.arrivals.length +
-        (this.props.store.useWidthCompression ? 1 : component.num_bin) +
+        (this.props.store.useWidthCompression
+          ? this.props.store.binScalingFactor
+          : component.num_bin) +
         component.departures.length -
         1) *
         this.props.store.pixelsPerColumn;
@@ -173,9 +175,7 @@ class ComponentRect extends React.Component {
           onClick={this.handleClick}
         ></Rect>
         {!this.props.store.useWidthCompression ? this.renderMatrix() : null}
-        {!this.props.store.useWidthCompression
-          ? this.renderAllConnectors()
-          : null}
+        {this.props.store.useConnector ? this.renderAllConnectors() : null}
       </>
     );
   }

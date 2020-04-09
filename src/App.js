@@ -71,6 +71,11 @@ class App extends Component {
       this.recalcXLayout.bind(this)
     );
     observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
+    observe(
+      this.props.store,
+      "binScalingFactor",
+      this.recalcXLayout.bind(this)
+    );
     observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
     observe(this.props.store.chunkURLs, this.nextChunk.bind(this));
     // this.nextChunk();
@@ -128,7 +133,7 @@ class App extends Component {
           component.arrivals.length +
           (component.departures.length - 1) +
           (this.props.store.useWidthCompression
-            ? 1
+            ? this.props.store.binScalingFactor
             : component.lastBin - component.firstBin) +
           1
       )
@@ -146,6 +151,7 @@ class App extends Component {
       this.props.store.pixelsPerColumn,
       this.props.store.topOffset,
       this.props.store.useWidthCompression,
+      this.props.store.binScalingFactor,
       this.leftXStart.bind(this)
     );
     this.distanceSortedLinks = links;
@@ -230,7 +236,8 @@ class App extends Component {
       ? schematizeComponent.firstBin -
         this.props.store.getBeginBin() +
         schematizeComponent.offset
-      : schematizeComponent.offset + schematizeComponent.index;
+      : schematizeComponent.offset +
+        schematizeComponent.index * this.props.store.binScalingFactor;
     let pixelsFromColumns =
       (previousColumns + firstDepartureColumn + j) *
       this.props.store.pixelsPerColumn;
@@ -248,7 +255,7 @@ class App extends Component {
           width={
             schematizeComponent.arrivals.length +
             (this.props.store.useWidthCompression
-              ? 1
+              ? this.props.store.binScalingFactor
               : schematizeComponent.num_bin) +
             (schematizeComponent.departures.length - 1)
           }
@@ -267,9 +274,9 @@ class App extends Component {
         })}
         {schematizeComponent.departures.slice(0, -1).map((linkColumn, j) => {
           let leftPad =
-            schematizeComponent.arrivals +
+            schematizeComponent.arrivals.length +
             (this.props.store.useWidthCompression
-              ? 1
+              ? this.props.store.binScalingFactor
               : schematizeComponent.num_bin);
           return this.renderLinkColumn(
             schematizeComponent,

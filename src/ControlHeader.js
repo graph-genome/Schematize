@@ -163,11 +163,32 @@ class ControlHeader extends React.Component {
             Use Width Compression:
             <WidthCompressedViewSwitch store={this.props.store} />
           </span>
-          <span>
-            {" "}
-            Render Connectors:
-            <RenderConnectorSwitch store={this.props.store} />
-          </span>
+          {this.props.store.useWidthCompression ? (
+            <React.Fragment>
+              <span>
+                {" "}
+                Render Connectors:
+                <RenderConnectorSwitch store={this.props.store} />
+              </span>
+              <span>
+                {" "}
+                Component Width Scaling Factor:
+                <Observer>
+                  {() => (
+                    <input
+                      type="number"
+                      min={1}
+                      value={this.props.store.binScalingFactor}
+                      onChange={this.props.store.updateBinScalingFactor}
+                      style={{ width: "30px" }}
+                    />
+                  )}
+                </Observer>
+              </span>
+            </React.Fragment>
+          ) : (
+            <></>
+          )}
           <span>
             {" "}
             Row Height:
