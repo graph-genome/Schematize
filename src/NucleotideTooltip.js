@@ -21,5 +21,5 @@ export default class NucleotideTooltip extends React.Component {
 }
 
 NucleotideTooltip.propTypes = {
-  store: PropTypes.node,
+  store: PropTypes.object,
 };

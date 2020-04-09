@@ -1,7 +1,10 @@
 import { types } from "mobx-state-tree";
 import { urlExists } from "./URL";
 
+
 const BeginEndBin = types.optional(types.array(types.integer), [1, 40]);
+const ChunkURLs = types.optional(types.array(types.string), ['', '']);
+
 const PathNucPos = types.model("PathNucPos", {
   path: types.string,
   nucPos: types.integer,
@@ -21,8 +24,7 @@ RootStore = types
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
     jsonName: "run1.B1phi1.i1.seqwish.w100",
-    startChunkURL: "",
-    endChunkURL: "",
+    chunkURLs: ChunkURLs,
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
     binWidth: 100,
@@ -91,9 +93,11 @@ RootStore = types
         self.jsonName = event.target.value;
       }
     }
-    function switchChunkFiles(startFile, endFile) {
-      self.endChunkURL = endFile; // CRITICAL ORDER!: doesn't cause an update
-      self.startChunkURL = startFile; // not user visible
+    function switchChunkURLs(startFile, endFile){
+      self.chunkURLs = [startFile, endFile];
+    }
+    function getChunkURLs() {
+      return self.chunkURLs;
     }
     function getBeginEndBin() {
       return self.beginEndBin;
@@ -139,7 +143,8 @@ RootStore = types
       updateHeight,
       updateWidth,
       tryJSONpath,
-      switchChunkFiles,
+      switchChunkURLs,
+      getChunkURLs,
       getBeginEndBin,
       getBeginBin,
       getEndBin,

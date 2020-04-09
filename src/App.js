@@ -41,6 +41,7 @@ const stringToColourSave = function (colorKey) {
 };
 
 class App extends Component {
+
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
   constructor(props) {
@@ -66,21 +67,21 @@ class App extends Component {
       this.recalcY.bind(this)
     );
     observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
-    observe(this.props.store, "startChunkURL", this.nextChunk.bind(this));
+    observe(this.props.store.chunkURLs, this.nextChunk.bind(this));
     // this.nextChunk();
   }
   nextChunk() {
-    console.log("nextChunk", this.props.store.startChunkURL);
-    if (!this.props.store.startChunkURL) {
+    console.log("nextChunk", this.props.store.getChunkURLs()[0]);
+    if (!this.props.store.getChunkURLs()[0]) {
       console.log("no");
       return;
     }
     this.schematic
-      .jsonFetch(this.props.store.startChunkURL)
+      .jsonFetch(this.props.store.getChunkURLs()[0])
       .then(this.queueUpdate.bind(this));
   }
   queueUpdate(data) {
-    console.log("queueUpdate", this.props.store.startChunkURL);
+    console.log("queueUpdate", this.props.store.getChunkURLs()[0]);
     this.schematic.loadFirstJSON(data);
     this.updateSchematicMetadata(true);
   }
@@ -335,7 +336,7 @@ class App extends Component {
     console.log("Start render");
     return (
       <>
-        <ControlHeader store={this.props.store} />
+        <ControlHeader store={this.props.store} schematic={this.schematic} />
         <Stage
           x={this.props.store.leftOffset}
           y={this.state.buttonsHeight} //removed leftOffset to simplify code.  Relative coordinates are always better.
