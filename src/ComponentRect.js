@@ -173,7 +173,9 @@ class ComponentRect extends React.Component {
           onClick={this.handleClick}
         ></Rect>
         {!this.props.store.useWidthCompression ? this.renderMatrix() : null}
-        {this.renderAllConnectors()}
+        {!this.props.store.useWidthCompression
+          ? this.renderAllConnectors()
+          : null}
       </>
     );
   }
