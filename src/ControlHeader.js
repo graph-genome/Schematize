@@ -97,12 +97,7 @@ class ControlHeader extends React.Component {
                 <input
                   type="number"
                   value={this.props.store.beginEndBin[1]}
-                  onChange={(event) =>
-                    this.props.store.updateBeginEndBin(
-                      this.props.store.getBeginBin(),
-                      event.target.value
-                    )
-                  }
+                  readOnly
                   style={{ width: "80px" }}
                 />
               </>

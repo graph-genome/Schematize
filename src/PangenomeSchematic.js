@@ -27,6 +27,8 @@ class PangenomeSchematic extends React.Component {
     this.chunk_index = chunk_index;
     const beginBin = this.props.store.getBeginBin();
     const endBin = this.props.store.getEndBin();
+    const endPangenome = chunk_index["last_bin"];
+    const minBin = Math.min(endPangenome, endBin);
     //only do a new chunk scan if it's needed
     let startFile = chunk_index["files"][0]["file"];
     let nextChunk = chunk_index["files"][0];
@@ -41,15 +43,12 @@ class PangenomeSchematic extends React.Component {
         }
         console.log("Opening chunk", startFile, nextChunk["file"]);
         //restrict end position to end of the new chunk
-        this.props.store.updateBeginEndBin(
-          beginBin,
-          Math.min(nextChunk["last_bin"], endBin)
-        );
+        this.props.store.updateBeginEndBin(beginBin, minBin);
         break; // done scanning
       }
     }
     //will trigger chunk update in App.nextChunk() which calls this.loadJSON
-    this.props.store.switchChunkURLs(
+    let fileArray = [
       process.env.PUBLIC_URL +
         "test_data/" +
         this.props.store.jsonName +
@@ -59,8 +58,9 @@ class PangenomeSchematic extends React.Component {
         "test_data/" +
         this.props.store.jsonName +
         "/" +
-        nextChunk["file"]
-    );
+        nextChunk["file"],
+    ];
+    this.props.store.switchChunkURLs(fileArray);
   }
   loadIndexFile(jsonFilename) {
     let indexPath =
@@ -69,12 +69,13 @@ class PangenomeSchematic extends React.Component {
     return fetch(indexPath)
       .then((res) => res.json())
       .then((json) => {
-				if (!this.props.store.getChunkURLs()[0]) {
+        if (!this.props.store.getChunkURLs()[0]) {
           // Initial state
-          this.props.store.switchChunkURLs(
-						`${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][0]["file"]}`,
-            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][1]["file"]}`
-          );
+          let fileArray = [
+            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][0]["file"]}`,
+            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][1]["file"]}`,
+          ];
+          this.props.store.switchChunkURLs(fileArray);
         }
         this.openRelevantChunk.call(this, json);
       });
@@ -94,7 +95,10 @@ class PangenomeSchematic extends React.Component {
     this.pathNames = this.jsonData.path_names;
     this.jsonData.mid_bin = data.last_bin; //placeholder
     let lastChunkURLIndex = this.props.store.chunkURLs.length - 1;
-    if (this.props.store.getChunkURLs()[0] === this.props.store.getChunkURLs()[lastChunkURLIndex]) {
+    if (
+      this.props.store.getChunkURLs()[0] ===
+      this.props.store.getChunkURLs()[lastChunkURLIndex]
+    ) {
       this.processArray();
     } else {
       this.jsonFetch(this.props.store.getChunkURLs()[lastChunkURLIndex]).then(
