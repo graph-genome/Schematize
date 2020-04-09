@@ -41,7 +41,6 @@ const stringToColourSave = function (colorKey) {
 };
 
 class App extends Component {
-
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
   constructor(props) {
@@ -71,6 +70,7 @@ class App extends Component {
       "useWidthCompression",
       this.recalcXLayout.bind(this)
     );
+    observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
     observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
     observe(this.props.store.chunkURLs, this.nextChunk.bind(this));
     // this.nextChunk();
@@ -127,7 +127,9 @@ class App extends Component {
         (component) =>
           component.arrivals.length +
           (component.departures.length - 1) +
-          (this.props.store.useWidthCompression ? 1 : (component.lastBin - component.firstBin)) +
+          (this.props.store.useWidthCompression
+            ? 1
+            : component.lastBin - component.firstBin) +
           1
       )
       .reduce(sum, 0);
@@ -224,10 +226,11 @@ class App extends Component {
 
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
     /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
-    let previousColumns = !this.props.store.useWidthCompression ? 
-      (schematizeComponent.firstBin -
-      this.props.store.getBeginBin() +
-      schematizeComponent.offset) : (schematizeComponent.offset + schematizeComponent.index);
+    let previousColumns = !this.props.store.useWidthCompression
+      ? schematizeComponent.firstBin -
+        this.props.store.getBeginBin() +
+        schematizeComponent.offset
+      : schematizeComponent.offset + schematizeComponent.index;
     let pixelsFromColumns =
       (previousColumns + firstDepartureColumn + j) *
       this.props.store.pixelsPerColumn;
@@ -244,7 +247,9 @@ class App extends Component {
           height={this.visibleHeight()}
           width={
             schematizeComponent.arrivals.length +
-            (this.props.store.useWidthCompression ? 1 : schematizeComponent.num_bin) +
+            (this.props.store.useWidthCompression
+              ? 1
+              : schematizeComponent.num_bin) +
             (schematizeComponent.departures.length - 1)
           }
           compressed_row_mapping={this.compressed_row_mapping}
@@ -261,7 +266,11 @@ class App extends Component {
           );
         })}
         {schematizeComponent.departures.slice(0, -1).map((linkColumn, j) => {
-          let leftPad = schematizeComponent.arrivals + (this.props.store.useWidthCompression ? 1 : schematizeComponent.num_bin);
+          let leftPad =
+            schematizeComponent.arrivals +
+            (this.props.store.useWidthCompression
+              ? 1
+              : schematizeComponent.num_bin);
           return this.renderLinkColumn(
             schematizeComponent,
             i,
