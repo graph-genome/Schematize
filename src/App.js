@@ -237,7 +237,8 @@ class App extends Component {
         this.props.store.getBeginBin() +
         schematizeComponent.offset
       : schematizeComponent.offset +
-        schematizeComponent.index * this.props.store.binScalingFactor;
+        (schematizeComponent.index - this.schematic.components[0].index) *
+          this.props.store.binScalingFactor;
     let pixelsFromColumns =
       (previousColumns + firstDepartureColumn + j) *
       this.props.store.pixelsPerColumn;
