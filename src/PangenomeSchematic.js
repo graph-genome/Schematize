@@ -31,6 +31,7 @@ class PangenomeSchematic extends React.Component {
     this.chunk_index = chunk_index;
     const beginBin = this.props.store.getBeginBin();
     const endBin = this.props.store.getEndBin();
+    const lastIndex = chunk_index["files"].length - 1;
 
     const findBegin = (entry) => entry["last_bin"] >= beginBin;
     const findEnd = (entry) => entry["first_bin"] >= endBin;
@@ -38,13 +39,20 @@ class PangenomeSchematic extends React.Component {
     let endIndex = chunk_index["files"].findIndex(findEnd);
 
     if (-1 === beginIndex || -1 === endIndex) {
-      endIndex = this.props.store.pangenomelast_bin;
+      // conserving beginIndex if -1 < beginIndex < lastIndex
+      const indexToCompare = [beginIndex, lastIndex];
+      const findMinBegin = (index) => index >= 0;
+      let trueBeginIndex =
+        indexToCompare[indexToCompare.findIndex(findMinBegin)];
+
+      beginIndex = trueBeginIndex;
+      endIndex = lastIndex;
     }
 
     //will trigger chunk update in App.nextChunk() which calls this.loadJSON
     let URLprefix =
       process.env.PUBLIC_URL + "test_data/" + this.props.store.jsonName + "/";
-    let fileArray = range(beginIndex, endIndex + 1).map((index) => {
+    let fileArray = range(beginIndex, endIndex).map((index) => {
       return URLprefix + chunk_index["files"][index]["file"];
     });
 
