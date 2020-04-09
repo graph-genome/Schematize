@@ -165,11 +165,6 @@ class ControlHeader extends React.Component {
           </span>
           <span>
             {" "}
-            Render Connectors:
-            <RenderConnectorSwitch store={this.props.store} />
-          </span>
-          <span>
-            {" "}
             Row Height:
             <input
               type="number"
@@ -217,26 +212,6 @@ class VerticalCompressedViewSwitch extends React.Component {
 }
 
 VerticalCompressedViewSwitch.propTypes = {
-  store: PropTypes.object,
-};
-
-class RenderConnectorSwitch extends React.Component {
-  render() {
-    return (
-      <Observer>
-        {() => (
-          <input
-            type="checkbox"
-            checked={this.props.store.useConnector}
-            onChange={this.props.store.toggleUseConnector}
-          />
-        )}
-      </Observer>
-    );
-  }
-}
-
-RenderConnectorSwitch.propTypes = {
   store: PropTypes.object,
 };
 

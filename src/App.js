@@ -70,7 +70,6 @@ class App extends Component {
       "useWidthCompression",
       this.recalcXLayout.bind(this)
     );
-    observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
     observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
     observe(this.props.store.chunkURLs, this.nextChunk.bind(this));
     // this.nextChunk();
