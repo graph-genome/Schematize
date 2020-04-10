@@ -191,6 +191,11 @@ class ControlHeader extends React.Component {
           )}
           <span>
             {" "}
+            Color by Provenance:
+            <ColorGeoSwitch store={this.props.store} />
+          </span>
+          <span>
+            {" "}
             Row Height:
             <input
               type="number"
@@ -278,6 +283,26 @@ class WidthCompressedViewSwitch extends React.Component {
 }
 
 WidthCompressedViewSwitch.propTypes = {
+  store: PropTypes.object,
+};
+
+class ColorGeoSwitch extends React.Component {
+  render() {
+    return (
+      <Observer>
+        {() => (
+          <input
+            type="checkbox"
+            checked={this.props.store.colorByGeo}
+            onChange={this.props.store.toggleColorByGeo}
+          />
+        )}
+      </Observer>
+    );
+  }
+}
+
+ColorGeoSwitch.propTypes = {
   store: PropTypes.object,
 };
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { observe } from "mobx";
+import { urlExists } from "./URL";
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
@@ -11,13 +12,17 @@ class PangenomeSchematic extends React.Component {
     this.pathNames = [];
     this.components = [];
     this.nucleotides = [];
+    this.metadata = [];
 
     this.loadIndexFile(this.props.store.jsonName) //initializes this.chunk_index
       .then(() => this.jsonFetch(this.props.store.getChunkURLs()[0]))
       .then(this.loadFirstJSON.bind(this));
+    this.loadMetadataFile(this.props.store.jsonName);
+
     //whenever jsonName changes,
     observe(this.props.store, "jsonName", () => {
       this.loadIndexFile(this.props.store.jsonName);
+      this.loadMetadataFile(this.props.store.jsonName);
     });
     // console.log("public ", process.env.PUBLIC_URL ) //PUBLIC_URL is empty
   }
@@ -150,6 +155,30 @@ class PangenomeSchematic extends React.Component {
         }
         return;
       });
+  }
+  loadMetadataFile(jsonFilename) {
+    const mdataPath = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/metadata.json`;
+    if (urlExists(mdataPath)) {
+      console.log("Reading", mdataPath);
+      return fetch(mdataPath)
+        .then((res) => res.json())
+        .then((json) => {
+          var metaData = {};
+          // commented-out could be used further to read in the metadata categories 
+          // into json_entries array.
+          //let json_entries = [];
+          for (let i=0; i<json.length; i++) {
+            metaData[json[i][this.props.store.metaDataKey]] = json[i];
+            // if (i == 0) {
+            //   for (let [key, value] of Object.entries(json[0])) {
+            //     json_entries.push(key);
+            //   }
+            //   this.props.store.setMetaDataChoices(json_entries);
+            // }
+          }
+          this.props.store.setMetaData(metaData);
+        });
+    }
   }
   processArray() {
     /*parses beginBin to endBin range, returns false if new file needed*/

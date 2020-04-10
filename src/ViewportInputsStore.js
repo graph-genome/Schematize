@@ -9,6 +9,19 @@ const PathNucPos = types.model("PathNucPos", {
   nucPos: types.integer,
 });
 
+const metaDataModelEntry = types.model({
+  Accession: types.identifier,
+  Release_Date: types.string,
+  Species: types.string,
+  Length: types.integer,
+  Geo_Location: types.string,
+  Host: types.string,
+  Isolation_Source: types.string,
+  Collection_Date: types.string,
+  GenBank_Title: types.string
+});
+
+
 export let RootStore; // AG: why is it exported?
 RootStore = types
   .model({
@@ -16,6 +29,7 @@ RootStore = types
     useWidthCompression: false,
     binScalingFactor: 3,
     useConnector: true,
+    colorByGeo: false,
     beginEndBin: BeginEndBin,
     pixelsPerColumn: 10,
     pixelsPerRow: 7,
@@ -30,6 +44,9 @@ RootStore = types
     pathIndexServerAddress: "http://193.196.29.24:3010/",
     binWidth: 100,
     nucleotideHeight: 10,
+    metaDataKey: "Accession",
+    metaData: types.map(metaDataModelEntry),
+    //metaDataChoices: types.array(types.string)
   })
   .actions((self) => {
     function updateBeginEndBin(newBegin, newEnd) {
@@ -92,6 +109,9 @@ RootStore = types
     function updateWidth(event) {
       self.pixelsPerColumn = Number(event.target.value);
     }
+    function toggleColorByGeo() {
+      self.colorByGeo = !self.colorByGeo;
+    }
     function tryJSONpath(event) {
       const url =
         process.env.PUBLIC_URL +
@@ -140,6 +160,17 @@ RootStore = types
     function setBinWidth(binWidth) {
       self.binWidth = binWidth;
     }
+    function setMetaData(metadata) {
+      for (let [key, value] of Object.entries(metadata)) {
+        self.metaData.set(key, value);
+      }
+    }
+    function getMetaData(key) {
+      self.metaData.get(key);
+    }
+    function setMetaDataChoices(ar) {
+      self.metaDataChoices = ar;
+    }
     return {
       updateBeginEndBin,
       updateTopOffset,
@@ -153,6 +184,7 @@ RootStore = types
       toggleUseConnector,
       updateHeight,
       updateWidth,
+      toggleColorByGeo,
       tryJSONpath,
       switchChunkURLs,
       getChunkURLs,
@@ -164,6 +196,9 @@ RootStore = types
       getPathNucPos,
       updatePathNucPos,
       setBinWidth,
+      setMetaData,
+      getMetaData,
+      setMetaDataChoices
     };
   })
   .views((self) => ({}));

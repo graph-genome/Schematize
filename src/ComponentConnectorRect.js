@@ -44,6 +44,9 @@ export class MatrixCell extends React.Component {
         tooltipContent += "," + start + "-" + end;
       }
     }
+    if (this.props.store.metaData.get(this.props.pathName) !== undefined) {
+      tooltipContent += " ; " + this.props.store.metaData.get(this.props.pathName).Geo_Location;
+    }
     this.props.store.updateCellTooltipContent(tooltipContent); //item[2] is array of ranges
   }
 

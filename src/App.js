@@ -77,6 +77,11 @@ class App extends Component {
       "useWidthCompression",
       this.recalcXLayout.bind(this)
     );
+    observe(
+      this.props.store,
+      "colorByGeo",
+      this.recalcY.bind(this)
+    );
     observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
     observe(
       this.props.store,
