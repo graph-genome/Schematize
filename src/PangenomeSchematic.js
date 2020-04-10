@@ -34,7 +34,7 @@ class PangenomeSchematic extends React.Component {
     const lastIndex = chunk_index["files"].length - 1;
 
     const findBegin = (entry) => entry["last_bin"] >= beginBin;
-    const findEnd = (entry) => entry["first_bin"] >= endBin;
+    const findEnd = (entry) => entry["last_bin"] >= endBin;
     let beginIndex = chunk_index["files"].findIndex(findBegin);
     let endIndex = chunk_index["files"].findIndex(findEnd);
 
@@ -163,6 +163,21 @@ class PangenomeSchematic extends React.Component {
     this.props.store.setBinWidth(parseInt(this.jsonData.bin_width));
     console.log("Parsing components ", beginBin, " - ", endBin);
     //Fetch the next file when viewport no longer needs the first file.
+    console.log(beginBin > this.jsonData.mid_bin);
+    console.log(endBin > this.jsonData.last_bin);
+    console.log(beginBin < this.jsonData.first_bin);
+    console.log(
+      "Begin:",
+      beginBin,
+      "mid_bin",
+      this.jsonData.mid_bin,
+      "End",
+      endBin,
+      "last_bin",
+      this.jsonData.last_bin,
+      "first_bin",
+      this.jsonData.first_bin
+    );
     if (
       beginBin > this.jsonData.mid_bin ||
       beginBin < this.jsonData.first_bin
