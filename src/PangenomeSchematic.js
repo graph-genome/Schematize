@@ -126,12 +126,12 @@ class PangenomeSchematic extends React.Component {
       this.props.store.getBeginBin(),
       this.props.store.getEndBin(),
     ];
-    if (this.jsonData.json_version !== 11) {
+    if (this.jsonData.json_version !== 12) {
       throw MediaError(
-        "Wrong Data JSON version: was expecting version 10, got " +
+        "Wrong Data JSON version: was expecting version 12, got " +
         this.jsonData.json_version +
         ".  " +
-        "This version added last_bin to data chunk index.  " + // KEEP THIS UP TO DATE!
+        "This version added nucleotide ranges to bins.  " + // KEEP THIS UP TO DATE!
           "Using a mismatched data file and renderer will cause unpredictable behavior," +
           " instead generate a new data file using github.com/graph-genome/component_segmentation."
       );
