@@ -69,10 +69,10 @@ class PangenomeSchematic extends React.Component {
     return fetch(indexPath)
       .then((res) => res.json())
       .then((json) => {
-				if (!this.props.store.getChunkURLs()[0]) {
+        if (!this.props.store.getChunkURLs()[0]) {
           // Initial state
           this.props.store.switchChunkURLs(
-						`${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][0]["file"]}`,
+            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][0]["file"]}`,
             `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][1]["file"]}`
           );
         }
@@ -94,7 +94,10 @@ class PangenomeSchematic extends React.Component {
     this.pathNames = this.jsonData.path_names;
     this.jsonData.mid_bin = data.last_bin; //placeholder
     let lastChunkURLIndex = this.props.store.chunkURLs.length - 1;
-    if (this.props.store.getChunkURLs()[0] === this.props.store.getChunkURLs()[lastChunkURLIndex]) {
+    if (
+      this.props.store.getChunkURLs()[0] ===
+      this.props.store.getChunkURLs()[lastChunkURLIndex]
+    ) {
       this.processArray();
     } else {
       this.jsonFetch(this.props.store.getChunkURLs()[lastChunkURLIndex]).then(
@@ -146,9 +149,9 @@ class PangenomeSchematic extends React.Component {
     } else {
       var componentArray = [];
       var offsetLength = 0;
-      for (var component of this.jsonData.components) {
+      for (let [index, component] of this.jsonData.components.entries()) {
         if (component.last_bin >= beginBin) {
-          var componentItem = new Component(component, offsetLength);
+          var componentItem = new Component(component, offsetLength, index);
           offsetLength +=
             componentItem.arrivals.length + componentItem.departures.length - 1;
           componentArray.push(componentItem);
@@ -169,8 +172,9 @@ class PangenomeSchematic extends React.Component {
 }
 
 class Component {
-  constructor(component, offsetLength) {
+  constructor(component, offsetLength, index) {
     this.offset = offsetLength;
+    this.index = index;
     this.firstBin = component.first_bin;
     this.lastBin = component.last_bin;
     this.arrivals = [];
@@ -188,9 +192,6 @@ class Component {
     this.occupants = Array.from(component.occupants);
     this.matrix = Array.from(component.matrix);
     this.num_bin = this.lastBin - this.firstBin + 1;
-  }
-  firstDepartureColumn() {
-    return this.num_bin + this.arrivals.length;
   }
 }
 

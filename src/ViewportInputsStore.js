@@ -1,9 +1,8 @@
 import { types } from "mobx-state-tree";
 import { urlExists } from "./URL";
 
-
 const BeginEndBin = types.optional(types.array(types.integer), [1, 40]);
-const ChunkURLs = types.optional(types.array(types.string), ['', '']);
+const ChunkURLs = types.optional(types.array(types.string), ["", ""]);
 
 const PathNucPos = types.model("PathNucPos", {
   path: types.string,
@@ -14,6 +13,9 @@ export let RootStore;
 RootStore = types
   .model({
     useVerticalCompression: false,
+    useWidthCompression: false,
+    binScalingFactor: 3,
+    useConnector: true,
     beginEndBin: BeginEndBin,
     pixelsPerColumn: 7,
     pixelsPerRow: 7,
@@ -55,6 +57,10 @@ RootStore = types
         self.topOffset = newTopOffset;
       }
     }
+    function updateBinScalingFactor(event) {
+      let newFactor = event.target.value;
+      self.binScalingFactor = Math.max(1, Number(newFactor));
+    }
     function updateHighlightedLink(linkRect) {
       self.highlightedLink = linkRect;
     }
@@ -73,6 +79,12 @@ RootStore = types
     function toggleUseVerticalCompression() {
       self.useVerticalCompression = !self.useVerticalCompression;
     }
+    function toggleUseWidthCompression() {
+      self.useWidthCompression = !self.useWidthCompression;
+    }
+    function toggleUseConnector() {
+      self.useConnector = !self.useConnector;
+    }
     function updateHeight(event) {
       self.pixelsPerRow = Math.max(1, Number(event.target.value));
     }
@@ -89,7 +101,7 @@ RootStore = types
         self.jsonName = event.target.value;
       }
     }
-    function switchChunkURLs(startFile, endFile){
+    function switchChunkURLs(startFile, endFile) {
       self.chunkURLs = [startFile, endFile];
     }
     function getChunkURLs() {
@@ -134,7 +146,10 @@ RootStore = types
       updateMaxHeight,
       resetRenderStats,
       updateCellTooltipContent,
+      updateBinScalingFactor,
       toggleUseVerticalCompression,
+      toggleUseWidthCompression,
+      toggleUseConnector,
       updateHeight,
       updateWidth,
       tryJSONpath,
