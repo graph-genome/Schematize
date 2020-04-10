@@ -227,6 +227,7 @@ class App extends Component {
 
   updateHighlightedNode = (linkRect) => {
     this.setState({ highlightedLink: linkRect });
+    this.recalcXLayout();
     // this.props.store.updateHighlightedLink(linkRect); // TODO this does not work, ask Robert about it
   };
 
