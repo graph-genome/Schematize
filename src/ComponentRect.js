@@ -124,8 +124,8 @@ class ComponentRect extends React.Component {
               x={x_val + x * this.props.store.pixelsPerColumn}
               y={
                 this_y * this.props.store.pixelsPerRow +
-                  this.props.store.topOffset +
-                  this.props.store.nucleotideHeight
+                this.props.store.topOffset +
+                this.props.store.nucleotideHeight
               }
               row_number={row_n}
               width={width}
@@ -186,7 +186,11 @@ class ComponentRect extends React.Component {
       <ConnectorRect
         key={"connector" + j}
         x={x_val}
-        y={this.props.store.topOffset + this_y * this.props.store.pixelsPerRow}
+        y={
+          this.props.store.topOffset +
+          this_y * this.props.store.pixelsPerRow +
+          this.props.store.nucleotideHeight
+        }
         width={this.props.store.pixelsPerColumn} //Clarified and corrected adjacent connectors as based on pixelsPerColumn width #9
         height={this.props.store.pixelsPerRow}
         color={"#464646"}
@@ -199,10 +203,7 @@ class ComponentRect extends React.Component {
       <>
         <Rect
           x={this.props.item.x}
-          y={
-              this.props.store.topOffset +
-              this.props.store.nucleotideHeight
-             }
+          y={this.props.store.topOffset + this.props.store.nucleotideHeight}
           width={this.props.width * this.props.store.pixelsPerColumn}
           height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
           fill={this.state.color}
