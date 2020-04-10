@@ -55,11 +55,8 @@ class PangenomeSchematic extends React.Component {
     let fileArray = range(beginIndex, endIndex).map((index) => {
       return URLprefix + chunk_index["files"][index]["file"];
     });
-    let URLBefore = this.props.store.getChunkURLs();
+
     this.props.store.switchChunkURLs(fileArray);
-    console.log(
-      `Before : ${URLBefore}, After switch : ${this.props.store.getChunkURLs()}`
-    );
   }
   loadIndexFile(jsonFilename) {
     let indexPath =
@@ -99,13 +96,15 @@ class PangenomeSchematic extends React.Component {
     const lastChunkURLIndex = this.props.store.chunkURLs.length - 1;
     let currentURLIndex = 0;
 
-    while (!(currentURLIndex === lastChunkURLIndex)) {
+    while (currentURLIndex !== lastChunkURLIndex) {
       currentURLIndex += 1;
       this.jsonFetch(this.props.store.getChunkURLs()[currentURLIndex]).then(
         this.loadAdditionalJSON.bind(this)
       );
     }
 
+    this.jsonData.mid_bin =
+      (this.jsonData.last_bin - this.jsonData.first_bin) / 2;
     this.processArray();
   }
   loadAdditionalJSON(otherChunkContents) {
@@ -122,27 +121,43 @@ class PangenomeSchematic extends React.Component {
     this.jsonData = data;
     this.pathNames = this.jsonData.path_names;
     this.jsonData.mid_bin = data.last_bin; //placeholder
+
     let lastChunkURLIndex = this.props.store.chunkURLs.length - 1;
+
     if (
       this.props.store.getChunkURLs()[0] ===
       this.props.store.getChunkURLs()[lastChunkURLIndex]
     ) {
       this.processArray();
     } else {
-      this.jsonFetch(this.props.store.getChunkURLs()[lastChunkURLIndex]).then(
-        this.loadSecondJSON.bind(this)
-      );
+      const [firstURL, ...rest] = this.props.store.getChunkURLs();
+      console.log(`${firstURL} loaded`);
+      this.rest = rest;
+      this.currentRestIdx = -1;
+      this.loadRestJSON.bind(this);
     }
   }
-  loadSecondJSON(secondChunkContents) {
-    if (this.jsonData.last_bin < secondChunkContents.last_bin) {
-      this.jsonData.mid_bin = this.jsonData.last_bin; //boundary between two files
-      this.jsonData.last_bin = secondChunkContents.last_bin;
-      this.jsonData.components.push(...secondChunkContents.components);
-      this.processArray();
+  //loadRestJSON will be called on this.rest, which should be an array
+  loadRestJSON() {
+    const lastChunkURLIndex = this.rest.length - 1;
+
+    while (this.currentRestIdx !== lastChunkURLIndex) {
+      this.jsonFetch(this.rest[this.currentRestIdx])
+        .then(this.extractDataFromChunk.bind(this))
+        //TODO Find a way to processArray only once all chunks have loaded
+        .then(this.processArray());
+    }
+  }
+  extractDataFromChunk(chunkContent) {
+    if (this.jsonData.last_bin < chunkContent.last_bin) {
+      this.jsonData.last_bin = chunkContent.last_bin;
+      this.jsonData.mid_bin =
+        (this.jsonData.last_bin - this.jsonData.first_bin) / 2; //boundary between two files
+      this.jsonData.components.push(...chunkContent.components);
+      this.currentRestIdx += 1;
     } else {
       console.warn(
-        "Second chunk was earlier than the first.  Check the order you set store.chunkURLs"
+        "Chunk was already loaded.  Check the order you set store.chunkURLs"
       );
     }
   }
@@ -168,21 +183,6 @@ class PangenomeSchematic extends React.Component {
     this.props.store.setBinWidth(parseInt(this.jsonData.bin_width));
     console.log("Parsing components ", beginBin, " - ", endBin);
     //Fetch the next file when viewport no longer needs the first file.
-    console.log(beginBin > this.jsonData.mid_bin);
-    console.log(endBin > this.jsonData.last_bin);
-    console.log(beginBin < this.jsonData.first_bin);
-    console.log(
-      "Begin:",
-      beginBin,
-      "mid_bin",
-      this.jsonData.mid_bin,
-      "End",
-      endBin,
-      "last_bin",
-      this.jsonData.last_bin,
-      "first_bin",
-      this.jsonData.first_bin
-    );
     if (
       beginBin > this.jsonData.mid_bin ||
       beginBin < this.jsonData.first_bin
