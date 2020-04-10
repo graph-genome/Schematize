@@ -77,8 +77,8 @@ class PangenomeSchematic extends React.Component {
           this.props.store.switchChunkURLs(fileArray);
         }
         console.log(`loadIndexFile ${this.props.store.getChunkURLs()}`);
-        // Is it relevant to openRelevantChunk here since it just does switchChunkURLs too ?
-        // this.openRelevantChunk.call(this, json);
+        // This following part is important to scroll right and left on browser
+        this.openRelevantChunk.call(this, json);
       });
   }
   jsonFetch(filepath) {
