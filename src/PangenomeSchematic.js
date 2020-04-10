@@ -1,8 +1,3 @@
-/* eslint-disable no-var */
-/* eslint-disable prefer-const */
-/* eslint-disable react/prop-types */
-/* eslint-disable spaced-comment */
-/* eslint-disable require-jsdoc */
 import React from "react";
 import { observe } from "mobx";
 
@@ -152,12 +147,6 @@ class PangenomeSchematic extends React.Component {
         this.nucleotides = binNucleotides;
         return;
       });
-    //work out which fasta. Get Json chuck and find chunk number (split on _, take [0], split on k take [0] find file with name with filter(?), parse int for matching)
-    //fetch fa (either promises or xhr but need to decide). Needs to be response.text. check bins match json bins. Load rest of text
-    //split on first line and turn rest of file into array
-    //in process array create bin nucleotide. Display nucleotide below arrows
-    //arrows will need raiding by height of text (probably)
-    //render text last so it appears on top of arrows and can be seen (might have to change arrow colours)
   }
   processArray() {
     /*parses beginBin to endBin range, returns false if new file needed*/

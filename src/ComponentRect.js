@@ -75,21 +75,19 @@ class ComponentRect extends React.Component {
     return <>{parts}</>;
   }
 
-  chooseNucleotides(parent) {
-    //parent is the component
-    const currentStart = parent.firstBin - 1;
-    const currentEnd = parent.lastBin;
-    const parentX = parent.x;
-    const nucelotides = {
-      [parentX]: [...this.props.nucleotides.slice(currentStart, currentEnd)],
-    };
-    return nucelotides;
-  }
+  // chooseNucleotides(parent) {
+  //   //parent is the component
+  //   const currentStart = parent.firstBin - 1;
+  //   const currentEnd = parent.lastBin;
+  //   const parentX = parent.x;
+  //   const nucelotides = {
+  //     [parentX]: [...this.props.nucleotides.slice(currentStart, currentEnd)],
+  //   };
+  //   return nucelotides;
+  // }
 
   renderMatrixRow(row, count, row_n) {
     const parent = this.props.item;
-    // console.log(this.chooseNucleotides(parent))
-    // this.chooseNucleotides(parent);
     const x_val =
       parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
     const width = 1 * this.props.store.pixelsPerColumn;
@@ -100,12 +98,9 @@ class ComponentRect extends React.Component {
       }
       this_y = this.props.compressed_row_mapping[row_n];
     }
-    // const letter = this.props.nucleotides[parent.firstBin];
     const letter = this.props.nucleotides.slice(parent.firstBin, parent.endBin);
-    // console.log(letter);
     return row.map((cell, x) => {
       if (cell.length) {
-        console.log(letter, parent.firstBin);
         return (
           <>
             {letter[x] ? (

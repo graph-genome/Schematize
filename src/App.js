@@ -1,9 +1,3 @@
-/* eslint-disable no-invalid-this */
-/* eslint-disable no-var */
-/* eslint-disable spaced-comment */
-/* eslint-disable prefer-const */
-/* eslint-disable react/prop-types */
-/* eslint-disable require-jsdoc */
 import { Layer, Stage } from "react-konva";
 import React, { Component } from "react";
 
@@ -92,9 +86,6 @@ class App extends Component {
   }
   updateSchematicMetadata(processingDone = false) {
     if (this.schematic.processArray()) {
-      //parses beginBin to endBin range, returns false if new file needed
-      // console.log("#paths: " + this.schematic.pathNames.length);
-      // console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
       console.log(
         "updateSchematicMetadata #components: " +
           this.schematic.components.length
@@ -235,7 +226,6 @@ class App extends Component {
   }
 
   renderComponent(schematizeComponent, i, pathNames) {
-    // console.log(this.schematic.nucleotides)
     return (
       <>
         <ComponentRect
@@ -329,16 +319,6 @@ class App extends Component {
       );
     });
   };
-
-  chooseNucleotides(parent) {
-    // console.log(parent.lastBin)
-    // parent is the component
-    const currentStart = parent.firstBin;
-    const currentEnd = parent.lastBin;
-    const parentX = parent.x;
-    console.log(currentStart, currentEnd);
-    // const nucelotides = {[parentX]: [...this.props.nucleotides.slice(currentStart, currentEnd)]}
-  }
 
   renderSortedLinks = () => {
     if (this.state.loading) {
