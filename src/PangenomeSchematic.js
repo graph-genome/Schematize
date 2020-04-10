@@ -88,35 +88,6 @@ class PangenomeSchematic extends React.Component {
 
     return fetch(process.env.PUBLIC_URL + filepath).then((res) => res.json());
   }
-  loadJSONs(data) {
-    // This assumes that URLs are in order
-    this.jsonData = data;
-    this.pathNames = this.jsonData.path_names;
-
-    const lastChunkURLIndex = this.props.store.chunkURLs.length - 1;
-    let currentURLIndex = 0;
-
-    while (currentURLIndex !== lastChunkURLIndex) {
-      currentURLIndex += 1;
-      this.jsonFetch(this.props.store.getChunkURLs()[currentURLIndex]).then(
-        this.loadAdditionalJSON.bind(this)
-      );
-    }
-
-    this.jsonData.mid_bin =
-      (this.jsonData.last_bin - this.jsonData.first_bin) / 2;
-    this.processArray();
-  }
-  loadAdditionalJSON(otherChunkContents) {
-    if (this.jsonData.last_bin < otherChunkContents.last_bin) {
-      this.jsonData.last_bin = otherChunkContents.last_bin;
-      this.jsonData.components.push(...otherChunkContents.components);
-    } else {
-      console.warn(
-        "Additional chunk has .last_bin smaller than the previous one. Check the order you set store.chunkURLs"
-      );
-    }
-  }
   loadFirstJSON(data) {
     this.jsonData = data;
     this.pathNames = this.jsonData.path_names;
@@ -154,6 +125,7 @@ class PangenomeSchematic extends React.Component {
       this.jsonData.mid_bin =
         (this.jsonData.last_bin - this.jsonData.first_bin) / 2; //boundary between two files
       this.jsonData.components.push(...chunkContent.components);
+      // CAUTION Might not work well if two extractDataFromChunk function run at the same time!
       this.currentRestIdx += 1;
     } else {
       console.warn(
