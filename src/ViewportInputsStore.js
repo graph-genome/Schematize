@@ -13,6 +13,9 @@ export let RootStore;
 RootStore = types
   .model({
     useVerticalCompression: false,
+    useWidthCompression: false,
+    binScalingFactor: 3,
+    useConnector: true,
     beginEndBin: BeginEndBin,
     pixelsPerColumn: 7,
     pixelsPerRow: 7,
@@ -56,6 +59,10 @@ RootStore = types
         self.topOffset = newTopOffset;
       }
     }
+    function updateBinScalingFactor(event) {
+      let newFactor = event.target.value;
+      self.binScalingFactor = Math.max(1, Number(newFactor));
+    }
     function updateHighlightedLink(linkRect) {
       self.highlightedLink = linkRect;
     }
@@ -73,6 +80,12 @@ RootStore = types
     }
     function toggleUseVerticalCompression() {
       self.useVerticalCompression = !self.useVerticalCompression;
+    }
+    function toggleUseWidthCompression() {
+      self.useWidthCompression = !self.useWidthCompression;
+    }
+    function toggleUseConnector() {
+      self.useConnector = !self.useConnector;
     }
     function updateHeight(event) {
       self.pixelsPerRow = Math.max(1, Number(event.target.value));
@@ -135,7 +148,10 @@ RootStore = types
       updateMaxHeight,
       resetRenderStats,
       updateCellTooltipContent,
+      updateBinScalingFactor,
       toggleUseVerticalCompression,
+      toggleUseWidthCompression,
+      toggleUseConnector,
       updateHeight,
       updateWidth,
       tryJSONpath,
