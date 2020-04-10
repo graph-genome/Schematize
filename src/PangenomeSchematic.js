@@ -127,23 +127,31 @@ class PangenomeSchematic extends React.Component {
   loadFasta() {
     //find a way to make this less fragile
     //probably move it elsewhere
-    const chunkNo = parseInt(
-      this.props.store.getChunkURLs()[0].split("chunk")[1].split("_")[0]
-    );
-    const fastaFileName = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/seq_chunk0${chunkNo}_bin1.fa`;
+    const chunkNo = this.props.store
+      .getChunkURLs()[0]
+      .split("chunk")[1]
+      .split("_")[0];
+
+    const fastaFileName = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/seq_chunk${chunkNo}_bin1.fa`;
     fetch(fastaFileName)
       .then((response) => {
         return response.text();
       })
       .then((text) => {
+        console.log(" uyyyyyyy");
         //we should check that the bins match in here
 
         //remove first line
         const splitText = text.replace(/.*/, "").substr(1);
         const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
         const nucelotides = noLinebreaks.split("");
+        const binNucleotides = nucelotides.slice(
+          this.props.store.getBeginBin() - 1,
+          this.props.store.getEndBin() - 1
+        );
+        // console.log(binNucleotides);
         //split into array of nucelotides
-        this.nucleotides = nucelotides;
+        this.nucleotides = binNucleotides;
         return;
       });
     //work out which fasta. Get Json chuck and find chunk number (split on _, take [0], split on k take [0] find file with name with filter(?), parse int for matching)

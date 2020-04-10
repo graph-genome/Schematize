@@ -44,6 +44,7 @@ function sum(a, b) {
 class ComponentRect extends React.Component {
   state = {
     color: "lightgray",
+    Nucleotides: [],
   };
 
   handleClick = () => {
@@ -56,20 +57,39 @@ class ComponentRect extends React.Component {
 
   renderMatrix() {
     let count = 0;
+    let nucleotides = [];
     let parts = this.props.item.matrix.map((row, row_n) => {
       if (row.length) {
         count++;
+        // let currentNucs = this.chooseNucleotides(this.props.item);
+        // if (nucleotides[this.props.item.x] === undefined) {
+        //   nucleotides.push(currentNucs);
+        // }
         return this.renderMatrixRow(row, count, row_n);
       } else {
         return null;
       }
     });
+    // console.log(nucleotides);
     this.props.store.updateMaxHeight(count); //Set max observed occupants in mobx store for render height
     return <>{parts}</>;
   }
 
+  chooseNucleotides(parent) {
+    //parent is the component
+    const currentStart = parent.firstBin - 1;
+    const currentEnd = parent.lastBin;
+    const parentX = parent.x;
+    const nucelotides = {
+      [parentX]: [...this.props.nucleotides.slice(currentStart, currentEnd)],
+    };
+    return nucelotides;
+  }
+
   renderMatrixRow(row, count, row_n) {
     const parent = this.props.item;
+    // console.log(this.chooseNucleotides(parent))
+    // this.chooseNucleotides(parent);
     const x_val =
       parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
     const width = 1 * this.props.store.pixelsPerColumn;
@@ -80,18 +100,23 @@ class ComponentRect extends React.Component {
       }
       this_y = this.props.compressed_row_mapping[row_n];
     }
+    // const letter = this.props.nucleotides[parent.firstBin];
+    const letter = this.props.nucleotides;
+    // console.log(letter);
     return row.map((cell, x) => {
-      console.log(this.props.nucleotides[x]);
       if (cell.length) {
+        console.log(letter, parent.firstBin);
         return (
           <>
-            <Text
-              x={x_val + x * this.props.store.pixelsPerColumn}
-              y={this.props.store.topOffset}
-              text="a"
-              align="center"
-              width={width}
-            />
+            {letter[x] ? (
+              <Text
+                x={x_val + x * this.props.store.pixelsPerColumn}
+                y={this.props.store.topOffset}
+                text={letter[x].toLowerCase()}
+                align="center"
+                width={width}
+              />
+            ) : null}
             <MatrixCell
               key={"occupant" + row_n + x}
               item={cell}

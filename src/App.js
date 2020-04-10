@@ -218,6 +218,7 @@ class App extends Component {
 
   updateHighlightedNode = (linkRect) => {
     this.setState({ highlightedLink: linkRect });
+    this.recalcXLayout();
     // this.props.store.updateHighlightedLink(linkRect); // TODO this does not work, ask Robert about it
   };
 
@@ -234,6 +235,7 @@ class App extends Component {
   }
 
   renderComponent(schematizeComponent, i, pathNames) {
+    // console.log(this.schematic.nucleotides)
     return (
       <>
         <ComponentRect
@@ -327,6 +329,16 @@ class App extends Component {
       );
     });
   };
+
+  chooseNucleotides(parent) {
+    // console.log(parent.lastBin)
+    // parent is the component
+    const currentStart = parent.firstBin;
+    const currentEnd = parent.lastBin;
+    const parentX = parent.x;
+    console.log(currentStart, currentEnd);
+    // const nucelotides = {[parentX]: [...this.props.nucleotides.slice(currentStart, currentEnd)]}
+  }
 
   renderSortedLinks = () => {
     if (this.state.loading) {

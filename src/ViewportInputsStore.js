@@ -51,7 +51,7 @@ RootStore = types
     }
     function updateTopOffset(newTopOffset) {
       if (Number.isFinite(newTopOffset) && Number.isSafeInteger(newTopOffset)) {
-        self.topOffset = newTopOffset;
+        self.topOffset = newTopOffset + 10;
       }
     }
     function updateHighlightedLink(linkRect) {
