@@ -138,7 +138,6 @@ class PangenomeSchematic extends React.Component {
         return response.text();
       })
       .then((text) => {
-        console.log(" uyyyyyyy");
         //we should check that the bins match in here
 
         //remove first line
@@ -149,7 +148,6 @@ class PangenomeSchematic extends React.Component {
           this.props.store.getBeginBin() - 1,
           this.props.store.getEndBin() - 1
         );
-        // console.log(binNucleotides);
         //split into array of nucelotides
         this.nucleotides = binNucleotides;
         return;

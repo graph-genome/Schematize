@@ -101,7 +101,7 @@ class ComponentRect extends React.Component {
       this_y = this.props.compressed_row_mapping[row_n];
     }
     // const letter = this.props.nucleotides[parent.firstBin];
-    const letter = this.props.nucleotides;
+    const letter = this.props.nucleotides.slice(parent.firstBin, parent.endBin);
     // console.log(letter);
     return row.map((cell, x) => {
       if (cell.length) {
