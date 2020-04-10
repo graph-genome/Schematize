@@ -110,8 +110,9 @@ class ComponentRect extends React.Component {
               <Text
                 x={x_val + x * this.props.store.pixelsPerColumn}
                 y={this.props.store.topOffset}
-                text={letter[x].toLowerCase()}
+                text={letter[x]}
                 align="center"
+                height={this.props.store.nucleotideHeight}
                 width={width}
               />
             ) : null}
@@ -123,7 +124,8 @@ class ComponentRect extends React.Component {
               x={x_val + x * this.props.store.pixelsPerColumn}
               y={
                 this_y * this.props.store.pixelsPerRow +
-                this.props.store.topOffset
+                  this.props.store.topOffset +
+                  this.props.store.nucleotideHeight
               }
               row_number={row_n}
               width={width}
@@ -197,7 +199,10 @@ class ComponentRect extends React.Component {
       <>
         <Rect
           x={this.props.item.x}
-          y={this.props.store.topOffset}
+          y={
+              this.props.store.topOffset +
+              this.props.store.nucleotideHeight
+             }
           width={this.props.width * this.props.store.pixelsPerColumn}
           height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
           fill={this.state.color}
