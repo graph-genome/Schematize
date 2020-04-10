@@ -26,6 +26,7 @@ RootStore = types
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
     binWidth: 100,
+    nucleotideHeight: 10,
   })
   .actions((self) => {
     function updateBeginEndBin(newBegin, newEnd) {
