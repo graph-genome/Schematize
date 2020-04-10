@@ -30,6 +30,7 @@ class PangenomeSchematic extends React.Component {
     const endBin = this.props.store.getEndBin();
     //only do a new chunk scan if it's needed
     let startFile = chunk_index["files"][0]["file"];
+    this.loadFasta();
     let nextChunk = chunk_index["files"][0];
     for (let i = 0; i < chunk_index["files"].length; ++i) {
       //linear scan for the right chunk
@@ -77,7 +78,6 @@ class PangenomeSchematic extends React.Component {
             `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][1]["file"]}`
           );
         }
-        this.loadFasta();
         this.openRelevantChunk.call(this, json);
       });
   }
@@ -121,7 +121,6 @@ class PangenomeSchematic extends React.Component {
   }
   loadFasta() {
     //find a way to make this less fragile
-    //probably move it elsewhere
     const chunkNo = this.props.store
       .getChunkURLs()[0]
       .split("chunk")[1]
@@ -133,14 +132,16 @@ class PangenomeSchematic extends React.Component {
         return response.text();
       })
       .then((text) => {
-        //we should check that the bins match in here
-
         //remove first line
         const splitText = text.replace(/.*/, "").substr(1);
         const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
         const nucelotides = noLinebreaks.split("");
         //split into array of nucelotides
-        this.nucleotides = nucelotides;
+        if (!this.nucleotides.length) {
+          this.nucleotides = nucelotides;
+        } else {
+          this.nucleotides.append(nucelotides);
+        }
         return;
       });
   }
