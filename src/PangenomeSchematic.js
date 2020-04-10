@@ -55,8 +55,11 @@ class PangenomeSchematic extends React.Component {
     let fileArray = range(beginIndex, endIndex).map((index) => {
       return URLprefix + chunk_index["files"][index]["file"];
     });
-
+    let URLBefore = this.props.store.getChunkURLs();
     this.props.store.switchChunkURLs(fileArray);
+    console.log(
+      `Before : ${URLBefore}, After switch : ${this.props.store.getChunkURLs()}`
+    );
   }
   loadIndexFile(jsonFilename) {
     let indexPath =
@@ -73,7 +76,9 @@ class PangenomeSchematic extends React.Component {
           ];
           this.props.store.switchChunkURLs(fileArray);
         }
-        this.openRelevantChunk.call(this, json);
+        console.log(`loadIndexFile ${this.props.store.getChunkURLs()}`);
+        // Is it relevant to openRelevantChunk here since it just does switchChunkURLs too ?
+        // this.openRelevantChunk.call(this, json);
       });
   }
   jsonFetch(filepath) {
