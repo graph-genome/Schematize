@@ -24,7 +24,7 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "run1.B1phi1.i1.seqwish.w100",
+    jsonName: "b1ph1.gfa.og.w100",
     chunkURLs: ChunkURLs,
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",

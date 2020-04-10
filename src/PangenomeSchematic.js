@@ -126,7 +126,7 @@ class PangenomeSchematic extends React.Component {
       this.props.store.getBeginBin(),
       this.props.store.getEndBin(),
     ];
-    if (this.jsonData.json_version !== 10) {
+    if (this.jsonData.json_version !== 11) {
       throw MediaError(
         "Wrong Data JSON version: was expecting version 10, got " +
         this.jsonData.json_version +

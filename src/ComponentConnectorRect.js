@@ -31,14 +31,19 @@ ConnectorRect.propTypes = {
 export class MatrixCell extends React.Component {
   onHover() {
     //tooltip: this.props.item.mean_pos
-    this.props.store.updateCellTooltipContent(
-      '"' +
-        this.props.pathName +
-        '": ' +
-        this.props.item[2] +
-        " - " +
-        this.props.item[3]
-    ); //[2] is first, [3] last
+    let tooltipContent = '"';
+    tooltipContent += this.props.pathName + '": ';
+    const ranges = this.props.item[2];
+    for (let j = 0; j < ranges.length; j++) {
+      let start = ranges[j][0];
+      let end = ranges[j][1];
+      if (j === 0) {
+        tooltipContent += start + "-" + end;
+      } else {
+        tooltipContent += "," + start + "-" + end;
+      }
+    }
+    this.props.store.updateCellTooltipContent(tooltipContent); //item[2] is array of ranges
   }
   onLeave() {
     this.props.store.updateCellTooltipContent(""); // we don't want any tooltip displayed if we leave the cell
