@@ -13,7 +13,7 @@ import { observe } from "mobx";
 import { Rect, Text } from "react-konva";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
-  let colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
+  const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
   if (
     highlightedLinkColumn &&
     colorKey ===
@@ -34,7 +34,7 @@ const stringToColourSave = function (colorKey) {
   }
   let colour = "#";
   for (let j = 0; j < 3; j++) {
-    let value = (hash >> (j * 8)) & 0xff;
+    const value = (hash >> (j * 8)) & 0xff;
     colour += ("00" + value.toString(16)).substr(-2);
   }
   return colour;
@@ -53,7 +53,7 @@ class App extends Component {
       actualWidth: 1,
       buttonsHeight: 0,
     };
-    this.schematic = new PangenomeSchematic({ store: this.props.store }); //Read file, parse nothing
+    this.schematic = new PangenomeSchematic({ store: this.props.store }); // Read file, parse nothing
     observe(
       this.props.store.beginEndBin,
       this.updateSchematicMetadata.bind(this)
@@ -113,7 +113,7 @@ class App extends Component {
   recalcXLayout() {
     console.log("recalcXLayout");
     const sum = (accumulator, currentValue) => accumulator + currentValue;
-    let columnsInComponents = this.schematic.components
+    const columnsInComponents = this.schematic.components
       .map(
         (component) =>
           component.arrivals.length +
@@ -122,15 +122,15 @@ class App extends Component {
           1
       )
       .reduce(sum, 0);
-    let paddingBetweenComponents =
+    const paddingBetweenComponents =
       this.props.store.pixelsPerColumn * this.schematic.components.length;
-    let actualWidth =
+    const actualWidth =
       columnsInComponents * this.props.store.pixelsPerColumn +
       paddingBetweenComponents;
     this.setState({
       actualWidth: actualWidth,
     });
-    let [links, top] = calculateLinkCoordinates(
+    const [links, top] = calculateLinkCoordinates(
       this.schematic.components,
       this.props.store.pixelsPerColumn,
       this.props.store.topOffset,
@@ -141,8 +141,8 @@ class App extends Component {
   }
 
   recalcY() {
-    //forceUpdate() doesn't work with callback function
-    this.setState({ highlightedLink: null }); //nothing code to force update.
+    // forceUpdate() doesn't work with callback function
+    this.setState({ highlightedLink: null }); // nothing code to force update.
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -157,9 +157,9 @@ class App extends Component {
   calcMaxNumRowsAcrossComponents(components) {
     let maxNumberRowsInOneComponent = 0;
     for (let i = 0; i < components.length; i++) {
-      let component = components[i];
-      let occupants = component.occupants;
-      let numberOccupants = occupants.filter(Boolean).length;
+      const component = components[i];
+      const occupants = component.occupants;
+      const numberOccupants = occupants.filter(Boolean).length;
       maxNumberRowsInOneComponent = Math.max(
         numberOccupants,
         maxNumberRowsInOneComponent
@@ -193,14 +193,13 @@ class App extends Component {
   }
 
   componentDidMount = () => {
-    var clientHeight = document.getElementById("button-container").clientHeight;
+    let clientHeight = document.getElementById("button-container").clientHeight;
     const arrowsDiv = document.getElementsByClassName("konvajs-content")[1];
     arrowsDiv.style.position = "fixed";
     arrowsDiv.style.top = "95px";
     this.setState({ buttonsHeight: clientHeight });
     this.layerRef.current.getCanvas()._canvas.id = "cnvs";
     this.layerRef2.current.getCanvas()._canvas.id = "arrow";
-    this.layerRef2.current.getCanvas()._canvas.style.position = "fixed";
     this.layerRef2.current.getCanvas()._canvas.style.top = "95px";
     /*        if(this.props.store.useVerticalCompression) {
             this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
@@ -215,11 +214,11 @@ class App extends Component {
 
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
     /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
-    let previousColumns =
+    const previousColumns =
       schematizeComponent.firstBin -
       this.props.store.getBeginBin() +
       schematizeComponent.offset;
-    let pixelsFromColumns =
+    const pixelsFromColumns =
       (previousColumns + firstDepartureColumn + j) *
       this.props.store.pixelsPerColumn;
     return pixelsFromColumns + i * this.props.store.pixelsPerColumn;
@@ -252,7 +251,7 @@ class App extends Component {
           );
         })}
         {schematizeComponent.departures.slice(0, -1).map((linkColumn, j) => {
-          let leftPad = schematizeComponent.firstDepartureColumn();
+          const leftPad = schematizeComponent.firstDepartureColumn();
           return this.renderLinkColumn(
             schematizeComponent,
             i,
@@ -272,13 +271,13 @@ class App extends Component {
     j,
     linkColumn
   ) {
-    let xCoordArrival = this.leftXStart(
+    const xCoordArrival = this.leftXStart(
       schematizeComponent,
       i,
       firstDepartureColumn,
       j
     );
-    let localColor = stringToColor(linkColumn, this.state.highlightedLink);
+    const localColor = stringToColor(linkColumn, this.state.highlightedLink);
     return (
       <LinkColumn
         store={this.props.store}
@@ -334,15 +333,6 @@ class App extends Component {
     console.log("Start render");
     return (
       <>
-        <ControlHeader store={this.props.store} schematic={this.schematic} />
-        <Stage
-          x={this.props.store.leftOffset}
-          y={this.state.buttonsHeight} //removed leftOffset to simplify code.  Relative coordinates are always better.
-          width={this.state.actualWidth + 60}
-          height={this.props.store.topOffset + this.visibleHeight()}
-        >
-          <Layer ref={this.layerRef}>{this.renderSchematic()}</Layer>
-        </Stage>
         <Stage
           x={this.props.store.leftOffset}
           y={this.props.topOffset}
@@ -359,6 +349,14 @@ class App extends Component {
             />
             {this.renderSortedLinks()}
           </Layer>
+        </Stage>
+        <ControlHeader store={this.props.store} schematic={this.schematic} />
+        <Stage
+          x={this.props.store.leftOffset} // removed leftOffset to simplify code.  Relative coordinates are always better.
+          width={this.state.actualWidth + 60}
+          height={this.props.store.topOffset + this.visibleHeight()}
+        >
+          <Layer ref={this.layerRef}>{this.renderSchematic()}</Layer>
         </Stage>
         <NucleotideTooltip store={this.props.store} />
       </>

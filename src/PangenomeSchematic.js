@@ -135,12 +135,12 @@ class PangenomeSchematic extends React.Component {
         //remove first line
         const splitText = text.replace(/.*/, "").substr(1);
         const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
-        const nucelotides = noLinebreaks.split("");
+        const nucleotides = noLinebreaks.split("");
         //split into array of nucelotides
         if (!this.nucleotides.length) {
-          this.nucleotides = nucelotides;
+          this.nucleotides = nucleotides;
         } else {
-          this.nucleotides.append(nucelotides);
+          this.nucleotides.push(...nucleotides);
         }
         return;
       });
