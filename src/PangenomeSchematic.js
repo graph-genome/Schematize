@@ -121,12 +121,18 @@ class PangenomeSchematic extends React.Component {
   }
   loadFasta() {
     //find a way to make this less fragile
-    const chunkNo = this.props.store
-      .getChunkURLs()[0]
-      .split("chunk")[1]
-      .split("_")[0];
+    const beginBin = this.props.store.getBeginBin();
+    const endBin = this.props.store.getEndBin();
+    const chunks = this.chunk_index;
 
-    const fastaFileName = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/seq_chunk${chunkNo}_bin1.fa`;
+    let chunkNo = chunks.files[0];
+
+    if (beginBin > chunkNo.lastBin) {
+      chunkNo = chunks.files[1];
+    }
+
+    const fastaFileName = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/${chunkNo.fasta}`;
+    console.log("fetching", fastaFileName);
     fetch(fastaFileName)
       .then((response) => {
         return response.text();
@@ -173,7 +179,8 @@ class PangenomeSchematic extends React.Component {
       beginBin < this.jsonData.first_bin
     ) {
       //only do a new chunk scan if it's needed
-      this.openRelevantChunk(this.chunk_index); // this will trigger a second update cycle
+      this.openRelevantChunk(this.chunk_index);
+      this.loadFasta(); // this will trigger a second update cycle
       return false;
     } else {
       var componentArray = [];
