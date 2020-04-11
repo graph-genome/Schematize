@@ -176,7 +176,12 @@ class ComponentRect extends React.Component {
     // x is the (num_bins + num_arrivals + num_departures)*pixelsPerColumn
     const x_val =
       component.x +
-      (component.firstDepartureColumn() + component.departures.length - 1) *
+      (component.arrivals.length +
+        (this.props.store.useWidthCompression
+          ? this.props.store.binScalingFactor
+          : component.num_bin) +
+        component.departures.length -
+        1) *
         this.props.store.pixelsPerColumn;
     let this_y = count;
     if (!this.props.store.useVerticalCompression) {
@@ -209,8 +214,8 @@ class ComponentRect extends React.Component {
           fill={this.state.color}
           onClick={this.handleClick}
         ></Rect>
-        {this.renderMatrix()}
-        {this.renderAllConnectors()}
+        {!this.props.store.useWidthCompression ? this.renderMatrix() : null}
+        {this.props.store.useConnector ? this.renderAllConnectors() : null}
       </>
     );
   }

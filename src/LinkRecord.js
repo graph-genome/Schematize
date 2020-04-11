@@ -18,6 +18,8 @@ export function calculateLinkCoordinates(
   schematic,
   pixelsPerColumn,
   topOffset,
+  useWidthCompression,
+  binScalingFactor,
   leftXStart
 ) {
   //leftXStart is necessary as a method at the moment
@@ -57,7 +59,10 @@ export function calculateLinkCoordinates(
       let xCoordDeparture = leftXStart(
         schematizeComponent,
         i,
-        schematizeComponent.firstDepartureColumn(),
+        schematizeComponent.arrivals.length +
+          (useWidthCompression
+            ? binScalingFactor
+            : schematizeComponent.num_bin),
         k
       );
       let paddedKey = departure.key;

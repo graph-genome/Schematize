@@ -156,8 +156,39 @@ class ControlHeader extends React.Component {
           <span>
             {" "}
             Use Vertical Compression:
-            <CompressedViewSwitch store={this.props.store} />
+            <VerticalCompressedViewSwitch store={this.props.store} />
           </span>
+          <span>
+            {" "}
+            Use Width Compression:
+            <WidthCompressedViewSwitch store={this.props.store} />
+          </span>
+          {this.props.store.useWidthCompression ? (
+            <React.Fragment>
+              <span>
+                {" "}
+                Render Connectors:
+                <RenderConnectorSwitch store={this.props.store} />
+              </span>
+              <span>
+                {" "}
+                Component Width Scaling Factor:
+                <Observer>
+                  {() => (
+                    <input
+                      type="number"
+                      min={1}
+                      value={this.props.store.binScalingFactor}
+                      onChange={this.props.store.updateBinScalingFactor}
+                      style={{ width: "30px" }}
+                    />
+                  )}
+                </Observer>
+              </span>
+            </React.Fragment>
+          ) : (
+            <></>
+          )}
           <span>
             {" "}
             Row Height:
@@ -190,21 +221,64 @@ ControlHeader.propTypes = {
   store: PropTypes.object,
 };
 
-class CompressedViewSwitch extends React.Component {
+class VerticalCompressedViewSwitch extends React.Component {
   render() {
     return (
-      <input
-        type="checkbox"
-        value={
-          <Observer>{() => this.props.store.useVerticalCompression}</Observer>
-        }
-        onChange={this.props.store.toggleUseVerticalCompression}
-      />
+      <Observer>
+        {() => (
+          <input
+            type="checkbox"
+            checked={this.props.store.useVerticalCompression}
+            onChange={this.props.store.toggleUseVerticalCompression}
+          />
+        )}
+      </Observer>
     );
   }
 }
 
-CompressedViewSwitch.propTypes = {
+VerticalCompressedViewSwitch.propTypes = {
   store: PropTypes.object,
 };
+
+class RenderConnectorSwitch extends React.Component {
+  render() {
+    return (
+      <Observer>
+        {() => (
+          <input
+            type="checkbox"
+            checked={this.props.store.useConnector}
+            onChange={this.props.store.toggleUseConnector}
+          />
+        )}
+      </Observer>
+    );
+  }
+}
+
+RenderConnectorSwitch.propTypes = {
+  store: PropTypes.object,
+};
+
+class WidthCompressedViewSwitch extends React.Component {
+  render() {
+    return (
+      <Observer>
+        {() => (
+          <input
+            type="checkbox"
+            checked={this.props.store.useWidthCompression}
+            onChange={this.props.store.toggleUseWidthCompression}
+          />
+        )}
+      </Observer>
+    );
+  }
+}
+
+WidthCompressedViewSwitch.propTypes = {
+  store: PropTypes.object,
+};
+
 export default ControlHeader;

@@ -161,12 +161,12 @@ class PangenomeSchematic extends React.Component {
       this.props.store.getBeginBin(),
       this.props.store.getEndBin(),
     ];
-    if (this.jsonData.json_version !== 10) {
+    if (this.jsonData.json_version !== 12) {
       throw MediaError(
-        "Wrong Data JSON version: was expecting version 10, got " +
+        "Wrong Data JSON version: was expecting version 12, got " +
         this.jsonData.json_version +
         ".  " +
-        "This version added last_bin to data chunk index.  " + // KEEP THIS UP TO DATE!
+        "This version added nucleotide ranges to bins.  " + // KEEP THIS UP TO DATE!
           "Using a mismatched data file and renderer will cause unpredictable behavior," +
           " instead generate a new data file using github.com/graph-genome/component_segmentation."
       );
@@ -185,9 +185,9 @@ class PangenomeSchematic extends React.Component {
     } else {
       var componentArray = [];
       var offsetLength = 0;
-      for (var component of this.jsonData.components) {
+      for (let [index, component] of this.jsonData.components.entries()) {
         if (component.last_bin >= beginBin) {
-          var componentItem = new Component(component, offsetLength);
+          var componentItem = new Component(component, offsetLength, index);
           offsetLength +=
             componentItem.arrivals.length + componentItem.departures.length - 1;
           componentArray.push(componentItem);
@@ -208,8 +208,9 @@ class PangenomeSchematic extends React.Component {
 }
 
 class Component {
-  constructor(component, offsetLength) {
+  constructor(component, offsetLength, index) {
     this.offset = offsetLength;
+    this.index = index;
     this.firstBin = component.first_bin;
     this.lastBin = component.last_bin;
     this.arrivals = [];
@@ -227,9 +228,6 @@ class Component {
     this.occupants = Array.from(component.occupants);
     this.matrix = Array.from(component.matrix);
     this.num_bin = this.lastBin - this.firstBin + 1;
-  }
-  firstDepartureColumn() {
-    return this.num_bin + this.arrivals.length;
   }
 }
 
