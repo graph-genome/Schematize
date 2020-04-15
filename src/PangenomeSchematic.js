@@ -1,6 +1,10 @@
 import React from "react";
 import { observe } from "mobx";
 
+function range(start, end) {
+  return [...Array(1 + end - start).keys()].map((v) => start + v);
+}
+
 class PangenomeSchematic extends React.Component {
   constructor(props) {
     /*Only plain objects will be made observable. For non-plain objects it is considered the
@@ -27,40 +31,32 @@ class PangenomeSchematic extends React.Component {
     this.chunk_index = chunk_index;
     const beginBin = this.props.store.getBeginBin();
     const endBin = this.props.store.getEndBin();
-    //only do a new chunk scan if it's needed
-    let startFile = chunk_index["files"][0]["file"];
-    let nextChunk = chunk_index["files"][0];
-    for (let i = 0; i < chunk_index["files"].length; ++i) {
-      //linear scan for the right chunk
-      let chunk = chunk_index["files"][i];
-      if (chunk["last_bin"] >= beginBin && chunk["first_bin"] <= beginBin) {
-        startFile = chunk["file"]; // retrieve file name
-        nextChunk = chunk; // fallback: if it's last chunk in series
-        if (i + 1 < chunk_index["files"].length) {
-          nextChunk = chunk_index["files"][i + 1];
-        }
-        console.log("Opening chunk", startFile, nextChunk["file"]);
-        //restrict end position to end of the new chunk
-        this.props.store.updateBeginEndBin(
-          beginBin,
-          Math.min(nextChunk["last_bin"], endBin)
-        );
-        break; // done scanning
-      }
+    const lastIndex = chunk_index["files"].length - 1;
+
+    const findBegin = (entry) => entry["last_bin"] >= beginBin;
+    const findEnd = (entry) => entry["last_bin"] >= endBin;
+    let beginIndex = chunk_index["files"].findIndex(findBegin);
+    let endIndex = chunk_index["files"].findIndex(findEnd);
+
+    if (-1 === beginIndex || -1 === endIndex) {
+      // conserving beginIndex if -1 < beginIndex < lastIndex
+      const indexToCompare = [beginIndex, lastIndex];
+      const findMinBegin = (index) => index >= 0;
+      let trueBeginIndex =
+        indexToCompare[indexToCompare.findIndex(findMinBegin)];
+
+      beginIndex = trueBeginIndex;
+      endIndex = lastIndex;
     }
+
     //will trigger chunk update in App.nextChunk() which calls this.loadJSON
-    this.props.store.switchChunkURLs(
-      process.env.PUBLIC_URL +
-        "test_data/" +
-        this.props.store.jsonName +
-        "/" +
-        startFile,
-      process.env.PUBLIC_URL +
-        "test_data/" +
-        this.props.store.jsonName +
-        "/" +
-        nextChunk["file"]
-    );
+    let URLprefix =
+      process.env.PUBLIC_URL + "test_data/" + this.props.store.jsonName + "/";
+    let fileArray = range(beginIndex, endIndex).map((index) => {
+      return URLprefix + chunk_index["files"][index]["file"];
+    });
+
+    this.props.store.switchChunkURLs(fileArray);
   }
   loadIndexFile(jsonFilename) {
     let indexPath =
@@ -71,11 +67,14 @@ class PangenomeSchematic extends React.Component {
       .then((json) => {
         if (!this.props.store.getChunkURLs()[0]) {
           // Initial state
-          this.props.store.switchChunkURLs(
+          let fileArray = [
             `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][0]["file"]}`,
-            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][1]["file"]}`
-          );
+            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][1]["file"]}`,
+          ];
+          this.props.store.switchChunkURLs(fileArray);
         }
+        console.log(`loadIndexFile ${this.props.store.getChunkURLs()}`);
+        // This following part is important to scroll right and left on browser
         this.openRelevantChunk.call(this, json);
       });
   }
@@ -93,27 +92,44 @@ class PangenomeSchematic extends React.Component {
     this.jsonData = data;
     this.pathNames = this.jsonData.path_names;
     this.jsonData.mid_bin = data.last_bin; //placeholder
+
     let lastChunkURLIndex = this.props.store.chunkURLs.length - 1;
+
     if (
       this.props.store.getChunkURLs()[0] ===
       this.props.store.getChunkURLs()[lastChunkURLIndex]
     ) {
       this.processArray();
     } else {
-      this.jsonFetch(this.props.store.getChunkURLs()[lastChunkURLIndex]).then(
-        this.loadSecondJSON.bind(this)
-      );
+      const [firstURL, ...rest] = this.props.store.getChunkURLs();
+      console.log(`${firstURL} loaded`);
+      this.rest = rest;
+      this.currentRestIdx = -1;
+      this.loadRestJSON.bind(this);
     }
   }
-  loadSecondJSON(secondChunkContents) {
-    if (this.jsonData.last_bin < secondChunkContents.last_bin) {
-      this.jsonData.mid_bin = this.jsonData.last_bin; //boundary between two files
-      this.jsonData.last_bin = secondChunkContents.last_bin;
-      this.jsonData.components.push(...secondChunkContents.components);
-      this.processArray();
+  //loadRestJSON will be called on this.rest, which should be an array
+  loadRestJSON() {
+    const lastChunkURLIndex = this.rest.length - 1;
+
+    while (this.currentRestIdx !== lastChunkURLIndex) {
+      this.jsonFetch(this.rest[this.currentRestIdx])
+        .then(this.extractDataFromChunk.bind(this))
+        //TODO Find a way to processArray only once all chunks have loaded
+        .then(this.processArray());
+    }
+  }
+  extractDataFromChunk(chunkContent) {
+    if (this.jsonData.last_bin < chunkContent.last_bin) {
+      this.jsonData.last_bin = chunkContent.last_bin;
+      this.jsonData.mid_bin =
+        (this.jsonData.last_bin - this.jsonData.first_bin) / 2; //boundary between two files
+      this.jsonData.components.push(...chunkContent.components);
+      // CAUTION Might not work well if two extractDataFromChunk function run at the same time!
+      this.currentRestIdx += 1;
     } else {
       console.warn(
-        "Second chunk was earlier than the first.  Check the order you set store.chunkURLs"
+        "Chunk was already loaded.  Check the order you set store.chunkURLs"
       );
     }
   }
@@ -142,6 +158,7 @@ class PangenomeSchematic extends React.Component {
     if (
       beginBin > this.jsonData.mid_bin ||
       beginBin < this.jsonData.first_bin
+      //TODO: add checks for beginBin vs .first_bin & endBin vs .last_bin too
     ) {
       //only do a new chunk scan if it's needed
       this.openRelevantChunk(this.chunk_index); // this will trigger a second update cycle
