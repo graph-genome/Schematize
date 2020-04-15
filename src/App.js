@@ -193,6 +193,11 @@ class App extends Component {
       !this.compressed_row_mapping
     ) {
       // this.state.schematize.forEach(value => Math.max(value.occupants.filter(Boolean).length, maxNumberRowsInOneComponent));
+      if(this.maxNumRowsAcrossComponents === undefined){
+        this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
+            this.schematic.components);
+      }
+      console.log("maxNumRowsAcrossComponents", this.maxNumRowsAcrossComponents)
       return (
         (this.maxNumRowsAcrossComponents + 2.5) * this.props.store.pixelsPerRow
       );
