@@ -1,5 +1,5 @@
 import React from "react";
-import { observe } from "mobx";
+import {observe} from "mobx";
 
 function range(start, end) {
   return [...Array(1 + end - start).keys()].map((v) => start + v);
@@ -37,16 +37,17 @@ class PangenomeSchematic extends React.Component {
     const findEnd = (entry) => entry["last_bin"] >= endBin;
     let beginIndex = chunk_index["files"].findIndex(findBegin);
     let endIndex = chunk_index["files"].findIndex(findEnd);
-
-    if (-1 === beginIndex || -1 === endIndex) {
-      // conserving beginIndex if -1 < beginIndex < lastIndex
-      const indexToCompare = [beginIndex, lastIndex];
-      const findMinBegin = (index) => index >= 0;
-      let trueBeginIndex =
-        indexToCompare[indexToCompare.findIndex(findMinBegin)];
-
-      beginIndex = trueBeginIndex;
+    if(-1 === endIndex){//#22 end of file limits so it doesn't crash
       endIndex = lastIndex;
+    }
+    if (-1 === beginIndex ) {
+        console.error("beginIndex", beginIndex, "endIndex", endIndex);
+        return;
+      // conserving beginIndex if -1 < beginIndex < lastIndex
+      // const indexToCompare = [beginIndex, lastIndex];
+      // const findMinBegin = (index) => index >= 0;
+      // beginIndex = indexToCompare[indexToCompare.findIndex(findMinBegin)]; //trueBeginIndex
+      // endIndex = lastIndex;
     }
 
     //will trigger chunk update in App.nextChunk() which calls this.loadJSON

@@ -128,7 +128,7 @@ function reserveElevationAirSpace(
         elevationOccupied
       );
     }
-    const stillSmall = elevation < topOffset / 3;
+    const stillSmall = true;//elevation < topOffset / 3;
     elevation += stillSmall ? pixelsPerColumn : pixelsPerColumn / 4;
     for (let x = linkBegin; x < linkEnd && x < elevationOccupied.length; x++) {
       elevationOccupied[x] = elevation;

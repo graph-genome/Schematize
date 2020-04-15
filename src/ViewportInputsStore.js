@@ -1,7 +1,7 @@
 import { types } from "mobx-state-tree";
 import { urlExists } from "./URL";
 
-const BeginEndBin = types.optional(types.array(types.integer), [1, 40]);
+const BeginEndBin = types.optional(types.array(types.integer), [1, 140]);
 const ChunkURLs = types.optional(types.array(types.string), ["", ""]);
 
 const PathNucPos = types.model("PathNucPos", {
@@ -103,8 +103,9 @@ RootStore = types
         self.jsonName = event.target.value;
       }
     }
-    function switchChunkURLArray(arrayOfFile) {
+    function switchChunkURLs(arrayOfFile) {
       self.chunkURLs = arrayOfFile;
+      console.log(arrayOfFile);
     }
     function getChunkURLs() {
       return self.chunkURLs;
@@ -155,7 +156,7 @@ RootStore = types
       updateHeight,
       updateWidth,
       tryJSONpath,
-      switchChunkURLs: switchChunkURLArray,
+      switchChunkURLs: switchChunkURLs,
       getChunkURLs,
       getBeginEndBin,
       getBeginBin,
