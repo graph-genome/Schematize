@@ -18,6 +18,9 @@
       "jsx": true
     }
   },
+  "rules": {
+    "require-jsdoc": ["off"]
+  },
   "settings": {
     "react": {
       "createClass": "createReactClass", // Regex for Component Factory to use,
