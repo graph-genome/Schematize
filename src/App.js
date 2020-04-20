@@ -77,23 +77,24 @@ class App extends Component {
       this.recalcXLayout.bind(this)
     );
     observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
-    observe(this.props.store.chunkURLs, this.nextChunk.bind(this));
-    // this.nextChunk();
+    observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
+    // this.fetchAllChunks();
   }
-  nextChunk() {
-    console.log("nextChunk", this.props.store.getChunkURLs()[0]);
+  fetchAllChunks() {
+    /*Dispatches fetches for all chunk files
+    * Read https://github.com/graph-genome/Schematize/issues/22 for details
+     */
+    console.log("fetchAllChunks", this.props.store.getChunkURLs());
     if (!this.props.store.getChunkURLs()[0]) {
-      console.log("no");
+      console.warn("No chunk URL defined.");
       return;
     }
-    this.schematic
-      .jsonFetch(this.props.store.getChunkURLs()[0])
-      .then(this.queueUpdate.bind(this));
-  }
-  queueUpdate(data) {
-    console.log("queueUpdate", this.props.store.getChunkURLs()[0]);
-    this.schematic.loadFirstJSON(data);
-    this.updateSchematicMetadata(true);
+    for(let chunk of this.props.store.chunkURLs){
+      //TODO: conditional on jsonCache not already having chunk
+      this.schematic
+          .jsonFetch(chunk)
+          .then((data)=> this.schematic.loadJsonCache(chunk, data));
+    }
   }
   updateSchematicMetadata(processingDone = false) {
     if (this.schematic.processArray()) {

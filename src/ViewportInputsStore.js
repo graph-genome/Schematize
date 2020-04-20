@@ -2,7 +2,7 @@ import { types } from "mobx-state-tree";
 import { urlExists } from "./URL";
 
 const BeginEndBin = types.optional(types.array(types.integer), [1, 140]);
-const ChunkURLs = types.optional(types.array(types.string), ["", ""]);
+const ChunkURLs = types.optional(types.array(types.string), [""]);
 
 const PathNucPos = types.model("PathNucPos", {
   path: types.string,
@@ -156,7 +156,7 @@ RootStore = types
       updateHeight,
       updateWidth,
       tryJSONpath,
-      switchChunkURLs: switchChunkURLs,
+      switchChunkURLs,
       getChunkURLs,
       getBeginEndBin,
       getBeginBin,
