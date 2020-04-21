@@ -43,6 +43,7 @@ const stringToColourSave = function (colorKey) {
 class App extends Component {
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
+
   constructor(props) {
     super(props);
     this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
@@ -80,6 +81,7 @@ class App extends Component {
     observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
     // this.fetchAllChunks();
   }
+
   fetchAllChunks() {
     /*Dispatches fetches for all chunk files
     * Read https://github.com/graph-genome/Schematize/issues/22 for details
@@ -89,61 +91,56 @@ class App extends Component {
       console.warn("No chunk URL defined.");
       return;
     }
-    for(let chunk of this.props.store.chunkURLs){
+    for (let chunk of this.props.store.chunkURLs) {
       //TODO: conditional on jsonCache not already having chunk
       this.schematic
           .jsonFetch(chunk)
-          .then((data)=> this.schematic.loadJsonCache(chunk, data));
+          .then((data) => this.schematic.loadJsonCache(chunk, data))
+          .then(this.updateSchematicMetadata.bind(this));
     }
   }
-  updateSchematicMetadata(processingDone = false) {
+
+  updateSchematicMetadata() {
     if (this.schematic.processArray()) {
       //parses beginBin to endBin range, returns false if new file needed
       // console.log("#paths: " + this.schematic.pathNames.length);
       // console.log("#bins: " + (this.props.store.endBin - this.props.store.beginBin + 1));
       console.log(
-        "updateSchematicMetadata #components: " +
+          "updateSchematicMetadata #components: " +
           this.schematic.components.length
       );
 
       // console.log(this.schematic.components);
       this.setState(
-        {
-          schematize: this.schematic.components,
-          pathNames: this.schematic.pathNames,
-        },
-        () => {
-          this.recalcXLayout();
-          this.compressed_row_mapping = compress_visible_rows(
-            this.schematic.components
-          );
-          this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
-            this.schematic.components
-          ); // TODO add this to mobx-state-tree
-          this.setState({ loading: false });
-        }
+          {
+            schematize: this.schematic.components,
+            pathNames: this.schematic.pathNames,
+          },
+          () => {
+            this.recalcXLayout();
+            this.compressed_row_mapping = compress_visible_rows(this.schematic.components);
+            this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
+                this.schematic.components); // TODO add this to mobx-state-tree
+            this.setState({loading: false});
+          }
       );
     }
   }
+
   recalcXLayout() {
     console.log("recalcXLayout");
     const sum = (accumulator, currentValue) => accumulator + currentValue;
-    let columnsInComponents = this.schematic.components
-      .map(
+    let columnsInComponents = this.schematic.components.map(
         (component) =>
-          component.arrivals.length +
-          (component.departures.length - 1) +
-          (this.props.store.useWidthCompression
-            ? this.props.store.binScalingFactor
-            : component.lastBin - component.firstBin) +
-          1
-      )
-      .reduce(sum, 0);
-    let paddingBetweenComponents =
-      this.props.store.pixelsPerColumn * this.schematic.components.length;
-    let actualWidth =
-      columnsInComponents * this.props.store.pixelsPerColumn +
-      paddingBetweenComponents;
+            component.arrivals.length +
+            (component.departures.length - 1) +
+            (this.props.store.useWidthCompression
+                ? this.props.store.binScalingFactor
+                : component.lastBin - component.firstBin) +
+            1
+    ).reduce(sum, 0);
+    let paddingBetweenComponents = this.props.store.pixelsPerColumn * this.schematic.components.length;
+    let actualWidth = columnsInComponents * this.props.store.pixelsPerColumn + paddingBetweenComponents;
     this.setState({
       actualWidth: actualWidth,
     });
@@ -180,8 +177,8 @@ class App extends Component {
       let occupants = component.occupants;
       let numberOccupants = occupants.filter(Boolean).length;
       maxNumberRowsInOneComponent = Math.max(
-        numberOccupants,
-        maxNumberRowsInOneComponent
+          numberOccupants,
+          maxNumberRowsInOneComponent
       );
     }
     console.log(
@@ -207,6 +204,7 @@ class App extends Component {
       );
     }
   }
+
   UNSAFE_componentWillMount() {
     this.updateSchematicMetadata();
   }
@@ -235,15 +233,15 @@ class App extends Component {
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
     /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
     let previousColumns = !this.props.store.useWidthCompression
-      ? schematizeComponent.firstBin -
+        ? schematizeComponent.firstBin -
         this.props.store.getBeginBin() +
         schematizeComponent.offset
-      : schematizeComponent.offset +
+        : schematizeComponent.offset +
         (schematizeComponent.index - this.schematic.components[0].index) *
-          this.props.store.binScalingFactor;
+        this.props.store.binScalingFactor;
     let pixelsFromColumns =
-      (previousColumns + firstDepartureColumn + j) *
-      this.props.store.pixelsPerColumn;
+        (previousColumns + firstDepartureColumn + j) *
+        this.props.store.pixelsPerColumn;
     return pixelsFromColumns + i * this.props.store.pixelsPerColumn;
   }
 
@@ -335,9 +333,9 @@ class App extends Component {
     );
   }
 
-  renderSchematic = () => {
+  renderSchematic() {
     if (this.state.loading) {
-      return <Text text="Loading..." fontSize={60} />;
+      return;
     }
     return this.schematic.components.map((schematizeComponent, i) => {
       return (
@@ -348,7 +346,7 @@ class App extends Component {
     });
   };
 
-  renderSortedLinks = () => {
+  renderSortedLinks() {
     if (this.state.loading) {
       return;
     }
@@ -358,11 +356,18 @@ class App extends Component {
     });
   };
 
+  loadingMessage() {
+    if (this.state.loading) {
+      return <p style={{fontSize:40}}>Loading...</p>;
+    }
+  }
+
   render() {
     console.log("Start render");
     return (
       <>
         <ControlHeader store={this.props.store} schematic={this.schematic} />
+        {this.loadingMessage()}
         <Stage
           x={this.props.store.leftOffset}
           y={this.state.buttonsHeight} //removed leftOffset to simplify code.  Relative coordinates are always better.
