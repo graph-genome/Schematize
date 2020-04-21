@@ -104,8 +104,12 @@ RootStore = types
       }
     }
     function switchChunkURLs(arrayOfFile) {
-      self.chunkURLs = arrayOfFile;
-      console.log(arrayOfFile);
+      let arraysEqual = (arrayOfFile.length === self.chunkURLs.length) &&
+          (arrayOfFile.every( e => self.chunkURLs.indexOf(e) > -1 ));
+      if(!arraysEqual) {
+        self.chunkURLs = arrayOfFile;
+        console.log(arrayOfFile);
+      }
     }
     function getChunkURLs() {
       return self.chunkURLs;

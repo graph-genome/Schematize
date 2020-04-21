@@ -14,6 +14,7 @@ class PangenomeSchematic extends React.Component {
     super(props);
     this.pathNames = [];
     this.components = [];
+    this.chunkIndex = null;
     this.jsonCache = {}; // URL keys, values are entire JSON file datas
     this.chunksProcessed = []; //list of URLs now in this.components
 
@@ -22,6 +23,7 @@ class PangenomeSchematic extends React.Component {
     observe(this.props.store, "jsonName", () => {
       this.loadIndexFile(this.props.store.jsonName);
     });
+    observe(this.props.store.beginEndBin, this.openRelevantChunksFromIndex.bind(this));
     // console.log("public ", process.env.PUBLIC_URL ) //PUBLIC_URL is empty
   }
   componentDidUpdate() {
@@ -30,43 +32,41 @@ class PangenomeSchematic extends React.Component {
 
   /** Compares bin2file @param indexContents with the beginBin and EndBin.
    * It finds the appropriate chunk URLS from the index and updates
-   * switchChunkURLs which trigger json fetches for the new chunks.
-   * @param indexContents bin2file.json contents */
-  openRelevantChunksFromIndex(indexContents) {
-    if(indexContents === undefined){
-      indexContents = this.chunk_index;// stored version (after first use)
-    } else {
-      this.chunk_index = indexContents;
-    }
-    const beginBin = this.props.store.getBeginBin();
-    const endBin = this.props.store.getEndBin();
-    const lastIndex = indexContents["files"].length - 1;
+   * switchChunkURLs which trigger json fetches for the new chunks. */
+  openRelevantChunksFromIndex() {
+      if(this.chunkIndex === null){
+          return;//before the class is fully initialized
+      }
+      let indexContents = this.chunkIndex;
+      const beginBin = this.props.store.getBeginBin();
+      const endBin = this.props.store.getEndBin();
+      const lastIndex = indexContents["files"].length - 1;
 
-    const findBegin = (entry) => entry["last_bin"] >= beginBin;
-    const findEnd = (entry) => entry["last_bin"] >= endBin;
-    let beginIndex = indexContents["files"].findIndex(findBegin);
-    let endIndex = indexContents["files"].findIndex(findEnd);
-    if(-1 === endIndex){//#22 end of file limits so it doesn't crash
-      endIndex = lastIndex;
-    }
-    if (-1 === beginIndex ) {
-        console.error("beginIndex", beginIndex, "endIndex", endIndex);
-        return;
-      // conserving beginIndex if -1 < beginIndex < lastIndex
-      // const indexToCompare = [beginIndex, lastIndex];
-      // const findMinBegin = (index) => index >= 0;
-      // beginIndex = indexToCompare[indexToCompare.findIndex(findMinBegin)]; //trueBeginIndex
-      // endIndex = lastIndex;
-    }
+      const findBegin = (entry) => entry["last_bin"] >= beginBin;
+      const findEnd = (entry) => entry["last_bin"] >= endBin;
+      let beginIndex = indexContents["files"].findIndex(findBegin);
+      let endIndex = indexContents["files"].findIndex(findEnd);
+      if(-1 === endIndex){//#22 end of file limits so it doesn't crash
+          endIndex = lastIndex;
+      }
+      if (-1 === beginIndex ) {
+          console.error("beginIndex", beginIndex, "endIndex", endIndex);
+          return;
+          // conserving beginIndex if -1 < beginIndex < lastIndex
+          // const indexToCompare = [beginIndex, lastIndex];
+          // const findMinBegin = (index) => index >= 0;
+          // beginIndex = indexToCompare[indexToCompare.findIndex(findMinBegin)]; //trueBeginIndex
+          // endIndex = lastIndex;
+      }
 
-    //will trigger chunk update in App.fetchAllChunks() which calls this.loadJsonCache
-    let URLprefix =
-      process.env.PUBLIC_URL + "test_data/" + this.props.store.jsonName + "/";
-    let fileArray = range(beginIndex, endIndex).map((index) => {
-      return URLprefix + indexContents["files"][index]["file"];
-    });
+      //will trigger chunk update in App.fetchAllChunks() which calls this.loadJsonCache
+      let URLprefix =
+          process.env.PUBLIC_URL + "test_data/" + this.props.store.jsonName + "/";
+      let fileArray = range(beginIndex, endIndex).map((index) => {
+          return URLprefix + indexContents["files"][index]["file"];
+      });
 
-    this.props.store.switchChunkURLs(fileArray);
+      this.props.store.switchChunkURLs(fileArray);
   }
 
     loadIndexFile(jsonFilename) {
@@ -77,7 +77,8 @@ class PangenomeSchematic extends React.Component {
             .then((res) => res.json())
             .then((json) => {
                 // This following part is important to scroll right and left on browser
-                this.openRelevantChunksFromIndex(json);
+                this.chunkIndex = json;
+                this.openRelevantChunksFromIndex();
             });
     }
 
@@ -91,7 +92,6 @@ class PangenomeSchematic extends React.Component {
   }
 
     loadJsonCache(url, data) {
-        console.log("loadJsonCache", url, data);
         if (data.json_version !== 12) {
             throw MediaError(
                 "Wrong Data JSON version: was expecting version 12, got " +
@@ -130,10 +130,11 @@ class PangenomeSchematic extends React.Component {
                 if(urls[urlIndex] in this.jsonCache){ //only process if data is available
                     let url = urls[urlIndex];
                     let jsonChunk = this.jsonCache[url];
-                    const xOffset = this.components.length ?
+                    let xOffset = this.components.length ?
                         this.components.slice(-1)[0].nextXOffset() : 0;
                     for (let [index, component] of jsonChunk.components.entries()) {
                         let componentItem = new Component(component, xOffset, index);
+                        xOffset = componentItem.nextXOffset();
                         this.components.push(componentItem); //TODO: concurrent modification?
                         //if (component.last_bin >= beginBin) { NOTE: we are now reading in whole chunk, this may place
                         //xOffset further right than it was intended when beginBin > chunk.first_bin
