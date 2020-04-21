@@ -35,8 +35,8 @@ RootStore = types
   .actions((self) => {
     function updateBeginEndBin(newBegin, newEnd) {
       /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
-      newBegin = Math.max(1, Number(newBegin));
-      newEnd = Math.max(1, Number(newEnd));
+      newBegin = Math.max(1, Math.round(newBegin));
+      newEnd = Math.max(1, Math.round(newEnd));
       const beginBin = getBeginBin();
       const endBin = getEndBin();
       if (newEnd === endBin) {

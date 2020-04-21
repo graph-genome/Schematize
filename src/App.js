@@ -55,31 +55,16 @@ class App extends Component {
       buttonsHeight: 0,
     };
     this.schematic = new PangenomeSchematic({ store: this.props.store }); //Read file, parse nothing
-    observe(
-      this.props.store.beginEndBin,
-      this.updateSchematicMetadata.bind(this)
-    );
-    //TODO: endBin observer is still double triggering on shift() buttons. wait for beginBin event?
-    observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
-    observe(
-      this.props.store,
-      "useVerticalCompression",
-      this.recalcY.bind(this)
-    );
-    observe(
-      this.props.store,
-      "useWidthCompression",
-      this.recalcXLayout.bind(this)
-    );
-    observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
-    observe(
-      this.props.store,
-      "binScalingFactor",
-      this.recalcXLayout.bind(this)
-    );
-    observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
+    observe(this.props.store.beginEndBin, this.updateSchematicMetadata.bind(this));
     observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
-    // this.fetchAllChunks();
+    //Arrays must be observed directly, simple objects are observed by name
+    observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
+    observe(this.props.store, "useVerticalCompression", this.recalcY.bind(this));
+    observe(this.props.store, "useWidthCompression", this.recalcXLayout.bind(this));
+    observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
+    observe(this.props.store, "binScalingFactor", this.recalcXLayout.bind(this));
+    observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
+    observe(this.props.store, "pixelsPerColumn", this.calculateBinWidthOfScreen.bind(this));
   }
 
   fetchAllChunks() {
@@ -203,6 +188,17 @@ class App extends Component {
         this.props.store.pixelsPerRow
       );
     }
+  }
+
+  calculateBinWidthOfScreen(){
+    let deviceWidth = 1920;// TODO: get width from browser
+    let widthInCells = deviceWidth / this.props.store.pixelsPerColumn;
+    // let paddingBetweenComponents = this.props.store.pixelsPerColumn * 20; //guessing number of components
+    let b = this.props.store.getBeginBin();
+    this.props.store.updateBeginEndBin(b, b + widthInCells);
+    //TODO the logic here could be much more complex by looking at the average pixel
+    //width of components and whether vaious settings are on.  The consequence
+    //of overestimating widthInCells is to make the shift buttons step too big
   }
 
   UNSAFE_componentWillMount() {
@@ -357,9 +353,10 @@ class App extends Component {
   };
 
   loadingMessage() {
-    if (this.state.loading) {
-      return <p style={{fontSize:40}}>Loading...</p>;
-    }
+      if (this.state.loading) {
+          return <Text y={100} fontSize={60} width={300}
+                       align="center" text="Loading..."/>
+      }
   }
 
   render() {
@@ -367,14 +364,15 @@ class App extends Component {
     return (
       <>
         <ControlHeader store={this.props.store} schematic={this.schematic} />
-        {this.loadingMessage()}
         <Stage
           x={this.props.store.leftOffset}
           y={this.state.buttonsHeight} //removed leftOffset to simplify code.  Relative coordinates are always better.
           width={this.state.actualWidth + 60}
           height={this.props.store.topOffset + this.visibleHeight()}
         >
-          <Layer ref={this.layerRef}>{this.renderSchematic()}</Layer>
+          <Layer ref={this.layerRef}>
+              {this.loadingMessage()}
+              {this.renderSchematic()}</Layer>
         </Stage>
         <Stage
           x={this.props.store.leftOffset}
