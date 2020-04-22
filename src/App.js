@@ -219,12 +219,15 @@ class App extends Component {
   componentDidMount = () => {
     let clientHeight = document.getElementById("button-container").clientHeight;
     const arrowsDiv = document.getElementsByClassName("konvajs-content")[1];
-    arrowsDiv.style.position = "fixed";
+    arrowsDiv.style.position = "relative";
     arrowsDiv.style.top = "95px";
     this.setState({ buttonsHeight: clientHeight });
     this.layerRef.current.getCanvas()._canvas.id = "cnvs";
+    this.layerRef.current.getCanvas()._canvas.style.zIndex = "-1";
     this.layerRef2.current.getCanvas()._canvas.id = "arrow";
     this.layerRef2.current.getCanvas()._canvas.style.top = "95px";
+    this.layerRef2.current.getCanvas()._canvas.style.position = "fixed";
+
     /*        if(this.props.store.useVerticalCompression) {
             this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
         }*/
