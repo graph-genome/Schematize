@@ -193,11 +193,15 @@ class App extends Component {
       !this.compressed_row_mapping
     ) {
       // this.state.schematize.forEach(value => Math.max(value.occupants.filter(Boolean).length, maxNumberRowsInOneComponent));
-      if(this.maxNumRowsAcrossComponents === undefined){
+      if (this.maxNumRowsAcrossComponents === undefined) {
         this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
-            this.schematic.components);
+          this.schematic.components
+        );
       }
-      console.log("maxNumRowsAcrossComponents", this.maxNumRowsAcrossComponents)
+      console.log(
+        "maxNumRowsAcrossComponents",
+        this.maxNumRowsAcrossComponents
+      );
       return (
         (this.maxNumRowsAcrossComponents + 2.5) * this.props.store.pixelsPerRow
       );
@@ -363,6 +367,10 @@ class App extends Component {
     console.log("Start render");
     return (
       <>
+        {/* Headers */}
+        <ControlHeader store={this.props.store} schematic={this.schematic} />
+
+        {/* Links  */}
         <Stage
           x={this.props.store.leftOffset}
           y={this.props.topOffset}
@@ -380,7 +388,8 @@ class App extends Component {
             {this.renderSortedLinks()}
           </Layer>
         </Stage>
-        <ControlHeader store={this.props.store} schematic={this.schematic} />
+
+        {/* Matrix */}
         <Stage
           x={this.props.store.leftOffset} // removed leftOffset to simplify code.  Relative coordinates are always better.
           width={this.state.actualWidth + 60}
@@ -393,6 +402,8 @@ class App extends Component {
         >
           <Layer ref={this.layerRef}>{this.renderSchematic()}</Layer>
         </Stage>
+
+        {/* Tooltips */}
         <NucleotideTooltip store={this.props.store} />
       </>
     );
