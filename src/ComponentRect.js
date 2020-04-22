@@ -1,6 +1,6 @@
 /* eslint-disable require-jsdoc */
 import React from "react";
-import { Rect, Text } from "react-konva";
+import { Rect } from "react-konva";
 import { MatrixCell, ConnectorRect } from "./ComponentConnectorRect";
 import PropTypes from "prop-types";
 
@@ -44,7 +44,6 @@ function sum(a, b) {
 class ComponentRect extends React.Component {
   state = {
     color: "lightgray",
-    Nucleotides: [],
   };
 
   handleClick = () => {
@@ -57,34 +56,17 @@ class ComponentRect extends React.Component {
 
   renderMatrix() {
     let count = 0;
-    let nucleotides = [];
     let parts = this.props.item.matrix.map((row, row_n) => {
       if (row.length) {
         count++;
-        // let currentNucs = this.chooseNucleotides(this.props.item);
-        // if (nucleotides[this.props.item.x] === undefined) {
-        //   nucleotides.push(currentNucs);
-        // }
         return this.renderMatrixRow(row, count, row_n);
       } else {
         return null;
       }
     });
-    // console.log(nucleotides);
     this.props.store.updateMaxHeight(count); //Set max observed occupants in mobx store for render height
     return <>{parts}</>;
   }
-
-  // chooseNucleotides(parent) {
-  //   //parent is the component
-  //   const currentStart = parent.firstBin - 1;
-  //   const currentEnd = parent.lastBin;
-  //   const parentX = parent.x;
-  //   const nucelotides = {
-  //     [parentX]: [...this.props.nucleotides.slice(currentStart, currentEnd)],
-  //   };
-  //   return nucelotides;
-  // }
 
   renderMatrixRow(row, count, row_n) {
     const parent = this.props.item;
