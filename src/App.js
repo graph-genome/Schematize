@@ -217,20 +217,37 @@ class App extends Component {
   }
 
   componentDidMount = () => {
+    // Is clientHeight not in the store? Why?
     let clientHeight = document.getElementById("button-container").clientHeight;
+    this.setState({ buttonsHeight: clientHeight });
+
+    {
+      /* Links */
+    }
+    // The container holding the arrows
+    // is there a better way to get this element or name it?
     const arrowsDiv = document.getElementsByClassName("konvajs-content")[1];
     arrowsDiv.style.position = "relative";
     arrowsDiv.style.top = "95px";
-    this.setState({ buttonsHeight: clientHeight });
-    this.layerRef.current.getCanvas()._canvas.id = "cnvs";
-    this.layerRef.current.getCanvas()._canvas.style.zIndex = "-1";
+
+    // The actual arrows
     this.layerRef2.current.getCanvas()._canvas.id = "arrow";
     this.layerRef2.current.getCanvas()._canvas.style.top = "95px";
     this.layerRef2.current.getCanvas()._canvas.style.position = "fixed";
 
-    /*        if(this.props.store.useVerticalCompression) {
-            this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
-        }*/
+    {
+      /* Matrix */
+    }
+    this.layerRef.current.getCanvas()._canvas.id = "cnvs";
+    this.layerRef.current.getCanvas()._canvas.style.zIndex = "-1";
+
+    // Commenting out code is unnecessary when version control is available
+    /*
+       if(this.props.store.useVerticalCompression) {
+       //FIXME: should not require two renders to get the correct number
+       this.props.store.resetRenderStats();
+       }
+     */
   };
 
   updateHighlightedNode = (linkRect) => {
