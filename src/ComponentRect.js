@@ -98,24 +98,11 @@ class ComponentRect extends React.Component {
       }
       this_y = this.props.compressed_row_mapping[row_n];
     }
-    const letter = this.props.nucleotides.slice(
-      parent.firstBin - 1,
-      parent.endBin
-    );
+
     return row.map((cell, x) => {
       if (cell.length) {
         return (
           <>
-            {letter[x] ? (
-              <Text
-                x={x_val + x * this.props.store.pixelsPerColumn}
-                y={this.props.store.topOffset}
-                text={letter[x]}
-                align="center"
-                height={this.props.store.nucleotideHeight}
-                width={width}
-              />
-            ) : null}
             <MatrixCell
               key={"occupant" + row_n + x}
               item={cell}
@@ -124,8 +111,7 @@ class ComponentRect extends React.Component {
               x={x_val + x * this.props.store.pixelsPerColumn}
               y={
                 this_y * this.props.store.pixelsPerRow +
-                this.props.store.topOffset +
-                this.props.store.nucleotideHeight
+                this.props.store.topOffset
               }
               row_number={row_n}
               width={width}
@@ -208,7 +194,7 @@ class ComponentRect extends React.Component {
       <>
         <Rect
           x={this.props.item.x}
-          y={this.props.store.topOffset + this.props.store.nucleotideHeight}
+          y={this.props.store.topOffset}
           width={this.props.width * this.props.store.pixelsPerColumn}
           height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
           fill={this.state.color}

@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
 import ComponentRect, { compress_visible_rows } from "./ComponentRect";
+import ComponentRectNucleotides from "./ComponentRectNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
 import { calculateLinkCoordinates } from "./LinkRecord";
@@ -43,9 +44,13 @@ const stringToColourSave = function (colorKey) {
 class App extends Component {
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
+  layerRef3 = React.createRef(null);
+
   constructor(props) {
     super(props);
+
     this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
+
     this.state = {
       schematize: [],
       pathNames: [],
@@ -53,11 +58,13 @@ class App extends Component {
       actualWidth: 1,
       buttonsHeight: 0,
     };
+
     this.schematic = new PangenomeSchematic({ store: this.props.store }); // Read file, parse nothing
     observe(
       this.props.store.beginEndBin,
       this.updateSchematicMetadata.bind(this)
     );
+
     // TODO: endBin observer is still double triggering on shift() buttons. wait for beginBin event?
     observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
     observe(
@@ -193,11 +200,15 @@ class App extends Component {
       !this.compressed_row_mapping
     ) {
       // this.state.schematize.forEach(value => Math.max(value.occupants.filter(Boolean).length, maxNumberRowsInOneComponent));
-      if(this.maxNumRowsAcrossComponents === undefined){
+      if (this.maxNumRowsAcrossComponents === undefined) {
         this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
-            this.schematic.components);
+          this.schematic.components
+        );
       }
-      console.log("maxNumRowsAcrossComponents", this.maxNumRowsAcrossComponents)
+      console.log(
+        "maxNumRowsAcrossComponents",
+        this.maxNumRowsAcrossComponents
+      );
       return (
         (this.maxNumRowsAcrossComponents + 2.5) * this.props.store.pixelsPerRow
       );
@@ -213,14 +224,31 @@ class App extends Component {
   }
 
   componentDidMount = () => {
-    let clientHeight = document.getElementById("button-container").clientHeight;
-    const arrowsDiv = document.getElementsByClassName("konvajs-content")[1];
-    arrowsDiv.style.position = "fixed";
-    arrowsDiv.style.top = "95px";
+    let buttonContainerDiv = document.getElementById("button-container");
+    buttonContainerDiv.style.position = "sticky";
+    buttonContainerDiv.style.top = "0";
+    buttonContainerDiv.style.background = "white";
+    buttonContainerDiv.style.zIndex = 5;
+
+    let clientHeight = buttonContainerDiv.clientHeight;
+
+    const arrowsDiv = document.getElementsByClassName("konvajs-content")[0];
+    arrowsDiv.style.position = "relative";
+    //arrowsDiv.style.top =  clientHeight + "px";
+
+    arrowsDiv.parentElement.style.position = "sticky";
+    arrowsDiv.parentElement.style.top = "0";
+    arrowsDiv.parentElement.style.background = "white";
+    arrowsDiv.parentElement.style.zIndex = 5;
+
     this.setState({ buttonsHeight: clientHeight });
+
     this.layerRef.current.getCanvas()._canvas.id = "cnvs";
+    this.layerRef.current.getCanvas()._canvas.position = "relative";
+
     this.layerRef2.current.getCanvas()._canvas.id = "arrow";
-    this.layerRef2.current.getCanvas()._canvas.style.top = "95px";
+    this.layerRef2.current.getCanvas()._canvas.position = "relative";
+    //this.layerRef2.current.getCanvas()._canvas.style.top = "95px";
     /*        if(this.props.store.useVerticalCompression) {
             this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
         }*/
@@ -336,6 +364,34 @@ class App extends Component {
     );
   }
 
+  renderNucleotidesSchematic = () => {
+    if (this.state.loading) {
+      return <Text text="Loading..." fontSize={60} />;
+    }
+    return this.schematic.components.map((schematizeComponent, i) => {
+      return (
+        <React.Fragment key={"f" + i}>
+          <ComponentRectNucleotides
+            store={this.props.store}
+            item={schematizeComponent}
+            key={i}
+            height={this.visibleHeight()}
+            width={
+              schematizeComponent.arrivals.length +
+              (this.props.store.useWidthCompression
+                ? this.props.store.binScalingFactor
+                : schematizeComponent.num_bin) +
+              (schematizeComponent.departures.length - 1)
+            }
+            compressed_row_mapping={this.compressed_row_mapping}
+            pathNames={this.state.pathNames}
+            nucleotides={this.schematic.nucleotides}
+          />
+        </React.Fragment>
+      );
+    });
+  };
+
   renderSchematic = () => {
     if (this.state.loading) {
       return <Text text="Loading..." fontSize={60} />;
@@ -363,36 +419,39 @@ class App extends Component {
     console.log("Start render");
     return (
       <>
-        <Stage
-          x={this.props.store.leftOffset}
-          y={this.props.topOffset}
-          width={this.state.actualWidth + 60}
-          height={this.props.store.topOffset}
+        <div
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: "2",
+          }}
         >
-          <Layer ref={this.layerRef2}>
-            <Rect
-              x={-20}
-              y={-this.state.buttonsHeight + 15}
-              width={this.state.actualWidth + 20}
-              height={this.props.store.topOffset + this.state.buttonsHeight}
-              fill="white"
-            />
-            {this.renderSortedLinks()}
-          </Layer>
-        </Stage>
-        <ControlHeader store={this.props.store} schematic={this.schematic} />
+          <ControlHeader store={this.props.store} schematic={this.schematic} />
+
+          <Stage
+            x={this.props.store.leftOffset}
+            y={this.props.topOffset}
+            width={this.state.actualWidth + 60}
+            height={
+              this.props.store.topOffset + this.props.store.nucleotideHeight
+            }
+          >
+            <Layer ref={this.layerRef2}>
+              {this.renderSortedLinks()}
+              {this.renderNucleotidesSchematic()}
+            </Layer>
+          </Stage>
+        </div>
+
         <Stage
           x={this.props.store.leftOffset} // removed leftOffset to simplify code.  Relative coordinates are always better.
+          y={-this.props.store.topOffset} // AG: for some reason, I have to put this, but I'd like to put 0
           width={this.state.actualWidth + 60}
-          height={
-            this.props.store.topOffset +
-            this.visibleHeight() +
-            this.props.store.nucleotideHeight -
-            3
-          }
+          height={this.visibleHeight() + this.props.store.nucleotideHeight}
         >
           <Layer ref={this.layerRef}>{this.renderSchematic()}</Layer>
         </Stage>
+
         <NucleotideTooltip store={this.props.store} />
       </>
     );

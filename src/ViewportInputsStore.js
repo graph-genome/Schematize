@@ -9,7 +9,7 @@ const PathNucPos = types.model("PathNucPos", {
   nucPos: types.integer,
 });
 
-export let RootStore;
+export let RootStore; // AG: why is it exported?
 RootStore = types
   .model({
     useVerticalCompression: false,
