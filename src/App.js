@@ -391,7 +391,8 @@ class App extends Component {
 
         {/* Matrix */}
         <Stage
-          x={this.props.store.leftOffset} // removed leftOffset to simplify code.  Relative coordinates are always better.
+          // removed leftOffset to simplify code. Relative coordinates are always better.
+          x={this.props.store.leftOffset}
           width={this.state.actualWidth + 60}
           height={
             this.props.store.topOffset +
