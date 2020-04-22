@@ -432,9 +432,7 @@ class App extends Component {
             x={this.props.store.leftOffset}
             y={this.props.topOffset}
             width={this.state.actualWidth + 60}
-            height={
-              this.props.store.topOffset + this.props.store.nucleotideHeight
-            }
+            height={this.props.store.topOffset}
           >
             <Layer ref={this.layerRef2}>
               {this.renderSortedLinks()}

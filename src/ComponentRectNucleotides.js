@@ -91,7 +91,9 @@ class ComponentRect extends React.Component {
             {letter[x] ? (
               <Text
                 x={x_val + x * this.props.store.pixelsPerColumn}
-                y={this.props.store.topOffset}
+                y={
+                  this.props.store.topOffset - this.props.store.nucleotideHeight
+                }
                 text={letter[x]}
                 align="center"
                 height={this.props.store.nucleotideHeight}
