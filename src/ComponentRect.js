@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 import React from "react";
 import { Rect } from "react-konva";
 import { MatrixCell, ConnectorRect } from "./ComponentConnectorRect";
@@ -79,24 +80,27 @@ class ComponentRect extends React.Component {
       }
       this_y = this.props.compressed_row_mapping[row_n];
     }
+
     return row.map((cell, x) => {
       if (cell.length) {
         return (
-          <MatrixCell
-            key={"occupant" + row_n + x}
-            item={cell}
-            store={this.props.store}
-            pathName={this.props.pathNames[row_n]}
-            x={x_val + x * this.props.store.pixelsPerColumn}
-            y={
-              this_y * this.props.store.pixelsPerRow +
-              this.props.store.topOffset
-            }
-            row_number={row_n}
-            width={width}
-            height={this.props.store.pixelsPerRow}
-            color={"#838383"}
-          />
+          <>
+            <MatrixCell
+              key={"occupant" + row_n + x}
+              item={cell}
+              store={this.props.store}
+              pathName={this.props.pathNames[row_n]}
+              x={x_val + x * this.props.store.pixelsPerColumn}
+              y={
+                this_y * this.props.store.pixelsPerRow +
+                this.props.store.topOffset
+              }
+              row_number={row_n}
+              width={width}
+              height={this.props.store.pixelsPerRow}
+              color={"#838383"}
+            />
+          </>
         );
       } else {
         return null;
@@ -155,7 +159,11 @@ class ComponentRect extends React.Component {
       <ConnectorRect
         key={"connector" + j}
         x={x_val}
-        y={this.props.store.topOffset + this_y * this.props.store.pixelsPerRow}
+        y={
+          this.props.store.topOffset +
+          this_y * this.props.store.pixelsPerRow +
+          this.props.store.nucleotideHeight
+        }
         width={this.props.store.pixelsPerColumn} //Clarified and corrected adjacent connectors as based on pixelsPerColumn width #9
         height={this.props.store.pixelsPerRow}
         color={"#464646"}

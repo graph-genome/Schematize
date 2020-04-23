@@ -6,6 +6,7 @@ export class ConnectorRect extends React.Component {
   state = {
     color: this.props.color,
   };
+
   render() {
     return (
       <Rect
@@ -45,9 +46,11 @@ export class MatrixCell extends React.Component {
     }
     this.props.store.updateCellTooltipContent(tooltipContent); //item[2] is array of ranges
   }
+
   onLeave() {
     this.props.store.updateCellTooltipContent(""); // we don't want any tooltip displayed if we leave the cell
   }
+
   render() {
     return (
       <Rect

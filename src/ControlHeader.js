@@ -53,12 +53,12 @@ class ControlHeader extends React.Component {
       <div
         id="button-container"
         style={{
-          marginBottom: "15px",
-          position: "fixed",
+          //marginBottom: "15px",
+          position: "relative",
           top: 0,
           zIndex: "1",
           backgroundColor: "white",
-          height: "95px",
+          //height: "95px",
         }}
       >
         <button className="button" id="btn-download">

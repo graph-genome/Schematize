@@ -9,7 +9,7 @@ const PathNucPos = types.model("PathNucPos", {
   nucPos: types.integer,
 });
 
-export let RootStore;
+export let RootStore; // AG: why is it exported?
 RootStore = types
   .model({
     useVerticalCompression: false,
@@ -17,18 +17,19 @@ RootStore = types
     binScalingFactor: 3,
     useConnector: true,
     beginEndBin: BeginEndBin,
-    pixelsPerColumn: 7,
+    pixelsPerColumn: 10,
     pixelsPerRow: 7,
     leftOffset: 25,
     topOffset: 400,
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "run1.B1phi1.i1.seqwish.w100",
+    jsonName: "run1.B1phi1.i1.seqwish.w1",
     chunkURLs: ChunkURLs,
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
     binWidth: 100,
+    nucleotideHeight: 10,
     pangenomelast_bin: -1,
     // TODO: Set when bin2file is read
   })
@@ -56,7 +57,7 @@ RootStore = types
     }
     function updateTopOffset(newTopOffset) {
       if (Number.isFinite(newTopOffset) && Number.isSafeInteger(newTopOffset)) {
-        self.topOffset = newTopOffset;
+        self.topOffset = newTopOffset + 10;
       }
     }
     function updateBinScalingFactor(event) {

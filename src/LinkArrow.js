@@ -16,7 +16,7 @@ class LinkArrow extends React.Component {
     this.handleMouseOver = this.handleMouseOver.bind(this);
   }
   componentDidUpdate() {
-    this.calculatePoints();
+    //this.calculatePoints(); // AG: is it necessary?
   }
 
   calculatePoints() {
@@ -77,6 +77,7 @@ class LinkArrow extends React.Component {
       console.log("Some points are NaN: " + this.points);
     }
   }
+
   render() {
     // if(this.arrowXCoord === null){
     this.calculatePoints();
@@ -88,7 +89,7 @@ class LinkArrow extends React.Component {
     return (
       <Arrow
         x={this.arrowXCoord}
-        y={this.props.store.topOffset - 5}
+        y={this.props.store.topOffset - 10}
         width={this.props.store.pixelsPerColumn}
         points={this.points}
         bezier={false}

@@ -15,6 +15,7 @@ class PangenomeSchematic extends React.Component {
     this.pathNames = [];
     this.components = [];
     this.chunkIndex = null;
+    //TODO: replace jsonCache with browser indexdb
     this.jsonCache = {}; // URL keys, values are entire JSON file datas
     this.chunksProcessed = []; //list of URLs now in this.components
 
@@ -37,6 +38,7 @@ class PangenomeSchematic extends React.Component {
       if(this.chunkIndex === null){
           return;//before the class is fully initialized
       }
+      this.loadFasta();
       let indexContents = this.chunkIndex;
       const beginBin = this.props.store.getBeginBin();
       const endBin = this.props.store.getEndBin();
@@ -105,6 +107,40 @@ class PangenomeSchematic extends React.Component {
         this.pathNames = data.path_names; //TODO: in later JSON versions path_names gets moved to bin2file.json
         this.props.store.setBinWidth(parseInt(data.bin_width));
     }
+
+    loadFasta() {
+        //find a way to make this less fragile
+        const beginBin = this.props.store.getBeginBin();
+        const endBin = this.props.store.getEndBin();
+        const chunks = this.chunk_index;
+
+        let chunkNo = chunks.files[0];
+
+        if (beginBin > chunkNo.lastBin) {
+            chunkNo = chunks.files[1];
+        }
+
+        const fastaFileName = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/${chunkNo.fasta}`;
+        console.log("fetching", fastaFileName);
+        fetch(fastaFileName)
+            .then((response) => {
+                return response.text();
+            })
+            .then((text) => {
+                //remove first line
+                const splitText = text.replace(/.*/, "").substr(1);
+                const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
+                const nucleotides = noLinebreaks.split("");
+                //split into array of nucelotides
+                if (!this.nucleotides.length) {
+                    this.nucleotides = nucleotides;
+                } else {
+                    this.nucleotides.push(...nucleotides);
+                }
+                return;
+            });
+    }
+
 
     /**Parses beginBin to endBin range, returns false if new file needed.
      * This calculates the pre-render for all contiguous JSON data.
