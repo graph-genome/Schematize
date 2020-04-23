@@ -50,17 +50,7 @@ class ControlHeader extends React.Component {
 
   render() {
     return (
-      <div
-        id="button-container"
-        style={{
-          //marginBottom: "15px",
-          position: "relative",
-          top: 0,
-          zIndex: "1",
-          backgroundColor: "white",
-          //height: "95px",
-        }}
-      >
+      <div id="button-container">
         <button className="button" id="btn-download">
           Save Image
         </button>
