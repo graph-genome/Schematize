@@ -3,10 +3,7 @@ import React from "react";
 import { Rect, Text } from "react-konva";
 import PropTypes from "prop-types";
 
-
-
 class ComponentNucleotides extends React.Component {
-
   renderMatrix() {
     let count = 0;
     let parts = this.props.item.matrix.map((row, row_n) => {
@@ -57,7 +54,10 @@ class ComponentNucleotides extends React.Component {
   }
 
   render() {
-    if(this.props.store.binWidth === 1 && !this.props.store.useWidthCompression){
+    if (
+      this.props.store.binWidth === 1 &&
+      !this.props.store.useWidthCompression
+    ) {
       return (
         <>
           <Rect
@@ -70,7 +70,7 @@ class ComponentNucleotides extends React.Component {
           {!this.props.store.useWidthCompression ? this.renderMatrix() : null}
         </>
       );
-    }else{
+    } else {
       return null;
     }
   }
