@@ -244,21 +244,10 @@ class App extends Component {
 
   componentDidMount = () => {
     let buttonContainerDiv = document.getElementById("button-container");
-    buttonContainerDiv.style.position = "sticky";
-    buttonContainerDiv.style.top = "0";
-    buttonContainerDiv.style.background = "white";
-    buttonContainerDiv.style.zIndex = 5;
-
     let clientHeight = buttonContainerDiv.clientHeight;
 
     const arrowsDiv = document.getElementsByClassName("konvajs-content")[0];
     arrowsDiv.style.position = "relative";
-    //arrowsDiv.style.top =  clientHeight + "px";
-
-    arrowsDiv.parentElement.style.position = "sticky";
-    arrowsDiv.parentElement.style.top = "0";
-    arrowsDiv.parentElement.style.background = "white";
-    arrowsDiv.parentElement.style.zIndex = 5;
 
     this.setState({ buttonsHeight: clientHeight });
 
@@ -457,6 +446,11 @@ class App extends Component {
             position: "sticky",
             top: 0,
             zIndex: "2",
+            background: "white",
+
+            // AG: to keep the matrix under the container with the vertical scrolling
+            // when the matrix is larger than the page
+            width: this.state.actualWidth + 60,
           }}
         >
           <ControlHeader store={this.props.store} schematic={this.schematic} />
@@ -475,7 +469,7 @@ class App extends Component {
         </div>
 
         <Stage
-          x={this.props.store.leftOffset} // removed leftOffset to simplify code.  Relative coordinates are always better.
+          x={this.props.store.leftOffset} // removed leftOffset to simplify code. Relative coordinates are always better.
           y={-this.props.store.topOffset} // AG: for some reason, I have to put this, but I'd like to put 0
           width={this.state.actualWidth + 60}
           height={this.visibleHeight() + this.props.store.nucleotideHeight}
