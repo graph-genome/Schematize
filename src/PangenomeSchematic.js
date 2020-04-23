@@ -18,8 +18,9 @@ class PangenomeSchematic extends React.Component {
     //TODO: replace jsonCache with browser indexdb
     this.jsonCache = {}; // URL keys, values are entire JSON file datas
     this.chunksProcessed = []; //list of URLs now in this.components
+    this.nucleotides = [];
 
-    this.loadIndexFile(this.props.store.jsonName) //initializes this.chunk_index
+    this.loadIndexFile(this.props.store.jsonName) //initializes this.chunkIndex
     //whenever jsonName changes,
     observe(this.props.store, "jsonName", () => {
       this.loadIndexFile(this.props.store.jsonName);
@@ -109,15 +110,16 @@ class PangenomeSchematic extends React.Component {
     }
 
     loadFasta() {
-        //find a way to make this less fragile
+        if(this.chunkIndex === undefined){
+            return;
+        }
+        //TODO: find a way to make this less fragile
         const beginBin = this.props.store.getBeginBin();
         const endBin = this.props.store.getEndBin();
-        const chunks = this.chunk_index;
-
-        let chunkNo = chunks.files[0];
+        let chunkNo = this.chunkIndex.files[0];
 
         if (beginBin > chunkNo.lastBin) {
-            chunkNo = chunks.files[1];
+            chunkNo = this.chunkIndex.files[1];
         }
 
         const fastaFileName = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/${chunkNo.fasta}`;
