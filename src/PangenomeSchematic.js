@@ -1,8 +1,15 @@
 import React from "react";
-import {observe} from "mobx";
+import { observe } from "mobx";
+
+import { urlExists } from "./URL";
 
 function range(start, end) {
   return [...Array(1 + end - start).keys()].map((v) => start + v);
+}
+
+// AG
+function getFileName(path) {
+  return path.substring(path.lastIndexOf("/") + 1);
 }
 
 class PangenomeSchematic extends React.Component {
@@ -18,14 +25,27 @@ class PangenomeSchematic extends React.Component {
     //TODO: replace jsonCache with browser indexdb
     this.jsonCache = {}; // URL keys, values are entire JSON file datas
     this.chunksProcessed = []; //list of URLs now in this.components
-    this.nucleotides = [];
 
-    this.loadIndexFile(this.props.store.jsonName) //initializes this.chunkIndex
+    // AG: added bin attributes
+    this.nucleotides = [];
+    this.first_bin = 1;
+    this.last_bin = 1;
+
+    this.loadIndexFile(this.props.store.jsonName); //initializes this.chunkIndex
     //whenever jsonName changes,
     observe(this.props.store, "jsonName", () => {
       this.loadIndexFile(this.props.store.jsonName);
     });
-    observe(this.props.store.beginEndBin, this.openRelevantChunksFromIndex.bind(this));
+
+    // AG: added indexSelectedZoomLevel observation
+    observe(this.props.store, "indexSelectedZoomLevel", () => {
+      this.loadIndexFile(this.props.store.jsonName);
+    });
+
+    observe(
+      this.props.store.beginEndBin,
+      this.openRelevantChunksFromIndex.bind(this)
+    );
     // console.log("public ", process.env.PUBLIC_URL ) //PUBLIC_URL is empty
   }
   componentDidUpdate() {
@@ -36,54 +56,76 @@ class PangenomeSchematic extends React.Component {
    * It finds the appropriate chunk URLS from the index and updates
    * switchChunkURLs which trigger json fetches for the new chunks. */
   openRelevantChunksFromIndex() {
-      if(this.chunkIndex === null){
-          return;//before the class is fully initialized
-      }
-      this.loadFasta();
-      let indexContents = this.chunkIndex;
-      const beginBin = this.props.store.getBeginBin();
-      const endBin = this.props.store.getEndBin();
-      const lastIndex = indexContents["files"].length - 1;
+    if (this.chunkIndex === null) {
+      return; //before the class is fully initialized
+    }
+    let indexContents = this.chunkIndex;
+    const beginBin = this.props.store.getBeginBin();
+    const endBin = this.props.store.getEndBin();
 
-      const findBegin = (entry) => entry["last_bin"] >= beginBin;
-      const findEnd = (entry) => entry["last_bin"] >= endBin;
-      let beginIndex = indexContents["files"].findIndex(findBegin);
-      let endIndex = indexContents["files"].findIndex(findEnd);
-      if(-1 === endIndex){//#22 end of file limits so it doesn't crash
-          endIndex = lastIndex;
-      }
-      if (-1 === beginIndex ) {
-          console.error("beginIndex", beginIndex, "endIndex", endIndex);
-          return;
-          // conserving beginIndex if -1 < beginIndex < lastIndex
-          // const indexToCompare = [beginIndex, lastIndex];
-          // const findMinBegin = (index) => index >= 0;
-          // beginIndex = indexToCompare[indexToCompare.findIndex(findMinBegin)]; //trueBeginIndex
-          // endIndex = lastIndex;
-      }
+    this.props.store.setAvailableZoomLevels(
+      Object.keys(indexContents["zoom_levels"])
+    );
+    const selZoomLev = this.props.store.getSelectedZoomLevel();
 
-      //will trigger chunk update in App.fetchAllChunks() which calls this.loadJsonCache
-      let URLprefix =
-          process.env.PUBLIC_URL + "test_data/" + this.props.store.jsonName + "/";
-      let fileArray = range(beginIndex, endIndex).map((index) => {
-          return URLprefix + indexContents["files"][index]["file"];
-      });
+    const lastIndex =
+      indexContents["zoom_levels"][selZoomLev]["files"].length - 1;
 
-      this.props.store.switchChunkURLs(fileArray);
+    const findBegin = (entry) => entry["last_bin"] >= beginBin;
+    const findEnd = (entry) => entry["last_bin"] >= endBin;
+    let beginIndex = indexContents["zoom_levels"][selZoomLev][
+      "files"
+    ].findIndex(findBegin);
+    let endIndex = indexContents["zoom_levels"][selZoomLev]["files"].findIndex(
+      findEnd
+    );
+    if (-1 === endIndex) {
+      //#22 end of file limits so it doesn't crash
+      endIndex = lastIndex;
+    }
+    if (-1 === beginIndex) {
+      console.error("beginIndex", beginIndex, "endIndex", endIndex);
+      return;
+      // conserving beginIndex if -1 < beginIndex < lastIndex
+      // const indexToCompare = [beginIndex, lastIndex];
+      // const findMinBegin = (index) => index >= 0;
+      // beginIndex = indexToCompare[indexToCompare.findIndex(findMinBegin)]; //trueBeginIndex
+      // endIndex = lastIndex;
+    }
+
+    //will trigger chunk update in App.fetchAllChunks() which calls this.loadJsonCache
+    let URLprefix =
+      process.env.PUBLIC_URL +
+      "test_data/" +
+      this.props.store.jsonName +
+      "/" +
+      selZoomLev +
+      "/";
+    let fileArray = range(beginIndex, endIndex).map((index) => {
+      return (
+        URLprefix +
+        indexContents["zoom_levels"][selZoomLev]["files"][index]["file"]
+      );
+    });
+
+    this.props.store.switchChunkURLs(fileArray);
+
+    // AG: at the end, after reading chunck information
+    this.loadFasta();
   }
 
-    loadIndexFile(jsonFilename) {
-        let indexPath =
-            process.env.PUBLIC_URL + "test_data/" + jsonFilename + "/bin2file.json";
-        console.log("Reading", indexPath);
-        return fetch(indexPath)
-            .then((res) => res.json())
-            .then((json) => {
-                // This following part is important to scroll right and left on browser
-                this.chunkIndex = json;
-                this.openRelevantChunksFromIndex();
-            });
-    }
+  loadIndexFile(jsonFilename) {
+    let indexPath =
+      process.env.PUBLIC_URL + "test_data/" + jsonFilename + "/bin2file.json";
+    console.log("Reading", indexPath);
+    return fetch(indexPath)
+      .then((res) => res.json())
+      .then((json) => {
+        // This following part is important to scroll right and left on browser
+        this.chunkIndex = json;
+        this.openRelevantChunksFromIndex();
+      });
+  }
 
   jsonFetch(filepath) {
     if (!filepath)
@@ -94,125 +136,175 @@ class PangenomeSchematic extends React.Component {
     return fetch(process.env.PUBLIC_URL + filepath).then((res) => res.json());
   }
 
-    loadJsonCache(url, data) {
-        if (data.json_version !== 12) {
-            throw MediaError(
-                "Wrong Data JSON version: was expecting version 12, got " +
-                data.json_version + ".  " +
-                "This version added nucleotide ranges to bins.  " + // KEEP THIS UP TO DATE!
-                "Using a mismatched data file and renderer will cause unpredictable behavior," +
-                " instead generate a new data file using github.com/graph-genome/component_segmentation."
-            );
-        }
-        this.jsonCache[url] = data;
-        this.pathNames = data.path_names; //TODO: in later JSON versions path_names gets moved to bin2file.json
-        this.props.store.setBinWidth(parseInt(data.bin_width));
+  loadJsonCache(url, data) {
+    if (data.json_version !== 13) {
+      throw MediaError(
+        "Wrong Data JSON version: was expecting version 13, got " +
+        data.json_version +
+        ".  " +
+        "This version added nucleotide ranges to bins.  " + // KEEP THIS UP TO DATE!
+          "Using a mismatched data file and renderer will cause unpredictable behavior," +
+          " instead generate a new data file using github.com/graph-genome/component_segmentation."
+      );
+    }
+    this.jsonCache[url] = data;
+    this.pathNames = data.path_names; //TODO: in later JSON versions path_names gets moved to bin2file.json
+    this.props.store.setBinWidth(parseInt(data.bin_width));
+  }
+
+  loadFasta() {
+    if (this.chunkIndex === undefined) {
+      return;
+    }
+    //TODO: find a way to make this less fragile
+    const beginBin = this.props.store.getBeginBin();
+    const endBin = this.props.store.getEndBin(); // AG: why is it not used?
+
+    const selZoomLev = this.props.store.getSelectedZoomLevel();
+
+    var index_file = 0;
+    var index_next_file = 1;
+
+    if (this.props.store.getChunkURLs().length > 1) {
+      index_file = parseInt(
+        getFileName(this.props.store.getChunkURLs()[0])
+          .split("chunk")[1]
+          .split("_")[0]
+      );
+      index_next_file = parseInt(
+        getFileName(this.props.store.getChunkURLs()[1])
+          .split("chunk")[1]
+          .split("_")[0]
+      );
+
+      //console.log('IndexesForFastaFiles: ' + index_file + ' --- ' + index_next_file)
     }
 
-    loadFasta() {
-        if(this.chunkIndex === undefined){
-            return;
-        }
-        //TODO: find a way to make this less fragile
-        const beginBin = this.props.store.getBeginBin();
-        const endBin = this.props.store.getEndBin();
-        let chunkNo = this.chunkIndex.files[0];
+    let chunkNo = this.chunkIndex["zoom_levels"][selZoomLev].files[index_file];
 
-        if (beginBin > chunkNo.lastBin) {
-            chunkNo = this.chunkIndex.files[1];
-        }
+    // AG: fixed the 'last_bin' reading
+    if (beginBin > chunkNo["last_bin"]) {
+      console.log("NextFile");
+      chunkNo = this.chunkIndex["zoom_levels"][selZoomLev].files[
+        index_next_file
+      ];
+    }
 
-        const fastaFileName = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/${chunkNo.fasta}`;
-        console.log("fetching", fastaFileName);
-        fetch(fastaFileName)
-            .then((response) => {
-                return response.text();
-            })
-            .then((text) => {
-                //remove first line
-                const splitText = text.replace(/.*/, "").substr(1);
-                const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
-                const nucleotides = noLinebreaks.split("");
-                //split into array of nucelotides
-                if (!this.nucleotides.length) {
+    //console.log('beginBin: ' + beginBin + '; endBin: ' + endBin + '; chunkNo.lastBin: ' + chunkNo["last_bin"])
+
+    const fastaFilePath = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/${selZoomLev}/${chunkNo.fasta}`;
+    console.log("fetching_fasta", fastaFilePath);
+
+    // AG: checked existance to avoid loading missing fasta files
+    if (urlExists(fastaFilePath)) {
+      fetch(fastaFilePath)
+        .then((response) => {
+          return response.text();
+        })
+        .then((text) => {
+          //remove first line
+          const splitText = text.replace(/.*/, "").substr(1);
+          const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
+          const nucleotides = noLinebreaks.split("");
+
+          this.nucleotides = nucleotides;
+          this.first_bin = chunkNo["first_bin"];
+          this.last_bin = chunkNo["last_bin"];
+
+          // AG: why were pushed new nucleodites every rendering?
+          //split into array of nucleotides
+          /*if (!this.nucleotides.length) {
                     this.nucleotides = nucleotides;
                 } else {
                     this.nucleotides.push(...nucleotides);
-                }
-                return;
-            });
+                }*/
+          return;
+        });
     }
+  }
 
-
-    /**Parses beginBin to endBin range, returns false if new file needed.
-     * This calculates the pre-render for all contiguous JSON data.
-     * State information is stored in this.chunksProcessed.
-     * Checks if there's new available data to pre-render in processArray()
-     * run through list of urls in order and see if we have data to load.**/
-    processArray() {
-        let [beginBin, endBin] = [
-            this.props.store.getBeginBin(),
-            this.props.store.getEndBin(),
-        ];
-        let urls = this.props.store.getChunkURLs();
-        if(this.chunksProcessed.length === 0 || this.chunksProcessed[0] !== urls[0]){
-            this.components = [];  // clear all pre-render data
-            this.chunksProcessed = [];
-        }
-        // may have additional chunks to pre-render
-        console.log("Parsing components ", beginBin, " - ", endBin);
-
-        for(let urlIndex = 0; urlIndex < urls.length; urlIndex++){
-            //if end of pre-render is earlier than end of contiguous available chunks, process new data
-            if(urlIndex >= this.chunksProcessed.length){
-                if(urls[urlIndex] in this.jsonCache){ //only process if data is available
-                    let url = urls[urlIndex];
-                    let jsonChunk = this.jsonCache[url];
-                    let xOffset = this.components.length ?
-                        this.components.slice(-1)[0].nextXOffset() : 0;
-                    for (let [index, component] of jsonChunk.components.entries()) {
-                        let componentItem = new Component(component, xOffset, index);
-                        xOffset = componentItem.nextXOffset();
-                        this.components.push(componentItem); //TODO: concurrent modification?
-                        //if (component.last_bin >= beginBin) { NOTE: we are now reading in whole chunk, this may place
-                        //xOffset further right than it was intended when beginBin > chunk.first_bin
-                    }
-                    this.chunksProcessed.push(url);
-                }else{//we've run into a contiguous chunk that is not available yet
-                    return false;
-                }
-            }
-        }
-        console.log("processArray", this.chunksProcessed[0], this.chunksProcessed.slice(-1)[0]);
-      return true;
+  /**Parses beginBin to endBin range, returns false if new file needed.
+   * This calculates the pre-render for all contiguous JSON data.
+   * State information is stored in this.chunksProcessed.
+   * Checks if there's new available data to pre-render in processArray()
+   * run through list of urls in order and see if we have data to load.**/
+  processArray() {
+    let [beginBin, endBin] = [
+      this.props.store.getBeginBin(),
+      this.props.store.getEndBin(),
+    ];
+    let urls = this.props.store.getChunkURLs();
+    if (
+      this.chunksProcessed.length === 0 ||
+      this.chunksProcessed[0] !== urls[0]
+    ) {
+      this.components = []; // clear all pre-render data
+      this.chunksProcessed = [];
     }
+    // may have additional chunks to pre-render
+    console.log("Parsing components ", beginBin, " - ", endBin);
+
+    for (let urlIndex = 0; urlIndex < urls.length; urlIndex++) {
+      //if end of pre-render is earlier than end of contiguous available chunks, process new data
+      if (urlIndex >= this.chunksProcessed.length) {
+        if (urls[urlIndex] in this.jsonCache) {
+          //only process if data is available
+          let url = urls[urlIndex];
+          let jsonChunk = this.jsonCache[url];
+          let xOffset = this.components.length
+            ? this.components.slice(-1)[0].nextXOffset()
+            : 0;
+          for (let [index, component] of jsonChunk.components.entries()) {
+            let componentItem = new Component(component, xOffset, index);
+            xOffset = componentItem.nextXOffset();
+            this.components.push(componentItem); //TODO: concurrent modification?
+            //if (component.last_bin >= beginBin) { NOTE: we are now reading in whole chunk, this may place
+            //xOffset further right than it was intended when beginBin > chunk.first_bin
+          }
+          this.chunksProcessed.push(url);
+        } else {
+          //we've run into a contiguous chunk that is not available yet
+          return false;
+        }
+      }
+    }
+    //console.log('this.chunksProcessed: ' + this.chunksProcessed)
+    console.log(
+      "processArray",
+      this.chunksProcessed[0],
+      this.chunksProcessed.slice(-1)[0]
+    );
+    //console.log(this.props)
+
+    return true;
+  }
 }
 
 class Component {
-    constructor(component, offsetLength, index) {
-        this.offset = offsetLength;
-        this.index = index;
-        this.firstBin = component.first_bin;
-        this.lastBin = component.last_bin;
-        this.arrivals = [];
-        for (let arrival of component.arrivals) {
-            this.arrivals.push(new LinkColumn(arrival));
-        }
-        this.departures = [];
-        for (let departure of component.departures) {
-            //don't slice off adjacent here
-            this.departures.push(new LinkColumn(departure));
-        }
-        // we do not know the x val for this component, yet
-        this.x = 0;
-        // deep copy of occupants
-        this.occupants = Array.from(component.occupants);
-        this.matrix = Array.from(component.matrix);
-        this.num_bin = this.lastBin - this.firstBin + 1;
+  constructor(component, offsetLength, index) {
+    this.offset = offsetLength;
+    this.index = index;
+    this.firstBin = component.first_bin;
+    this.lastBin = component.last_bin;
+    this.arrivals = [];
+    for (let arrival of component.arrivals) {
+      this.arrivals.push(new LinkColumn(arrival));
     }
-    nextXOffset(){
-        return this.offset + this.arrivals.length + this.departures.length - 1;
+    this.departures = [];
+    for (let departure of component.departures) {
+      //don't slice off adjacent here
+      this.departures.push(new LinkColumn(departure));
     }
+    // we do not know the x val for this component, yet
+    this.x = 0;
+    // deep copy of occupants
+    this.occupants = Array.from(component.occupants);
+    this.matrix = Array.from(component.matrix);
+    this.num_bin = this.lastBin - this.firstBin + 1;
+  }
+  nextXOffset() {
+    return this.offset + this.arrivals.length + this.departures.length - 1;
+  }
 }
 
 class LinkColumn {
