@@ -9,7 +9,7 @@ class ControlHeader extends React.Component {
     const endBin = this.props.store.getEndBin();
     let size = endBin - beginBin;
     let diff = Math.floor(size * (percentage / 100));
-    console.log("Diff: " + diff);
+    console.log(endBin + "-" + beginBin + "=" + size + " --> diff: " + diff);
     this.props.store.updateBeginEndBin(beginBin + diff, endBin + diff);
   }
 
@@ -48,6 +48,18 @@ class ControlHeader extends React.Component {
     httpGetAsync(addr + path_name + "/" + nuc_pos, handleOdgiServerResponse);
   }
 
+  // AG
+  change_zoom_level(target) {
+    console.log(
+      "change_zoom_level: " +
+        target.value +
+        " ---" +
+        target.options[target.selectedIndex].text
+    );
+
+    this.props.store.setIndexSelectedZoomLevel(parseInt(target.value));
+  }
+
   render() {
     return (
       <div id="button-container">
@@ -61,6 +73,36 @@ class ControlHeader extends React.Component {
           onChange={this.props.store.tryJSONpath}
           title={"File:"}
         />
+        <span style={{ marginLeft: "30px" }}>
+          Bin width:
+          <button
+            className="button"
+            onClick={() => this.props.store.decIndexSelectedZoomLevel()}
+          >
+            -
+          </button>
+          <select
+            id="select_bin_width"
+            onChange={(val) => this.change_zoom_level(val.target)}
+          >
+            {this.props.store.getAvailableZoomLevels().map((item, i) => (
+              <option
+                key={i}
+                value={i}
+                selected={i === this.props.store.getIndexSelectedZoomLevel()}
+              >
+                {item}
+              </option>
+            ))}
+          </select>
+          <button
+            className="button"
+            onClick={() => this.props.store.incIndexSelectedZoomLevel()}
+          >
+            +
+          </button>
+        </span>
+
         <span style={{ marginLeft: "30px" }}>
           <button className="button" onClick={() => this.shift(-100)}>
             &lt;&lt;
