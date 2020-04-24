@@ -33,7 +33,7 @@ class ComponentNucleotides extends React.Component {
       if (cell.length) {
         return (
           <>
-            {letter[x] ? (
+            {x < letter.length && letter[x] ? (
               <Text
                 x={x_val + x * this.props.store.pixelsPerColumn}
                 y={
