@@ -11,7 +11,7 @@ import { calculateLinkCoordinates } from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import { observe } from "mobx";
-import { Rect, Text } from "react-konva";
+import { Text } from "react-konva";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
   const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -300,7 +300,6 @@ class App extends Component {
           }
           compressed_row_mapping={this.compressed_row_mapping}
           pathNames={pathNames}
-          nucleotides={this.schematic.nucleotides}
         />
 
         {schematizeComponent.arrivals.map((linkColumn, j) => {
@@ -451,6 +450,9 @@ class App extends Component {
             // AG: to keep the matrix under the container with the vertical scrolling
             // when the matrix is larger than the page
             width: this.state.actualWidth + 60,
+
+            // AG: to avoid width too low with large bin_width
+            minWidth: "100%",
           }}
         >
           <ControlHeader store={this.props.store} schematic={this.schematic} />
