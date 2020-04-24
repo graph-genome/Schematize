@@ -392,7 +392,10 @@ class App extends Component {
             }
             compressed_row_mapping={this.compressed_row_mapping}
             pathNames={this.state.pathNames}
+            // AG: passed interval fasta information
             nucleotides={this.schematic.nucleotides}
+            first_bin={this.schematic.first_bin}
+            last_bin={this.schematic.last_bin}
           />
         </React.Fragment>
       );
