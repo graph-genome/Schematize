@@ -19,41 +19,54 @@ class ComponentNucleotides extends React.Component {
   }
 
   renderMatrixRow(row, count, row_n) {
-    const parent = this.props.item;
-    const x_val =
-      parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
-    const width = 1 * this.props.store.pixelsPerColumn;
+    // AG: important, to avoid many unnecessary operations, improving the performance
+    if (count === 1) {
+      const parent = this.props.item;
+      const x_val =
+        parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
+      const width = 1 * this.props.store.pixelsPerColumn;
 
-    const letter = this.props.nucleotides.slice(
-      parent.firstBin - 1,
-      parent.endBin
-    );
+      const letter = this.props.nucleotides.slice(
+        parent.firstBin - 1,
+        parent.endBin
+      );
 
-    return row.map((cell, x) => {
-      if (cell.length) {
-        return (
-          <>
-            {x < letter.length && letter[x] ? (
-              <Text
-                x={x_val + x * this.props.store.pixelsPerColumn}
-                y={
-                  this.props.store.topOffset - this.props.store.nucleotideHeight
-                }
-                text={letter[x]}
-                align="center"
-                height={this.props.store.nucleotideHeight}
-                width={width}
-              />
-            ) : null}
-          </>
-        );
-      } else {
-        return null;
-      }
-    });
+      return row.map((cell, x) => {
+        if (cell.length) {
+          console.log("count: " + count + "; row_n: " + row_n + "; x: " + x);
+          return (
+            <>
+              {x < letter.length && letter[x] ? (
+                <Text
+                  x={x_val + x * this.props.store.pixelsPerColumn}
+                  y={
+                    this.props.store.topOffset -
+                    this.props.store.nucleotideHeight
+                  }
+                  text={letter[x]}
+                  align="center"
+                  height={this.props.store.nucleotideHeight}
+                  width={width}
+                />
+              ) : null}
+            </>
+          );
+        } else {
+          return null;
+        }
+      });
+    } else {
+      return null;
+    }
   }
 
   render() {
+    console.log(
+      "ComponentNucleotides: " +
+        this.props.store.binWidth +
+        " --- " +
+        this.props.store.useWidthCompression
+    );
     if (
       this.props.store.binWidth === 1 &&
       !this.props.store.useWidthCompression
