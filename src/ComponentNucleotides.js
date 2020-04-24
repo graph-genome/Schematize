@@ -19,6 +19,7 @@ class ComponentNucleotides extends React.Component {
   }
 
   renderMatrixRow(row, count, row_n) {
+    //console.log('renderMatrixRow - count: ' + count + "; row_n: " + row_n)
     // AG: important, to avoid many unnecessary operations, improving the performance
     if (count === 1) {
       const parent = this.props.item;
@@ -26,14 +27,31 @@ class ComponentNucleotides extends React.Component {
         parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
       const width = 1 * this.props.store.pixelsPerColumn;
 
+      // AG: info for debugging
+      /*console.log('parent-offset: ' + parent.offset)
+      console.log('parent-index: ' + parent.index)
+      console.log('parent-arrivals: ' + parent.arrivals)
+      console.log('parent-departures: ' + parent.departures)
+      console.log('parent-matrix: ' + parent.matrix)
+      console.log('parent-num_bin: ' + parent.num_bin)
+
+      console.log('x_val: ' + x_val)
+      console.log(parent.firstBin + '---------'+ parent.lastBin)
+      console.log(this.props.first_bin + ' ..... ' + this.props.last_bin)
+      console.log(parent.firstBin - this.props.first_bin)
+      console.log(parent.lastBin - this.props.first_bin)*/
+
+      // AG: this.props.first_bin to manage the offset in the sequence string,
+      // without loading the entire sequence from all the chunks
       const letter = this.props.nucleotides.slice(
-        parent.firstBin - 1,
-        parent.endBin
+        parent.firstBin - this.props.first_bin,
+        parent.lastBin - this.props.first_bin + 1
       );
 
       return row.map((cell, x) => {
         if (cell.length) {
-          console.log("count: " + count + "; row_n: " + row_n + "; x: " + x);
+          //console.log("letter: " + letter + "; count: " + count + "; row_n: " + row_n + "; x: " + x)
+
           return (
             <>
               {x < letter.length && letter[x] ? (
@@ -61,16 +79,11 @@ class ComponentNucleotides extends React.Component {
   }
 
   render() {
-    console.log(
-      "ComponentNucleotides: " +
-        this.props.store.binWidth +
-        " --- " +
-        this.props.store.useWidthCompression
-    );
     if (
       this.props.store.binWidth === 1 &&
       !this.props.store.useWidthCompression
     ) {
+      //console.log('ComponentNucleotides - render')
       return (
         <>
           <Rect
@@ -80,7 +93,7 @@ class ComponentNucleotides extends React.Component {
             height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
             //fill={this.state.color}
           />
-          {!this.props.store.useWidthCompression ? this.renderMatrix() : null}
+          {this.renderMatrix()}
         </>
       );
     } else {
