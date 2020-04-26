@@ -12,7 +12,7 @@ class ComponentNucleotides extends React.Component {
 
         // AG: important, to avoid many unnecessary operations, improving the performance
         if (count === 1) {
-          return this.renderMatrixRow(row, count, row_n);
+          return this.renderMatrixRow(row, row_n);
         }
       }
 
@@ -22,14 +22,22 @@ class ComponentNucleotides extends React.Component {
     return <>{parts}</>;
   }
 
-  renderMatrixRow(row, count, row_n) {
-    //console.log('renderMatrixRow - count: ' + count + "; row_n: " + row_n)
-
+  renderMatrixRow(row, row_n) {
     const parent = this.props.item;
     const x_val =
       parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
     const width = 1 * this.props.store.pixelsPerColumn;
 
+    if (
+      !(
+        parent.firstBin >= this.props.first_bin &&
+        parent.lastBin > this.props.first_bin
+      )
+    ) {
+      return null;
+    }
+
+    //console.log('renderMatrixRow - row_n: ' + row_n)
     // AG: info for debugging
     /*console.log('parent-offset: ' + parent.offset)
     console.log('parent-index: ' + parent.index)
@@ -37,12 +45,12 @@ class ComponentNucleotides extends React.Component {
     console.log('parent-departures: ' + parent.departures)
     console.log('parent-matrix: ' + parent.matrix)
     console.log('parent-num_bin: ' + parent.num_bin)
-
-    console.log('x_val: ' + x_val)
-    console.log(parent.firstBin + '---------'+ parent.lastBin)
-    console.log(this.props.first_bin + ' ..... ' + this.props.last_bin)
-    console.log(parent.firstBin - this.props.first_bin)
-    console.log(parent.lastBin - this.props.first_bin)*/
+*/
+    //console.log('x_val: ' + x_val)
+    //console.log('parent.firstBin / -lastBin: ' + parent.firstBin + ' / '+ parent.lastBin)
+    //console.log('this.props.first/last_bin: ' + this.props.first_bin + ' / ' + this.props.last_bin)
+    //console.log(parent.firstBin - this.props.first_bin)
+    //console.log(parent.lastBin - this.props.first_bin)
 
     // AG: this.props.first_bin to manage the offset in the sequence string,
     // without loading the entire sequence from all the chunks
@@ -53,7 +61,7 @@ class ComponentNucleotides extends React.Component {
 
     return row.map((cell, x) => {
       if (cell.length) {
-        //console.log("letter: " + letter + "; count: " + count + "; row_n: " + row_n + "; x: " + x)
+        //console.log("letter: " + letter + "; x: " + x)
 
         return (
           <>
@@ -97,10 +105,8 @@ class ComponentNucleotides extends React.Component {
 ComponentNucleotides.propTypes = {
   store: PropTypes.object,
   item: PropTypes.object,
-  compressed_row_mapping: PropTypes.object,
   width: PropTypes.node,
   height: PropTypes.node,
-  pathNames: PropTypes.node,
 };
 
 export default ComponentNucleotides;
