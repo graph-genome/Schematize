@@ -28,8 +28,8 @@ class PangenomeSchematic extends React.Component {
 
     // AG: added bin attributes
     this.nucleotides = [];
-    this.first_bin = 1;
-    this.last_bin = 1;
+    this.first_bin = -1;
+    this.last_bin = -1;
 
     this.loadIndexFile(this.props.store.jsonName); //initializes this.chunkIndex
     //whenever jsonName changes,
@@ -109,9 +109,6 @@ class PangenomeSchematic extends React.Component {
     });
 
     this.props.store.switchChunkURLs(fileArray);
-
-    // AG: at the end, after reading chunck information
-    this.loadFasta();
   }
 
   loadIndexFile(jsonFilename) {
@@ -153,73 +150,72 @@ class PangenomeSchematic extends React.Component {
   }
 
   loadFasta() {
+    console.log("loadFasta");
+    const beginBin = this.props.store.getBeginBin();
+    const endBin = this.props.store.getEndBin();
+
+    if (
+      !(
+        endBin < this.first_bin ||
+        endBin > this.last_bin ||
+        beginBin < this.first_bin ||
+        beginBin > this.last_bin
+      )
+    ) {
+      // AG: it is not necessary to read new sequences
+      return;
+    }
+
+    this.nucleotides = [];
+    this.first_bin = -1;
+    this.last_bin = -1;
+
     if (this.chunkIndex === undefined) {
       return;
     }
-    //TODO: find a way to make this less fragile
-    const beginBin = this.props.store.getBeginBin();
-    const endBin = this.props.store.getEndBin(); // AG: why is it not used?
-
+    if (this.props.store.getChunkURLs().length < 1) {
+      return;
+    }
     const selZoomLev = this.props.store.getSelectedZoomLevel();
 
-    var index_file = 0;
-    var index_next_file = 1;
-
-    if (this.props.store.getChunkURLs().length > 1) {
-      index_file = parseInt(
-        getFileName(this.props.store.getChunkURLs()[0])
-          .split("chunk")[1]
-          .split("_")[0]
-      );
-      index_next_file = parseInt(
-        getFileName(this.props.store.getChunkURLs()[1])
-          .split("chunk")[1]
-          .split("_")[0]
+    for (var i = 0; i < this.chunksProcessed.length; i++) {
+      var index_file = parseInt(
+        getFileName(this.chunksProcessed[i]).split("chunk")[1].split("_")[0]
       );
 
-      //console.log('IndexesForFastaFiles: ' + index_file + ' --- ' + index_next_file)
-    }
-
-    let chunkNo = this.chunkIndex["zoom_levels"][selZoomLev].files[index_file];
-
-    // AG: fixed the 'last_bin' reading
-    if (beginBin > chunkNo["last_bin"]) {
-      console.log("NextFile");
-      chunkNo = this.chunkIndex["zoom_levels"][selZoomLev].files[
-        index_next_file
+      let chunkNo = this.chunkIndex["zoom_levels"][selZoomLev].files[
+        index_file
       ];
-    }
 
-    //console.log('beginBin: ' + beginBin + '; endBin: ' + endBin + '; chunkNo.lastBin: ' + chunkNo["last_bin"])
+      const fastaFilePath = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/${selZoomLev}/${chunkNo.fasta}`;
+      if (urlExists(fastaFilePath)) {
+        fetch(fastaFilePath)
+          .then((response) => {
+            return response.text();
+          })
+          .then((text) => {
+            //remove first line
+            const splitText = text.replace(/.*/, "").substr(1);
+            const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
+            const nucleotides = noLinebreaks.split("");
 
-    const fastaFilePath = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/${selZoomLev}/${chunkNo.fasta}`;
-    console.log("fetching_fasta", fastaFilePath);
+            if (this.first_bin < 0) {
+              this.first_bin = chunkNo["first_bin"];
+            }
+            if (chunkNo["last_bin"] > this.last_bin) {
+              this.last_bin = chunkNo["last_bin"];
+            }
 
-    // AG: checked existance to avoid loading missing fasta files
-    if (urlExists(fastaFilePath)) {
-      fetch(fastaFilePath)
-        .then((response) => {
-          return response.text();
-        })
-        .then((text) => {
-          //remove first line
-          const splitText = text.replace(/.*/, "").substr(1);
-          const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
-          const nucleotides = noLinebreaks.split("");
+            //split into array of nucleotides
+            this.nucleotides.push(...nucleotides);
 
-          this.nucleotides = nucleotides;
-          this.first_bin = chunkNo["first_bin"];
-          this.last_bin = chunkNo["last_bin"];
+            console.log("fetching_fasta: ", fastaFilePath);
+            //console.log("this.nucleotides: ", this.nucleotides.length);
+            //console.log("this.first/last_bin: ", this.first_bin + ' / ' + this.last_bin);
 
-          // AG: why were pushed new nucleodites every rendering?
-          //split into array of nucleotides
-          /*if (!this.nucleotides.length) {
-                    this.nucleotides = nucleotides;
-                } else {
-                    this.nucleotides.push(...nucleotides);
-                }*/
-          return;
-        });
+            return;
+          });
+      }
     }
   }
 
@@ -268,7 +264,10 @@ class PangenomeSchematic extends React.Component {
         }
       }
     }
-    //console.log('this.chunksProcessed: ' + this.chunksProcessed)
+
+    // AG: at the end, after reading chunck information
+    this.loadFasta();
+
     console.log(
       "processArray",
       this.chunksProcessed[0],
