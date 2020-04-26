@@ -9,96 +9,88 @@ class ComponentNucleotides extends React.Component {
     let parts = this.props.item.matrix.map((row, row_n) => {
       if (row.length) {
         count++;
-        return this.renderMatrixRow(row, count, row_n);
-      } else {
-        return null;
+
+        // AG: important, to avoid many unnecessary operations, improving the performance
+        if (count === 1) {
+          return this.renderMatrixRow(row, count, row_n);
+        }
       }
+
+      return null;
     });
-    this.props.store.updateMaxHeight(count); //Set max observed occupants in mobx store for render height
+
     return <>{parts}</>;
   }
 
   renderMatrixRow(row, count, row_n) {
     //console.log('renderMatrixRow - count: ' + count + "; row_n: " + row_n)
-    // AG: important, to avoid many unnecessary operations, improving the performance
-    if (count === 1) {
-      const parent = this.props.item;
-      const x_val =
-        parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
-      const width = 1 * this.props.store.pixelsPerColumn;
 
-      // AG: info for debugging
-      /*console.log('parent-offset: ' + parent.offset)
-      console.log('parent-index: ' + parent.index)
-      console.log('parent-arrivals: ' + parent.arrivals)
-      console.log('parent-departures: ' + parent.departures)
-      console.log('parent-matrix: ' + parent.matrix)
-      console.log('parent-num_bin: ' + parent.num_bin)
+    const parent = this.props.item;
+    const x_val =
+      parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
+    const width = 1 * this.props.store.pixelsPerColumn;
 
-      console.log('x_val: ' + x_val)
-      console.log(parent.firstBin + '---------'+ parent.lastBin)
-      console.log(this.props.first_bin + ' ..... ' + this.props.last_bin)
-      console.log(parent.firstBin - this.props.first_bin)
-      console.log(parent.lastBin - this.props.first_bin)*/
+    // AG: info for debugging
+    /*console.log('parent-offset: ' + parent.offset)
+    console.log('parent-index: ' + parent.index)
+    console.log('parent-arrivals: ' + parent.arrivals)
+    console.log('parent-departures: ' + parent.departures)
+    console.log('parent-matrix: ' + parent.matrix)
+    console.log('parent-num_bin: ' + parent.num_bin)
 
-      // AG: this.props.first_bin to manage the offset in the sequence string,
-      // without loading the entire sequence from all the chunks
-      const letter = this.props.nucleotides.slice(
-        parent.firstBin - this.props.first_bin,
-        parent.lastBin - this.props.first_bin + 1
-      );
+    console.log('x_val: ' + x_val)
+    console.log(parent.firstBin + '---------'+ parent.lastBin)
+    console.log(this.props.first_bin + ' ..... ' + this.props.last_bin)
+    console.log(parent.firstBin - this.props.first_bin)
+    console.log(parent.lastBin - this.props.first_bin)*/
 
-      return row.map((cell, x) => {
-        if (cell.length) {
-          //console.log("letter: " + letter + "; count: " + count + "; row_n: " + row_n + "; x: " + x)
+    // AG: this.props.first_bin to manage the offset in the sequence string,
+    // without loading the entire sequence from all the chunks
+    const letter = this.props.nucleotides.slice(
+      parent.firstBin - this.props.first_bin,
+      parent.lastBin - this.props.first_bin + 1
+    );
 
-          return (
-            <>
-              {x < letter.length && letter[x] ? (
-                <Text
-                  x={x_val + x * this.props.store.pixelsPerColumn}
-                  y={
-                    this.props.store.topOffset -
-                    this.props.store.nucleotideHeight
-                  }
-                  text={letter[x]}
-                  align="center"
-                  height={this.props.store.nucleotideHeight}
-                  width={width}
-                />
-              ) : null}
-            </>
-          );
-        } else {
-          return null;
-        }
-      });
-    } else {
-      return null;
-    }
+    return row.map((cell, x) => {
+      if (cell.length) {
+        //console.log("letter: " + letter + "; count: " + count + "; row_n: " + row_n + "; x: " + x)
+
+        return (
+          <>
+            {x < letter.length && letter[x] ? (
+              <Text
+                x={x_val + x * this.props.store.pixelsPerColumn}
+                y={
+                  this.props.store.topOffset - this.props.store.nucleotideHeight
+                }
+                text={letter[x]}
+                align="center"
+                height={this.props.store.nucleotideHeight}
+                width={width}
+              />
+            ) : null}
+          </>
+        );
+      } else {
+        return null;
+      }
+    });
   }
 
   render() {
-    if (
-      this.props.store.binWidth === 1 &&
-      !this.props.store.useWidthCompression
-    ) {
-      //console.log('ComponentNucleotides - render')
-      return (
-        <>
-          <Rect
-            x={this.props.item.x}
-            y={this.props.store.topOffset + this.props.store.nucleotideHeight}
-            width={this.props.width * this.props.store.pixelsPerColumn}
-            height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
-            //fill={this.state.color}
-          />
-          {this.renderMatrix()}
-        </>
-      );
-    } else {
-      return null;
-    }
+    //console.log('ComponentNucleotides - render')
+    return (
+      <>
+        <Rect
+          x={this.props.item.x}
+          y={this.props.store.topOffset + this.props.store.nucleotideHeight}
+          width={this.props.width * this.props.store.pixelsPerColumn}
+          height={this.props.height * this.props.store.pixelsPerRow}
+          //fill={this.state.color}
+        />
+        {this.renderMatrix()}
+      </>
+    );
   }
 }
 

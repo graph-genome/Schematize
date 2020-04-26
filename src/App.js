@@ -372,12 +372,18 @@ class App extends Component {
   }
 
   renderNucleotidesSchematic = () => {
-    if (this.state.loading) {
+    // AG: the conditions on bitWidht and useWidthCompression are "lifted" here,
+    // avoid any computation if nucleotides are not to be visualized
+    if (
+      this.state.loading ||
+      this.props.store.binWidth != 1 ||
+      this.props.store.useWidthCompression
+    ) {
       return;
     }
     return this.schematic.components.map((schematizeComponent, i) => {
       return (
-        <React.Fragment key={"f" + i}>
+        <React.Fragment key={"nt" + i}>
           <ComponentNucleotides
             store={this.props.store}
             item={schematizeComponent}
