@@ -59,6 +59,7 @@ class App extends Component {
       buttonsHeight: 0,
     };
     this.schematic = new PangenomeSchematic({ store: this.props.store }); //Read file, parse nothing
+
     observe(
       this.props.store.beginEndBin,
       this.updateSchematicMetadata.bind(this)
@@ -374,10 +375,12 @@ class App extends Component {
   renderNucleotidesSchematic = () => {
     // AG: the conditions on bitWidht and useWidthCompression are "lifted" here,
     // avoid any computation if nucleotides are not to be visualized
+    console.log("renderNuclSchematic: " + this.schematic.nucleotides.length);
     if (
       this.state.loading ||
-      this.props.store.binWidth != 1 ||
-      this.props.store.useWidthCompression
+      this.props.store.binWidth !== 1 ||
+      this.props.store.useWidthCompression ||
+      this.schematic.nucleotides.length < 1
     ) {
       return;
     }
@@ -396,8 +399,6 @@ class App extends Component {
                 : schematizeComponent.num_bin) +
               (schematizeComponent.departures.length - 1)
             }
-            compressed_row_mapping={this.compressed_row_mapping}
-            pathNames={this.state.pathNames}
             // AG: passed interval fasta information
             nucleotides={this.schematic.nucleotides}
             first_bin={this.schematic.first_bin}
