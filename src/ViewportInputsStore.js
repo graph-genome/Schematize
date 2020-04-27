@@ -2,7 +2,10 @@ import { types } from "mobx-state-tree";
 import { urlExists } from "./URL";
 
 const BeginEndBin = types.optional(types.array(types.integer), [1, 140]);
+
 const ChunkURLs = types.optional(types.array(types.string), [""]);
+const ChunkFastaURLs = types.optional(types.array(types.string), [""]);
+const ChunkBeginEndBin = types.optional(types.array(types.integer), [-1, 0]);
 
 const PathNucPos = types.model("PathNucPos", {
   path: types.string,
@@ -25,16 +28,17 @@ RootStore = types
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
 
-    // AG: to change 'jsonName' in 'jsonNameDir'???
+    // TO_DO: to change 'jsonName' in 'jsonNameDir'?
     jsonName: "run1.B1phi1.i1.seqwish",
 
-    // AG: added new attribute.
+    // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
-
-    // AG: added new attribute.
     indexSelectedZoomLevel: 0,
 
     chunkURLs: ChunkURLs,
+    chunkFastaURLs: ChunkFastaURLs,
+    chunkBeginEndBin: ChunkBeginEndBin,
+
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
     binWidth: 100,
@@ -127,6 +131,20 @@ RootStore = types
     function getChunkURLs() {
       return self.chunkURLs;
     }
+
+    function switchChunkFastaURLs(arrayOfFile) {
+      let arraysEqual =
+        arrayOfFile.length === self.chunkFastaURLs.length &&
+        arrayOfFile.every((e) => self.chunkFastaURLs.indexOf(e) > -1);
+      if (!arraysEqual) {
+        self.chunkFastaURLs = arrayOfFile;
+        console.log("arrayOfFastaFile: " + arrayOfFile);
+      }
+    }
+    function getChunkFastaURLs() {
+      return self.chunkFastaURLs;
+    }
+
     function getBeginEndBin() {
       return self.beginEndBin;
     }
@@ -136,8 +154,14 @@ RootStore = types
     function getEndBin() {
       return getBeginEndBin()[1];
     }
+    function setChunkBeginEndBin(newChunkBeginBin, newChunkEndBin) {
+      self.chunkBeginEndBin = [newChunkBeginBin, newChunkEndBin];
+    }
+    function getChunkBeginEndBin() {
+      return self.chunkBeginEndBin;
+    }
 
-    // AG: added getter and setter for zoom info management
+    // Added getter and setter for zoom info management
     function getSelectedZoomLevel() {
       return self.availableZoomLevels[self.indexSelectedZoomLevel];
     }
@@ -201,8 +225,14 @@ RootStore = types
       updateHeight,
       updateWidth,
       tryJSONpath,
+
       switchChunkURLs,
       getChunkURLs,
+      switchChunkFastaURLs,
+      getChunkFastaURLs,
+      setChunkBeginEndBin,
+      getChunkBeginEndBin,
+
       getBeginEndBin,
       getBeginBin,
       getEndBin,
@@ -212,7 +242,7 @@ RootStore = types
       updatePathNucPos,
       setBinWidth,
 
-      // AG: added zoom actions
+      // Added zoom actions
       getSelectedZoomLevel,
       setIndexSelectedZoomLevel,
       getIndexSelectedZoomLevel,
