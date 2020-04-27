@@ -4,14 +4,14 @@ import React, { Component } from "react";
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
 import ComponentRect, { compress_visible_rows } from "./ComponentRect";
-import ComponentRectNucleotides from "./ComponentRectNucleotides";
+import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
 import { calculateLinkCoordinates } from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import { observe } from "mobx";
-import { Rect, Text } from "react-konva";
+import { Text } from "react-konva";
 
 function stringToColor(linkColumn, highlightedLinkColumn) {
   const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
@@ -59,23 +59,41 @@ class App extends Component {
       buttonsHeight: 0,
     };
     this.schematic = new PangenomeSchematic({ store: this.props.store }); //Read file, parse nothing
-    observe(this.props.store.beginEndBin,
-        this.updateSchematicMetadata.bind(this));
-    observe(this.props.store.chunkURLs,
-        this.fetchAllChunks.bind(this));
+
+    observe(
+      this.props.store.beginEndBin,
+      this.updateSchematicMetadata.bind(this)
+    );
+    observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
     //Arrays must be observed directly, simple objects are observed by name
     observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
-    observe(this.props.store, "useVerticalCompression", this.recalcY.bind(this));
-    observe(this.props.store, "useWidthCompression", this.recalcXLayout.bind(this));
+    observe(
+      this.props.store,
+      "useVerticalCompression",
+      this.recalcY.bind(this)
+    );
+    observe(
+      this.props.store,
+      "useWidthCompression",
+      this.recalcXLayout.bind(this)
+    );
     observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
-    observe(this.props.store, "binScalingFactor", this.recalcXLayout.bind(this));
+    observe(
+      this.props.store,
+      "binScalingFactor",
+      this.recalcXLayout.bind(this)
+    );
     observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
-    observe(this.props.store, "pixelsPerColumn", this.calculateBinWidthOfScreen.bind(this));
+    observe(
+      this.props.store,
+      "pixelsPerColumn",
+      this.calculateBinWidthOfScreen.bind(this)
+    );
   }
 
   fetchAllChunks() {
     /*Dispatches fetches for all chunk files
-    * Read https://github.com/graph-genome/Schematize/issues/22 for details
+     * Read https://github.com/graph-genome/Schematize/issues/22 for details
      */
     console.log("fetchAllChunks", this.props.store.getChunkURLs());
     if (!this.props.store.getChunkURLs()[0]) {
@@ -85,32 +103,35 @@ class App extends Component {
     for (let chunk of this.props.store.chunkURLs) {
       //TODO: conditional on jsonCache not already having chunk
       this.schematic
-          .jsonFetch(chunk)
-          .then((data) => this.schematic.loadJsonCache(chunk, data))
-          .then(this.updateSchematicMetadata.bind(this));
+        .jsonFetch(chunk)
+        .then((data) => this.schematic.loadJsonCache(chunk, data))
+        .then(this.updateSchematicMetadata.bind(this));
     }
   }
 
   updateSchematicMetadata() {
     if (this.schematic.processArray()) {
       console.log(
-          "updateSchematicMetadata #components: " +
+        "updateSchematicMetadata #components: " +
           this.schematic.components.length
       );
 
       // console.log(this.schematic.components);
       this.setState(
-          {
-            schematize: this.schematic.components,
-            pathNames: this.schematic.pathNames,
-          },
-          () => {
-            this.recalcXLayout();
-            this.compressed_row_mapping = compress_visible_rows(this.schematic.components);
-            this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
-                this.schematic.components); // TODO add this to mobx-state-tree
-            this.setState({loading: false});
-          }
+        {
+          schematize: this.schematic.components,
+          pathNames: this.schematic.pathNames,
+        },
+        () => {
+          this.recalcXLayout();
+          this.compressed_row_mapping = compress_visible_rows(
+            this.schematic.components
+          );
+          this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
+            this.schematic.components
+          ); // TODO add this to mobx-state-tree
+          this.setState({ loading: false });
+        }
       );
     }
   }
@@ -170,8 +191,8 @@ class App extends Component {
       const occupants = component.occupants;
       const numberOccupants = occupants.filter(Boolean).length;
       maxNumberRowsInOneComponent = Math.max(
-          numberOccupants,
-          maxNumberRowsInOneComponent
+        numberOccupants,
+        maxNumberRowsInOneComponent
       );
     }
     console.log(
@@ -207,8 +228,8 @@ class App extends Component {
     }
   }
 
-  calculateBinWidthOfScreen(){
-    let deviceWidth = 1920;// TODO: get width from browser
+  calculateBinWidthOfScreen() {
+    let deviceWidth = 1920; // TODO: get width from browser
     let widthInCells = deviceWidth / this.props.store.pixelsPerColumn;
     // let paddingBetweenComponents = this.props.store.pixelsPerColumn * 20; //guessing number of components
     let b = this.props.store.getBeginBin();
@@ -224,21 +245,10 @@ class App extends Component {
 
   componentDidMount = () => {
     let buttonContainerDiv = document.getElementById("button-container");
-    buttonContainerDiv.style.position = "sticky";
-    buttonContainerDiv.style.top = "0";
-    buttonContainerDiv.style.background = "white";
-    buttonContainerDiv.style.zIndex = 5;
-
     let clientHeight = buttonContainerDiv.clientHeight;
 
     const arrowsDiv = document.getElementsByClassName("konvajs-content")[0];
     arrowsDiv.style.position = "relative";
-    //arrowsDiv.style.top =  clientHeight + "px";
-
-    arrowsDiv.parentElement.style.position = "sticky";
-    arrowsDiv.parentElement.style.top = "0";
-    arrowsDiv.parentElement.style.background = "white";
-    arrowsDiv.parentElement.style.zIndex = 5;
 
     this.setState({ buttonsHeight: clientHeight });
 
@@ -262,15 +272,15 @@ class App extends Component {
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
     /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
     let previousColumns = !this.props.store.useWidthCompression
-        ? schematizeComponent.firstBin -
+      ? schematizeComponent.firstBin -
         this.props.store.getBeginBin() +
         schematizeComponent.offset
-        : schematizeComponent.offset +
+      : schematizeComponent.offset +
         (schematizeComponent.index - this.schematic.components[0].index) *
-        this.props.store.binScalingFactor;
+          this.props.store.binScalingFactor;
     let pixelsFromColumns =
-        (previousColumns + firstDepartureColumn + j) *
-        this.props.store.pixelsPerColumn;
+      (previousColumns + firstDepartureColumn + j) *
+      this.props.store.pixelsPerColumn;
     return pixelsFromColumns + i * this.props.store.pixelsPerColumn;
   }
 
@@ -291,7 +301,6 @@ class App extends Component {
           }
           compressed_row_mapping={this.compressed_row_mapping}
           pathNames={pathNames}
-          nucleotides={this.schematic.nucleotides}
         />
 
         {schematizeComponent.arrivals.map((linkColumn, j) => {
@@ -364,13 +373,21 @@ class App extends Component {
   }
 
   renderNucleotidesSchematic = () => {
-    if (this.state.loading) {
+    // AG: the conditions on bitWidht and useWidthCompression are "lifted" here,
+    // avoid any computation if nucleotides are not to be visualized
+    console.log("renderNuclSchematic: " + this.schematic.nucleotides.length);
+    if (
+      this.state.loading ||
+      this.props.store.binWidth !== 1 ||
+      this.props.store.useWidthCompression ||
+      this.schematic.nucleotides.length < 1
+    ) {
       return;
     }
     return this.schematic.components.map((schematizeComponent, i) => {
       return (
-        <React.Fragment key={"f" + i}>
-          <ComponentRectNucleotides
+        <React.Fragment key={"nt" + i}>
+          <ComponentNucleotides
             store={this.props.store}
             item={schematizeComponent}
             key={i}
@@ -382,16 +399,17 @@ class App extends Component {
                 : schematizeComponent.num_bin) +
               (schematizeComponent.departures.length - 1)
             }
-            compressed_row_mapping={this.compressed_row_mapping}
-            pathNames={this.state.pathNames}
+            // AG: passed interval fasta information
             nucleotides={this.schematic.nucleotides}
+            first_bin={this.schematic.first_bin}
+            last_bin={this.schematic.last_bin}
           />
         </React.Fragment>
       );
     });
   };
 
-    renderSchematic() {
+  renderSchematic() {
     if (this.state.loading) {
       return;
     }
@@ -402,7 +420,7 @@ class App extends Component {
         </React.Fragment>
       );
     });
-  };
+  }
 
   renderSortedLinks() {
     if (this.state.loading) {
@@ -412,13 +430,20 @@ class App extends Component {
     return this.distanceSortedLinks.map((record, i) => {
       return this.renderLink(record);
     });
-  };
+  }
 
   loadingMessage() {
-      if (this.state.loading) {
-          return <Text y={100} fontSize={60} width={300}
-                       align="center" text="Loading..."/>
-      }
+    if (this.state.loading) {
+      return (
+        <Text
+          y={100}
+          fontSize={60}
+          width={300}
+          align="center"
+          text="Loading..."
+        />
+      );
+    }
   }
 
   render() {
@@ -430,6 +455,14 @@ class App extends Component {
             position: "sticky",
             top: 0,
             zIndex: "2",
+            background: "white",
+
+            // AG: to keep the matrix under the container with the vertical scrolling
+            // when the matrix is larger than the page
+            width: this.state.actualWidth + 60,
+
+            // AG: to avoid width too low with large bin_width
+            minWidth: "100%",
           }}
         >
           <ControlHeader store={this.props.store} schematic={this.schematic} />
@@ -448,14 +481,15 @@ class App extends Component {
         </div>
 
         <Stage
-          x={this.props.store.leftOffset} // removed leftOffset to simplify code.  Relative coordinates are always better.
+          x={this.props.store.leftOffset} // removed leftOffset to simplify code. Relative coordinates are always better.
           y={-this.props.store.topOffset} // AG: for some reason, I have to put this, but I'd like to put 0
           width={this.state.actualWidth + 60}
           height={this.visibleHeight() + this.props.store.nucleotideHeight}
         >
           <Layer ref={this.layerRef}>
-              {this.loadingMessage()}
-              {this.renderSchematic()}</Layer>
+            {this.loadingMessage()}
+            {this.renderSchematic()}
+          </Layer>
         </Stage>
 
         <NucleotideTooltip store={this.props.store} />

@@ -24,7 +24,16 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "run1.B1phi1.i1.seqwish.w1",
+
+    // AG: to change 'jsonName' in 'jsonNameDir'???
+    jsonName: "run1.B1phi1.i1.seqwish",
+
+    // AG: added new attribute.
+    availableZoomLevels: types.optional(types.array(types.string), ["1"]),
+
+    // AG: added new attribute.
+    indexSelectedZoomLevel: 0,
+
     chunkURLs: ChunkURLs,
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
@@ -94,6 +103,7 @@ RootStore = types
     function updateWidth(event) {
       self.pixelsPerColumn = Number(event.target.value);
     }
+
     function tryJSONpath(event) {
       const url =
         process.env.PUBLIC_URL +
@@ -104,12 +114,14 @@ RootStore = types
         self.jsonName = event.target.value;
       }
     }
+
     function switchChunkURLs(arrayOfFile) {
-      let arraysEqual = (arrayOfFile.length === self.chunkURLs.length) &&
-          (arrayOfFile.every( e => self.chunkURLs.indexOf(e) > -1 ));
-      if(!arraysEqual) {
+      let arraysEqual =
+        arrayOfFile.length === self.chunkURLs.length &&
+        arrayOfFile.every((e) => self.chunkURLs.indexOf(e) > -1);
+      if (!arraysEqual) {
         self.chunkURLs = arrayOfFile;
-        console.log(arrayOfFile);
+        console.log("arrayOfFile: " + arrayOfFile);
       }
     }
     function getChunkURLs() {
@@ -124,6 +136,34 @@ RootStore = types
     function getEndBin() {
       return getBeginEndBin()[1];
     }
+
+    // AG: added getter and setter for zoom info management
+    function getSelectedZoomLevel() {
+      return self.availableZoomLevels[self.indexSelectedZoomLevel];
+    }
+    function getIndexSelectedZoomLevel() {
+      return self.indexSelectedZoomLevel;
+    }
+    function setIndexSelectedZoomLevel(index) {
+      self.indexSelectedZoomLevel = index;
+    }
+    function decIndexSelectedZoomLevel() {
+      if (self.indexSelectedZoomLevel > 0) {
+        self.indexSelectedZoomLevel -= 1;
+      }
+    }
+    function incIndexSelectedZoomLevel() {
+      if (self.indexSelectedZoomLevel < self.availableZoomLevels.length - 1) {
+        self.indexSelectedZoomLevel += 1;
+      }
+    }
+    function getAvailableZoomLevels() {
+      return self.availableZoomLevels;
+    }
+    function setAvailableZoomLevels(availableZoomLevels) {
+      self.availableZoomLevels = availableZoomLevels;
+    }
+
     function setBeginEndBin(newBeginBin, newEndBin) {
       self.beginEndBin = [newBeginBin, newEndBin];
     }
@@ -171,6 +211,15 @@ RootStore = types
       getPathNucPos,
       updatePathNucPos,
       setBinWidth,
+
+      // AG: added zoom actions
+      getSelectedZoomLevel,
+      setIndexSelectedZoomLevel,
+      getIndexSelectedZoomLevel,
+      decIndexSelectedZoomLevel,
+      incIndexSelectedZoomLevel,
+      getAvailableZoomLevels,
+      setAvailableZoomLevels,
     };
   })
   .views((self) => ({}));
