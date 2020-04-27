@@ -64,6 +64,7 @@ class PangenomeSchematic extends React.Component {
     const selZoomLev = this.props.store.getSelectedZoomLevel();
     let [endBin, fileArray] = calculateEndBinFromScreen(beginBin, this.chunkIndex,
         selZoomLev, this.props.store.pixelsPerColumn);
+    this.props.store.updateBeginEndBin(beginBin, endBin);
 
     let URLprefix =
         process.env.PUBLIC_URL +

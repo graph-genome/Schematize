@@ -10,15 +10,15 @@ export function calculateEndBinFromScreen(beginBin, chunkIndex, selZoomLev, pixe
     let workingWidth = 0;
     //this loop will automatically cap out at the last bin of the file
     for (let chunk of chunkIndex["zoom_levels"][selZoomLev]["files"]) {
-        if(chunk.first_bin >= beginBin){ //don't start until viewport starts
+        if(chunk.last_bin >= beginBin){ //don't start until viewport starts
             let width = chunk["last_bin"] - chunk["first_bin"] +
                 chunk["component_count"] + chunk["link_count"];
+            let columnsLeftToAdd = widthInCells - workingWidth;
             workingWidth += width;
             chunkURLarray.push(chunk["file"]);
             if(workingWidth > widthInCells){
                 // fractional chunk to add, could cut a Component in half
-                let columnsLeftToAdd = widthInCells - workingWidth;
-                let density = chunk["last_bin"] - chunk["first_bin"] / width;
+                let density = (chunk["last_bin"] - chunk["first_bin"]) / width;
                 currEnd = Math.round(columnsLeftToAdd * density);
                 // currEnd = chunk["last_bin"];
                 break;

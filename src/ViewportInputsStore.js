@@ -19,7 +19,7 @@ RootStore = types
     beginEndBin: BeginEndBin,
     pixelsPerColumn: 10,
     pixelsPerRow: 7,
-    leftOffset: 25,
+    leftOffset: 0,
     topOffset: 400,
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
@@ -31,9 +31,9 @@ RootStore = types
     chunkURLs: ChunkURLs,
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
-    binWidth: 100,
+    binWidth: 1,
     nucleotideHeight: 10,
-    pangenomelast_bin: -1,
+    pangenomelast_bin: -1,//TODO: don't add values unless they're needed
     // TODO: Set when bin2file is read
   })
   .actions((self) => {
@@ -52,11 +52,12 @@ RootStore = types
         //crush newStart
         newBegin = newEnd - 1;
       }
-      setBeginEndBin(newBegin, newEnd);
-      console.log("updateBeginEnd: " + newBegin + " " + newEnd);
-      console.log(
-        "updatedBeginEnd: " + self.beginEndBin[0] + " " + self.beginEndBin[1]
-      );
+      if(newBegin !== beginBin){
+        setBeginEndBin(newBegin, newEnd);
+        console.log("updateBeginEnd: " + newBegin + " " + newEnd);
+      }else{
+        self.beginEndBin[1] = newEnd; // quietly update without refresh
+      }
     }
     function updateTopOffset(newTopOffset) {
       if (Number.isFinite(newTopOffset) && Number.isSafeInteger(newTopOffset)) {
