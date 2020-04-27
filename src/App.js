@@ -84,11 +84,8 @@ class App extends Component {
       this.recalcXLayout.bind(this)
     );
     observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
-    observe(
-      this.props.store,
-      "pixelsPerColumn",
-      this.calculateBinWidthOfScreen.bind(this)
-    );
+    // observe(this.props.store, "pixelsPerColumn",
+    //     this.calculateBinWidthOfScreen.bind(this));
   }
 
   fetchAllChunks() {
@@ -226,17 +223,6 @@ class App extends Component {
         this.props.store.pixelsPerRow
       );
     }
-  }
-
-  calculateBinWidthOfScreen() {
-    let deviceWidth = 1920; // TODO: get width from browser
-    let widthInCells = deviceWidth / this.props.store.pixelsPerColumn;
-    // let paddingBetweenComponents = this.props.store.pixelsPerColumn * 20; //guessing number of components
-    let b = this.props.store.getBeginBin();
-    this.props.store.updateBeginEndBin(b, b + widthInCells);
-    //TODO the logic here could be much more complex by looking at the average pixel
-    //width of components and whether vaious settings are on.  The consequence
-    //of overestimating widthInCells is to make the shift buttons step too big
   }
 
   UNSAFE_componentWillMount() {

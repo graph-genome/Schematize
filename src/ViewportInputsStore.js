@@ -9,7 +9,7 @@ const PathNucPos = types.model("PathNucPos", {
   nucPos: types.integer,
 });
 
-export let RootStore; // AG: why is it exported?
+let RootStore;
 RootStore = types
   .model({
     useVerticalCompression: false,
@@ -24,16 +24,10 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-
     // AG: to change 'jsonName' in 'jsonNameDir'???
     jsonName: "run1.B1phi1.i1.seqwish",
-
-    // AG: added new attribute.
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
-
-    // AG: added new attribute.
     indexSelectedZoomLevel: 0,
-
     chunkURLs: ChunkURLs,
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",

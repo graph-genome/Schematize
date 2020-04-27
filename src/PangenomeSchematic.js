@@ -1,7 +1,7 @@
 import React from "react";
 import { observe } from "mobx";
-
 import { urlExists } from "./URL";
+import {calculateEndBinFromScreen} from "./utilities";
 
 function range(start, end) {
   return [...Array(1 + end - start).keys()].map((v) => start + v);
@@ -37,16 +37,14 @@ class PangenomeSchematic extends React.Component {
       this.loadIndexFile(this.props.store.jsonName);
     });
 
-    // AG: added indexSelectedZoomLevel observation
     observe(this.props.store, "indexSelectedZoomLevel", () => {
       this.loadIndexFile(this.props.store.jsonName);
     });
 
-    observe(
-      this.props.store.beginEndBin,
-      this.openRelevantChunksFromIndex.bind(this)
-    );
-    // console.log("public ", process.env.PUBLIC_URL ) //PUBLIC_URL is empty
+    // observe(
+    //     this.props.store.beginEndBin, ()=>{
+    //     this.openRelevantChunksFromIndex.bind(this)}
+    // );
   }
   componentDidUpdate() {
     // console.log("#components: " + this.components);
@@ -54,59 +52,27 @@ class PangenomeSchematic extends React.Component {
 
   /** Compares bin2file @param indexContents with the beginBin and EndBin.
    * It finds the appropriate chunk URLS from the index and updates
-   * switchChunkURLs which trigger json fetches for the new chunks. */
+   * switchChunkURLs which trigger json fetches for the new chunks. **/
   openRelevantChunksFromIndex() {
     if (this.chunkIndex === null) {
       return; //before the class is fully initialized
     }
     let indexContents = this.chunkIndex;
     const beginBin = this.props.store.getBeginBin();
-    const endBin = this.props.store.getEndBin();
 
-    this.props.store.setAvailableZoomLevels(
-      Object.keys(indexContents["zoom_levels"])
-    );
+    this.props.store.setAvailableZoomLevels(Object.keys(indexContents["zoom_levels"]));
     const selZoomLev = this.props.store.getSelectedZoomLevel();
+    let [endBin, fileArray] = calculateEndBinFromScreen(beginBin, this.chunkIndex,
+        selZoomLev, this.props.store.pixelsPerColumn);
 
-    const lastIndex =
-      indexContents["zoom_levels"][selZoomLev]["files"].length - 1;
-
-    const findBegin = (entry) => entry["last_bin"] >= beginBin;
-    const findEnd = (entry) => entry["last_bin"] >= endBin;
-    let beginIndex = indexContents["zoom_levels"][selZoomLev][
-      "files"
-    ].findIndex(findBegin);
-    let endIndex = indexContents["zoom_levels"][selZoomLev]["files"].findIndex(
-      findEnd
-    );
-    if (-1 === endIndex) {
-      //#22 end of file limits so it doesn't crash
-      endIndex = lastIndex;
-    }
-    if (-1 === beginIndex) {
-      console.error("beginIndex", beginIndex, "endIndex", endIndex);
-      return;
-      // conserving beginIndex if -1 < beginIndex < lastIndex
-      // const indexToCompare = [beginIndex, lastIndex];
-      // const findMinBegin = (index) => index >= 0;
-      // beginIndex = indexToCompare[indexToCompare.findIndex(findMinBegin)]; //trueBeginIndex
-      // endIndex = lastIndex;
-    }
-
-    //will trigger chunk update in App.fetchAllChunks() which calls this.loadJsonCache
     let URLprefix =
-      process.env.PUBLIC_URL +
-      "test_data/" +
-      this.props.store.jsonName +
-      "/" +
-      selZoomLev +
-      "/";
-    let fileArray = range(beginIndex, endIndex).map((index) => {
-      return (
-        URLprefix +
-        indexContents["zoom_levels"][selZoomLev]["files"][index]["file"]
-      );
-    });
+        process.env.PUBLIC_URL +
+        "test_data/" +
+        this.props.store.jsonName +
+        "/" +
+        selZoomLev +
+        "/";
+    fileArray = fileArray.map((filename) => {return URLprefix + filename});
 
     this.props.store.switchChunkURLs(fileArray);
   }
@@ -134,12 +100,12 @@ class PangenomeSchematic extends React.Component {
   }
 
   loadJsonCache(url, data) {
-    if (data.json_version !== 13) {
+    if (data.json_version !== 14) {
       throw MediaError(
-        "Wrong Data JSON version: was expecting version 13, got " +
-        data.json_version +
-        ".  " +
-        "This version added nucleotide ranges to bins.  " + // KEEP THIS UP TO DATE!
+          "Wrong Data JSON version: was expecting version 14, got " +
+          data.json_version +
+          ".  " +
+          "This version precalculated X values for Components.  " + // KEEP THIS UP TO DATE!
           "Using a mismatched data file and renderer will cause unpredictable behavior," +
           " instead generate a new data file using github.com/graph-genome/component_segmentation."
       );
@@ -173,48 +139,48 @@ class PangenomeSchematic extends React.Component {
     if (this.chunkIndex === undefined) {
       return;
     }
-    if (this.props.store.getChunkURLs().length < 1) {
+    if (this.chunksProcessed.length < 1) {
       return;
     }
     const selZoomLev = this.props.store.getSelectedZoomLevel();
 
     for (var i = 0; i < this.chunksProcessed.length; i++) {
       var index_file = parseInt(
-        getFileName(this.chunksProcessed[i]).split("chunk")[1].split("_")[0]
+          getFileName(this.chunksProcessed[i]).split("chunk")[1].split("_")[0]
       );
 
       let chunkNo = this.chunkIndex["zoom_levels"][selZoomLev].files[
-        index_file
-      ];
+          index_file
+          ];
 
       const fastaFilePath = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/${selZoomLev}/${chunkNo.fasta}`;
-      if (urlExists(fastaFilePath)) {
+      if (urlExists(fastaFilePath)) { //TODO: this is really slow synchronous, just fetch it
         fetch(fastaFilePath)
-          .then((response) => {
-            return response.text();
-          })
-          .then((text) => {
-            //remove first line
-            const splitText = text.replace(/.*/, "").substr(1);
-            const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
-            const nucleotides = noLinebreaks.split("");
+            .then((response) => {
+              return response.text();
+            })
+            .then((text) => {
+              //remove first line
+              const splitText = text.replace(/.*/, "").substr(1);
+              const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
+              const nucleotides = noLinebreaks.split("");
 
-            if (this.first_bin < 0) {
-              this.first_bin = chunkNo["first_bin"];
-            }
-            if (chunkNo["last_bin"] > this.last_bin) {
-              this.last_bin = chunkNo["last_bin"];
-            }
+              if (this.first_bin < 0) {
+                this.first_bin = chunkNo["first_bin"];
+              }
+              if (chunkNo["last_bin"] > this.last_bin) {
+                this.last_bin = chunkNo["last_bin"];
+              }
 
-            //split into array of nucleotides
-            this.nucleotides.push(...nucleotides);
+              //split into array of nucleotides
+              this.nucleotides.push(...nucleotides);
 
-            console.log("fetching_fasta: ", fastaFilePath);
-            //console.log("this.nucleotides: ", this.nucleotides.length);
-            //console.log("this.first/last_bin: ", this.first_bin + ' / ' + this.last_bin);
+              console.log("fetching_fasta: ", fastaFilePath);
+              //console.log("this.nucleotides: ", this.nucleotides.length);
+              //console.log("this.first/last_bin: ", this.first_bin + ' / ' + this.last_bin);
 
-            return;
-          });
+              return;
+            });
       }
     }
   }
@@ -231,8 +197,8 @@ class PangenomeSchematic extends React.Component {
     ];
     let urls = this.props.store.getChunkURLs();
     if (
-      this.chunksProcessed.length === 0 ||
-      this.chunksProcessed[0] !== urls[0]
+        this.chunksProcessed.length === 0 ||
+        this.chunksProcessed[0] !== urls[0]
     ) {
       this.components = []; // clear all pre-render data
       this.chunksProcessed = [];
@@ -248,8 +214,8 @@ class PangenomeSchematic extends React.Component {
           let url = urls[urlIndex];
           let jsonChunk = this.jsonCache[url];
           let xOffset = this.components.length
-            ? this.components.slice(-1)[0].nextXOffset()
-            : 0;
+              ? this.components.slice(-1)[0].nextXOffset()
+              : 0;
           for (let [index, component] of jsonChunk.components.entries()) {
             let componentItem = new Component(component, xOffset, index);
             xOffset = componentItem.nextXOffset();
@@ -269,9 +235,9 @@ class PangenomeSchematic extends React.Component {
     this.loadFasta();
 
     console.log(
-      "processArray",
-      this.chunksProcessed[0],
-      this.chunksProcessed.slice(-1)[0]
+        "processArray",
+        this.chunksProcessed[0],
+        this.chunksProcessed.slice(-1)[0]
     );
     //console.log(this.props)
 
