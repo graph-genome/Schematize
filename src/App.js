@@ -373,40 +373,64 @@ class App extends Component {
   }
 
   renderNucleotidesSchematic = () => {
-    // AG: the conditions on bitWidht and useWidthCompression are "lifted" here,
-    // avoid any computation if nucleotides are not to be visualized
-    console.log("renderNuclSchematic: " + this.schematic.nucleotides.length);
     if (
-      this.state.loading ||
-      this.props.store.binWidth !== 1 ||
-      this.props.store.useWidthCompression ||
-      this.schematic.nucleotides.length < 1
+      !this.state.loading &&
+      // The conditions on bitWidht and useWidthCompression are lifted here,
+      // avoiding any computation if nucleotides have not to be visualized.
+      this.props.store.binWidth === 1 &&
+      !this.props.store.useWidthCompression &&
+      this.schematic.nucleotides.length > 0
     ) {
-      return;
+      return this.schematic.components.map((schematizeComponent, i) => {
+        //TO_DO: maybe it is not necessary
+        // Check if there are nucleotides (which cover the range [this.schematic.first_bin, this.schematic.last_bin])
+        // associated to the component to visualize (which cover the range [schematizeComponent.firstBin, schematizeComponent.lastBin])
+        if (
+          !(
+            this.schematic.first_bin <= schematizeComponent.firstBin &&
+            schematizeComponent.firstBin <= schematizeComponent.lastBin &&
+            schematizeComponent.lastBin <= this.schematic.last_bin
+          )
+        ) {
+          console.log("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+          return null;
+        }
+
+        //console.log('this.schematic.first_bin: ' + this.schematic.first_bin)
+        //console.log('this.schematic.last_bin: ' + this.schematic.last_bin)
+        //console.log('firstBin: ' + schematizeComponent.firstBin)
+        //console.log('lastBin: ' + schematizeComponent.lastBin)
+
+        const nucleotides_slice = this.schematic.nucleotides.slice(
+          schematizeComponent.firstBin - this.schematic.first_bin,
+          schematizeComponent.lastBin - this.schematic.first_bin + 1
+        );
+
+        console.log("nucleotides_slice: " + nucleotides_slice);
+
+        return (
+          <React.Fragment key={"nt" + i}>
+            <ComponentNucleotides
+              store={this.props.store}
+              item={schematizeComponent}
+              key={i}
+              height={this.visibleHeight()}
+              width={
+                schematizeComponent.arrivals.length +
+                (this.props.store.useWidthCompression
+                  ? this.props.store.binScalingFactor
+                  : schematizeComponent.num_bin) +
+                (schematizeComponent.departures.length - 1)
+              }
+              // They are passed only the nucleotides associated to the current component
+              nucleotides={nucleotides_slice}
+            />
+          </React.Fragment>
+        );
+      });
     }
-    return this.schematic.components.map((schematizeComponent, i) => {
-      return (
-        <React.Fragment key={"nt" + i}>
-          <ComponentNucleotides
-            store={this.props.store}
-            item={schematizeComponent}
-            key={i}
-            height={this.visibleHeight()}
-            width={
-              schematizeComponent.arrivals.length +
-              (this.props.store.useWidthCompression
-                ? this.props.store.binScalingFactor
-                : schematizeComponent.num_bin) +
-              (schematizeComponent.departures.length - 1)
-            }
-            // AG: passed interval fasta information
-            nucleotides={this.schematic.nucleotides}
-            first_bin={this.schematic.first_bin}
-            last_bin={this.schematic.last_bin}
-          />
-        </React.Fragment>
-      );
-    });
+
+    return;
   };
 
   renderSchematic() {
