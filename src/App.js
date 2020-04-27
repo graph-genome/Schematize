@@ -382,31 +382,26 @@ class App extends Component {
       this.schematic.nucleotides.length > 0
     ) {
       return this.schematic.components.map((schematizeComponent, i) => {
-        //TO_DO: maybe it is not necessary
+        //TO_DO: maybe it is not necessary, to confirm its elimination
         // Check if there are nucleotides (which cover the range [this.schematic.first_bin, this.schematic.last_bin])
         // associated to the component to visualize (which cover the range [schematizeComponent.firstBin, schematizeComponent.lastBin])
-        if (
+        /*if (
           !(
             this.schematic.first_bin <= schematizeComponent.firstBin &&
             schematizeComponent.firstBin <= schematizeComponent.lastBin &&
             schematizeComponent.lastBin <= this.schematic.last_bin
           )
         ) {
-          console.log("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
           return null;
-        }
+        }*/
 
-        //console.log('this.schematic.first_bin: ' + this.schematic.first_bin)
-        //console.log('this.schematic.last_bin: ' + this.schematic.last_bin)
-        //console.log('firstBin: ' + schematizeComponent.firstBin)
-        //console.log('lastBin: ' + schematizeComponent.lastBin)
-
+        const chunkBeginBin = this.props.store.getChunkBeginEndBin()[0];
         const nucleotides_slice = this.schematic.nucleotides.slice(
-          schematizeComponent.firstBin - this.schematic.first_bin,
-          schematizeComponent.lastBin - this.schematic.first_bin + 1
+          schematizeComponent.firstBin - chunkBeginBin,
+          schematizeComponent.lastBin - chunkBeginBin + 1
         );
 
-        console.log("nucleotides_slice: " + nucleotides_slice);
+        //console.log("nucleotides_slice: " + nucleotides_slice);
 
         return (
           <React.Fragment key={"nt" + i}>
