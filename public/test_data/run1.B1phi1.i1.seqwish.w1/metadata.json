@@ -1,0 +1,35 @@
+[
+ {
+   "Accession": "1727",
+   "Release_Date": "2020-01-13T00:00:00Z",
+   "Species": "Severe acute respiratory syndrome-related coronavirus",
+   "Length": 29903,
+   "Geo_Location": "China",
+   "Host": "Homo sapiens",
+   "Isolation_Source": "",
+   "Collection_Date": "2019-12",
+   "GenBank_Title": "Severe acute respiratory syndrome coronavirus 2 isolate Wuhan-Hu-1, complete genome"
+ },
+ {
+   "Accession": "2103",
+   "Release_Date": "2020-03-17T00:00:00Z",
+   "Species": "Severe acute respiratory syndrome-related coronavirus",
+   "Length": 29611,
+   "Geo_Location": "Spain",
+   "Host": "Homo sapiens",
+   "Isolation_Source": "oronasopharynx",
+   "Collection_Date": "2020-03-08",
+   "GenBank_Title": "Severe acute respiratory syndrome coronavirus 2 isolate SARS-CoV-2/Valencia001/human/2020/ESP, partial genome"
+ },
+ {
+   "Accession": "1925",
+   "Release_Date": "2020-03-17T00:00:00Z",
+   "Species": "Severe acute respiratory syndrome-related coronavirus",
+   "Length": 29611,
+   "Geo_Location": "Spain",
+   "Host": "Homo sapiens",
+   "Isolation_Source": "oronasopharynx",
+   "Collection_Date": "2020-03-04",
+   "GenBank_Title": "Severe acute respiratory syndrome coronavirus 2 isolate SARS-CoV-2/Valencia002/human/2020/ESP, partial genome"
+ }
+]
