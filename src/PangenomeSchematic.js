@@ -63,7 +63,7 @@ class PangenomeSchematic extends React.Component {
     this.props.store.setAvailableZoomLevels(Object.keys(indexContents["zoom_levels"]));
     const selZoomLev = this.props.store.getSelectedZoomLevel();
     let [endBin, fileArray] = calculateEndBinFromScreen(beginBin, this.chunkIndex,
-        selZoomLev, this.props.store.pixelsPerColumn);
+        selZoomLev, this.props.store);
     this.props.store.updateBeginEndBin(beginBin, endBin);
 
     let URLprefix =
@@ -214,12 +214,8 @@ class PangenomeSchematic extends React.Component {
           //only process if data is available
           let url = urls[urlIndex];
           let jsonChunk = this.jsonCache[url];
-          let xOffset = this.components.length
-              ? this.components.slice(-1)[0].nextXOffset()
-              : 0;
           for (let [index, component] of jsonChunk.components.entries()) {
-            let componentItem = new Component(component, xOffset, index);
-            xOffset = componentItem.nextXOffset();
+            let componentItem = new Component(component, index);
             this.components.push(componentItem); //TODO: concurrent modification?
             //if (component.last_bin >= beginBin) { NOTE: we are now reading in whole chunk, this may place
             //xOffset further right than it was intended when beginBin > chunk.first_bin
@@ -246,9 +242,9 @@ class PangenomeSchematic extends React.Component {
   }
 }
 
-class Component {
-  constructor(component, offsetLength, index) {
-    this.offset = offsetLength;
+class Component {//extends React.Component{
+  constructor(component,  index) {
+    this.columnX = component.x;
     this.index = index;
     this.firstBin = component.first_bin;
     this.lastBin = component.last_bin;
@@ -267,9 +263,6 @@ class Component {
     this.occupants = Array.from(component.occupants);
     this.matrix = Array.from(component.matrix);
     this.num_bin = this.lastBin - this.firstBin + 1;
-  }
-  nextXOffset() {
-    return this.offset + this.arrivals.length + this.departures.length - 1;
   }
 }
 

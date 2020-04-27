@@ -35,6 +35,7 @@ RootStore = types
     nucleotideHeight: 10,
     pangenomelast_bin: -1,//TODO: don't add values unless they're needed
     // TODO: Set when bin2file is read
+    beginColumnX: 0, //TODO: copied and stored from bin2file.json in calculateEndBinFromScreen()
   })
   .actions((self) => {
     function updateBeginEndBin(newBegin, newEnd) {
@@ -126,10 +127,10 @@ RootStore = types
       return self.beginEndBin;
     }
     function getBeginBin() {
-      return getBeginEndBin()[0];
+      return self.beginEndBin[0];
     }
     function getEndBin() {
-      return getBeginEndBin()[1];
+      return self.beginEndBin[1];
     }
 
     // AG: added getter and setter for zoom info management
@@ -182,6 +183,9 @@ RootStore = types
     function setBinWidth(binWidth) {
       self.binWidth = binWidth;
     }
+    function setBeginColumnX(x){
+      self.beginColumnX = x;
+    }
     return {
       updateBeginEndBin,
       updateTopOffset,
@@ -206,11 +210,13 @@ RootStore = types
       getPathNucPos,
       updatePathNucPos,
       setBinWidth,
+      setBeginColumnX,
 
-      // AG: added zoom actions
+      // AG: zoom actions
       getSelectedZoomLevel,
       setIndexSelectedZoomLevel,
       getIndexSelectedZoomLevel,
+      //TODO: these actions are too specific. Increase and decrease should go in the widget code
       decIndexSelectedZoomLevel,
       incIndexSelectedZoomLevel,
       getAvailableZoomLevels,

@@ -258,10 +258,9 @@ class App extends Component {
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
     /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
     let previousColumns = !this.props.store.useWidthCompression
-      ? schematizeComponent.firstBin -
-        this.props.store.getBeginBin() +
-        schematizeComponent.offset
-      : schematizeComponent.offset +
+      ? schematizeComponent.columnX -
+        this.props.store.beginColumnX
+      : schematizeComponent.columnX +
         (schematizeComponent.index - this.schematic.components[0].index) *
           this.props.store.binScalingFactor;
     let pixelsFromColumns =
@@ -276,7 +275,7 @@ class App extends Component {
         <ComponentRect
           store={this.props.store}
           item={schematizeComponent}
-          key={i}
+          key={"r" + i}
           height={this.visibleHeight()}
           width={
             schematizeComponent.arrivals.length +
