@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 
 class ComponentNucleotides extends React.Component {
   renderMatrix() {
-    console.log("AComponentNucleotides: " + this.props.nucleotides);
+    //console.log("ComponentNucleotides: " + this.props.nucleotides);
 
     let count = 0;
     let parts = this.props.item.matrix.map((row, row_n) => {
