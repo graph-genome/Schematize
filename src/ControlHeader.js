@@ -89,9 +89,7 @@ class ControlHeader extends React.Component {
               <option
                 key={i}
                 value={i}
-                defaultValue={
-                  i === this.props.store.indexSelectedZoomLevel
-                }
+                selected={i === this.props.store.indexSelectedZoomLevel}
               >
                 {item}
               </option>

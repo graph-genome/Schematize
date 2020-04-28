@@ -5,12 +5,16 @@ import PropTypes from "prop-types";
 
 class ComponentNucleotides extends React.Component {
   renderMatrix() {
+    //console.log("ComponentNucleotides: " + this.props.nucleotides);
+
     let count = 0;
     let parts = this.props.item.matrix.map((row, row_n) => {
+      //console.log('row.length: ' + row.length)
       if (row.length) {
         count++;
 
-        // AG: important, to avoid many unnecessary operations, improving the performance
+        // TO_DO: why is this checks needed?
+        // To avoid many unnecessary operations, improving the performance
         if (count === 1) {
           return this.renderMatrixRow(row, row_n);
         }
@@ -28,55 +32,23 @@ class ComponentNucleotides extends React.Component {
       parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
     const width = 1 * this.props.store.pixelsPerColumn;
 
-    if (
-      !(
-        parent.firstBin >= this.props.first_bin &&
-        parent.lastBin > this.props.first_bin
-      )
-    ) {
-      return null;
-    }
-
     //console.log('renderMatrixRow - row_n: ' + row_n)
-    // AG: info for debugging
-    /*console.log('parent-offset: ' + parent.offset)
-    console.log('parent-index: ' + parent.index)
-    console.log('parent-arrivals: ' + parent.arrivals)
-    console.log('parent-departures: ' + parent.departures)
-    console.log('parent-matrix: ' + parent.matrix)
-    console.log('parent-num_bin: ' + parent.num_bin)
-*/
     //console.log('x_val: ' + x_val)
-    //console.log('parent.firstBin / -lastBin: ' + parent.firstBin + ' / '+ parent.lastBin)
-    //console.log('this.props.first/last_bin: ' + this.props.first_bin + ' / ' + this.props.last_bin)
-    //console.log(parent.firstBin - this.props.first_bin)
-    //console.log(parent.lastBin - this.props.first_bin)
-
-    // AG: this.props.first_bin to manage the offset in the sequence string,
-    // without loading the entire sequence from all the chunks
-    const letter = this.props.nucleotides.slice(
-      parent.firstBin - this.props.first_bin,
-      parent.lastBin - this.props.first_bin + 1
-    );
 
     return row.map((cell, x) => {
       if (cell.length) {
-        //console.log("letter: " + letter + "; x: " + x)
+        //console.log("this.props.nucleotides: " + this.props.nucleotides + "; x: " + x)
 
         return (
           <>
-            {x < letter.length && letter[x] ? (
-              <Text
-                x={x_val + x * this.props.store.pixelsPerColumn}
-                y={
-                  this.props.store.topOffset - this.props.store.nucleotideHeight
-                }
-                text={letter[x]}
-                align="center"
-                height={this.props.store.nucleotideHeight}
-                width={width}
-              />
-            ) : null}
+            <Text
+              x={x_val + x * this.props.store.pixelsPerColumn}
+              y={this.props.store.topOffset - this.props.store.nucleotideHeight}
+              text={this.props.nucleotides[x]}
+              align="center"
+              height={this.props.store.nucleotideHeight}
+              width={width}
+            />
           </>
         );
       } else {
@@ -94,7 +66,6 @@ class ComponentNucleotides extends React.Component {
           y={this.props.store.topOffset + this.props.store.nucleotideHeight}
           width={this.props.width * this.props.store.pixelsPerColumn}
           height={this.props.height * this.props.store.pixelsPerRow}
-          //fill={this.state.color}
         />
         {this.renderMatrix()}
       </>

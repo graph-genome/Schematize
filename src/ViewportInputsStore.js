@@ -2,7 +2,9 @@ import {types} from "mobx-state-tree";
 import {urlExists} from "./URL";
 
 const BeginEndBin = types.optional(types.array(types.integer), [1, 140]);
-const ChunkURLs = types.optional(types.array(types.string), [""]);
+
+const ChunkURLs = types.optional(types.array(types.string), []);
+const ChunkFastaURLs = types.optional(types.array(types.string), []);
 
 const PathNucPos = types.model("PathNucPos", {
   path: types.string,
@@ -24,11 +26,17 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    // AG: to change 'jsonName' in 'jsonNameDir'???
+
+    // TODO: to change 'jsonName' in 'jsonNameDir'?
     jsonName: "run1.B1phi1.i1.seqwish",
+
+    // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
     indexSelectedZoomLevel: 0,
     chunkURLs: ChunkURLs,
+    chunkFastaURLs: ChunkFastaURLs,
+    chunkBeginBin: -1,
+
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
     binWidth: 1,
@@ -120,14 +128,25 @@ RootStore = types
         console.log("arrayOfFile: " + arrayOfFile);
       }
     }
+    function switchChunkFastaURLs(arrayOfFile) {
+        let arraysEqual =
+            arrayOfFile.length === self.chunkFastaURLs.length &&
+            arrayOfFile.every((e) => self.chunkFastaURLs.indexOf(e) > -1);
+        if (!arraysEqual) {
+            self.chunkFastaURLs = arrayOfFile;
+            console.log("arrayOfFastaFile: " + arrayOfFile);
+        }
+    }
     function getBeginBin() {
       return self.beginEndBin[0];
     }
     function getEndBin() {
       return self.beginEndBin[1];
     }
-
-    // AG: added getter and setter for zoom info management
+    function setChunkBeginEndBin(newChunkBeginBin) {
+      self.chunkBeginBin = newChunkBeginBin;
+    }
+    // Added getter and setter for zoom info management
     function getSelectedZoomLevel() {
       //This is a genuinely useful getter
       return self.availableZoomLevels[self.indexSelectedZoomLevel];
@@ -180,7 +199,10 @@ RootStore = types
       updateHeight,
       updateWidth,
       tryJSONpath,
+
       switchChunkURLs,
+      switchChunkFastaURLs,
+      setChunkBeginEndBin,
       getBeginBin,
       getEndBin,
       updatePathNucPos,
@@ -190,7 +212,7 @@ RootStore = types
       // You can reference store.val directly without store.getVal()
       //Only write getters to encapsulate useful logic for derived values
 
-      // AG: zoom actions
+      // Added zoom actions
       getSelectedZoomLevel,
       setIndexSelectedZoomLevel,
       //TODO: these actions are too specific. Increase and decrease should go in the widget code
