@@ -1,5 +1,11 @@
 import React from "react";
 import { observe } from "mobx";
+import { urlExists } from "./URL";
+import {calculateEndBinFromScreen} from "./utilities";
+
+function range(start, end) {
+  return [...Array(1 + end - start).keys()].map((v) => start + v);
+}
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
@@ -10,60 +16,78 @@ class PangenomeSchematic extends React.Component {
     super(props);
     this.pathNames = [];
     this.components = [];
+    this.chunkIndex = null;
+    //TODO: replace jsonCache with browser indexdb
+    this.jsonCache = {}; // URL keys, values are entire JSON file datas
+    this.chunksProcessed = []; //list of URLs now in this.components
+
+    // Added nucleotides attribute and its edges
     this.nucleotides = [];
 
-    this.loadIndexFile(this.props.store.jsonName) //initializes this.chunk_index
-      .then(() => this.jsonFetch(this.props.store.getChunkURLs()[0]))
-      .then(this.loadFirstJSON.bind(this));
+    this.loadIndexFile(this.props.store.jsonName); //initializes this.chunkIndex
     //whenever jsonName changes,
     observe(this.props.store, "jsonName", () => {
       this.loadIndexFile(this.props.store.jsonName);
     });
+
+    // Whenever the selected zoom level changes
+    observe(this.props.store, "indexSelectedZoomLevel", () => {
+      this.loadIndexFile(this.props.store.jsonName);
+    });
+
+    observe(
+      this.props.store.beginEndBin,
+      this.openRelevantChunksFromIndex.bind(this)
+    );
+
+    // The FASTA files are read only when there are new chuncks to read
+    observe(this.props.store.chunkFastaURLs, () => {
+      this.loadFasta();
+    });
+
     // console.log("public ", process.env.PUBLIC_URL ) //PUBLIC_URL is empty
   }
   componentDidUpdate() {
     // console.log("#components: " + this.components);
   }
-  openRelevantChunk(chunk_index) {
-    this.chunk_index = chunk_index;
-    const beginBin = this.props.store.getBeginBin();
-    const endBin = this.props.store.getEndBin();
-    //only do a new chunk scan if it's needed
-    let startFile = chunk_index["files"][0]["file"];
-    this.loadFasta();
-    let nextChunk = chunk_index["files"][0];
-    for (let i = 0; i < chunk_index["files"].length; ++i) {
-      //linear scan for the right chunk
-      let chunk = chunk_index["files"][i];
-      if (chunk["last_bin"] >= beginBin && chunk["first_bin"] <= beginBin) {
-        startFile = chunk["file"]; // retrieve file name
-        nextChunk = chunk; // fallback: if it's last chunk in series
-        if (i + 1 < chunk_index["files"].length) {
-          nextChunk = chunk_index["files"][i + 1];
-        }
-        console.log("Opening chunk", startFile, nextChunk["file"]);
-        //restrict end position to end of the new chunk
-        this.props.store.updateBeginEndBin(
-          beginBin,
-          Math.min(nextChunk["last_bin"], endBin)
-        );
-        break; // done scanning
+
+  /** Compares bin2file @param indexContents with the beginBin and EndBin.
+   * It finds the appropriate chunk URLS from the index and updates
+   * switchChunkURLs which trigger json fetches for the new chunks. **/
+  openRelevantChunksFromIndex() {
+      if (this.chunkIndex === null) {
+          return; //before the class is fully initialized
       }
-    }
-    //will trigger chunk update in App.nextChunk() which calls this.loadJSON
-    this.props.store.switchChunkURLs(
-      process.env.PUBLIC_URL +
-        "test_data/" +
-        this.props.store.jsonName +
-        "/" +
-        startFile,
-      process.env.PUBLIC_URL +
-        "test_data/" +
-        this.props.store.jsonName +
-        "/" +
-        nextChunk["file"]
-    );
+      let indexContents = this.chunkIndex;
+      const beginBin = this.props.store.getBeginBin();
+
+      this.props.store.setAvailableZoomLevels(Object.keys(indexContents["zoom_levels"]));
+      const selZoomLev = this.props.store.getSelectedZoomLevel();
+      let [endBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(beginBin, this.chunkIndex,
+          selZoomLev, this.props.store);
+      this.props.store.updateBeginEndBin(beginBin, endBin);
+
+      let URLprefix =
+          process.env.PUBLIC_URL +
+          "test_data/" +
+          this.props.store.jsonName +
+          "/" +
+          selZoomLev +
+          "/";
+      fileArray = fileArray.map((filename) => {
+          return URLprefix + filename
+      });
+      fileArrayFasta = fileArrayFasta.map((filename) => {
+          return URLprefix + filename
+      });
+
+      this.props.store.switchChunkURLs(fileArray);
+
+      if (fileArrayFasta.length) {
+          this.props.store.switchChunkFastaURLs(fileArrayFasta);
+      }
   }
+
   loadIndexFile(jsonFilename) {
     let indexPath =
       process.env.PUBLIC_URL + "test_data/" + jsonFilename + "/bin2file.json";
@@ -71,145 +95,123 @@ class PangenomeSchematic extends React.Component {
     return fetch(indexPath)
       .then((res) => res.json())
       .then((json) => {
-        if (!this.props.store.getChunkURLs()[0]) {
-          // Initial state
-          this.props.store.switchChunkURLs(
-            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][0]["file"]}`,
-            `${process.env.PUBLIC_URL}test_data/${this.props.store.jsonName}/${json["files"][1]["file"]}`
-          );
-        }
-        this.openRelevantChunk.call(this, json);
+        // This following part is important to scroll right and left on browser
+        this.chunkIndex = json;
+        this.openRelevantChunksFromIndex();
       });
   }
+
   jsonFetch(filepath) {
     if (!filepath)
       throw new Error(
         "No filepath given. Ensure chunknames in bin2file.json are correct."
       );
-
     console.log("Fetching", filepath);
-
     return fetch(process.env.PUBLIC_URL + filepath).then((res) => res.json());
   }
-  loadFirstJSON(data) {
-    this.jsonData = data;
-    this.pathNames = this.jsonData.path_names;
-    this.jsonData.mid_bin = data.last_bin; //placeholder
-    let lastChunkURLIndex = this.props.store.chunkURLs.length - 1;
-    if (
-      this.props.store.getChunkURLs()[0] ===
-      this.props.store.getChunkURLs()[lastChunkURLIndex]
-    ) {
-      this.processArray();
-    } else {
-      this.jsonFetch(this.props.store.getChunkURLs()[lastChunkURLIndex]).then(
-        this.loadSecondJSON.bind(this)
-      );
-    }
-  }
-  loadSecondJSON(secondChunkContents) {
-    if (this.jsonData.last_bin < secondChunkContents.last_bin) {
-      this.jsonData.mid_bin = this.jsonData.last_bin; //boundary between two files
-      this.jsonData.last_bin = secondChunkContents.last_bin;
-      this.jsonData.components.push(...secondChunkContents.components);
-      this.processArray();
-    } else {
-      console.warn(
-        "Second chunk was earlier than the first.  Check the order you set store.chunkURLs"
-      );
-    }
-  }
-  loadFasta() {
-    //find a way to make this less fragile
-    const beginBin = this.props.store.getBeginBin();
-    const endBin = this.props.store.getEndBin();
-    const chunks = this.chunk_index;
 
-    let chunkNo = chunks.files[0];
-
-    if (beginBin > chunkNo.lastBin) {
-      chunkNo = chunks.files[1];
-    }
-
-    const fastaFileName = `${process.env.PUBLIC_URL}/test_data/${this.props.store.jsonName}/${chunkNo.fasta}`;
-    console.log("fetching", fastaFileName);
-    fetch(fastaFileName)
-      .then((response) => {
-        return response.text();
-      })
-      .then((text) => {
-        //remove first line
-        const splitText = text.replace(/.*/, "").substr(1);
-        const noLinebreaks = splitText.replace(/[\r\n]+/gm, "");
-        const nucleotides = noLinebreaks.split("");
-        //split into array of nucelotides
-        if (!this.nucleotides.length) {
-          this.nucleotides = nucleotides;
-        } else {
-          this.nucleotides.push(...nucleotides);
-        }
-        return;
-      });
-  }
-  processArray() {
-    /*parses beginBin to endBin range, returns false if new file needed*/
-    if (!this.jsonData) {
-      return false;
-    }
-    // eslint-disable-next-line prefer-const
-    let [beginBin, endBin] = [
-      this.props.store.getBeginBin(),
-      this.props.store.getEndBin(),
-    ];
-    if (this.jsonData.json_version !== 12) {
+  loadJsonCache(url, data) {
+    if (data.json_version !== 14) {
       throw MediaError(
-        "Wrong Data JSON version: was expecting version 12, got " +
-        this.jsonData.json_version +
-        ".  " +
-        "This version added nucleotide ranges to bins.  " + // KEEP THIS UP TO DATE!
+          "Wrong Data JSON version: was expecting version 14, got " +
+          data.json_version +
+          ".  " +
+          "This version precalculated X values for Components.  " + // KEEP THIS UP TO DATE!
           "Using a mismatched data file and renderer will cause unpredictable behavior," +
           " instead generate a new data file using github.com/graph-genome/component_segmentation."
       );
     }
-    this.props.store.setBinWidth(parseInt(this.jsonData.bin_width));
-    console.log("Parsing components ", beginBin, " - ", endBin);
-    //Fetch the next file when viewport no longer needs the first file.
+    this.jsonCache[url] = data;
+    this.pathNames = data.path_names; //TODO: in later JSON versions path_names gets moved to bin2file.json
+    this.props.store.setBinWidth(parseInt(data.bin_width));
+  }
+
+  loadFasta() {
+    console.log("loadFasta");
+
+    // Clear the nucleotides information
+    this.nucleotides = [];
+
+    // This loop will automatically cap out at the fasta file corrisponding to the last loaded chunk
+    for (let path_fasta of this.props.store.chunkFastaURLs) {
+      if (urlExists(path_fasta)) {
+        fetch(path_fasta)
+          .then((response) => {
+            return response.text();
+          })
+          .then((text) => {
+            const sequence = text
+              .replace(/.*/, "")
+              .substr(1)
+              .replace(/[\r\n]+/gm, "");
+
+            //split into array of nucleotides
+            this.nucleotides.push(...sequence.split(""));//TODO: could ... work alone?
+
+            console.log("fetching_fasta: ", path_fasta);
+
+              return;
+            });
+      }
+    }
+  }
+
+  /**Parses beginBin to endBin range, returns false if new file needed.
+   * This calculates the pre-render for all contiguous JSON data.
+   * State information is stored in this.chunksProcessed.
+   * Checks if there's new available data to pre-render in processArray()
+   * run through list of urls in order and see if we have data to load.**/
+  processArray() {
+    let [beginBin, endBin] = [
+      this.props.store.getBeginBin(),
+      this.props.store.getEndBin(),
+    ];
+    let urls = this.props.store.chunkURLs;
     if (
-      beginBin > this.jsonData.mid_bin ||
-      beginBin < this.jsonData.first_bin
+        this.chunksProcessed.length === 0 ||
+        this.chunksProcessed[0] !== urls[0]
     ) {
-      //only do a new chunk scan if it's needed
-      this.openRelevantChunk(this.chunk_index);
-      this.loadFasta(); // this will trigger a second update cycle
-      return false;
-    } else {
-      var componentArray = [];
-      var offsetLength = 0;
-      for (let [index, component] of this.jsonData.components.entries()) {
-        if (component.last_bin >= beginBin) {
-          var componentItem = new Component(component, offsetLength, index);
-          offsetLength +=
-            componentItem.arrivals.length + componentItem.departures.length - 1;
-          componentArray.push(componentItem);
-          if (component.first_bin > endBin && componentArray.length > 1) {
-            break;
+      this.components = []; // clear all pre-render data
+      this.chunksProcessed = [];
+    }
+    // may have additional chunks to pre-render
+    console.log("Parsing components ", beginBin, " - ", endBin);
+
+    for (let urlIndex = 0; urlIndex < urls.length; urlIndex++) {
+      //if end of pre-render is earlier than end of contiguous available chunks, process new data
+      if (urlIndex >= this.chunksProcessed.length) {
+        if (urls[urlIndex] in this.jsonCache) {
+          //only process if data is available
+          let url = urls[urlIndex];
+          let jsonChunk = this.jsonCache[url];
+          for (let [index, component] of jsonChunk.components.entries()) {
+            let componentItem = new Component(component, index);
+            this.components.push(componentItem); //TODO: concurrent modification?
+            //if (component.last_bin >= beginBin) { NOTE: we are now reading in whole chunk, this may place
+            //xOffset further right than it was intended when beginBin > chunk.first_bin
           }
+          this.chunksProcessed.push(url);
+        } else {
+          //we've run into a contiguous chunk that is not available yet
+          return false;
         }
       }
-      this.components = componentArray;
-      console.log(
-        "processArray",
-        this.jsonData.first_bin,
-        this.jsonData.last_bin
-      );
-      return true;
     }
+
+    console.log(
+        "processArray",
+        this.chunksProcessed[0],
+        this.chunksProcessed.slice(-1)[0]
+    );
+    //console.log(this.props)
+
+    return true;
   }
 }
 
-class Component {
-  constructor(component, offsetLength, index) {
-    this.offset = offsetLength;
+class Component {//extends React.Component{
+  constructor(component,  index) {
+    this.columnX = component.x;
     this.index = index;
     this.firstBin = component.first_bin;
     this.lastBin = component.last_bin;

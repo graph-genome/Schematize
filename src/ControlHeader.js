@@ -9,23 +9,23 @@ class ControlHeader extends React.Component {
     const endBin = this.props.store.getEndBin();
     let size = endBin - beginBin;
     let diff = Math.floor(size * (percentage / 100));
-    console.log("Diff: " + diff);
+    console.log(endBin + "-" + beginBin + "=" + size + " --> diff: " + diff);
     this.props.store.updateBeginEndBin(beginBin + diff, endBin + diff);
   }
 
   handleJump() {
     console.log(
       "JUMP: path name: " +
-        this.props.store.getPath() +
+        this.props.store.pathNucPos.path +
         " nucleotide position: " +
-        this.props.store.getNucPos()
+        this.props.store.pathNucPos.nucPos
     );
     // I don't know why, but in order for the CORS headers to exchange we need to make a first GET request to "/hi" which will not return anything
 
     const store = this.props.store;
     const addr = store.pathIndexServerAddress;
-    const path_name = store.getPath();
-    const nuc_pos = store.getNucPos();
+    const path_name = store.pathNucPos.path;
+    const nuc_pos = store.pathNucPos.nucPos;
     const binWidth = store.binWidth;
 
     function handleOdgiServerResponse(result) {
@@ -48,19 +48,21 @@ class ControlHeader extends React.Component {
     httpGetAsync(addr + path_name + "/" + nuc_pos, handleOdgiServerResponse);
   }
 
+  // AG
+  change_zoom_level(target) {
+    console.log(
+      "change_zoom_level: " +
+        target.value +
+        " ---" +
+        target.options[target.selectedIndex].text
+    );
+
+    this.props.store.setIndexSelectedZoomLevel(parseInt(target.value));
+  }
+
   render() {
     return (
-      <div
-        id="button-container"
-        style={{
-          //marginBottom: "15px",
-          position: "relative",
-          top: 0,
-          zIndex: "1",
-          backgroundColor: "white",
-          //height: "95px",
-        }}
-      >
+      <div id="button-container">
         <button className="button" id="btn-download">
           Save Image
         </button>
@@ -71,6 +73,36 @@ class ControlHeader extends React.Component {
           onChange={this.props.store.tryJSONpath}
           title={"File:"}
         />
+        <span style={{ marginLeft: "30px" }}>
+          Bin width:
+          <button
+            className="button"
+            onClick={() => this.props.store.decIndexSelectedZoomLevel()}
+          >
+            -
+          </button>
+          <select
+            id="select_bin_width"
+            onChange={(val) => this.change_zoom_level(val.target)}
+          >
+            {this.props.store.availableZoomLevels.map((item, i) => (
+              <option
+                key={i}
+                value={i}
+                selected={i === this.props.store.indexSelectedZoomLevel}
+              >
+                {item}
+              </option>
+            ))}
+          </select>
+          <button
+            className="button"
+            onClick={() => this.props.store.incIndexSelectedZoomLevel()}
+          >
+            +
+          </button>
+        </span>
+
         <span style={{ marginLeft: "30px" }}>
           <button className="button" onClick={() => this.shift(-100)}>
             &lt;&lt;
@@ -97,12 +129,7 @@ class ControlHeader extends React.Component {
                 <input
                   type="number"
                   value={this.props.store.beginEndBin[1]}
-                  onChange={(event) =>
-                    this.props.store.updateBeginEndBin(
-                      this.props.store.getBeginBin(),
-                      event.target.value
-                    )
-                  }
+                  readOnly
                   style={{ width: "80px" }}
                 />
               </>
@@ -124,7 +151,7 @@ class ControlHeader extends React.Component {
             onChange={(event) =>
               this.props.store.updatePathNucPos(
                 event.target.value,
-                this.props.store.getNucPos()
+                this.props.store.pathNucPos.nucPos
               )
             }
             style={{ width: "80px" }}
