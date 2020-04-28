@@ -7,11 +7,6 @@ function range(start, end) {
   return [...Array(1 + end - start).keys()].map((v) => start + v);
 }
 
-// AG
-function getFileName(path) {
-  return path.substring(path.lastIndexOf("/") + 1);
-}
-
 class PangenomeSchematic extends React.Component {
   constructor(props) {
     /*Only plain objects will be made observable. For non-plain objects it is considered the
@@ -35,7 +30,7 @@ class PangenomeSchematic extends React.Component {
       this.loadIndexFile(this.props.store.jsonName);
     });
 
-    // AG: added indexSelectedZoomLevel observation
+    // Whenever the selected zoom level changes
     observe(this.props.store, "indexSelectedZoomLevel", () => {
       this.loadIndexFile(this.props.store.jsonName);
     });
@@ -45,7 +40,7 @@ class PangenomeSchematic extends React.Component {
       this.openRelevantChunksFromIndex.bind(this)
     );
 
-    // The FASTA files are read whene there are new chunck to read
+    // The FASTA files are read only when there are new chuncks to read
     observe(this.props.store.chunkFastaURLs, () => {
       this.loadFasta();
     });
@@ -123,19 +118,11 @@ class PangenomeSchematic extends React.Component {
     this.props.store.switchChunkFastaURLs(fileArrayFasta);
 
     // To know which region the chunks cover
-    let newChunckBeginBin_list = range(beginIndex, endIndex).map((index) => {
-      return indexContents["zoom_levels"][selZoomLev]["files"][index][
-        "first_bin"
-      ];
-    });
-    let newChunckEndBin_list = range(beginIndex, endIndex).map((index) => {
-      return indexContents["zoom_levels"][selZoomLev]["files"][index][
-        "last_bin"
-      ];
-    });
     this.props.store.setChunkBeginEndBin(
-      Math.min.apply(Math, newChunckBeginBin_list),
-      Math.max.apply(Math, newChunckEndBin_list)
+      indexContents["zoom_levels"][selZoomLev]["files"][beginIndex][
+        "first_bin"
+      ],
+      indexContents["zoom_levels"][selZoomLev]["files"][endIndex]["last_bin"]
     );
   }
 
@@ -252,9 +239,6 @@ class PangenomeSchematic extends React.Component {
         }
       }
     }
-
-    // AG: at the end, after reading chunck information
-    //this.loadFasta();
 
     console.log(
       "processArray",
