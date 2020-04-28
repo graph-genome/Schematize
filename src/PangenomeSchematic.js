@@ -196,7 +196,7 @@ class PangenomeSchematic extends React.Component {
       this.props.store.getBeginBin(),
       this.props.store.getEndBin(),
     ];
-    let urls = this.props.store.getChunkURLs();
+    let urls = this.props.store.chunkURLs;
     if (
         this.chunksProcessed.length === 0 ||
         this.chunksProcessed[0] !== urls[0]

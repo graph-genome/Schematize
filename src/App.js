@@ -92,8 +92,8 @@ class App extends Component {
     /*Dispatches fetches for all chunk files
      * Read https://github.com/graph-genome/Schematize/issues/22 for details
      */
-    console.log("fetchAllChunks", this.props.store.getChunkURLs());
-    if (!this.props.store.getChunkURLs()[0]) {
+    console.log("fetchAllChunks", this.props.store.chunkURLs);
+    if (!this.props.store.chunkURLs[0]) {
       console.warn("No chunk URL defined.");
       return;
     }

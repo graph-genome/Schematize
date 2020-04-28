@@ -1,5 +1,5 @@
-import { types } from "mobx-state-tree";
-import { urlExists } from "./URL";
+import {types} from "mobx-state-tree";
+import {urlExists} from "./URL";
 
 const BeginEndBin = types.optional(types.array(types.integer), [1, 140]);
 const ChunkURLs = types.optional(types.array(types.string), [""]);
@@ -120,12 +120,6 @@ RootStore = types
         console.log("arrayOfFile: " + arrayOfFile);
       }
     }
-    function getChunkURLs() {
-      return self.chunkURLs;
-    }
-    function getBeginEndBin() {
-      return self.beginEndBin;
-    }
     function getBeginBin() {
       return self.beginEndBin[0];
     }
@@ -135,10 +129,8 @@ RootStore = types
 
     // AG: added getter and setter for zoom info management
     function getSelectedZoomLevel() {
+      //This is a genuinely useful getter
       return self.availableZoomLevels[self.indexSelectedZoomLevel];
-    }
-    function getIndexSelectedZoomLevel() {
-      return self.indexSelectedZoomLevel;
     }
     function setIndexSelectedZoomLevel(index) {
       self.indexSelectedZoomLevel = index;
@@ -153,24 +145,12 @@ RootStore = types
         self.indexSelectedZoomLevel += 1;
       }
     }
-    function getAvailableZoomLevels() {
-      return self.availableZoomLevels;
-    }
     function setAvailableZoomLevels(availableZoomLevels) {
       self.availableZoomLevels = availableZoomLevels;
     }
 
     function setBeginEndBin(newBeginBin, newEndBin) {
       self.beginEndBin = [newBeginBin, newEndBin];
-    }
-    function getPath() {
-      return self.pathNucPos.path;
-    }
-    function getNucPos() {
-      return self.pathNucPos.nucPos;
-    }
-    function getPathNucPos() {
-      return self.pathNucPos;
     }
     function updatePathNucPos(path, nucPos) {
       if (nucPos) {
@@ -201,25 +181,21 @@ RootStore = types
       updateWidth,
       tryJSONpath,
       switchChunkURLs,
-      getChunkURLs,
-      getBeginEndBin,
       getBeginBin,
       getEndBin,
-      getPath,
-      getNucPos,
-      getPathNucPos,
       updatePathNucPos,
       setBinWidth,
       setBeginColumnX,
+      //NOTE: DO NOT ADD GETTERS here.  They are not necessary in mobx.
+      // You can reference store.val directly without store.getVal()
+      //Only write getters to encapsulate useful logic for derived values
 
       // AG: zoom actions
       getSelectedZoomLevel,
       setIndexSelectedZoomLevel,
-      getIndexSelectedZoomLevel,
       //TODO: these actions are too specific. Increase and decrease should go in the widget code
       decIndexSelectedZoomLevel,
       incIndexSelectedZoomLevel,
-      getAvailableZoomLevels,
       setAvailableZoomLevels,
     };
   })

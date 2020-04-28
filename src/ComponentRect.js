@@ -177,11 +177,12 @@ class ComponentRect extends React.Component {
         <Rect
           x={this.props.item.x}
           y={this.props.store.topOffset}
+          key={this.state.key + "R"}
           width={this.props.width * this.props.store.pixelsPerColumn}
           height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
           fill={this.state.color}
           onClick={this.handleClick}
-        ></Rect>
+        />
         {!this.props.store.useWidthCompression ? this.renderMatrix() : null}
         {this.props.store.useConnector ? this.renderAllConnectors() : null}
       </>
