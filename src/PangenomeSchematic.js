@@ -3,10 +3,6 @@ import { observe } from "mobx";
 import { urlExists } from "./URL";
 import {calculateEndBinFromScreen} from "./utilities";
 
-function range(start, end) {
-  return [...Array(1 + end - start).keys()].map((v) => start + v);
-}
-
 class PangenomeSchematic extends React.Component {
   constructor(props) {
     /*Only plain objects will be made observable. For non-plain objects it is considered the

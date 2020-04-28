@@ -43,3 +43,36 @@ export function calculateEndBinFromScreen(beginBin, chunkIndex, selZoomLev, stor
     //of overestimating widthInCells is to make the shift buttons step too big
     return [currEnd, chunkURLarray, fileArrayFasta];
 }
+
+export function range(start, end) {
+    return [...Array(1 + end - start).keys()].map((v) => start + v);
+}
+
+
+export function stringToColor(linkColumn, highlightedLinkColumn) {
+    const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
+    if (
+        highlightedLinkColumn &&
+        colorKey ===
+        (highlightedLinkColumn.downstream + 1) *
+        (highlightedLinkColumn.upstream + 1)
+    ) {
+        return "black";
+    } else {
+        return stringToColourSave(colorKey);
+    }
+}
+
+export function stringToColourSave(colorKey) {
+    colorKey = colorKey.toString();
+    let hash = 0;
+    for (let i = 0; i < colorKey.length; i++) {
+        hash = colorKey.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    let colour = "#";
+    for (let j = 0; j < 3; j++) {
+        const value = (hash >> (j * 8)) & 0xff;
+        colour += ("00" + value.toString(16)).substr(-2);
+    }
+    return colour;
+}

@@ -12,39 +12,11 @@ import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import { observe } from "mobx";
 import { Text } from "react-konva";
-
-function stringToColor(linkColumn, highlightedLinkColumn) {
-  const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
-  if (
-    highlightedLinkColumn &&
-    colorKey ===
-      (highlightedLinkColumn.downstream + 1) *
-        (highlightedLinkColumn.upstream + 1)
-  ) {
-    return "black";
-  } else {
-    return stringToColourSave(colorKey);
-  }
-}
-
-const stringToColourSave = function (colorKey) {
-  colorKey = colorKey.toString();
-  let hash = 0;
-  for (let i = 0; i < colorKey.length; i++) {
-    hash = colorKey.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  let colour = "#";
-  for (let j = 0; j < 3; j++) {
-    const value = (hash >> (j * 8)) & 0xff;
-    colour += ("00" + value.toString(16)).substr(-2);
-  }
-  return colour;
-};
+import {stringToColor} from "./utilities";
 
 class App extends Component {
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
-  layerRef3 = React.createRef(null);
 
   constructor(props) {
     super(props);
@@ -66,6 +38,7 @@ class App extends Component {
     );
     observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
     //Arrays must be observed directly, simple objects are observed by name
+
     observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
     observe(
       this.props.store,
@@ -78,14 +51,8 @@ class App extends Component {
       this.recalcXLayout.bind(this)
     );
     observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
-    observe(
-      this.props.store,
-      "binScalingFactor",
-      this.recalcXLayout.bind(this)
-    );
+    observe(this.props.store, "binScalingFactor", this.recalcXLayout.bind(this));
     observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
-    // observe(this.props.store, "pixelsPerColumn",
-    //     this.calculateBinWidthOfScreen.bind(this));
   }
 
   fetchAllChunks() {
