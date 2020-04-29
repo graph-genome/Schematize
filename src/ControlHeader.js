@@ -26,7 +26,6 @@ class ControlHeader extends React.Component {
     const addr = store.pathIndexServerAddress;
     const path_name = store.pathNucPos.path;
     const nuc_pos = store.pathNucPos.nucPos;
-    const binWidth = store.binWidth;
 
     function handleOdgiServerResponse(result) {
       if (result === "0") {
@@ -37,7 +36,7 @@ class ControlHeader extends React.Component {
         console.log(result);
         // go from nucleotide position to bin
         result = parseInt(result);
-        const newBeginBin = Math.ceil(result / binWidth);
+        const newBeginBin = Math.ceil(result / this.props.store.getBinWidth());
         console.log(newBeginBin);
         store.updateBeginEndBin(newBeginBin, store.getEndBin());
       }
@@ -56,7 +55,6 @@ class ControlHeader extends React.Component {
         " ---" +
         target.options[target.selectedIndex].text
     );
-
     this.props.store.setIndexSelectedZoomLevel(parseInt(target.value));
   }
 
@@ -84,12 +82,12 @@ class ControlHeader extends React.Component {
           <select
             id="select_bin_width"
             onChange={(val) => this.change_zoom_level(val.target)}
+            value={this.props.store.indexSelectedZoomLevel}
           >
             {this.props.store.availableZoomLevels.map((item, i) => (
               <option
                 key={i}
                 value={i}
-                selected={i === this.props.store.indexSelectedZoomLevel}
               >
                 {item}
               </option>

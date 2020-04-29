@@ -1,6 +1,6 @@
 
 
-export function calculateEndBinFromScreen(beginBin, chunkIndex, selZoomLev, store)
+export function calculateEndBinFromScreen(beginBin, selZoomLev, store)
 {
     let deviceWidth = 1920; // TODO: get width from browser
     let widthInCells = deviceWidth / store.pixelsPerColumn;
@@ -11,7 +11,8 @@ export function calculateEndBinFromScreen(beginBin, chunkIndex, selZoomLev, stor
     let currEnd = beginBin + 1;
     let workingWidth = 0;
     //this loop will automatically cap out at the last bin of the file
-    for (let chunk of chunkIndex["zoom_levels"][selZoomLev]["files"]) {
+    for (let ichunk = 0; ichunk < store.chunkIndex.zoom_levels[selZoomLev].files.length; ichunk++) {
+        let chunk = store.chunkIndex.zoom_levels[selZoomLev].files[ichunk];
         if(chunk.last_bin >= beginBin) { //don't start until viewport starts
             if (!initialized) {
                 store.setBeginColumnX(chunk.x); //TODO calculate partial chunk X

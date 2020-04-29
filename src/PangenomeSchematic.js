@@ -9,39 +9,40 @@ class PangenomeSchematic extends React.Component {
 		 responsibility of the constructor to initialize the observable properties. Either use
 		 the @observable annotation or the extendObservable function.*/
 
-    super(props);
-    this.pathNames = [];
-    this.components = [];
-    this.chunkIndex = null;
-    //TODO: replace jsonCache with browser indexdb
-    this.jsonCache = {}; // URL keys, values are entire JSON file datas
-    this.chunksProcessed = []; //list of URLs now in this.components
+      super(props);
+      this.pathNames = [];
+      this.components = [];
+      //TODO: replace jsonCache with browser indexdb
+      this.jsonCache = {}; // URL keys, values are entire JSON file datas
+      this.chunksProcessed = []; //list of URLs now in this.components
 
-    // Added nucleotides attribute and its edges
-    this.nucleotides = [];
+      // Added nucleotides attribute and its edges
+      this.nucleotides = [];
+      this.loadIndexFile(this.props.store.jsonName); //initializes this.chunkIndex
 
-    this.loadIndexFile(this.props.store.jsonName); //initializes this.chunkIndex
-    //whenever jsonName changes,
-    observe(this.props.store, "jsonName", () => {
-      this.loadIndexFile(this.props.store.jsonName);
-    });
+      //STEP #1: whenever jsonName changes, loadIndexFile
+      observe(this.props.store, "jsonName", () => {
+          this.loadIndexFile(this.props.store.jsonName);
+      });
 
-    // Whenever the selected zoom level changes
-    observe(this.props.store, "indexSelectedZoomLevel", () => {
-      this.loadIndexFile(this.props.store.jsonName);
-    });
+      //STEP #3: with new chunkIndex, openRelevantChunksFromIndex
+      observe(this.props.store,"chunkIndex",
+          this.openRelevantChunksFromIndex.bind(this)
+      );
+      observe(this.props.store, "indexSelectedZoomLevel",
+          this.openRelevantChunksFromIndex.bind(this) // Whenever the selected zoom level changes
+      );
+      observe(this.props.store.beginEndBin, //user moves start position
+          //This following part is important to scroll right and left on browser
+          this.openRelevantChunksFromIndex.bind(this)
+      );
 
-    observe(
-      this.props.store.beginEndBin,
-      this.openRelevantChunksFromIndex.bind(this)
-    );
+      // The FASTA files are read only when there are new chunks to read
+      observe(this.props.store.chunkFastaURLs, () => {
+          this.loadFasta();
+      });
 
-    // The FASTA files are read only when there are new chuncks to read
-    observe(this.props.store.chunkFastaURLs, () => {
-      this.loadFasta();
-    });
-
-    // console.log("public ", process.env.PUBLIC_URL ) //PUBLIC_URL is empty
+      // console.log("public ", process.env.PUBLIC_URL ) //PUBLIC_URL is empty
   }
   componentDidUpdate() {
     // console.log("#components: " + this.components);
@@ -51,16 +52,16 @@ class PangenomeSchematic extends React.Component {
    * It finds the appropriate chunk URLS from the index and updates
    * switchChunkURLs which trigger json fetches for the new chunks. **/
   openRelevantChunksFromIndex() {
-      if (this.chunkIndex === null) {
+      if(!this.props.store.chunkIndex.zoom_levels.length) {
           return; //before the class is fully initialized
       }
-      let indexContents = this.chunkIndex;
       const beginBin = this.props.store.getBeginBin();
 
-      this.props.store.setAvailableZoomLevels(Object.keys(indexContents["zoom_levels"]));
+      this.props.store.setAvailableZoomLevels(Object.keys(
+          this.props.store.chunkIndex["zoom_levels"]));
       const selZoomLev = this.props.store.getSelectedZoomLevel();
-      let [endBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(beginBin, this.chunkIndex,
-          selZoomLev, this.props.store);
+      let [endBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
+          beginBin, selZoomLev, this.props.store);
       this.props.store.updateBeginEndBin(beginBin, endBin);
 
       let URLprefix =
@@ -77,6 +78,7 @@ class PangenomeSchematic extends React.Component {
           return URLprefix + filename
       });
 
+      //STEP #4: Set switchChunkURLs
       this.props.store.switchChunkURLs(fileArray);
 
       if (fileArrayFasta.length) {
@@ -91,9 +93,8 @@ class PangenomeSchematic extends React.Component {
     return fetch(indexPath)
       .then((res) => res.json())
       .then((json) => {
-        // This following part is important to scroll right and left on browser
-        this.chunkIndex = json;
-        this.openRelevantChunksFromIndex();
+        // STEP#2:
+        this.props.store.setChunkIndex(json);
       });
   }
 
@@ -107,6 +108,7 @@ class PangenomeSchematic extends React.Component {
   }
 
   loadJsonCache(url, data) {
+    //STEP #6: fetched chunks go into loadJsonCache
     if (data.json_version !== 14) {
       throw MediaError(
           "Wrong Data JSON version: was expecting version 14, got " +
@@ -119,7 +121,6 @@ class PangenomeSchematic extends React.Component {
     }
     this.jsonCache[url] = data;
     this.pathNames = data.path_names; //TODO: in later JSON versions path_names gets moved to bin2file.json
-    this.props.store.setBinWidth(parseInt(data.bin_width));
   }
 
   loadFasta() {
@@ -158,6 +159,7 @@ class PangenomeSchematic extends React.Component {
    * Checks if there's new available data to pre-render in processArray()
    * run through list of urls in order and see if we have data to load.**/
   processArray() {
+      //STEP #8: processArray for available chunks into Component objects
     let [beginBin, endBin] = [
       this.props.store.getBeginBin(),
       this.props.store.getEndBin(),
@@ -201,7 +203,7 @@ class PangenomeSchematic extends React.Component {
     );
     //console.log(this.props)
 
-    return true;
+    return true;//this.chunksProcessed.length > 0;
   }
 }
 
