@@ -84,13 +84,10 @@ class ControlHeader extends React.Component {
           <select
             id="select_bin_width"
             onChange={(val) => this.change_zoom_level(val.target)}
+            value={this.props.store.getIndexSelectedZoomLevel()}
           >
             {this.props.store.getAvailableZoomLevels().map((item, i) => (
-              <option
-                key={i}
-                value={i}
-                selected={i === this.props.store.getIndexSelectedZoomLevel()}
-              >
+              <option key={i} value={i}>
                 {item}
               </option>
             ))}
