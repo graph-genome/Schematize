@@ -96,6 +96,8 @@ class LinkArrow extends React.Component {
         strokeWidth={this.props.store.pixelsPerColumn}
         fill={this.props.color}
         stroke={this.props.color}
+        opacity={this.props.opacity}
+        stroke-opacity={this.props.opacity}
         pointerLength={1}
         pointerWidth={1}
         tension={1 / 3}
@@ -115,23 +117,37 @@ class LinkArrow extends React.Component {
   };
   handleClick = (event) => {
     /*Jump on Link click rough draft. Detects which end is closest to the view and
-        jumps to the other side. TODO: Still needs visual highlighting at destination.*/
+    jumps to the other side. TODO: Still needs visual highlighting at destination.*/
     console.log("Click", event, this.props.link);
-    //find middle position of viewport
-    let width = this.props.store.getEndBin() - this.props.store.getBeginBin();
-    let mid_bin = this.props.store.getBeginBin() + width / 2;
-    //compare with ends of arrow coordinates
-    let end_closer =
-      Math.abs(this.props.link.linkColumn.upstream - mid_bin) <
-      Math.abs(this.props.link.linkColumn.downstream - mid_bin);
-    //identify more distant end
-    let destination_bin = end_closer
-      ? this.props.link.linkColumn.downstream
-      : this.props.link.linkColumn.upstream;
-    //calculate beginBin that will place distant end in middle of viewport
-    let newStart = ~~(destination_bin - width / 2);
-    this.props.store.updateBeginEndBin(newStart, newStart + width);
-    //set beginBin.
+
+    const [beginBin, endBin] = this.props.store.getBeginEndBin();
+
+    // TODO: Update the range only if the arrow it is not already contained in the current visualized range
+    if (true) {
+      // Find middle position of viewport
+      let width = endBin - beginBin;
+      let mid_bin = beginBin + width / 2;
+
+      // Compare with ends of arrow coordinates
+      let end_closer =
+        Math.abs(this.props.link.linkColumn.upstream - mid_bin) <
+        Math.abs(this.props.link.linkColumn.downstream - mid_bin);
+
+      // Identify more distant end
+      let destination_bin = end_closer
+        ? this.props.link.linkColumn.downstream
+        : this.props.link.linkColumn.upstream;
+
+      // Calculate beginBin that will place distant end in middle of viewport
+      // The ~~ operator is a double NOT bitwise operator. It is used as a faster substitute for Math.floor().
+      let newBeginBin = ~~(destination_bin - width / 2);
+      let newEndBin = newBeginBin + width;
+
+      this.props.store.updateBeginEndBin(newBeginBin, newEndBin);
+
+      // Called after the bin updating to start the timers after the rendering
+      this.props.updateSelectedLink(this.props.link.linkColumn);
+    }
   };
 }
 
@@ -140,6 +156,7 @@ LinkArrow.propTypes = {
   link: PropTypes.object,
   color: PropTypes.node,
   updateHighlightedNode: PropTypes.func,
+  updateSelectedLink: PropTypes.func,
 };
 
 export default LinkArrow;
