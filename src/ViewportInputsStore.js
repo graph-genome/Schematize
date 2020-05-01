@@ -21,7 +21,7 @@ RootStore = types
     useConnector: true,
     beginEndBin: BeginEndBin,
     pixelsPerColumn: 10,
-    pixelsPerRow: 7,
+    pixelsPerRow: 10,
     leftOffset: 25,
     topOffset: 400,
     highlightedLink: 0, // we will compare linkColumns

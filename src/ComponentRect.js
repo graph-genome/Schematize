@@ -1,6 +1,6 @@
 /* eslint-disable require-jsdoc */
 import React from "react";
-import { Rect } from "react-konva";
+import { Rect, Text } from "react-konva";
 import { MatrixCell, ConnectorRect } from "./ComponentConnectorRect";
 import PropTypes from "prop-types";
 
@@ -83,6 +83,38 @@ class ComponentRect extends React.Component {
 
     return row.map((cell, x) => {
       if (cell.length) {
+        const inverted = cell[1] > 0.5;
+
+        let color = "#838383";
+
+        if (inverted) {
+          color = "#DE4B39";
+        }
+
+        if (cell[0] > 1) {
+          color = "#6A6A6A";
+        }
+
+        const xPos = (x) => x_val + x * this.props.store.pixelsPerColumn;
+        const y =
+          this_y * this.props.store.pixelsPerRow + this.props.store.topOffset;
+
+        const LessThanSign = () => {
+          if (!inverted) {
+            return null;
+          }
+
+          return (
+            <Text
+              x={xPos(x)}
+              y={y}
+              align="center"
+              verticalAlign="center"
+              text="<"
+            />
+          );
+        };
+
         return (
           <>
             <MatrixCell
@@ -90,16 +122,14 @@ class ComponentRect extends React.Component {
               item={cell}
               store={this.props.store}
               pathName={this.props.pathNames[row_n]}
-              x={x_val + x * this.props.store.pixelsPerColumn}
-              y={
-                this_y * this.props.store.pixelsPerRow +
-                this.props.store.topOffset
-              }
+              x={xPos(x)}
+              y={y}
               row_number={row_n}
               width={width}
               height={this.props.store.pixelsPerRow}
-              color={"#838383"}
+              color={color}
             />
+            <LessThanSign />
           </>
         );
       } else {
