@@ -154,16 +154,7 @@ RootStore = types
     function setIndexSelectedZoomLevel(index) {
       self.indexSelectedZoomLevel = index;
     }
-    function decIndexSelectedZoomLevel() {
-      if (self.indexSelectedZoomLevel > 0) {
-        self.indexSelectedZoomLevel -= 1;
-      }
-    }
-    function incIndexSelectedZoomLevel() {
-      if (self.indexSelectedZoomLevel < self.availableZoomLevels.length - 1) {
-        self.indexSelectedZoomLevel += 1;
-      }
-    }
+
     function setAvailableZoomLevels(availableZoomLevels) {
       self.availableZoomLevels = availableZoomLevels;
     }
@@ -215,9 +206,6 @@ RootStore = types
       // Added zoom actions
       getSelectedZoomLevel,
       setIndexSelectedZoomLevel,
-      //TODO: these actions are too specific. Increase and decrease should go in the widget code
-      decIndexSelectedZoomLevel,
-      incIndexSelectedZoomLevel,
       setAvailableZoomLevels,
     };
   })

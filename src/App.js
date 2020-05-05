@@ -13,17 +13,32 @@ import ControlHeader from "./ControlHeader";
 import { observe } from "mobx";
 import { Text } from "react-konva";
 
-function stringToColor(linkColumn, highlightedLinkColumn) {
+function stringToColorAndOpacity(
+  linkColumn,
+  highlightedLinkColumn,
+  selectedLink
+) {
   const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
+
+  const whichLinkToConsider = selectedLink
+    ? selectedLink
+    : highlightedLinkColumn;
+
+  // When the mouse in on a Link, all the other ones will become gray and fade out
+
   if (
-    highlightedLinkColumn &&
+    // Check if the mouse in on a Link (highlightedLinkColumn) or if a Link was clicked (selectedLink)
+    (!highlightedLinkColumn && !selectedLink) ||
     colorKey ===
-      (highlightedLinkColumn.downstream + 1) *
-        (highlightedLinkColumn.upstream + 1)
+      (whichLinkToConsider.downstream + 1) * (whichLinkToConsider.upstream + 1)
   ) {
-    return "black";
+    return [
+      stringToColourSave(colorKey),
+      1.0,
+      highlightedLinkColumn || selectedLink ? "black" : null,
+    ];
   } else {
-    return stringToColourSave(colorKey);
+    return ["gray", 0.3, null];
   }
 }
 
@@ -45,11 +60,14 @@ class App extends Component {
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
   layerRef3 = React.createRef(null);
+  timerHighlightingLink = null;
+  timerSelectionLink = null;
 
   constructor(props) {
     super(props);
 
     this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
+    this.updateSelectedLink = this.updateSelectedLink.bind(this);
 
     this.state = {
       schematize: [],
@@ -244,15 +262,82 @@ class App extends Component {
     this.layerRef2.current.getCanvas()._canvas.id = "arrow";
     this.layerRef2.current.getCanvas()._canvas.position = "relative";
     //this.layerRef2.current.getCanvas()._canvas.style.top = "95px";
-    /*        if(this.props.store.useVerticalCompression) {
-            this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
-        }*/
+    /*if(this.props.store.useVerticalCompression) {
+      this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
+    }*/
   };
 
-  updateHighlightedNode = (linkRect) => {
+  // Now it is wrapped in the updateHighlightedNode() function
+  _updateHighlightedNode = (linkRect) => {
     this.setState({ highlightedLink: linkRect });
     this.recalcXLayout();
-    // this.props.store.updateHighlightedLink(linkRect); // TODO this does not work, ask Robert about it
+  };
+
+  // Wrapper function to wrap the logic (no link selected and time delay)
+  updateHighlightedNode = (linkRect) => {
+    // The highlighting has to work only if there isn't any selected link
+    if (!this.state.selectedLink) {
+      if (linkRect != null) {
+        // It comes from an handleMouseOver event
+
+        clearTimeout(this.timerHighlightingLink);
+
+        // To avoid unnecessary rendering when linkRect is still the this.state.highlightedLink link.
+        if (this.state.highlightedLink !== linkRect) {
+          // This ES6 syntaxt avoid to pass the result of the callback to setTimeoutwork.
+          // It works because the ES6 arrow function does not change the context of this.
+          this.timerHighlightingLink = setTimeout(
+            () => {
+              this._updateHighlightedNode(linkRect);
+            },
+            600 // TODO: value to tune. Create a config file where all these hard-coded settings will be
+          );
+        }
+      } else {
+        // It comes from an handleMouseOut event
+
+        clearTimeout(this.timerHighlightingLink);
+
+        // To avoid unnecessary rendering when linkRect == null and this.state.highlightedLink is already null for any reason.
+        if (this.state.highlightedLink != null) {
+          this.timerHighlightingLink = setTimeout(
+            () => {
+              this._updateHighlightedNode(linkRect);
+            },
+            600 // TODO: value to tune. Create a config file where all these hard-coded settings will be
+          );
+        }
+      }
+    }
+  };
+
+  updateSelectedLink = (linkRect) => {
+    console.log("updateSelectedLink");
+
+    if (linkRect !== this.state.selectedLink) {
+      console.log("updateSelectedLink - NewSelection");
+
+      clearTimeout(this.timerHighlightingLink);
+
+      this.setState({
+        highlightedLink: linkRect,
+        selectedLink: linkRect,
+      });
+    }
+    //else it is a re-clik on the same link, so do nothing here
+
+    // Auto de-selection after a delay
+    if (linkRect) {
+      // Eventually restart the timer if it was already ongoing
+      clearTimeout(this.timerSelectionLink);
+
+      this.timerSelectionLink = setTimeout(
+        () => {
+          this.updateSelectedLink(null);
+        },
+        5000 // TODO: to tune. Create a config file where all these hard-coded settings will be
+      );
+    }
   };
 
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
@@ -328,7 +413,11 @@ class App extends Component {
       firstDepartureColumn,
       j
     );
-    const localColor = stringToColor(linkColumn, this.state.highlightedLink);
+    const [localColor, localOpacity, localStroke] = stringToColorAndOpacity(
+      linkColumn,
+      this.state.highlightedLink,
+      this.state.selectedLink
+    );
     return (
       <LinkColumn
         store={this.props.store}
@@ -339,6 +428,8 @@ class App extends Component {
         pixelsPerRow={this.props.store.pixelsPerRow}
         width={this.props.store.pixelsPerColumn}
         color={localColor}
+        opacity={localOpacity}
+        stroke={localStroke}
         updateHighlightedNode={this.updateHighlightedNode}
         compressed_row_mapping={this.compressed_row_mapping}
       />
@@ -346,13 +437,21 @@ class App extends Component {
   }
 
   renderLink(link) {
+    const [localColor, localOpacity] = stringToColorAndOpacity(
+      link.linkColumn,
+      this.state.highlightedLink,
+      this.state.selectedLink
+    );
+
     return (
       <LinkArrow
         store={this.props.store}
         key={"arrow" + link.linkColumn.key}
         link={link}
-        color={stringToColor(link.linkColumn, this.state.highlightedLink)}
+        color={localColor}
+        opacity={localOpacity}
         updateHighlightedNode={this.updateHighlightedNode}
+        updateSelectedLink={this.updateSelectedLink}
       />
     );
   }
@@ -461,11 +560,11 @@ class App extends Component {
             zIndex: "2",
             background: "white",
 
-            // AG: to keep the matrix under the container with the vertical scrolling
+            // To keep the matrix under the container with the vertical scrolling
             // when the matrix is larger than the page
             width: this.state.actualWidth + 60,
 
-            // AG: to avoid width too low with large bin_width
+            // To avoid width too low with large bin_width
             minWidth: "100%",
           }}
         >
@@ -486,7 +585,7 @@ class App extends Component {
 
         <Stage
           x={this.props.store.leftOffset} // removed leftOffset to simplify code. Relative coordinates are always better.
-          y={-this.props.store.topOffset} // AG: for some reason, I have to put this, but I'd like to put 0
+          y={-this.props.store.topOffset} // For some reason, I have to put this, but I'd like to put 0
           width={this.state.actualWidth + 60}
           height={this.visibleHeight() + this.props.store.nucleotideHeight}
         >
