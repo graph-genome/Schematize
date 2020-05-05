@@ -165,25 +165,11 @@ RootStore = types
     function getSelectedZoomLevel() {
       return self.availableZoomLevels[self.indexSelectedZoomLevel];
     }
-    function getIndexSelectedZoomLevel() {
-      return self.indexSelectedZoomLevel;
-    }
+
     function setIndexSelectedZoomLevel(index) {
       self.indexSelectedZoomLevel = index;
     }
-    function decIndexSelectedZoomLevel() {
-      if (self.indexSelectedZoomLevel > 0) {
-        self.indexSelectedZoomLevel -= 1;
-      }
-    }
-    function incIndexSelectedZoomLevel() {
-      if (self.indexSelectedZoomLevel < self.availableZoomLevels.length - 1) {
-        self.indexSelectedZoomLevel += 1;
-      }
-    }
-    function getAvailableZoomLevels() {
-      return self.availableZoomLevels;
-    }
+
     function setAvailableZoomLevels(availableZoomLevels) {
       self.availableZoomLevels = availableZoomLevels;
     }
@@ -245,10 +231,6 @@ RootStore = types
       // Added zoom actions
       getSelectedZoomLevel,
       setIndexSelectedZoomLevel,
-      getIndexSelectedZoomLevel,
-      decIndexSelectedZoomLevel,
-      incIndexSelectedZoomLevel,
-      getAvailableZoomLevels,
       setAvailableZoomLevels,
     };
   })
