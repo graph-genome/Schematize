@@ -46,11 +46,17 @@ class LinkColumn extends React.Component {
             <Rect
               key={"dot" + d}
               x={this.props.x}
-              y={this.props.store.topOffset + y_coord + this.props.store.nucleotideHeight}
+              y={
+                this.props.store.topOffset +
+                y_coord +
+                this.props.store.nucleotideHeight
+              }
               width={this.props.store.pixelsPerColumn}
               height={this.props.store.pixelsPerRow}
               fill={this.props.color}
-            // onClick={this.handleClick}
+              opacity={this.props.opacity}
+              stroke={this.props.stroke}
+              // onClick={this.handleClick}
               onMouseOver={this.handleMouseOver}
               onMouseOut={this.handleMouseOut}
             />

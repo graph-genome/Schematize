@@ -60,6 +60,20 @@ class ControlHeader extends React.Component {
     this.props.store.setIndexSelectedZoomLevel(parseInt(target.value));
   }
 
+  decIndexSelectedZoomLevel() {
+    let indexSelZoomLevel = this.props.store.indexSelectedZoomLevel;
+    if (indexSelZoomLevel > 0) {
+      this.props.store.setIndexSelectedZoomLevel(indexSelZoomLevel - 1);
+    }
+  }
+
+  incIndexSelectedZoomLevel() {
+    let indexSelZoomLevel = this.props.store.indexSelectedZoomLevel;
+    if (indexSelZoomLevel < this.props.store.availableZoomLevels.length - 1) {
+      this.props.store.setIndexSelectedZoomLevel(indexSelZoomLevel + 1);
+    }
+  }
+
   render() {
     return (
       <div id="button-container">
@@ -77,27 +91,24 @@ class ControlHeader extends React.Component {
           Bin width:
           <button
             className="button"
-            onClick={() => this.props.store.decIndexSelectedZoomLevel()}
+            onClick={() => this.decIndexSelectedZoomLevel()}
           >
             -
           </button>
           <select
             id="select_bin_width"
             onChange={(val) => this.change_zoom_level(val.target)}
+            value={this.props.store.indexSelectedZoomLevel}
           >
-            {this.props.store.getAvailableZoomLevels().map((item, i) => (
-              <option
-                key={i}
-                value={i}
-                selected={i === this.props.store.getIndexSelectedZoomLevel()}
-              >
+            {this.props.store.availableZoomLevels.map((item, i) => (
+              <option key={i} value={i}>
                 {item}
               </option>
             ))}
           </select>
           <button
             className="button"
-            onClick={() => this.props.store.incIndexSelectedZoomLevel()}
+            onClick={() => this.incIndexSelectedZoomLevel()}
           >
             +
           </button>
