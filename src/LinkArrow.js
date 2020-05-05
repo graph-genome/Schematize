@@ -120,7 +120,7 @@ class LinkArrow extends React.Component {
     jumps to the other side. TODO: Still needs visual highlighting at destination.*/
     console.log("Click", event, this.props.link);
 
-    const [beginBin, endBin] = this.props.store.getBeginEndBin();
+    const [beginBin, endBin] = this.props.store.beginEndBin;
 
     // TODO: Update the range only if the arrow it is not already contained in the current visualized range
     if (true) {

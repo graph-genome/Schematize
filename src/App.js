@@ -12,7 +12,7 @@ import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import { observe } from "mobx";
 import { Text } from "react-konva";
-import {stringToColor} from "./utilities";
+import {stringToColorAndOpacity} from "./utilities";
 
 class App extends Component {
   layerRef = React.createRef();

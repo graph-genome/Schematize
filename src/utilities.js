@@ -50,19 +50,27 @@ export function range(start, end) {
 }
 
 
-export function stringToColor(linkColumn, highlightedLinkColumn) {
+export function stringToColorAndOpacity(linkColumn, highlightedLinkColumn, selectedLink) {
     const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
-    if (
-        highlightedLinkColumn &&
-        colorKey ===
-        (highlightedLinkColumn.downstream + 1) *
-        (highlightedLinkColumn.upstream + 1)
-    ) {
-        return "black";
+
+    const whichLinkToConsider = selectedLink
+        ? selectedLink
+        : highlightedLinkColumn;
+
+    // When the mouse in on a Link, all the other ones will become gray and fade out
+    let matchColor = (whichLinkToConsider.downstream + 1) * (whichLinkToConsider.upstream + 1);
+    // Check if the mouse in on a Link (highlightedLinkColumn) or if a Link was clicked (selectedLink)
+    if ((!highlightedLinkColumn && !selectedLink) || colorKey === matchColor) {
+        return [
+            stringToColourSave(colorKey),
+            1.0,
+            highlightedLinkColumn || selectedLink ? "black" : null,
+        ];
     } else {
-        return stringToColourSave(colorKey);
+        return ["gray", 0.3, null];
     }
 }
+
 
 export function stringToColourSave(colorKey) {
     colorKey = colorKey.toString();
