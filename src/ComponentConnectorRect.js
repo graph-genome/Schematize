@@ -64,22 +64,7 @@ export class MatrixCell extends React.Component {
       color = "#6A6A6A";
     }
 
-    const LessThanSign = () => {
-      if (!inverted) {
-        return null;
-      }
-
-      return (
-        <Text
-          x={this.props.x}
-          y={this.props.y}
-          align="center"
-          verticalAlign="center"
-          text="<"
-        />
-      );
-    };
-
+    // TODO: if possible, use HTML/CSS to write the '<', avoiding the <Text />s rendering, therefore improving the performance
     return (
       <>
         <Rect
@@ -87,12 +72,20 @@ export class MatrixCell extends React.Component {
           y={this.props.y}
           width={this.props.width}
           height={this.props.height || 1}
-          label={"c"}
           fill={color}
+        />
+
+        <Text
+          x={this.props.x}
+          y={this.props.y}
+          width={this.props.width}
+          height={this.props.height || 1}
+          align={"center"}
+          verticalAlign={"center"}
+          text={inverted ? "<" : " "}
           onMouseEnter={this.onHover.bind(this)}
           onMouseLeave={this.onLeave.bind(this)}
         />
-        <LessThanSign />
       </>
     );
   }
