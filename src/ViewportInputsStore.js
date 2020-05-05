@@ -57,6 +57,7 @@ RootStore = types
   })
   .actions((self) => {
     function setChunkIndex(json){
+      console.log("Index updated with content:", json);
       self.chunkIndex = json;
     }
     function updateBeginEndBin(newBegin, newEnd) {
@@ -138,7 +139,7 @@ RootStore = types
         arrayOfFile.every((e) => self.chunkURLs.indexOf(e) > -1);
       if (!arraysEqual) {
         self.chunkURLs = arrayOfFile;
-        console.log("arrayOfFile: " + arrayOfFile);
+        console.log("switchChunkURLs arrayOfFile: " + arrayOfFile);
       }
     }
     function switchChunkFastaURLs(arrayOfFile) {
@@ -174,7 +175,8 @@ RootStore = types
     }
 
     function setAvailableZoomLevels(availableZoomLevels) {
-      self.availableZoomLevels = availableZoomLevels;
+      let arr = [...availableZoomLevels];
+      self.availableZoomLevels = arr;
     }
 
     function setBeginEndBin(newBeginBin, newEndBin) {

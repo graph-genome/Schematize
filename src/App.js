@@ -17,7 +17,6 @@ import {stringToColorAndOpacity} from "./utilities";
 class App extends Component {
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
-  layerRef3 = React.createRef(null);
   timerHighlightingLink = null;
   timerSelectionLink = null;
 
@@ -68,16 +67,16 @@ class App extends Component {
      * Read https://github.com/graph-genome/Schematize/issues/22 for details
      */
     console.log("fetchAllChunks", this.props.store.chunkURLs);
-    if (!this.props.store.chunkURLs[0]) {
+    if (!this.props.store.chunkURLs.get(0)) {
       console.warn("No chunk URL defined.");
       return;
     }
-    for (let chunk of this.props.store.chunkURLs) {
+    for (let chunkPath of this.props.store.chunkURLs) {
       //TODO: conditional on jsonCache not already having chunk
       this.schematic
-        .jsonFetch(chunk)
-        .then((data) => this.schematic.loadJsonCache(chunk, data))
-        .then(this.updateSchematicMetadata.bind(this));
+        .jsonFetch(chunkPath)
+        .then((data) => this.schematic.loadJsonCache(chunkPath, data))
+        //.then(this.updateSchematicMetadata.bind(this));
     }
   }
 
@@ -97,6 +96,7 @@ class App extends Component {
         },
         () => {
           this.recalcXLayout();
+
           this.compressed_row_mapping = compress_visible_rows(
             this.schematic.components
           );
@@ -148,15 +148,6 @@ class App extends Component {
     this.setState({ highlightedLink: null }); // nothing code to force update.
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (
-      this.props.store.getBeginBin() !== prevProps.store.getBeginBin() ||
-      this.props.store.getEndBin() !== prevProps.store.getEndBin()
-    ) {
-      this.updateSchematicMetadata();
-    }
-  }
-
   calcMaxNumRowsAcrossComponents(components) {
     let maxNumberRowsInOneComponent = 0;
     for (let i = 0; i < components.length; i++) {
@@ -195,14 +186,11 @@ class App extends Component {
       );
     } else {
       return (
+          //TODO: NOTE that Object.keys is wrong if you change compressed_row_mapping to a mobx object
         (Object.keys(this.compressed_row_mapping).length + 0.25) *
         this.props.store.pixelsPerRow
       );
     }
-  }
-
-  UNSAFE_componentWillMount() {
-    this.updateSchematicMetadata();
   }
 
   componentDidMount = () => {

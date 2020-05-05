@@ -11,8 +11,9 @@ export function calculateEndBinFromScreen(beginBin, selZoomLev, store)
     let currEnd = beginBin + 1;
     let workingWidth = 0;
     //this loop will automatically cap out at the last bin of the file
-    for (let ichunk = 0; ichunk < store.chunkIndex.zoom_levels[selZoomLev].files.length; ichunk++) {
-        let chunk = store.chunkIndex.zoom_levels[selZoomLev].files[ichunk];
+    let level = store.chunkIndex.zoom_levels.get(selZoomLev)
+    for (let ichunk = 0; ichunk < level.files.length; ichunk++) {
+        let chunk = level.files[ichunk];
         if(chunk.last_bin >= beginBin) { //don't start until viewport starts
             if (!initialized) {
                 store.setBeginColumnX(chunk.x); //TODO calculate partial chunk X

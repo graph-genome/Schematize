@@ -52,13 +52,12 @@ class PangenomeSchematic extends React.Component {
    * It finds the appropriate chunk URLS from the index and updates
    * switchChunkURLs which trigger json fetches for the new chunks. **/
   openRelevantChunksFromIndex() {
-      if(!this.props.store.chunkIndex.zoom_levels.length) {
+      if(!this.props.store.chunkIndex.zoom_levels.keys()) {
           return; //before the class is fully initialized
       }
       const beginBin = this.props.store.getBeginBin();
 
-      this.props.store.setAvailableZoomLevels(Object.keys(
-          this.props.store.chunkIndex["zoom_levels"]));
+      this.props.store.setAvailableZoomLevels(this.props.store.chunkIndex["zoom_levels"].keys());
       const selZoomLev = this.props.store.getSelectedZoomLevel();
       let [endBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
           beginBin, selZoomLev, this.props.store);
@@ -89,7 +88,7 @@ class PangenomeSchematic extends React.Component {
   loadIndexFile(jsonFilename) {
     let indexPath =
       process.env.PUBLIC_URL + "test_data/" + jsonFilename + "/bin2file.json";
-    console.log("Reading", indexPath);
+    console.log("loadIndexFile Reading", indexPath);
     return fetch(indexPath)
       .then((res) => res.json())
       .then((json) => {
@@ -199,7 +198,8 @@ class PangenomeSchematic extends React.Component {
     console.log(
         "processArray",
         this.chunksProcessed[0],
-        this.chunksProcessed.slice(-1)[0]
+        this.chunksProcessed.slice(-1)[0], 
+        "out of", urls.length, "chunks"
     );
     //console.log(this.props)
 
