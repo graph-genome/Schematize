@@ -1,11 +1,23 @@
 import {types} from "mobx-state-tree";
 import {urlExists} from "./URL";
 
-const BeginEndBin = types.optional(types.array(types.integer), [1, 140]);
-
-const ChunkURLs = types.optional(types.array(types.string), []);
-const ChunkFastaURLs = types.optional(types.array(types.string), []);
-
+const Chunk = types.model({
+  file: types.string,
+  first_bin: types.integer,
+  last_bin: types.integer,
+  component_count: types.integer,
+  link_count: types.integer,
+});
+const ZoomLevel = types.model({
+  bin_width: types.integer,
+  last_bin:  types.integer,
+  files: types.array(Chunk)
+});
+const ChunkIndex = types.maybeNull(types.model({
+  json_version: 14,
+  pangenome_length: types.integer,
+  zoom_levels: types.map(ZoomLevel)
+}));
 const PathNucPos = types.model("PathNucPos", {
   path: types.string,
   nucPos: types.integer,
@@ -14,11 +26,12 @@ const PathNucPos = types.model("PathNucPos", {
 let RootStore;
 RootStore = types
   .model({
+    chunkIndex: ChunkIndex,
+    beginEndBin: types.optional(types.array(types.integer), [1, 100]),
     useVerticalCompression: false,
     useWidthCompression: false,
     binScalingFactor: 3,
     useConnector: true,
-    beginEndBin: BeginEndBin,
     pixelsPerColumn: 10,
     pixelsPerRow: 7,
     leftOffset: 0,
@@ -26,26 +39,26 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-
     // TODO: to change 'jsonName' in 'jsonNameDir'?
     jsonName: "run1.B1phi1.i1.seqwish",
-
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
     indexSelectedZoomLevel: 0,
-    chunkURLs: ChunkURLs,
-    chunkFastaURLs: ChunkFastaURLs,
+    chunkURLs: types.optional(types.array(types.string), []),
+    chunkFastaURLs: types.optional(types.array(types.string), []),
     chunkBeginBin: -1,
 
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
-    binWidth: 1,
     nucleotideHeight: 10,
     pangenomelast_bin: -1,//TODO: don't add values unless they're needed
     // TODO: Set when bin2file is read
     beginColumnX: 0, //TODO: copied and stored from bin2file.json in calculateEndBinFromScreen()
   })
   .actions((self) => {
+    function setChunkIndex(json){
+      self.chunkIndex = json;
+    }
     function updateBeginEndBin(newBegin, newEnd) {
       /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
       newBegin = Math.max(1, Math.round(newBegin));
@@ -146,10 +159,15 @@ RootStore = types
     function setChunkBeginEndBin(newChunkBeginBin) {
       self.chunkBeginBin = newChunkBeginBin;
     }
-    // Added getter and setter for zoom info management
+    // Getter and setter for zoom info management
+    function getBinWidth(){
+      //Zoom level and BinWidth are actually the same thing
+      return Number(self.getSelectedZoomLevel())
+    }
     function getSelectedZoomLevel() {
       //This is a genuinely useful getter
-      return self.availableZoomLevels[self.indexSelectedZoomLevel];
+      let a = self.availableZoomLevels[self.indexSelectedZoomLevel];
+      return a? a : "1";
     }
     function setIndexSelectedZoomLevel(index) {
       self.indexSelectedZoomLevel = index;
@@ -170,13 +188,11 @@ RootStore = types
       }
       self.pathNucPos = { path: path, nucPos: nucPos };
     }
-    function setBinWidth(binWidth) {
-      self.binWidth = binWidth;
-    }
     function setBeginColumnX(x){
       self.beginColumnX = x;
     }
     return {
+      setChunkIndex,
       updateBeginEndBin,
       updateTopOffset,
       updateHighlightedLink,
@@ -197,13 +213,13 @@ RootStore = types
       getBeginBin,
       getEndBin,
       updatePathNucPos,
-      setBinWidth,
       setBeginColumnX,
       //NOTE: DO NOT ADD GETTERS here.  They are not necessary in mobx.
       // You can reference store.val directly without store.getVal()
       //Only write getters to encapsulate useful logic for derived values
 
       // Added zoom actions
+      getBinWidth,
       getSelectedZoomLevel,
       setIndexSelectedZoomLevel,
       setAvailableZoomLevels,

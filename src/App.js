@@ -12,49 +12,7 @@ import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import { observe } from "mobx";
 import { Text } from "react-konva";
-
-function stringToColorAndOpacity(
-  linkColumn,
-  highlightedLinkColumn,
-  selectedLink
-) {
-  const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
-
-  const whichLinkToConsider = selectedLink
-    ? selectedLink
-    : highlightedLinkColumn;
-
-  // When the mouse in on a Link, all the other ones will become gray and fade out
-
-  if (
-    // Check if the mouse in on a Link (highlightedLinkColumn) or if a Link was clicked (selectedLink)
-    (!highlightedLinkColumn && !selectedLink) ||
-    colorKey ===
-      (whichLinkToConsider.downstream + 1) * (whichLinkToConsider.upstream + 1)
-  ) {
-    return [
-      stringToColourSave(colorKey),
-      1.0,
-      highlightedLinkColumn || selectedLink ? "black" : null,
-    ];
-  } else {
-    return ["gray", 0.3, null];
-  }
-}
-
-const stringToColourSave = function (colorKey) {
-  colorKey = colorKey.toString();
-  let hash = 0;
-  for (let i = 0; i < colorKey.length; i++) {
-    hash = colorKey.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  let colour = "#";
-  for (let j = 0; j < 3; j++) {
-    const value = (hash >> (j * 8)) & 0xff;
-    colour += ("00" + value.toString(16)).substr(-2);
-  }
-  return colour;
-};
+import {stringToColor} from "./utilities";
 
 class App extends Component {
   layerRef = React.createRef();
@@ -78,32 +36,31 @@ class App extends Component {
     };
     this.schematic = new PangenomeSchematic({ store: this.props.store }); //Read file, parse nothing
 
-    observe(
-      this.props.store.beginEndBin,
-      this.updateSchematicMetadata.bind(this)
-    );
+    /* == State control flow --> redundancies here can waste processing time
+    * STEP #1: whenever jsonName changes, loadIndexFile
+    * STEP #2: chunkIndex contents loaded
+    * STEP #3: with new chunkIndex, this.openRelevantChunksFromIndex();
+    * STEP #4: Set switchChunkURLs
+    * STEP #5: once ChunkURLs are listed, go fetchAllChunks
+    * STEP #6: fetched chunks go into loadJsonCache
+    * STEP #7: updateSchematicMetadata with final rendering info for this loaded chunks
+    * STEP #8: processArray for available chunks into Component objects
+        //TODO: separate processArray into its  own observer
+    //chunksProcessed updated, reserveAirspace & calcMaxNumRowsAcrossComponents
+    //Y values calculated, do the render
+    * */
+
+    // observe(this.props.store.beginEndBin, this.updateSchematicMetadata.bind(this));
+    //STEP #5: once ChunkURLs are listed, go fetchAllChunks
     observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
     //Arrays must be observed directly, simple objects are observed by name
-    observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
-    observe(
-      this.props.store,
-      "useVerticalCompression",
-      this.recalcY.bind(this)
-    );
-    observe(
-      this.props.store,
-      "useWidthCompression",
-      this.recalcXLayout.bind(this)
-    );
-    observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
-    observe(
-      this.props.store,
-      "binScalingFactor",
-      this.recalcXLayout.bind(this)
-    );
-    observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
-    // observe(this.props.store, "pixelsPerColumn",
-    //     this.calculateBinWidthOfScreen.bind(this));
+
+    // observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
+    // observe(this.props.store, "useVerticalCompression", this.recalcY.bind(this));
+    // observe(this.props.store, "useWidthCompression", this.recalcXLayout.bind(this));
+    // observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
+    // observe(this.props.store, "binScalingFactor", this.recalcXLayout.bind(this));
+    // observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
   }
 
   fetchAllChunks() {
@@ -124,6 +81,7 @@ class App extends Component {
     }
   }
 
+  //STEP #7: updateSchematicMetadata with final rendering info for this loaded chunks
   updateSchematicMetadata() {
     if (this.schematic.processArray()) {
       console.log(
@@ -461,7 +419,7 @@ class App extends Component {
       !this.state.loading &&
       // The conditions on bitWidht and useWidthCompression are lifted here,
       // avoiding any computation if nucleotides have not to be visualized.
-      this.props.store.binWidth === 1 &&
+      this.props.store.getBinWidth() === 1 &&
       !this.props.store.useWidthCompression &&
       this.schematic.nucleotides.length > 0
     ) {
