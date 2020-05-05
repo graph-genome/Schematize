@@ -25,7 +25,9 @@ function stringToColorAndOpacity(
     : highlightedLinkColumn;
 
   // When the mouse in on a Link, all the other ones will become gray and fade out
+
   if (
+    // Check if the mouse in on a Link (highlightedLinkColumn) or if a Link was clicked (selectedLink)
     (!highlightedLinkColumn && !selectedLink) ||
     colorKey ===
       (whichLinkToConsider.downstream + 1) * (whichLinkToConsider.upstream + 1)
@@ -303,7 +305,7 @@ class App extends Component {
             () => {
               this._updateHighlightedNode(linkRect);
             },
-            700 // TODO: value to tune. Create a config file where all these hard-coded settings will be
+            600 // TODO: value to tune. Create a config file where all these hard-coded settings will be
           );
         }
       } else {
@@ -317,7 +319,7 @@ class App extends Component {
             () => {
               this._updateHighlightedNode(linkRect);
             },
-            700 // TODO: value to tune. Create a config file where all these hard-coded settings will be
+            600 // TODO: value to tune. Create a config file where all these hard-coded settings will be
           );
         }
       }
