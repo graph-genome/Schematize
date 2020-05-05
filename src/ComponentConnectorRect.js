@@ -1,5 +1,5 @@
 import React from "react";
-import { Rect } from "react-konva";
+import { Rect, Text } from "react-konva";
 import PropTypes from "prop-types";
 
 export class ConnectorRect extends React.Component {
@@ -52,16 +52,48 @@ export class MatrixCell extends React.Component {
   }
 
   render() {
+    const inverted = this.props.item[1] > 0.5;
+
+    let color = "#838383";
+
+    if (inverted) {
+      color = "#DE4B39";
+    }
+
+    if (this.props.item[0] > 1) {
+      color = "#6A6A6A";
+    }
+
+    const LessThanSign = () => {
+      if (!inverted) {
+        return null;
+      }
+
+      return (
+        <Text
+          x={this.props.x}
+          y={this.props.y}
+          align="center"
+          verticalAlign="center"
+          text="<"
+        />
+      );
+    };
+
     return (
-      <Rect
-        x={this.props.x}
-        y={this.props.y}
-        width={this.props.width}
-        height={this.props.height || 1}
-        fill={this.props.color}
-        onMouseEnter={this.onHover.bind(this)}
-        onMouseLeave={this.onLeave.bind(this)}
-      />
+      <>
+        <Rect
+          x={this.props.x}
+          y={this.props.y}
+          width={this.props.width}
+          height={this.props.height || 1}
+          label={"c"}
+          fill={color}
+          onMouseEnter={this.onHover.bind(this)}
+          onMouseLeave={this.onLeave.bind(this)}
+        />
+        <LessThanSign />
+      </>
     );
   }
 }
