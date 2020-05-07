@@ -86,30 +86,36 @@ class ControlHeader extends React.Component {
           title={"File:"}
         />
         <span style={{ marginLeft: "30px" }}>
-          Bin width:
-          <button
-            className="button"
-            onClick={() => this.decIndexSelectedZoomLevel()}
-          >
-            -
-          </button>
-          <select
-            id="select_bin_width"
-            onChange={(val) => this.change_zoom_level(val.target)}
-            value={this.props.store.indexSelectedZoomLevel}
-          >
-            {this.props.store.availableZoomLevels.map((item, i) => (
-              <option key={i} value={i}>
-                {item}
-              </option>
-            ))}
-          </select>
-          <button
-            className="button"
-            onClick={() => this.incIndexSelectedZoomLevel()}
-          >
-            +
-          </button>
+          <Observer>
+            {() => (
+              <>
+                Bin width:
+                <button
+                  className="button"
+                  onClick={() => this.decIndexSelectedZoomLevel()}
+                >
+                  -
+                </button>
+                <select
+                  id="select_bin_width"
+                  onChange={(val) => this.change_zoom_level(val.target)}
+                  value={this.props.store.indexSelectedZoomLevel}
+                >
+                  {this.props.store.availableZoomLevels.map((item, i) => (
+                    <option key={i} value={i}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  className="button"
+                  onClick={() => this.incIndexSelectedZoomLevel()}
+                >
+                  +
+                </button>
+              </>
+            )}
+          </Observer>
         </span>
 
         <span style={{ marginLeft: "30px" }}>

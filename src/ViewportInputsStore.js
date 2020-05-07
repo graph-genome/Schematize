@@ -1,8 +1,9 @@
-import {types} from "mobx-state-tree";
-import {urlExists} from "./URL";
+import { types } from "mobx-state-tree";
+import { urlExists } from "./URL";
 
 const Chunk = types.model({
   file: types.string,
+  fasta: types.maybeNull(types.string),
   first_bin: types.integer,
   last_bin: types.integer,
   component_count: types.integer,
@@ -10,14 +11,16 @@ const Chunk = types.model({
 });
 const ZoomLevel = types.model({
   bin_width: types.integer,
-  last_bin:  types.integer,
-  files: types.array(Chunk)
+  last_bin: types.integer,
+  files: types.array(Chunk),
 });
-const ChunkIndex = types.maybeNull(types.model({
-  json_version: 14,
-  pangenome_length: types.integer,
-  zoom_levels: types.map(ZoomLevel)
-}));
+const ChunkIndex = types.maybeNull(
+  types.model({
+    json_version: 14,
+    pangenome_length: types.integer,
+    zoom_levels: types.map(ZoomLevel),
+  })
+);
 const PathNucPos = types.model("PathNucPos", {
   path: types.string,
   nucPos: types.integer,
@@ -51,12 +54,12 @@ RootStore = types
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
     nucleotideHeight: 10,
-    pangenomelast_bin: -1,//TODO: don't add values unless they're needed
+    pangenomelast_bin: -1, //TODO: don't add values unless they're needed
     // TODO: Set when bin2file is read
     beginColumnX: 0, //TODO: copied and stored from bin2file.json in calculateEndBinFromScreen()
   })
   .actions((self) => {
-    function setChunkIndex(json){
+    function setChunkIndex(json) {
       console.log("Index updated with content:", json);
       self.chunkIndex = json;
     }
@@ -75,10 +78,10 @@ RootStore = types
         //crush newStart
         newBegin = newEnd - 1;
       }
-      if(newBegin !== beginBin){
+      if (newBegin !== beginBin) {
         setBeginEndBin(newBegin, newEnd);
         console.log("updateBeginEnd: " + newBegin + " " + newEnd);
-      }else{
+      } else {
         self.beginEndBin[1] = newEnd; // quietly update without refresh
       }
     }
@@ -143,13 +146,13 @@ RootStore = types
       }
     }
     function switchChunkFastaURLs(arrayOfFile) {
-        let arraysEqual =
-            arrayOfFile.length === self.chunkFastaURLs.length &&
-            arrayOfFile.every((e) => self.chunkFastaURLs.indexOf(e) > -1);
-        if (!arraysEqual) {
-            self.chunkFastaURLs = arrayOfFile;
-            console.log("arrayOfFastaFile: " + arrayOfFile);
-        }
+      let arraysEqual =
+        arrayOfFile.length === self.chunkFastaURLs.length &&
+        arrayOfFile.every((e) => self.chunkFastaURLs.indexOf(e) > -1);
+      if (!arraysEqual) {
+        self.chunkFastaURLs = arrayOfFile;
+        console.log("arrayOfFastaFile: " + arrayOfFile);
+      }
     }
     function getBeginBin() {
       return self.beginEndBin[0];
@@ -161,14 +164,14 @@ RootStore = types
       self.chunkBeginBin = newChunkBeginBin;
     }
     // Getter and setter for zoom info management
-    function getBinWidth(){
+    function getBinWidth() {
       //Zoom level and BinWidth are actually the same thing
-      return Number(self.getSelectedZoomLevel())
+      return Number(self.getSelectedZoomLevel());
     }
     function getSelectedZoomLevel() {
       //This is a genuinely useful getter
       let a = self.availableZoomLevels[self.indexSelectedZoomLevel];
-      return a? a : "1";
+      return a ? a : "1";
     }
     function setIndexSelectedZoomLevel(index) {
       self.indexSelectedZoomLevel = index;
@@ -176,7 +179,9 @@ RootStore = types
 
     function setAvailableZoomLevels(availableZoomLevels) {
       let arr = [...availableZoomLevels];
+
       self.availableZoomLevels = arr;
+      console.log("setAvailableZoomLevels: " + self.availableZoomLevels);
     }
 
     function setBeginEndBin(newBeginBin, newEndBin) {
@@ -190,7 +195,7 @@ RootStore = types
       }
       self.pathNucPos = { path: path, nucPos: nucPos };
     }
-    function setBeginColumnX(x){
+    function setBeginColumnX(x) {
       self.beginColumnX = x;
     }
     return {

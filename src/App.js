@@ -12,7 +12,9 @@ import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import { observe } from "mobx";
 import { Text } from "react-konva";
-import {stringToColorAndOpacity} from "./utilities";
+import { stringToColorAndOpacity } from "./utilities";
+
+import makeInspectable from "mobx-devtools-mst";
 
 class App extends Component {
   layerRef = React.createRef();
@@ -60,6 +62,8 @@ class App extends Component {
     // observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
     // observe(this.props.store, "binScalingFactor", this.recalcXLayout.bind(this));
     // observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
+
+    makeInspectable(this.props.store);
   }
 
   fetchAllChunks() {
@@ -75,8 +79,8 @@ class App extends Component {
       //TODO: conditional on jsonCache not already having chunk
       this.schematic
         .jsonFetch(chunkPath)
-        .then((data) => this.schematic.loadJsonCache(chunkPath, data))
-        //.then(this.updateSchematicMetadata.bind(this));
+        .then((data) => this.schematic.loadJsonCache(chunkPath, data));
+      //.then(this.updateSchematicMetadata.bind(this));
     }
   }
 
@@ -186,7 +190,7 @@ class App extends Component {
       );
     } else {
       return (
-          //TODO: NOTE that Object.keys is wrong if you change compressed_row_mapping to a mobx object
+        //TODO: NOTE that Object.keys is wrong if you change compressed_row_mapping to a mobx object
         (Object.keys(this.compressed_row_mapping).length + 0.25) *
         this.props.store.pixelsPerRow
       );
@@ -289,8 +293,7 @@ class App extends Component {
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
     /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
     let previousColumns = !this.props.store.useWidthCompression
-      ? schematizeComponent.columnX -
-        this.props.store.beginColumnX
+      ? schematizeComponent.columnX - this.props.store.beginColumnX
       : schematizeComponent.columnX +
         (schematizeComponent.index - this.schematic.components[0].index) *
           this.props.store.binScalingFactor;

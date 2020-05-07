@@ -1,7 +1,7 @@
 import React from "react";
 import { observe } from "mobx";
 import { urlExists } from "./URL";
-import {calculateEndBinFromScreen} from "./utilities";
+import { calculateEndBinFromScreen } from "./utilities";
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
@@ -9,40 +9,45 @@ class PangenomeSchematic extends React.Component {
 		 responsibility of the constructor to initialize the observable properties. Either use
 		 the @observable annotation or the extendObservable function.*/
 
-      super(props);
-      this.pathNames = [];
-      this.components = [];
-      //TODO: replace jsonCache with browser indexdb
-      this.jsonCache = {}; // URL keys, values are entire JSON file datas
-      this.chunksProcessed = []; //list of URLs now in this.components
+    super(props);
+    this.pathNames = [];
+    this.components = [];
+    //TODO: replace jsonCache with browser indexdb
+    this.jsonCache = {}; // URL keys, values are entire JSON file datas
+    this.chunksProcessed = []; //list of URLs now in this.components
 
-      // Added nucleotides attribute and its edges
-      this.nucleotides = [];
-      this.loadIndexFile(this.props.store.jsonName); //initializes this.chunkIndex
+    // Added nucleotides attribute and its edges
+    this.nucleotides = [];
+    this.loadIndexFile(this.props.store.jsonName); //initializes this.chunkIndex
 
-      //STEP #1: whenever jsonName changes, loadIndexFile
-      observe(this.props.store, "jsonName", () => {
-          this.loadIndexFile(this.props.store.jsonName);
-      });
+    //STEP #1: whenever jsonName changes, loadIndexFile
+    observe(this.props.store, "jsonName", () => {
+      this.loadIndexFile(this.props.store.jsonName);
+    });
 
-      //STEP #3: with new chunkIndex, openRelevantChunksFromIndex
-      observe(this.props.store,"chunkIndex",
-          this.openRelevantChunksFromIndex.bind(this)
-      );
-      observe(this.props.store, "indexSelectedZoomLevel",
-          this.openRelevantChunksFromIndex.bind(this) // Whenever the selected zoom level changes
-      );
-      observe(this.props.store.beginEndBin, //user moves start position
-          //This following part is important to scroll right and left on browser
-          this.openRelevantChunksFromIndex.bind(this)
-      );
+    //STEP #3: with new chunkIndex, openRelevantChunksFromIndex
+    observe(
+      this.props.store,
+      "chunkIndex",
+      this.openRelevantChunksFromIndex.bind(this)
+    );
+    observe(
+      this.props.store,
+      "indexSelectedZoomLevel",
+      this.openRelevantChunksFromIndex.bind(this) // Whenever the selected zoom level changes
+    );
+    observe(
+      this.props.store.beginEndBin, //user moves start position
+      //This following part is important to scroll right and left on browser
+      this.openRelevantChunksFromIndex.bind(this)
+    );
 
-      // The FASTA files are read only when there are new chunks to read
-      observe(this.props.store.chunkFastaURLs, () => {
-          this.loadFasta();
-      });
+    // The FASTA files are read only when there are new chunks to read
+    observe(this.props.store.chunkFastaURLs, () => {
+      this.loadFasta();
+    });
 
-      // console.log("public ", process.env.PUBLIC_URL ) //PUBLIC_URL is empty
+    // console.log("public ", process.env.PUBLIC_URL ) //PUBLIC_URL is empty
   }
   componentDidUpdate() {
     // console.log("#components: " + this.components);
@@ -52,37 +57,52 @@ class PangenomeSchematic extends React.Component {
    * It finds the appropriate chunk URLS from the index and updates
    * switchChunkURLs which trigger json fetches for the new chunks. **/
   openRelevantChunksFromIndex() {
-      if(!this.props.store.chunkIndex.zoom_levels.keys()) {
-          return; //before the class is fully initialized
-      }
-      const beginBin = this.props.store.getBeginBin();
+    if (
+      this.props.store.chunkIndex === null ||
+      !this.props.store.chunkIndex.zoom_levels.keys()
+    ) {
+      return; //before the class is fully initialized
+    }
+    const beginBin = this.props.store.getBeginBin();
 
-      this.props.store.setAvailableZoomLevels(this.props.store.chunkIndex["zoom_levels"].keys());
-      const selZoomLev = this.props.store.getSelectedZoomLevel();
-      let [endBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
-          beginBin, selZoomLev, this.props.store);
-      this.props.store.updateBeginEndBin(beginBin, endBin);
+    this.props.store.setAvailableZoomLevels(
+      this.props.store.chunkIndex["zoom_levels"].keys()
+    );
+    const selZoomLev = this.props.store.getSelectedZoomLevel();
+    let [endBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
+      beginBin,
+      selZoomLev,
+      this.props.store
+    );
+    this.props.store.updateBeginEndBin(beginBin, endBin);
 
-      let URLprefix =
-          process.env.PUBLIC_URL +
-          "test_data/" +
-          this.props.store.jsonName +
-          "/" +
-          selZoomLev +
-          "/";
-      fileArray = fileArray.map((filename) => {
-          return URLprefix + filename
-      });
-      fileArrayFasta = fileArrayFasta.map((filename) => {
-          return URLprefix + filename
-      });
+    let URLprefix =
+      process.env.PUBLIC_URL +
+      "test_data/" +
+      this.props.store.jsonName +
+      "/" +
+      selZoomLev +
+      "/";
+    fileArray = fileArray.map((filename) => {
+      return URLprefix + filename;
+    });
+    fileArrayFasta = fileArrayFasta.map((filename) => {
+      return URLprefix + filename;
+    });
 
-      //STEP #4: Set switchChunkURLs
-      this.props.store.switchChunkURLs(fileArray);
+    //STEP #4: Set switchChunkURLs
+    this.props.store.switchChunkURLs(fileArray);
 
-      if (fileArrayFasta.length) {
-          this.props.store.switchChunkFastaURLs(fileArrayFasta);
-      }
+    console.log(
+      "openRelevantChunksFromIndex - fileArray.length=" + fileArray.length
+    );
+    console.log(
+      "openRelevantChunksFromIndex - fileArrayFasta.length=" +
+        fileArrayFasta.length
+    );
+    if (fileArrayFasta.length) {
+      this.props.store.switchChunkFastaURLs(fileArrayFasta);
+    }
   }
 
   loadIndexFile(jsonFilename) {
@@ -142,12 +162,12 @@ class PangenomeSchematic extends React.Component {
               .replace(/[\r\n]+/gm, "");
 
             //split into array of nucleotides
-            this.nucleotides.push(...sequence.split(""));//TODO: could ... work alone?
+            this.nucleotides.push(...sequence.split("")); //TODO: could ... work alone?
 
             console.log("fetching_fasta: ", path_fasta);
 
-              return;
-            });
+            return;
+          });
       }
     }
   }
@@ -158,15 +178,15 @@ class PangenomeSchematic extends React.Component {
    * Checks if there's new available data to pre-render in processArray()
    * run through list of urls in order and see if we have data to load.**/
   processArray() {
-      //STEP #8: processArray for available chunks into Component objects
+    //STEP #8: processArray for available chunks into Component objects
     let [beginBin, endBin] = [
       this.props.store.getBeginBin(),
       this.props.store.getEndBin(),
     ];
     let urls = this.props.store.chunkURLs;
     if (
-        this.chunksProcessed.length === 0 ||
-        this.chunksProcessed[0] !== urls[0]
+      this.chunksProcessed.length === 0 ||
+      this.chunksProcessed[0] !== urls[0]
     ) {
       this.components = []; // clear all pre-render data
       this.chunksProcessed = [];
@@ -196,19 +216,22 @@ class PangenomeSchematic extends React.Component {
     }
 
     console.log(
-        "processArray",
-        this.chunksProcessed[0],
-        this.chunksProcessed.slice(-1)[0], 
-        "out of", urls.length, "chunks"
+      "processArray",
+      this.chunksProcessed[0],
+      this.chunksProcessed.slice(-1)[0],
+      "out of",
+      urls.length,
+      "chunks"
     );
     //console.log(this.props)
 
-    return true;//this.chunksProcessed.length > 0;
+    return true; //this.chunksProcessed.length > 0;
   }
 }
 
-class Component {//extends React.Component{
-  constructor(component,  index) {
+class Component {
+  //extends React.Component{
+  constructor(component, index) {
     this.columnX = component.x;
     this.index = index;
     this.firstBin = component.first_bin;
