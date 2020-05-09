@@ -78,9 +78,13 @@ class App extends Component {
     }
     for (let chunkPath of this.props.store.chunkURLs) {
       //TODO: conditional on jsonCache not already having chunk
+      console.log("fetchAllChunks - START reading: " + chunkPath);
       this.schematic
         .jsonFetch(chunkPath)
-        .then((data) => this.schematic.loadJsonCache(chunkPath, data))
+        .then((data) => {
+          console.log("fetchAllChunks - END reading: " + chunkPath);
+          this.schematic.loadJsonCache(chunkPath, data);
+        })
         .then(this.updateSchematicMetadata.bind(this));
     }
   }
@@ -414,8 +418,10 @@ class App extends Component {
       // avoiding any computation if nucleotides have not to be visualized.
       this.props.store.getBinWidth() === 1 &&
       !this.props.store.useWidthCompression &&
+      this.props.store.pixelsPerColumn >= 10 &&
       this.schematic.nucleotides.length > 0
     ) {
+      //console.log('renderNucleotidesSchematic - START')
       return this.schematic.components.map((schematizeComponent, i) => {
         //TODO: maybe it is not necessary, to confirm its elimination
         // Check if there are nucleotides (which cover the range [this.schematic.first_bin, this.schematic.last_bin])
