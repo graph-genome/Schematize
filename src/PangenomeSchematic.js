@@ -57,6 +57,10 @@ class PangenomeSchematic extends React.Component {
    * It finds the appropriate chunk URLS from the index and updates
    * switchChunkURLs which trigger json fetches for the new chunks. **/
   openRelevantChunksFromIndex() {
+    console.log(
+      "STEP #3: with new chunkIndex, this.openRelevantChunksFromIndex()"
+    );
+
     if (
       this.props.store.chunkIndex === null ||
       !this.props.store.chunkIndex.zoom_levels.keys()
@@ -65,6 +69,7 @@ class PangenomeSchematic extends React.Component {
     }
     const beginBin = this.props.store.getBeginBin();
 
+    // With new chunkIndex, it sets the available zoom levels
     this.props.store.setAvailableZoomLevels(
       this.props.store.chunkIndex["zoom_levels"].keys()
     );
@@ -90,29 +95,22 @@ class PangenomeSchematic extends React.Component {
       return URLprefix + filename;
     });
 
-    //STEP #4: Set switchChunkURLs
     this.props.store.switchChunkURLs(fileArray);
-
-    console.log(
-      "openRelevantChunksFromIndex - fileArray.length=" + fileArray.length
-    );
-    console.log(
-      "openRelevantChunksFromIndex - fileArrayFasta.length=" +
-        fileArrayFasta.length
-    );
-    if (fileArrayFasta.length) {
-      this.props.store.switchChunkFastaURLs(fileArrayFasta);
-    }
+    this.props.store.switchChunkFastaURLs(fileArrayFasta);
   }
 
   loadIndexFile(jsonFilename) {
+    console.log("STEP #1: whenever jsonName changes, loadIndexFile");
+
     let indexPath =
       process.env.PUBLIC_URL + "test_data/" + jsonFilename + "/bin2file.json";
-    console.log("loadIndexFile Reading", indexPath);
+    console.log("loadIndexFile - START reading", indexPath);
     return fetch(indexPath)
       .then((res) => res.json())
       .then((json) => {
-        // STEP#2:
+        console.log("loadIndexFile - END reading", indexPath);
+
+        //STEP #2: chunkIndex contents loaded
         this.props.store.setChunkIndex(json);
       });
   }
@@ -127,7 +125,8 @@ class PangenomeSchematic extends React.Component {
   }
 
   loadJsonCache(url, data) {
-    //STEP #6: fetched chunks go into loadJsonCache
+    console.log("STEP #6: fetched chunks go into loadJsonCache");
+
     if (data.json_version !== 14) {
       throw MediaError(
         "Wrong Data JSON version: was expecting version 14, got " +
@@ -178,7 +177,10 @@ class PangenomeSchematic extends React.Component {
    * Checks if there's new available data to pre-render in processArray()
    * run through list of urls in order and see if we have data to load.**/
   processArray() {
-    //STEP #8: processArray for available chunks into Component objects
+    console.log(
+      "STEP #8: processArray for available chunks into Component objects"
+    );
+
     let [beginBin, endBin] = [
       this.props.store.getBeginBin(),
       this.props.store.getEndBin(),

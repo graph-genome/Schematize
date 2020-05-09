@@ -60,7 +60,9 @@ RootStore = types
   })
   .actions((self) => {
     function setChunkIndex(json) {
+      console.log("STEP #2: chunkIndex contents loaded");
       console.log("Index updated with content:", json);
+
       self.chunkIndex = json;
     }
     function updateBeginEndBin(newBegin, newEnd) {
@@ -136,22 +138,25 @@ RootStore = types
       }
     }
 
+    // Lifted down the control of the emptyness of the arrays
     function switchChunkURLs(arrayOfFile) {
-      let arraysEqual =
-        arrayOfFile.length === self.chunkURLs.length &&
-        arrayOfFile.every((e) => self.chunkURLs.indexOf(e) > -1);
-      if (!arraysEqual) {
+      let arrayEmptyOrEqual =
+        arrayOfFile.length == 0 ||
+        (arrayOfFile.length === self.chunkURLs.length &&
+          arrayOfFile.every((e) => self.chunkURLs.indexOf(e) > -1));
+      if (!arrayEmptyOrEqual) {
+        console.log("STEP #4: Set switchChunkURLs: " + arrayOfFile);
         self.chunkURLs = arrayOfFile;
-        console.log("switchChunkURLs arrayOfFile: " + arrayOfFile);
       }
     }
     function switchChunkFastaURLs(arrayOfFile) {
-      let arraysEqual =
-        arrayOfFile.length === self.chunkFastaURLs.length &&
-        arrayOfFile.every((e) => self.chunkFastaURLs.indexOf(e) > -1);
-      if (!arraysEqual) {
+      let arrayEmptyOrEqual =
+        arrayOfFile.length == 0 ||
+        (arrayOfFile.length === self.chunkURLs.length &&
+          arrayOfFile.every((e) => self.chunkURLs.indexOf(e) > -1));
+      if (!arrayEmptyOrEqual) {
+        console.log("STEP #4.fasta: Set switchChunkFastaURLs: " + arrayOfFile);
         self.chunkFastaURLs = arrayOfFile;
-        console.log("arrayOfFastaFile: " + arrayOfFile);
       }
     }
     function getBeginBin() {
@@ -160,9 +165,7 @@ RootStore = types
     function getEndBin() {
       return self.beginEndBin[1];
     }
-    function setChunkBeginEndBin(newChunkBeginBin) {
-      self.chunkBeginBin = newChunkBeginBin;
-    }
+
     // Getter and setter for zoom info management
     function getBinWidth() {
       //Zoom level and BinWidth are actually the same thing
@@ -181,7 +184,6 @@ RootStore = types
       let arr = [...availableZoomLevels];
 
       self.availableZoomLevels = arr;
-      console.log("setAvailableZoomLevels: " + self.availableZoomLevels);
     }
 
     function setBeginEndBin(newBeginBin, newEndBin) {
@@ -216,7 +218,7 @@ RootStore = types
 
       switchChunkURLs,
       switchChunkFastaURLs,
-      setChunkBeginEndBin,
+
       getBeginBin,
       getEndBin,
       updatePathNucPos,
