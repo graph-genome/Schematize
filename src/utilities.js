@@ -3,22 +3,15 @@ export function calculateEndBinFromScreen(beginBin, selZoomLev, store) {
   let widthInCells = deviceWidth / store.pixelsPerColumn;
   let chunkURLarray = [];
   let fileArrayFasta = [];
-  let initialized = false;
 
   let currEnd = beginBin + 1;
   let workingWidth = 0;
   //this loop will automatically cap out at the last bin of the file
   let level = store.chunkIndex.zoom_levels.get(selZoomLev);
   for (let ichunk = 0; ichunk < level.files.length; ichunk++) {
+    // The "x" info is not here
     let chunk = level.files[ichunk];
     if (chunk.last_bin >= beginBin) {
-      //don't start until viewport starts
-      if (!initialized) {
-        store.setBeginColumnX(chunk.x); //TODO calculate partial chunk X
-        // To know which region the chunks cover
-        store.setChunkBeginEndBin(chunk.first_bin);
-        initialized = true;
-      }
       let width =
         chunk["last_bin"] -
         chunk["first_bin"] +
@@ -56,24 +49,27 @@ export function stringToColorAndOpacity(
   highlightedLinkColumn,
   selectedLink
 ) {
-  const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
-
   const whichLinkToConsider = selectedLink
     ? selectedLink
     : highlightedLinkColumn;
 
-  // When the mouse in on a Link, all the other ones will become gray and fade out
-  let matchColor =
-    (whichLinkToConsider.downstream + 1) * (whichLinkToConsider.upstream + 1);
-  // Check if the mouse in on a Link (highlightedLinkColumn) or if a Link was clicked (selectedLink)
-  if ((!highlightedLinkColumn && !selectedLink) || colorKey === matchColor) {
-    return [
-      stringToColourSave(colorKey),
-      1.0,
-      highlightedLinkColumn || selectedLink ? "black" : null,
-    ];
+  const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
+  if (whichLinkToConsider) {
+    // When the mouse in on a Link, all the other ones will become gray and fade out
+    let matchColor =
+      (whichLinkToConsider.downstream + 1) * (whichLinkToConsider.upstream + 1);
+    // Check if the mouse in on a Link (highlightedLinkColumn) or if a Link was clicked (selectedLink)
+    if ((!highlightedLinkColumn && !selectedLink) || colorKey === matchColor) {
+      return [
+        stringToColourSave(colorKey),
+        1.0,
+        highlightedLinkColumn || selectedLink ? "black" : null,
+      ];
+    } else {
+      return ["gray", 0.3, null];
+    }
   } else {
-    return ["gray", 0.3, null];
+    return [stringToColourSave(colorKey), 1.0, null];
   }
 }
 
