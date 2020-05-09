@@ -79,8 +79,10 @@ class PangenomeSchematic extends React.Component {
       selZoomLev,
       this.props.store
     );
-    this.props.store.updateBeginEndBin(beginBin, endBin);
+    //TODO: commented because maybe it creates problems
+    //this.props.store.updateBeginEndBin(beginBin, endBin);
 
+    console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
     let URLprefix =
       process.env.PUBLIC_URL +
       "test_data/" +

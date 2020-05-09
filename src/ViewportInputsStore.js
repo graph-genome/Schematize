@@ -66,6 +66,8 @@ RootStore = types
       self.chunkIndex = json;
     }
     function updateBeginEndBin(newBegin, newEnd) {
+      console.log("updateBeginEndBin - " + newBegin + " - " + newEnd);
+
       /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
       newBegin = Math.max(1, Math.round(newBegin));
       newEnd = Math.max(1, Math.round(newEnd));
@@ -141,7 +143,7 @@ RootStore = types
     // Lifted down the control of the emptyness of the arrays
     function switchChunkURLs(arrayOfFile) {
       let arrayEmptyOrEqual =
-        arrayOfFile.length == 0 ||
+        arrayOfFile.length === 0 ||
         (arrayOfFile.length === self.chunkURLs.length &&
           arrayOfFile.every((e) => self.chunkURLs.indexOf(e) > -1));
       if (!arrayEmptyOrEqual) {
@@ -151,7 +153,7 @@ RootStore = types
     }
     function switchChunkFastaURLs(arrayOfFile) {
       let arrayEmptyOrEqual =
-        arrayOfFile.length == 0 ||
+        arrayOfFile.length === 0 ||
         (arrayOfFile.length === self.chunkURLs.length &&
           arrayOfFile.every((e) => self.chunkURLs.indexOf(e) > -1));
       if (!arrayEmptyOrEqual) {
@@ -200,6 +202,10 @@ RootStore = types
     function setBeginColumnX(x) {
       self.beginColumnX = x;
     }
+    function setChunkBeginBin(x) {
+      self.chunkBeginBin = x;
+    }
+
     return {
       setChunkIndex,
       updateBeginEndBin,
@@ -223,6 +229,7 @@ RootStore = types
       getEndBin,
       updatePathNucPos,
       setBeginColumnX,
+      setChunkBeginBin,
       //NOTE: DO NOT ADD GETTERS here.  They are not necessary in mobx.
       // You can reference store.val directly without store.getVal()
       //Only write getters to encapsulate useful logic for derived values
