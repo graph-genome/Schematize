@@ -40,7 +40,7 @@ class App extends Component {
     /* == State control flow --> redundancies here can waste processing time
     * STEP #1: whenever jsonName changes, loadIndexFile
     * STEP #2: chunkIndex contents loaded
-    * STEP #3: with new chunkIndex, this.openRelevantChunksFromIndex();
+    * STEP #3: with new chunkIndex, this.openRelevantChunksFromIndex()
     * STEP #4: Set switchChunkURLs
     * STEP #5: once ChunkURLs are listed, go fetchAllChunks
     * STEP #6: fetched chunks go into loadJsonCache
@@ -70,6 +70,7 @@ class App extends Component {
     /*Dispatches fetches for all chunk files
      * Read https://github.com/graph-genome/Schematize/issues/22 for details
      */
+    console.log("STEP #5: once ChunkURLs are listed, go fetchAllChunks");
     console.log("fetchAllChunks", this.props.store.chunkURLs);
     if (!this.props.store.chunkURLs.get(0)) {
       console.warn("No chunk URL defined.");
@@ -79,13 +80,16 @@ class App extends Component {
       //TODO: conditional on jsonCache not already having chunk
       this.schematic
         .jsonFetch(chunkPath)
-        .then((data) => this.schematic.loadJsonCache(chunkPath, data));
-      //.then(this.updateSchematicMetadata.bind(this));
+        .then((data) => this.schematic.loadJsonCache(chunkPath, data))
+        .then(this.updateSchematicMetadata.bind(this));
     }
   }
 
-  //STEP #7: updateSchematicMetadata with final rendering info for this loaded chunks
   updateSchematicMetadata() {
+    console.log(
+      "STEP #7: updateSchematicMetadata with final rendering info for this loaded chunks"
+    );
+
     if (this.schematic.processArray()) {
       console.log(
         "updateSchematicMetadata #components: " +
@@ -163,9 +167,6 @@ class App extends Component {
         maxNumberRowsInOneComponent
       );
     }
-    console.log(
-      "Max number of rows across components: " + maxNumberRowsInOneComponent
-    );
 
     return maxNumberRowsInOneComponent;
   }
@@ -185,6 +186,7 @@ class App extends Component {
         "maxNumRowsAcrossComponents",
         this.maxNumRowsAcrossComponents
       );
+
       return (
         (this.maxNumRowsAcrossComponents + 2.5) * this.props.store.pixelsPerRow
       );
@@ -465,6 +467,7 @@ class App extends Component {
     if (this.state.loading) {
       return;
     }
+
     return this.schematic.components.map((schematizeComponent, i) => {
       return (
         <React.Fragment key={"f" + i}>
@@ -500,6 +503,7 @@ class App extends Component {
 
   render() {
     console.log("Start render");
+
     return (
       <>
         <div
