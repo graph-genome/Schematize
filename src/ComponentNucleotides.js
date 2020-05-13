@@ -1,6 +1,5 @@
-/* eslint-disable require-jsdoc */
 import React from "react";
-import { Rect, Text } from "react-konva";
+import {Rect, Text} from "react-konva";
 import PropTypes from "prop-types";
 
 class ComponentNucleotides extends React.Component {
@@ -62,10 +61,11 @@ class ComponentNucleotides extends React.Component {
     return (
       <>
         <Rect
-          x={this.props.item.x}
-          y={this.props.store.topOffset + this.props.store.nucleotideHeight}
-          width={this.props.width * this.props.store.pixelsPerColumn}
-          height={this.props.height * this.props.store.pixelsPerRow}
+            key={"nuc" + this.props.item.x}
+            x={this.props.item.x}
+            y={this.props.store.topOffset + this.props.store.nucleotideHeight}
+            width={this.props.width * this.props.store.pixelsPerColumn}
+            height={this.props.height * this.props.store.pixelsPerRow}
         />
         {this.renderMatrix()}
       </>
