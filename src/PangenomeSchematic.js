@@ -14,7 +14,6 @@ class PangenomeSchematic extends React.Component {
     this.components = [];
     //TODO: replace jsonCache with browser indexdb
     this.jsonCache = {}; // URL keys, values are entire JSON file datas
-    this.chunksProcessed = []; //list of URLs now in this.components
 
     // Added nucleotides attribute and its edges
     this.nucleotides = [];
@@ -46,6 +45,10 @@ class PangenomeSchematic extends React.Component {
     observe(this.props.store.chunkFastaURLs, () => {
       this.loadFasta();
     });
+
+    //STEP #7: JsonCache causes processArray to update chunksProcessed
+    // observe(this.props.store.jsonCache,
+    //     this.processArray.bind(this));
 
     // console.log("public ", process.env.PUBLIC_URL ) //PUBLIC_URL is empty
   }
@@ -141,6 +144,7 @@ class PangenomeSchematic extends React.Component {
     }
     this.jsonCache[url] = data;
     this.pathNames = data.path_names; //TODO: in later JSON versions path_names gets moved to bin2file.json
+    this.processArray()
   }
 
   loadFasta() {
@@ -177,51 +181,45 @@ class PangenomeSchematic extends React.Component {
 
   /**Parses beginBin to endBin range, returns false if new file needed.
    * This calculates the pre-render for all contiguous JSON data.
-   * State information is stored in this.chunksProcessed.
+   * State information is stored in store.chunksProcessed.
    * Checks if there's new available data to pre-render in processArray()
    * run through list of urls in order and see if we have data to load.**/
   processArray() {
     console.log(
-      "STEP #8: processArray for available chunks into Component objects"
+      "STEP #7: JsonCache causes processArray to update chunksProcessed"
     );
-
+    let store = this.props.store;
     let [beginBin, endBin] = [
-      this.props.store.getBeginBin(),
-      this.props.store.getEndBin(),
+      store.getBeginBin(),
+      store.getEndBin(),
     ];
 
-    if (
-      this.chunksProcessed.length === 0 ||
-      this.chunksProcessed[0] !== this.props.store.chunkURLs[0]
-    ) {
+    if (store.chunksProcessed.length === 0 ||
+      store.chunksProcessed[0] !== this.props.store.chunkURLs[0]) {
       this.components = []; // clear all pre-render data
-      this.chunksProcessed = [];
     }
     // may have additional chunks to pre-render
     console.log("processArray - parsing components ", beginBin, " - ", endBin);
 
-    for (
-      let urlIndex = 0;
-      urlIndex < this.props.store.chunkURLs.length;
-      urlIndex++
-    ) {
+    for (let urlIndex = 0; urlIndex < store.chunkURLs.length; urlIndex++) {
       //if end of pre-render is earlier than end of contiguous available chunks, process new data
-      if (urlIndex >= this.chunksProcessed.length) {
-        if (this.props.store.chunkURLs[urlIndex] in this.jsonCache) {
-          //only process if data is available
-          let url = this.props.store.chunkURLs[urlIndex];
+      if (urlIndex >= store.chunksProcessed.length) {
+        //only process if data is available
+        if (store.chunkURLs[urlIndex] in this.jsonCache) {
+          let url = store.chunkURLs[urlIndex];
           let jsonChunk = this.jsonCache[url];
 
           console.log(
             "processArray - jsonChunk.components[0].x: " +
               jsonChunk.components[0].x
           );
-          this.props.store.setBeginColumnX(jsonChunk.components[0].x);
-
-          console.log(
-            "processArray - jsonChunk.first_bin: " + jsonChunk.first_bin
-          );
-          this.props.store.setChunkBeginBin(jsonChunk.first_bin);
+          if(urlIndex === 0){// first component in the render
+            store.setBeginColumnX(jsonChunk.components[0].x);
+            console.log(
+              "processArray - jsonChunk.first_bin: " + jsonChunk.first_bin
+            );
+            store.setChunkBeginBin(jsonChunk.first_bin);
+          }
 
           for (let [index, component] of jsonChunk.components.entries()) {
             let componentItem = new Component(component, index);
@@ -229,7 +227,7 @@ class PangenomeSchematic extends React.Component {
             //if (component.last_bin >= beginBin) { NOTE: we are now reading in whole chunk, this may place
             //xOffset further right than it was intended when beginBin > chunk.first_bin
           }
-          this.chunksProcessed.push(url);
+          store.addChunkProcessed(url);
         } else {
           //we've run into a contiguous chunk that is not available yet
           return false;
@@ -239,15 +237,15 @@ class PangenomeSchematic extends React.Component {
 
     console.log(
       "processArray",
-      this.chunksProcessed[0],
-      this.chunksProcessed.slice(-1)[0],
+      store.chunksProcessed[0],
+      store.chunksProcessed.slice(-1)[0],
       "out of",
       this.props.store.chunkURLs.length,
       "chunks"
     );
     //console.log(this.props)
 
-    return true; //this.chunksProcessed.length > 0;
+    return true; //store.chunksProcessed.length > 0;
   }
 }
 

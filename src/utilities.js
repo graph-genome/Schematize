@@ -1,3 +1,9 @@
+export function arraysEqual(A, B) {
+  return (A.length === 0 && B.length === 0) ||
+      (A.length === B.length &&
+          A.every((e) => B.indexOf(e) > -1));
+}
+
 export function calculateEndBinFromScreen(beginBin, selZoomLev, store) {
   let deviceWidth = 1920; // TODO: get width from browser
   let widthInCells = deviceWidth / store.pixelsPerColumn;

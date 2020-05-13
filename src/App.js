@@ -12,7 +12,7 @@ import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import { observe } from "mobx";
 import { Text } from "react-konva";
-import { stringToColorAndOpacity } from "./utilities";
+import {arraysEqual, stringToColorAndOpacity} from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
 
@@ -44,17 +44,17 @@ class App extends Component {
     * STEP #4: Set switchChunkURLs
     * STEP #5: once ChunkURLs are listed, go fetchAllChunks
     * STEP #6: fetched chunks go into loadJsonCache
-    * STEP #7: updateSchematicMetadata with final rendering info for this loaded chunks
-    * STEP #8: processArray for available chunks into Component objects
-        //TODO: separate processArray into its  own observer
-    //chunksProcessed updated, reserveAirspace & calcMaxNumRowsAcrossComponents
-    //Y values calculated, do the render
+    * STEP #7: JsonCache causes processArray to update chunksProcessed
+    * STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final rendering info for this loaded chunks
+      * STEP #9: reserveAirspace
+      * STEP #10: calcMaxNumRowsAcrossComponents
+    //TODO: separate processArray into its  own observer
+    * STEP #11: Y values calculated, trigger do the render
     * */
 
-    // observe(this.props.store.beginEndBin, this.updateSchematicMetadata.bind(this));
+    //Arrays must be observed directly, simple objects are observed by name
     //STEP #5: once ChunkURLs are listed, go fetchAllChunks
     observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
-    //Arrays must be observed directly, simple objects are observed by name
 
     // observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
     // observe(this.props.store, "useVerticalCompression", this.recalcY.bind(this));
@@ -62,6 +62,10 @@ class App extends Component {
     // observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
     // observe(this.props.store, "binScalingFactor", this.recalcXLayout.bind(this));
     // observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
+
+    //STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final
+    // rendering info for this loaded chunks
+    observe(this.props.store.chunksProcessed, this.updateSchematicMetadata.bind(this));
 
     makeInspectable(this.props.store);
   }
@@ -85,16 +89,15 @@ class App extends Component {
           console.log("fetchAllChunks - END reading: " + chunkPath);
           this.schematic.loadJsonCache(chunkPath, data);
         })
-        .then(this.updateSchematicMetadata.bind(this));
     }
   }
 
   updateSchematicMetadata() {
     console.log(
-      "STEP #7: updateSchematicMetadata with final rendering info for this loaded chunks"
+      "STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final rendering info for this loaded chunks"
     );
 
-    if (this.schematic.processArray()) {
+    if (arraysEqual(this.props.store.chunkURLs, this.props.store.chunksProcessed)) {
       console.log(
         "updateSchematicMetadata #components: " +
           this.schematic.components.length

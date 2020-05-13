@@ -1,5 +1,6 @@
 import { types } from "mobx-state-tree";
 import { urlExists } from "./URL";
+import {arraysEqual} from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
@@ -49,6 +50,8 @@ RootStore = types
     indexSelectedZoomLevel: 0,
     chunkURLs: types.optional(types.array(types.string), []),
     chunkFastaURLs: types.optional(types.array(types.string), []),
+    //to be compared against chunkURLs
+    chunksProcessed: types.optional(types.array(types.string), []),
     chunkBeginBin: -1,
 
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
@@ -142,24 +145,21 @@ RootStore = types
 
     // Lifted down the control of the emptyness of the arrays
     function switchChunkURLs(arrayOfFile) {
-      let arrayEmptyOrEqual =
-        arrayOfFile.length === 0 ||
-        (arrayOfFile.length === self.chunkURLs.length &&
-          arrayOfFile.every((e) => self.chunkURLs.indexOf(e) > -1));
-      if (!arrayEmptyOrEqual) {
+      if (!arraysEqual(arrayOfFile, self.chunkURLs)) {
         console.log("STEP #4: Set switchChunkURLs: " + arrayOfFile);
         self.chunkURLs = arrayOfFile;
+        self.chunksProcessed = []; //clear
       }
     }
     function switchChunkFastaURLs(arrayOfFile) {
-      let arrayEmptyOrEqual =
-        arrayOfFile.length === 0 ||
-        (arrayOfFile.length === self.chunkURLs.length &&
-          arrayOfFile.every((e) => self.chunkURLs.indexOf(e) > -1));
-      if (!arrayEmptyOrEqual) {
+      if (!arraysEqual(arrayOfFile, self.chunkFastaURLs)) {
         console.log("STEP #4.fasta: Set switchChunkFastaURLs: " + arrayOfFile);
         self.chunkFastaURLs = arrayOfFile;
       }
+    }
+    function addChunkProcessed(singleChunk){
+      console.log("STEP #7: processed " + singleChunk);
+      self.chunksProcessed.push(singleChunk);
     }
     function getBeginBin() {
       return self.beginEndBin[0];
@@ -224,6 +224,7 @@ RootStore = types
 
       switchChunkURLs,
       switchChunkFastaURLs,
+      addChunkProcessed,
 
       getBeginBin,
       getEndBin,
