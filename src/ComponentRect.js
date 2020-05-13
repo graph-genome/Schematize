@@ -159,11 +159,8 @@ class ComponentRect extends React.Component {
       <ConnectorRect
         key={"connector" + j}
         x={x_val}
-        y={
-          this.props.store.topOffset +
-          this_y * this.props.store.pixelsPerRow +
-          this.props.store.nucleotideHeight
-        }
+        y={this.props.store.topOffset +
+          this_y * this.props.store.pixelsPerRow}
         width={this.props.store.pixelsPerColumn} //Clarified and corrected adjacent connectors as based on pixelsPerColumn width #9
         height={this.props.store.pixelsPerRow}
         color={"#464646"}

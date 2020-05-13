@@ -93,14 +93,13 @@ class App extends Component {
   }
 
   updateSchematicMetadata() {
-    console.log(
-      "STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final rendering info for this loaded chunks"
-    );
-
     if (arraysEqual(this.props.store.chunkURLs, this.props.store.chunksProcessed)) {
       console.log(
         "updateSchematicMetadata #components: " +
-          this.schematic.components.length
+        this.schematic.components.length
+      );
+      console.log(
+        "STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final rendering info for this loaded chunks"
       );
 
       // console.log(this.schematic.components);
@@ -346,36 +345,16 @@ class App extends Component {
             (this.props.store.useWidthCompression
               ? this.props.store.binScalingFactor
               : schematizeComponent.num_bin);
-          return this.renderLinkColumn(
-            schematizeComponent,
-            i,
-            leftPad,
-            j,
-            linkColumn
-          );
+          return this.renderLinkColumn(schematizeComponent, i, leftPad, j, linkColumn);
         })}
       </>
     );
   }
 
-  renderLinkColumn(
-    schematizeComponent,
-    i,
-    firstDepartureColumn,
-    j,
-    linkColumn
-  ) {
-    const xCoordArrival = this.leftXStart(
-      schematizeComponent,
-      i,
-      firstDepartureColumn,
-      j
-    );
-    const [localColor, localOpacity, localStroke] = stringToColorAndOpacity(
-      linkColumn,
-      this.state.highlightedLink,
-      this.state.selectedLink
-    );
+  renderLinkColumn(schematizeComponent, i, firstDepartureColumn, j, linkColumn) {
+    const xCoordArrival = this.leftXStart(schematizeComponent, i, firstDepartureColumn, j);
+    const [localColor, localOpacity, localStroke] =
+        stringToColorAndOpacity(linkColumn, this.state.highlightedLink, this.state.selectedLink);
     return (
       <LinkColumn
         store={this.props.store}
