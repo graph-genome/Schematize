@@ -177,7 +177,7 @@ class App extends Component {
     return maxNumberRowsInOneComponent;
   }
 
-  visibleHeight() {
+  visibleHeightPixels() {
     if (
       this.props.store.useVerticalCompression ||
       !this.compressed_row_mapping
@@ -318,8 +318,8 @@ class App extends Component {
           store={this.props.store}
           item={schematizeComponent}
           key={"r" + i}
-          height={this.visibleHeight()}
-          width={
+          height={this.visibleHeightPixels()}
+          widthInColumns={
             schematizeComponent.arrivals.length +
             (this.props.store.useWidthCompression
               ? this.props.store.binScalingFactor
@@ -432,7 +432,7 @@ class App extends Component {
               store={this.props.store}
               item={schematizeComponent}
               key={i}
-              height={this.visibleHeight()}
+              height={this.visibleHeightPixels()}
               width={
                 schematizeComponent.arrivals.length +
                 (this.props.store.useWidthCompression
@@ -528,7 +528,7 @@ class App extends Component {
           x={this.props.store.leftOffset} // removed leftOffset to simplify code. Relative coordinates are always better.
           y={-this.props.store.topOffset} // For some reason, I have to put this, but I'd like to put 0
           width={this.state.actualWidth + 60}
-          height={this.visibleHeight() + this.props.store.nucleotideHeight}
+          height={this.visibleHeightPixels() + this.props.store.nucleotideHeight}
         >
           <Layer ref={this.layerRef}>
             {this.loadingMessage()}

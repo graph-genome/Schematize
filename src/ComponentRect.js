@@ -175,8 +175,8 @@ class ComponentRect extends React.Component {
           x={this.props.item.x}
           y={this.props.store.topOffset}
           key={this.state.key + "R"}
-          width={this.props.width * this.props.store.pixelsPerColumn}
-          height={this.props.height * this.props.store.pixelsPerRow} //TODO: change to compressed height
+          width={this.props.widthInColumns * this.props.store.pixelsPerColumn}
+          height={this.props.height - 2} //TODO: change to compressed height
           fill={this.state.color}
           onClick={this.handleClick}
         />
@@ -191,8 +191,8 @@ ComponentRect.propTypes = {
   store: PropTypes.object,
   item: PropTypes.object,
   compressed_row_mapping: PropTypes.object,
-  width: PropTypes.node,
-  height: PropTypes.node,
+  widthInColumns: PropTypes.number,
+  height: PropTypes.number,
   pathNames: PropTypes.node,
 };
 
