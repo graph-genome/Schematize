@@ -1,7 +1,7 @@
 import React from "react";
-import { observe } from "mobx";
-import { urlExists } from "./URL";
-import { calculateEndBinFromScreen } from "./utilities";
+import {observe} from "mobx";
+import {urlExists} from "./URL";
+import {calculateEndBinFromScreen} from "./utilities";
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
@@ -12,24 +12,23 @@ class PangenomeSchematic extends React.Component {
     super(props);
     this.pathNames = [];
     this.components = [];
-    //TODO: replace jsonCache with browser indexdb
     this.jsonCache = {}; // URL keys, values are entire JSON file datas
+      // TODO: make jsonCache store React components and save them in mobx
+      // TODO: make FILO queue to remove old jsonCache once we hit max memory usage
+      this.nucleotides = []; // nucleotides attribute and its edges
 
-    // Added nucleotides attribute and its edges
-    this.nucleotides = [];
     this.loadIndexFile(this.props.store.jsonName); //initializes this.chunkIndex
 
     //STEP #1: whenever jsonName changes, loadIndexFile
     observe(this.props.store, "jsonName", () => {
       this.loadIndexFile(this.props.store.jsonName);
     });
-
     //STEP #3: with new chunkIndex, openRelevantChunksFromIndex
     observe(
-      this.props.store,
-      "chunkIndex",
-      this.openRelevantChunksFromIndex.bind(this)
+        this.props.store, "chunkIndex", //TODO: this is currently not triggering on input change. No idea why
+        this.openRelevantChunksFromIndex.bind(this)
     );
+
     observe(
       this.props.store,
       "indexSelectedZoomLevel",
@@ -173,7 +172,7 @@ class PangenomeSchematic extends React.Component {
 
             console.log("loadFasta - END: ", path_fasta);
 
-            return;
+
           });
       }
     }
@@ -185,6 +184,7 @@ class PangenomeSchematic extends React.Component {
    * Checks if there's new available data to pre-render in processArray()
    * run through list of urls in order and see if we have data to load.**/
   processArray() {
+      //TODO: make processArray parallelized by placing outputs in a Key Map and rendering out of order
     console.log(
       "STEP #7: JsonCache causes processArray to update chunksProcessed"
     );

@@ -1,17 +1,16 @@
-import { Layer, Stage } from "react-konva";
-import React, { Component } from "react";
+import {Layer, Stage, Text} from "react-konva";
+import React, {Component} from "react";
 
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
-import ComponentRect, { compress_visible_rows } from "./ComponentRect";
+import ComponentRect, {compress_visible_rows} from "./ComponentRect";
 import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
-import { calculateLinkCoordinates } from "./LinkRecord";
+import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
-import { observe } from "mobx";
-import { Text } from "react-konva";
+import {observe} from "mobx";
 import {arraysEqual, stringToColorAndOpacity} from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
@@ -31,7 +30,6 @@ class App extends Component {
     this.state = {
       schematize: [],
       pathNames: [],
-      loading: true,
       actualWidth: 1,
       buttonsHeight: 0,
     };
@@ -67,6 +65,8 @@ class App extends Component {
     // rendering info for this loaded chunks
     observe(this.props.store.chunksProcessed, this.updateSchematicMetadata.bind(this));
 
+    //STEP #11: Y values calculated, trigger do the render
+    observe(this.props.store, "loading", this.render.bind(this));
     makeInspectable(this.props.store);
   }
 
@@ -117,7 +117,7 @@ class App extends Component {
           this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
             this.schematic.components
           ); // TODO add this to mobx-state-tree
-          this.setState({ loading: false });
+          this.props.store.setLoading(false);
         }
       );
     }
@@ -395,7 +395,7 @@ class App extends Component {
 
   renderNucleotidesSchematic = () => {
     if (
-      !this.state.loading &&
+        !this.props.store.loading &&
       // The conditions on bitWidht and useWidthCompression are lifted here,
       // avoiding any computation if nucleotides have not to be visualized.
       this.props.store.getBinWidth() === 1 &&
@@ -448,11 +448,11 @@ class App extends Component {
       });
     }
 
-    return;
+
   };
 
   renderSchematic() {
-    if (this.state.loading) {
+    if (this.props.store.loading) {
       return;
     }
 
@@ -466,7 +466,7 @@ class App extends Component {
   }
 
   renderSortedLinks() {
-    if (this.state.loading) {
+    if (this.props.store.loading) {
       return;
     }
 
@@ -476,7 +476,7 @@ class App extends Component {
   }
 
   loadingMessage() {
-    if (this.state.loading) {
+    if (this.props.store.loading) {
       return (
         <Text
           y={100}

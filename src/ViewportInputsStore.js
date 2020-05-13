@@ -1,5 +1,5 @@
-import { types } from "mobx-state-tree";
-import { urlExists } from "./URL";
+import {types} from "mobx-state-tree";
+import {urlExists} from "./URL";
 import {arraysEqual} from "./utilities";
 
 const Chunk = types.model({
@@ -37,7 +37,7 @@ RootStore = types
     binScalingFactor: 3,
     useConnector: true,
     pixelsPerColumn: 10,
-    pixelsPerRow: 7,
+      pixelsPerRow: 10,
     leftOffset: 0,
     topOffset: 400,
     highlightedLink: 0, // we will compare linkColumns
@@ -60,12 +60,12 @@ RootStore = types
     pangenomelast_bin: -1, //TODO: don't add values unless they're needed
     // TODO: Set when bin2file is read
     beginColumnX: 0, //TODO: copied and stored from bin2file.json in calculateEndBinFromScreen()
+      loading: true,
   })
   .actions((self) => {
     function setChunkIndex(json) {
       console.log("STEP #2: chunkIndex contents loaded");
       console.log("Index updated with content:", json);
-
       self.chunkIndex = json;
     }
     function updateBeginEndBin(newBegin, newEnd) {
@@ -139,6 +139,7 @@ RootStore = types
         event.target.value +
         "/bin2file.json";
       if (urlExists(url)) {
+          console.log('STEP#1: New Data Source: ' + event.target.value);
         self.jsonName = event.target.value;
       }
     }
@@ -206,6 +207,9 @@ RootStore = types
       self.chunkBeginBin = x;
     }
 
+      function setLoading(val) {
+          self.loading = val;
+      }
     return {
       setChunkIndex,
       updateBeginEndBin,
@@ -240,6 +244,8 @@ RootStore = types
       getSelectedZoomLevel,
       setIndexSelectedZoomLevel,
       setAvailableZoomLevels,
+
+        setLoading,
     };
   })
   .views((self) => ({}));

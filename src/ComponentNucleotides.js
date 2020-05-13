@@ -29,7 +29,6 @@ class ComponentNucleotides extends React.Component {
     const parent = this.props.item;
     const x_val =
       parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
-    const width = 1 * this.props.store.pixelsPerColumn;
 
     //console.log('renderMatrixRow - row_n: ' + row_n)
     //console.log('x_val: ' + x_val)
@@ -41,12 +40,12 @@ class ComponentNucleotides extends React.Component {
         return (
           <>
             <Text
-              x={x_val + x * this.props.store.pixelsPerColumn}
-              y={this.props.store.topOffset - this.props.store.nucleotideHeight}
-              text={this.props.nucleotides[x]}
-              align="center"
-              height={this.props.store.nucleotideHeight}
-              width={width}
+                x={x_val + x * this.props.store.pixelsPerColumn}
+                y={this.props.store.topOffset - this.props.store.nucleotideHeight}
+                text={this.props.nucleotides[x]}
+                align="center"
+                height={this.props.store.nucleotideHeight}
+                width={this.props.store.pixelsPerColumn}
             />
           </>
         );
