@@ -1,17 +1,17 @@
-import {Layer, Stage, Text} from "react-konva";
-import React, {Component} from "react";
+import { Layer, Stage, Text } from "react-konva";
+import React, { Component } from "react";
 
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
-import ComponentRect, {compress_visible_rows} from "./ComponentRect";
+import ComponentRect, { compress_visible_rows } from "./ComponentRect";
 import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
-import {calculateLinkCoordinates} from "./LinkRecord";
+import { calculateLinkCoordinates } from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
-import {observe} from "mobx";
-import {arraysEqual, stringToColorAndOpacity} from "./utilities";
+import { observe } from "mobx";
+import { arraysEqual, stringToColorAndOpacity } from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
 
@@ -63,7 +63,10 @@ class App extends Component {
 
     //STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final
     // rendering info for this loaded chunks
-    observe(this.props.store.chunksProcessed, this.updateSchematicMetadata.bind(this));
+    observe(
+      this.props.store.chunksProcessed,
+      this.updateSchematicMetadata.bind(this)
+    );
 
     //STEP #11: Y values calculated, trigger do the render
     observe(this.props.store, "loading", this.render.bind(this));
@@ -83,20 +86,20 @@ class App extends Component {
     for (let chunkPath of this.props.store.chunkURLs) {
       //TODO: conditional on jsonCache not already having chunk
       console.log("fetchAllChunks - START reading: " + chunkPath);
-      this.schematic
-        .jsonFetch(chunkPath)
-        .then((data) => {
-          console.log("fetchAllChunks - END reading: " + chunkPath);
-          this.schematic.loadJsonCache(chunkPath, data);
-        })
+      this.schematic.jsonFetch(chunkPath).then((data) => {
+        console.log("fetchAllChunks - END reading: " + chunkPath);
+        this.schematic.loadJsonCache(chunkPath, data);
+      });
     }
   }
 
   updateSchematicMetadata() {
-    if (arraysEqual(this.props.store.chunkURLs, this.props.store.chunksProcessed)) {
+    if (
+      arraysEqual(this.props.store.chunkURLs, this.props.store.chunksProcessed)
+    ) {
       console.log(
         "updateSchematicMetadata #components: " +
-        this.schematic.components.length
+          this.schematic.components.length
       );
       console.log(
         "STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final rendering info for this loaded chunks"
@@ -345,16 +348,36 @@ class App extends Component {
             (this.props.store.useWidthCompression
               ? this.props.store.binScalingFactor
               : schematizeComponent.num_bin);
-          return this.renderLinkColumn(schematizeComponent, i, leftPad, j, linkColumn);
+          return this.renderLinkColumn(
+            schematizeComponent,
+            i,
+            leftPad,
+            j,
+            linkColumn
+          );
         })}
       </>
     );
   }
 
-  renderLinkColumn(schematizeComponent, i, firstDepartureColumn, j, linkColumn) {
-    const xCoordArrival = this.leftXStart(schematizeComponent, i, firstDepartureColumn, j);
-    const [localColor, localOpacity, localStroke] =
-        stringToColorAndOpacity(linkColumn, this.state.highlightedLink, this.state.selectedLink);
+  renderLinkColumn(
+    schematizeComponent,
+    i,
+    firstDepartureColumn,
+    j,
+    linkColumn
+  ) {
+    const xCoordArrival = this.leftXStart(
+      schematizeComponent,
+      i,
+      firstDepartureColumn,
+      j
+    );
+    const [localColor, localOpacity, localStroke] = stringToColorAndOpacity(
+      linkColumn,
+      this.state.highlightedLink,
+      this.state.selectedLink
+    );
     return (
       <LinkColumn
         store={this.props.store}
@@ -395,7 +418,7 @@ class App extends Component {
 
   renderNucleotidesSchematic = () => {
     if (
-        !this.props.store.loading &&
+      !this.props.store.loading &&
       // The conditions on bitWidht and useWidthCompression are lifted here,
       // avoiding any computation if nucleotides have not to be visualized.
       this.props.store.getBinWidth() === 1 &&
@@ -418,9 +441,16 @@ class App extends Component {
           return null;
         }*/
 
+        if (
+          schematizeComponent.firstBin == schematizeComponent.lastBin &&
+          schematizeComponent.firstBin == 0
+        ) {
+          return null; // Dummy component
+        }
+
         const chunkBeginBin = this.props.store.chunkBeginBin; //TODO: question if this is necessary
         const nucleotides_slice = this.schematic.nucleotides.slice(
-          schematizeComponent.firstBin - chunkBeginBin,
+          schematizeComponent.firstBin - chunkBeginBin - 1,
           schematizeComponent.lastBin - chunkBeginBin + 1
         );
 
@@ -447,8 +477,6 @@ class App extends Component {
         );
       });
     }
-
-
   };
 
   renderSchematic() {
@@ -528,7 +556,9 @@ class App extends Component {
           x={this.props.store.leftOffset} // removed leftOffset to simplify code. Relative coordinates are always better.
           y={-this.props.store.topOffset} // For some reason, I have to put this, but I'd like to put 0
           width={this.state.actualWidth + 60}
-          height={this.visibleHeightPixels() + this.props.store.nucleotideHeight}
+          height={
+            this.visibleHeightPixels() + this.props.store.nucleotideHeight
+          }
         >
           <Layer ref={this.layerRef}>
             {this.loadingMessage()}
