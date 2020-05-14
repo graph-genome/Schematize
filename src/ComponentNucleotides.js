@@ -30,22 +30,6 @@ class ComponentNucleotides extends React.Component {
   render() {
     //console.log('ComponentNucleotides - render')
     return this.renderMatrixRow();
-
-    // TODO: to confirm the elimination of the Rect tag (less tags to render!)
-    /*return (
-      *<>
-        <Rect
-            key={"nuc" + this.props.item.x}
-            x={this.props.item.x}
-            y={this.props.store.topOffset + this.props.store.nucleotideHeight}
-            width={this.props.width * this.props.store.pixelsPerColumn}
-            height={this.props.height * this.props.store.pixelsPerRow}
-        />
-        {this.renderMatrixRow()}
-      </>
-
-      this.renderMatrixRow()
-    );*/
   }
 }
 

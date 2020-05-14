@@ -441,12 +441,12 @@ class App extends Component {
           return null;
         }*/
 
-        if (
+        /*if (
           schematizeComponent.firstBin === schematizeComponent.lastBin &&
           schematizeComponent.firstBin === 0
         ) {
           return null; // Dummy component
-        }
+        }*/
 
         const chunkBeginBin = this.props.store.chunkBeginBin; //TODO: question if this is necessary
 
