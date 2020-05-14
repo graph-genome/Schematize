@@ -442,8 +442,8 @@ class App extends Component {
         }*/
 
         if (
-          schematizeComponent.firstBin == schematizeComponent.lastBin &&
-          schematizeComponent.firstBin == 0
+          schematizeComponent.firstBin === schematizeComponent.lastBin &&
+          schematizeComponent.firstBin === 0
         ) {
           return null; // Dummy component
         }
