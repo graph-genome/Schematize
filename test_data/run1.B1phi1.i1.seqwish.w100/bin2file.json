@@ -1,0 +1,63 @@
+{
+    "bin_width": 100,
+    "json_version": 12,
+    "last_bin": 525,
+    "pangenome_length": 52441,
+    "files": [
+        {
+            "file": "chunk00_bin100.schematic.json",
+            "first_bin": 0,
+            "last_bin": 29
+        },
+        {
+            "file": "chunk01_bin100.schematic.json",
+            "first_bin": 30,
+            "last_bin": 46
+        },
+        {
+            "file": "chunk02_bin100.schematic.json",
+            "first_bin": 47,
+            "last_bin": 94
+        },
+        {
+            "file": "chunk03_bin100.schematic.json",
+            "first_bin": 95,
+            "last_bin": 153
+        },
+        {
+            "file": "chunk04_bin100.schematic.json",
+            "first_bin": 154,
+            "last_bin": 214
+        },
+        {
+            "file": "chunk05_bin100.schematic.json",
+            "first_bin": 215,
+            "last_bin": 259
+        },
+        {
+            "file": "chunk06_bin100.schematic.json",
+            "first_bin": 260,
+            "last_bin": 289
+        },
+        {
+            "file": "chunk07_bin100.schematic.json",
+            "first_bin": 290,
+            "last_bin": 362
+        },
+        {
+            "file": "chunk08_bin100.schematic.json",
+            "first_bin": 363,
+            "last_bin": 451
+        },
+        {
+            "file": "chunk09_bin100.schematic.json",
+            "first_bin": 452,
+            "last_bin": 522
+        },
+        {
+            "file": "chunk10_bin100.schematic.json",
+            "first_bin": 523,
+            "last_bin": 525
+        }
+    ]
+}
