@@ -1,5 +1,5 @@
 import React from "react";
-import { Rect, Text } from "react-konva";
+import { Text } from "react-konva";
 import PropTypes from "prop-types";
 
 class ComponentNucleotides extends React.Component {
