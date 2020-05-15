@@ -122,32 +122,31 @@ class LinkArrow extends React.Component {
 
     const [beginBin, endBin] = this.props.store.beginEndBin;
 
-    // TODO: Update the range only if the arrow it is not already contained in the current visualized range
-    if (true) {
-      // Find middle position of viewport
-      let width = endBin - beginBin;
-      let mid_bin = beginBin + width / 2;
+    // Find middle position of viewport
+    let width = endBin - beginBin;
+    let mid_bin = beginBin + width / 2;
 
-      // Compare with ends of arrow coordinates
-      let end_closer =
-        Math.abs(this.props.link.linkColumn.upstream - mid_bin) <
-        Math.abs(this.props.link.linkColumn.downstream - mid_bin);
+    // Compare with ends of arrow coordinates
+    let end_closer =
+      Math.abs(this.props.link.linkColumn.upstream - mid_bin) <
+      Math.abs(this.props.link.linkColumn.downstream - mid_bin);
 
-      // Identify more distant end
-      let destination_bin = end_closer
-        ? this.props.link.linkColumn.downstream
-        : this.props.link.linkColumn.upstream;
+    // Identify more distant end
+    let destination_bin = end_closer
+      ? this.props.link.linkColumn.downstream
+      : this.props.link.linkColumn.upstream;
 
-      // Calculate beginBin that will place distant end in middle of viewport
-      // The ~~ operator is a double NOT bitwise operator. It is used as a faster substitute for Math.floor().
-      let newBeginBin = ~~(destination_bin - width / 2);
-      let newEndBin = newBeginBin + width;
+    // Calculate beginBin that will place distant end in middle of viewport
+    // The ~~ operator is a double NOT bitwise operator. It is used as a faster substitute for Math.floor().
+    let newBeginBin = ~~(destination_bin - width / 2);
+    let newEndBin = newBeginBin + width;
 
-      this.props.store.updateBeginEndBin(newBeginBin, newEndBin);
-
-      // Called after the bin updating to start the timers after the rendering
-      this.props.updateSelectedLink(this.props.link.linkColumn);
-    }
+    // Called after the bin updating to start the timers after the rendering
+    this.props.updateSelectedLink(
+      this.props.link.linkColumn,
+      newBeginBin,
+      newEndBin
+    );
   };
 }
 

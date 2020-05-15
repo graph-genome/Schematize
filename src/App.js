@@ -61,7 +61,8 @@ class App extends Component {
     // observe(this.props.store, "binScalingFactor", this.recalcXLayout.bind(this));
     // observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
 
-    observe(this.props.store, "beginEndBin", this.recalcXLayout.bind(this));
+    // TODO: evaluate if it is always correct
+    observe(this.props.store.beginEndBin, this.recalcXLayout.bind(this));
 
     //STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final
     // rendering info for this loaded chunks
@@ -130,6 +131,17 @@ class App extends Component {
 
   recalcXLayout() {
     console.log("recalcXLayout");
+
+    // In this way the updated relativePixelX information is available everywhere for the rendering
+    this.schematic.components.map((schematizeComponent, i) => {
+      schematizeComponent.relativePixelX = this.leftXStart(
+        schematizeComponent,
+        i,
+        0,
+        0
+      );
+    });
+
     const sum = (accumulator, currentValue) => accumulator + currentValue;
     const columnsInComponents = this.schematic.components
       .map(
@@ -274,29 +286,45 @@ class App extends Component {
     }
   };
 
-  updateSelectedLink = (linkRect) => {
+  updateSelectedLink = (linkRect, newBeginBin, newEndBin) => {
     console.log("updateSelectedLink");
 
-    if (linkRect !== this.state.selectedLink) {
-      console.log("updateSelectedLink - NewSelection");
+    const [beginBin, endBin] = this.props.store.beginEndBin;
 
-      clearTimeout(this.timerHighlightingLink);
+    // if (linkRect !== this.state.selectedLink) //else it is a re-clik on the same link, so do nothing here
+    // TODO: simplify this part, avoiding operations if the arrow is already visibile in the screen
+    let update_state = false;
+    if (!(beginBin <= newBeginBin && newEndBin <= endBin)) {
+      console.log("updateSelectedLink - NewBeginEndBin");
+
+      this.props.store.updateBeginEndBin(newBeginBin, newEndBin);
+      update_state = true;
+    }
+
+    clearTimeout(this.timerHighlightingLink);
+
+    // Update the rendering if it is selected a new arrow (or deselected the last one) or
+    // if the range in changed (clicking on a new arrow or recliking on the same one)
+    if (linkRect !== this.selectedLink || update_state) {
+      console.log("updateSelectedLink - NewSelection");
 
       this.setState({
         highlightedLink: linkRect,
         selectedLink: linkRect,
       });
     }
-    //else it is a re-clik on the same link, so do nothing here
 
     // Auto de-selection after a delay
     if (linkRect) {
+      console.log("Timer deselection");
+
       // Eventually restart the timer if it was already ongoing
       clearTimeout(this.timerSelectionLink);
 
       this.timerSelectionLink = setTimeout(
         () => {
-          this.updateSelectedLink(null);
+          const [beginBin, endBin] = this.props.store.beginEndBin;
+          this.updateSelectedLink(null, beginBin, endBin);
         },
         5000 // TODO: to tune. Create a config file where all these hard-coded settings will be
       );
@@ -512,14 +540,6 @@ class App extends Component {
     }
 
     return this.schematic.components.map((schematizeComponent, i) => {
-      // In this way the updated relativePixelX information is available everywhere for the rendering
-      schematizeComponent.relativePixelX = this.leftXStart(
-        schematizeComponent,
-        i,
-        0,
-        0
-      );
-
       return (
         <React.Fragment key={"f" + i}>
           {this.renderComponent(schematizeComponent, i, this.state.pathNames)}
