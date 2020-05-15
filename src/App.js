@@ -61,6 +61,8 @@ class App extends Component {
     // observe(this.props.store, "binScalingFactor", this.recalcXLayout.bind(this));
     // observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
 
+    observe(this.props.store, "beginEndBin", this.recalcXLayout.bind(this));
+
     //STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final
     // rendering info for this loaded chunks
     observe(
@@ -302,15 +304,31 @@ class App extends Component {
   };
 
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
-    /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
+    /*
+    Return the x coordinate pixel that starts the LinkColumn at i, j
+    
+    If this.props.store.useWidthCompression is false:
+    - "schematizeComponent.columnX - this.props.store.beginColumnX" calculates the offset of the current chunk respect to the first chunk loaded
+    - "this.props.store.getBeginBin() - this.props.store.chunkBeginBin":" calculates the offset of the current visualized window respect to the starting bin coordinate
+    */
+
     let previousColumns = !this.props.store.useWidthCompression
-      ? schematizeComponent.columnX - this.props.store.beginColumnX
+      ? schematizeComponent.columnX -
+        this.props.store.beginColumnX -
+        (this.props.store.getBeginBin() - this.props.store.chunkBeginBin - 1)
       : schematizeComponent.columnX +
         (schematizeComponent.index - this.schematic.components[0].index) *
           this.props.store.binScalingFactor;
+
     let pixelsFromColumns =
       (previousColumns + firstDepartureColumn + j) *
       this.props.store.pixelsPerColumn;
+
+    /*console.log('columnX ' + schematizeComponent.columnX + '; beginColumnX: ' + this.props.store.beginColumnX + ', beginBin: ' + this.props.store.getBeginBin())
+    console.log('')
+    console.log('previousColumns: ' + previousColumns)
+    console.log('pixelsFromColumns: ' + pixelsFromColumns)*/
+
     return pixelsFromColumns + i * this.props.store.pixelsPerColumn;
   }
 
@@ -487,11 +505,21 @@ class App extends Component {
   };
 
   renderSchematic() {
+    console.log("renderSchematic");
+
     if (this.props.store.loading) {
       return;
     }
 
     return this.schematic.components.map((schematizeComponent, i) => {
+      // In this way the updated relativePixelX information is available everywhere for the rendering
+      schematizeComponent.relativePixelX = this.leftXStart(
+        schematizeComponent,
+        i,
+        0,
+        0
+      );
+
       return (
         <React.Fragment key={"f" + i}>
           {this.renderComponent(schematizeComponent, i, this.state.pathNames)}

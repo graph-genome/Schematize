@@ -221,7 +221,7 @@ class PangenomeSchematic extends React.Component {
           }
 
           for (let [index, component] of jsonChunk.components.entries()) {
-            if (component.firstBin > 0) {
+            if (component.first_bin > 0) {
               let componentItem = new Component(component, index);
               this.components.push(componentItem); //TODO: concurrent modification?
               //if (component.last_bin >= beginBin) { NOTE: we are now reading in whole chunk, this may place
@@ -267,7 +267,7 @@ class Component {
       this.departures.push(new LinkColumn(departure));
     }
     // we do not know the x val for this component, yet
-    this.x = 0;
+    this.relativePixelX = component.x;
     // deep copy of occupants
     this.occupants = Array.from(component.occupants);
     this.matrix = Array.from(component.matrix);

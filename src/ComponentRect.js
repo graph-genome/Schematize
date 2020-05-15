@@ -71,7 +71,8 @@ class ComponentRect extends React.Component {
   renderMatrixRow(row, count, row_n) {
     const parent = this.props.item;
     const x_val =
-      parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
+      parent.relativePixelX +
+      parent.arrivals.length * this.props.store.pixelsPerColumn;
     const width = 1 * this.props.store.pixelsPerColumn;
     let this_y = count;
     if (!this.props.store.useVerticalCompression) {
@@ -143,7 +144,7 @@ class ComponentRect extends React.Component {
     let component = this.props.item;
     // x is the (num_bins + num_arrivals + num_departures)*pixelsPerColumn
     const x_val =
-      component.x +
+      component.relativePixelX +
       (component.arrivals.length +
         (this.props.store.useWidthCompression
           ? this.props.store.binScalingFactor
@@ -159,8 +160,7 @@ class ComponentRect extends React.Component {
       <ConnectorRect
         key={"connector" + j}
         x={x_val}
-        y={this.props.store.topOffset +
-          this_y * this.props.store.pixelsPerRow}
+        y={this.props.store.topOffset + this_y * this.props.store.pixelsPerRow}
         width={this.props.store.pixelsPerColumn} //Clarified and corrected adjacent connectors as based on pixelsPerColumn width #9
         height={this.props.store.pixelsPerRow}
         color={"#464646"}
@@ -172,7 +172,7 @@ class ComponentRect extends React.Component {
     return (
       <>
         <Rect
-          x={this.props.item.x}
+          x={this.props.item.relativePixelX}
           y={this.props.store.topOffset}
           key={this.state.key + "R"}
           width={this.props.widthInColumns * this.props.store.pixelsPerColumn}

@@ -6,7 +6,8 @@ class ComponentNucleotides extends React.Component {
   renderMatrixRow() {
     const parent = this.props.item;
     const x_val =
-      parent.x + parent.arrivals.length * this.props.store.pixelsPerColumn;
+      parent.relativePixelX +
+      parent.arrivals.length * this.props.store.pixelsPerColumn;
 
     //console.log('x_val: ' + x_val)
 

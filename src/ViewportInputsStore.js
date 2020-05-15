@@ -1,6 +1,6 @@
-import {types} from "mobx-state-tree";
-import {urlExists} from "./URL";
-import {arraysEqual} from "./utilities";
+import { types } from "mobx-state-tree";
+import { urlExists } from "./URL";
+import { arraysEqual } from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
@@ -37,7 +37,7 @@ RootStore = types
     binScalingFactor: 3,
     useConnector: true,
     pixelsPerColumn: 10,
-      pixelsPerRow: 10,
+    pixelsPerRow: 10,
     leftOffset: 0,
     topOffset: 400,
     highlightedLink: 0, // we will compare linkColumns
@@ -60,7 +60,7 @@ RootStore = types
     pangenomelast_bin: -1, //TODO: don't add values unless they're needed
     // TODO: Set when bin2file is read
     beginColumnX: 0, //TODO: copied and stored from bin2file.json in calculateEndBinFromScreen()
-      loading: true,
+    loading: true,
   })
   .actions((self) => {
     function setChunkIndex(json) {
@@ -87,7 +87,7 @@ RootStore = types
       }
       if (newBegin !== beginBin) {
         setBeginEndBin(newBegin, newEnd);
-        console.log("updateBeginEnd: " + newBegin + " " + newEnd);
+        console.log("updateed begin and end: " + newBegin + " " + newEnd);
       } else {
         self.beginEndBin[1] = newEnd; // quietly update without refresh
       }
@@ -139,7 +139,7 @@ RootStore = types
         event.target.value +
         "/bin2file.json";
       if (urlExists(url)) {
-          console.log('STEP#1: New Data Source: ' + event.target.value);
+        console.log("STEP#1: New Data Source: " + event.target.value);
         self.jsonName = event.target.value;
       }
     }
@@ -158,7 +158,7 @@ RootStore = types
         self.chunkFastaURLs = arrayOfFile;
       }
     }
-    function addChunkProcessed(singleChunk){
+    function addChunkProcessed(singleChunk) {
       console.log("STEP #7: processed " + singleChunk);
       self.chunksProcessed.push(singleChunk);
     }
@@ -207,9 +207,9 @@ RootStore = types
       self.chunkBeginBin = x;
     }
 
-      function setLoading(val) {
-          self.loading = val;
-      }
+    function setLoading(val) {
+      self.loading = val;
+    }
     return {
       setChunkIndex,
       updateBeginEndBin,
@@ -245,7 +245,7 @@ RootStore = types
       setIndexSelectedZoomLevel,
       setAvailableZoomLevels,
 
-        setLoading,
+      setLoading,
     };
   })
   .views((self) => ({}));
