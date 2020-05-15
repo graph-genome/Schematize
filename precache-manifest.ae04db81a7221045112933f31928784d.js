@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "bedfd8ada22bfecc168c6061346fa389",
+    "revision": "0a91f352948620cc0d2df8b7bdf10dbe",
     "url": "/Schematize/index.html"
   },
   {
-    "revision": "6806ba13de08fcfba2f6",
+    "revision": "bdedcb392463106827f0",
     "url": "/Schematize/static/css/main.ea0bbd06.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/Schematize/static/js/2.06453761.chunk.js"
   },
   {
-    "revision": "6806ba13de08fcfba2f6",
-    "url": "/Schematize/static/js/main.44a46dc8.chunk.js"
+    "revision": "bdedcb392463106827f0",
+    "url": "/Schematize/static/js/main.f1edc009.chunk.js"
   },
   {
     "revision": "a4e10835abd6053a24b1",
