@@ -120,6 +120,8 @@ class LinkArrow extends React.Component {
     jumps to the other side. TODO: Still needs visual highlighting at destination.*/
     console.log("Click", event, this.props.link);
 
+    let [newBeginBin, newEndBin] = this.props.store.beginEndBin;
+
     const [beginBin, endBin] = this.props.store.beginEndBin;
 
     // Find middle position of viewport
@@ -136,12 +138,14 @@ class LinkArrow extends React.Component {
       ? this.props.link.linkColumn.downstream
       : this.props.link.linkColumn.upstream;
 
-    // Calculate beginBin that will place distant end in middle of viewport
-    // The ~~ operator is a double NOT bitwise operator. It is used as a faster substitute for Math.floor().
-    let newBeginBin = ~~(destination_bin - width / 2);
-    let newEndBin = newBeginBin + width;
+    if (!(destination_bin >= beginBin && destination_bin <= endBin)) {
+      // Calculate beginBin that will place distant end in middle of viewport
+      // The ~~ operator is a double NOT bitwise operator. It is used as a faster substitute for Math.floor().
+      newBeginBin = Math.max(1, ~~(destination_bin - width / 2));
+      newEndBin = newBeginBin + width;
+      // Called after the bin updating to start the timers after the rendering
+    }
 
-    // Called after the bin updating to start the timers after the rendering
     this.props.updateSelectedLink(
       this.props.link.linkColumn,
       newBeginBin,
