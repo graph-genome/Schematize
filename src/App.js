@@ -11,7 +11,11 @@ import { calculateLinkCoordinates } from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import { observe } from "mobx";
-import { arraysEqual, stringToColorAndOpacity } from "./utilities";
+import {
+  arraysEqual,
+  stringToColorAndOpacity,
+  calculateEndBinFromScreen,
+} from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
 
@@ -61,9 +65,6 @@ class App extends Component {
     // observe(this.props.store, "binScalingFactor", this.recalcXLayout.bind(this));
     // observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
 
-    // TODO: evaluate if it is always correct
-    observe(this.props.store.beginEndBin, this.recalcXLayout.bind(this));
-
     //STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final
     // rendering info for this loaded chunks
     observe(
@@ -73,7 +74,78 @@ class App extends Component {
 
     //STEP #11: Y values calculated, trigger do the render
     observe(this.props.store, "loading", this.render.bind(this));
+
+    //STEP #3: with new chunkIndex, openRelevantChunksFromIndex
+    observe(
+      this.props.store,
+      "chunkIndex", //TODO: this is currently not triggering on input change. No idea why
+      this.openRelevantChunksFromIndex.bind(this)
+    );
+
+    observe(
+      this.props.store,
+      "indexSelectedZoomLevel",
+      this.openRelevantChunksFromIndex.bind(this) // Whenever the selected zoom level changes
+    );
+    observe(
+      this.props.store.beginEndBin, //user moves start position
+      //This following part is important to scroll right and left on browser
+      this.openRelevantChunksFromIndex.bind(this)
+    );
+
     makeInspectable(this.props.store);
+  }
+
+  /** Compares bin2file @param indexContents with the beginBin and EndBin.
+   * It finds the appropriate chunk URLS from the index and updates
+   * switchChunkURLs which trigger json fetches for the new chunks. **/
+  openRelevantChunksFromIndex() {
+    console.log(
+      "STEP #3: with new chunkIndex, this.openRelevantChunksFromIndex()"
+    );
+
+    if (
+      this.props.store.chunkIndex === null ||
+      !this.props.store.chunkIndex.zoom_levels.keys()
+    ) {
+      return; //before the class is fully initialized
+    }
+    const beginBin = this.props.store.getBeginBin();
+
+    // With new chunkIndex, it sets the available zoom levels
+    this.props.store.setAvailableZoomLevels(
+      this.props.store.chunkIndex["zoom_levels"].keys()
+    );
+    const selZoomLev = this.props.store.getSelectedZoomLevel();
+    let [endBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
+      beginBin,
+      selZoomLev,
+      this.props.store
+    );
+    //TODO: commented because maybe it creates problems
+    //this.props.store.updateBeginEndBin(beginBin, endBin);
+
+    console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
+    let URLprefix =
+      process.env.PUBLIC_URL +
+      "test_data/" +
+      this.props.store.jsonName +
+      "/" +
+      selZoomLev +
+      "/";
+    fileArray = fileArray.map((filename) => {
+      return URLprefix + filename;
+    });
+    fileArrayFasta = fileArrayFasta.map((filename) => {
+      return URLprefix + filename;
+    });
+
+    this.props.store.switchChunkFastaURLs(fileArrayFasta);
+
+    // If there are no new chunck, it has only to recalcualte the X layout
+    if (!this.props.store.switchChunkURLs(fileArray)) {
+      this.recalcXLayout();
+    }
   }
 
   fetchAllChunks() {
@@ -352,9 +424,8 @@ class App extends Component {
       (previousColumns + firstDepartureColumn + j) *
       this.props.store.pixelsPerColumn;
 
-    /*console.log('columnX ' + schematizeComponent.columnX + '; beginColumnX: ' + this.props.store.beginColumnX + ', beginBin: ' + this.props.store.getBeginBin())
-    console.log('')
-    console.log('previousColumns: ' + previousColumns)
+    /*console.log(i, firstDepartureColumn, j)
+    console.log('previousColumns (' + previousColumns + ') = columnX (' + schematizeComponent.columnX + ') - beginColumnX (' + this.props.store.beginColumnX + ') - (getBeginBin (' + this.props.store.getBeginBin() + ') - chunkBeginBin (' + this.props.store.chunkBeginBin + ') - 1)')
     console.log('pixelsFromColumns: ' + pixelsFromColumns)*/
 
     return pixelsFromColumns + i * this.props.store.pixelsPerColumn;
@@ -493,7 +564,6 @@ class App extends Component {
         ) {
           return null; // Dummy component
         }*/
-
         const chunkBeginBin = this.props.store.chunkBeginBin; //TODO: question if this is necessary
 
         let first_nucleotide_position =

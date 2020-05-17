@@ -44,7 +44,7 @@ RootStore = types
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
     // TODO: to change 'jsonName' in 'jsonNameDir'?
-    jsonName: "small_test",
+    jsonName: "run1.B1phi1.i1.seqwish",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
     indexSelectedZoomLevel: 0,
@@ -87,7 +87,7 @@ RootStore = types
       }
       if (newBegin !== beginBin) {
         setBeginEndBin(newBegin, newEnd);
-        console.log("updateed begin and end: " + newBegin + " " + newEnd);
+        console.log("updated begin and end: " + newBegin + " " + newEnd);
       } else {
         self.beginEndBin[1] = newEnd; // quietly update without refresh
       }
@@ -150,7 +150,10 @@ RootStore = types
         console.log("STEP #4: Set switchChunkURLs: " + arrayOfFile);
         self.chunkURLs = arrayOfFile;
         self.chunksProcessed = []; //clear
+
+        return true;
       }
+      return false;
     }
     function switchChunkFastaURLs(arrayOfFile) {
       if (!arraysEqual(arrayOfFile, self.chunkFastaURLs)) {

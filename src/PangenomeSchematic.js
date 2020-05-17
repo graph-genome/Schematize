@@ -1,7 +1,6 @@
 import React from "react";
 import { observe } from "mobx";
 import { urlExists } from "./URL";
-import { calculateEndBinFromScreen } from "./utilities";
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
@@ -23,23 +22,6 @@ class PangenomeSchematic extends React.Component {
     observe(this.props.store, "jsonName", () => {
       this.loadIndexFile(this.props.store.jsonName);
     });
-    //STEP #3: with new chunkIndex, openRelevantChunksFromIndex
-    observe(
-      this.props.store,
-      "chunkIndex", //TODO: this is currently not triggering on input change. No idea why
-      this.openRelevantChunksFromIndex.bind(this)
-    );
-
-    observe(
-      this.props.store,
-      "indexSelectedZoomLevel",
-      this.openRelevantChunksFromIndex.bind(this) // Whenever the selected zoom level changes
-    );
-    observe(
-      this.props.store.beginEndBin, //user moves start position
-      //This following part is important to scroll right and left on browser
-      this.openRelevantChunksFromIndex.bind(this)
-    );
 
     // The FASTA files are read only when there are new chunks to read
     observe(this.props.store.chunkFastaURLs, () => {
@@ -54,54 +36,6 @@ class PangenomeSchematic extends React.Component {
   }
   componentDidUpdate() {
     // console.log("#components: " + this.components);
-  }
-
-  /** Compares bin2file @param indexContents with the beginBin and EndBin.
-   * It finds the appropriate chunk URLS from the index and updates
-   * switchChunkURLs which trigger json fetches for the new chunks. **/
-  openRelevantChunksFromIndex() {
-    console.log(
-      "STEP #3: with new chunkIndex, this.openRelevantChunksFromIndex()"
-    );
-
-    if (
-      this.props.store.chunkIndex === null ||
-      !this.props.store.chunkIndex.zoom_levels.keys()
-    ) {
-      return; //before the class is fully initialized
-    }
-    const beginBin = this.props.store.getBeginBin();
-
-    // With new chunkIndex, it sets the available zoom levels
-    this.props.store.setAvailableZoomLevels(
-      this.props.store.chunkIndex["zoom_levels"].keys()
-    );
-    const selZoomLev = this.props.store.getSelectedZoomLevel();
-    let [endBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
-      beginBin,
-      selZoomLev,
-      this.props.store
-    );
-    //TODO: commented because maybe it creates problems
-    //this.props.store.updateBeginEndBin(beginBin, endBin);
-
-    console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
-    let URLprefix =
-      process.env.PUBLIC_URL +
-      "test_data/" +
-      this.props.store.jsonName +
-      "/" +
-      selZoomLev +
-      "/";
-    fileArray = fileArray.map((filename) => {
-      return URLprefix + filename;
-    });
-    fileArrayFasta = fileArrayFasta.map((filename) => {
-      return URLprefix + filename;
-    });
-
-    this.props.store.switchChunkFastaURLs(fileArrayFasta);
-    this.props.store.switchChunkURLs(fileArray);
   }
 
   loadIndexFile(jsonFilename) {
