@@ -564,17 +564,11 @@ class App extends Component {
         ) {
           return null; // Dummy component
         }*/
-        const chunkBeginBin = this.props.store.chunkBeginBin; //TODO: question if this is necessary
 
-        let first_nucleotide_position =
-          schematizeComponent.firstBin - chunkBeginBin;
-        if (chunkBeginBin === 0) {
-          // The first chunk contains the dummy components at bin 0, therefore the real position in the fasta has to be shifted by one
-          first_nucleotide_position -= 1;
-        }
+        //TODO: question if this.props.store.chunkBeginBin is necessary
         const nucleotides_slice = this.schematic.nucleotides.slice(
-          first_nucleotide_position,
-          schematizeComponent.lastBin - chunkBeginBin + 1
+          schematizeComponent.firstBin - this.props.store.chunkBeginBin,
+          schematizeComponent.lastBin - this.props.store.chunkBeginBin + 1
         );
 
         //console.log("nucleotides_slice: " + nucleotides_slice);
