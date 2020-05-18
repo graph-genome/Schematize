@@ -1,21 +1,17 @@
-import { Layer, Stage, Text } from "react-konva";
-import React, { Component } from "react";
+import {Layer, Stage, Text} from "react-konva";
+import React, {Component} from "react";
 
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
-import ComponentRect, { compress_visible_rows } from "./ComponentRect";
+import ComponentRect, {compress_visible_rows} from "./ComponentRect";
 import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
-import { calculateLinkCoordinates } from "./LinkRecord";
+import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
-import { observe } from "mobx";
-import {
-  arraysEqual,
-  stringToColorAndOpacity,
-  calculateEndBinFromScreen,
-} from "./utilities";
+import {observe} from "mobx";
+import {arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
 
@@ -205,14 +201,10 @@ class App extends Component {
     console.log("recalcXLayout");
 
     // In this way the updated relativePixelX information is available everywhere for the rendering
-    this.schematic.components.map((schematizeComponent, i) => {
-      schematizeComponent.relativePixelX = this.leftXStart(
-        schematizeComponent,
-        i,
-        0,
-        0
-      );
-    });
+      for (const [i, schematizeComponent] of this.schematic.components.entries()) {
+          schematizeComponent.relativePixelX = this.leftXStart(schematizeComponent,
+              i, 0, 0);
+      }
 
     const sum = (accumulator, currentValue) => accumulator + currentValue;
     const columnsInComponents = this.schematic.components
@@ -425,7 +417,10 @@ class App extends Component {
       this.props.store.pixelsPerColumn;
 
     /*console.log(i, firstDepartureColumn, j)
-    console.log('previousColumns (' + previousColumns + ') = columnX (' + schematizeComponent.columnX + ') - beginColumnX (' + this.props.store.beginColumnX + ') - (getBeginBin (' + this.props.store.getBeginBin() + ') - chunkBeginBin (' + this.props.store.chunkBeginBin + ') - 1)')
+    console.log('previousColumns (' + previousColumns + ') = columnX (
+    ' + schematizeComponent.columnX + ') - beginColumnX (' + this.props.store.beginColumnX + ')
+     - (getBeginBin (' + this.props.store.getBeginBin() + ') -
+     chunkBeginBin (' + this.props.store.chunkBeginBin + ') - 1)')
     console.log('pixelsFromColumns: ' + pixelsFromColumns)*/
 
     return pixelsFromColumns + i * this.props.store.pixelsPerColumn;

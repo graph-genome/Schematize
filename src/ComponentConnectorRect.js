@@ -1,5 +1,5 @@
 import React from "react";
-import { Rect, Text } from "react-konva";
+import {Rect, Text} from "react-konva";
 import PropTypes from "prop-types";
 
 export class ConnectorRect extends React.Component {
@@ -51,6 +51,25 @@ export class MatrixCell extends React.Component {
     this.props.store.updateCellTooltipContent(""); // we don't want any tooltip displayed if we leave the cell
   }
 
+    /**Reduced number of Text elements generated for inversions,
+     * mouse events restored**/
+    inversionText(inverted) {
+        if (this.props.store.pixelsPerRow > 7 && inverted) {
+            return <Text
+                x={this.props.x}
+                y={this.props.y}
+                width={this.props.width}
+                height={this.props.height || 1}
+                align={"center"}
+                verticalAlign={"center"}
+                text={inverted ? "<" : " "}
+                onMouseEnter={this.onHover.bind(this)}
+                onMouseLeave={this.onLeave.bind(this)}
+            />
+        } else {
+            return null
+        }
+    }
   render() {
     const inverted = this.props.item[1] > 0.5;
 
@@ -68,24 +87,16 @@ export class MatrixCell extends React.Component {
     return (
       <>
         <Rect
-          x={this.props.x}
-          y={this.props.y}
-          width={this.props.width}
-          height={this.props.height || 1}
-          fill={color}
-        />
+            x={this.props.x}
+            y={this.props.y}
+            width={this.props.width}
+            height={this.props.height || 1}
+            fill={color}
+            onMouseEnter={this.onHover.bind(this)}
+            onMouseLeave={this.onLeave.bind(this)}>
+        </Rect>
+          {this.inversionText(inverted)}
 
-        <Text
-          x={this.props.x}
-          y={this.props.y}
-          width={this.props.width}
-          height={this.props.height || 1}
-          align={"center"}
-          verticalAlign={"center"}
-          text={inverted ? "<" : " "}
-          onMouseEnter={this.onHover.bind(this)}
-          onMouseLeave={this.onLeave.bind(this)}
-        />
       </>
     );
   }
