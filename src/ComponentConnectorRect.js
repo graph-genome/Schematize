@@ -32,8 +32,18 @@ ConnectorRect.propTypes = {
 export class MatrixCell extends React.Component {
   onHover() {
     //tooltip: this.props.item.mean_pos
+
+    // An example: Path_name, Coverage: 0.23, Inversion: 0.0, Pos: 2365-27289
+
     let tooltipContent = '"';
-    tooltipContent += this.props.pathName + '": ';
+    tooltipContent +=
+      this.props.pathName +
+      '"\nCoverage: ' +
+      this.props.item[0] +
+      "\nInversion: " +
+      this.props.item[1] +
+      "\nPos: ";
+
     const ranges = this.props.item[2];
     for (let j = 0; j < ranges.length; j++) {
       let start = ranges[j][0];
@@ -51,6 +61,27 @@ export class MatrixCell extends React.Component {
     this.props.store.updateCellTooltipContent(""); // we don't want any tooltip displayed if we leave the cell
   }
 
+  /**Reduced number of Text elements generated for inversions,
+   * mouse events restored**/
+  inversionText(inverted) {
+    if (this.props.store.pixelsPerRow > 9 && inverted) {
+      return (
+        <Text
+          x={this.props.x}
+          y={this.props.y}
+          width={this.props.width}
+          height={this.props.height || 1}
+          align={"center"}
+          verticalAlign={"center"}
+          text={inverted ? "<" : " "}
+          onMouseEnter={this.onHover.bind(this)}
+          onMouseLeave={this.onLeave.bind(this)}
+        />
+      );
+    } else {
+      return null;
+    }
+  }
   render() {
     const inverted = this.props.item[1] > 0.5;
 
@@ -73,19 +104,10 @@ export class MatrixCell extends React.Component {
           width={this.props.width}
           height={this.props.height || 1}
           fill={color}
-        />
-
-        <Text
-          x={this.props.x}
-          y={this.props.y}
-          width={this.props.width}
-          height={this.props.height || 1}
-          align={"center"}
-          verticalAlign={"center"}
-          text={inverted ? "<" : " "}
           onMouseEnter={this.onHover.bind(this)}
           onMouseLeave={this.onLeave.bind(this)}
-        />
+        ></Rect>
+        {this.inversionText(inverted)}
       </>
     );
   }

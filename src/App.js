@@ -1,65 +1,23 @@
-import { Layer, Stage } from "react-konva";
-import React, { Component } from "react";
+import {Layer, Stage, Text} from "react-konva";
+import React, {Component} from "react";
 
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
-import ComponentRect, { compress_visible_rows } from "./ComponentRect";
+import ComponentRect, {compress_visible_rows} from "./ComponentRect";
 import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
-import { calculateLinkCoordinates } from "./LinkRecord";
+import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
-import { observe } from "mobx";
-import { Text } from "react-konva";
+import {observe} from "mobx";
+import {arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "./utilities";
 
-function stringToColorAndOpacity(
-  linkColumn,
-  highlightedLinkColumn,
-  selectedLink
-) {
-  const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
-
-  const whichLinkToConsider = selectedLink
-    ? selectedLink
-    : highlightedLinkColumn;
-
-  // When the mouse in on a Link, all the other ones will become gray and fade out
-
-  if (
-    // Check if the mouse in on a Link (highlightedLinkColumn) or if a Link was clicked (selectedLink)
-    (!highlightedLinkColumn && !selectedLink) ||
-    colorKey ===
-      (whichLinkToConsider.downstream + 1) * (whichLinkToConsider.upstream + 1)
-  ) {
-    return [
-      stringToColourSave(colorKey),
-      1.0,
-      highlightedLinkColumn || selectedLink ? "black" : null,
-    ];
-  } else {
-    return ["gray", 0.3, null];
-  }
-}
-
-const stringToColourSave = function (colorKey) {
-  colorKey = colorKey.toString();
-  let hash = 0;
-  for (let i = 0; i < colorKey.length; i++) {
-    hash = colorKey.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  let colour = "#";
-  for (let j = 0; j < 3; j++) {
-    const value = (hash >> (j * 8)) & 0xff;
-    colour += ("00" + value.toString(16)).substr(-2);
-  }
-  return colour;
-};
+import makeInspectable from "mobx-devtools-mst";
 
 class App extends Component {
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
-  layerRef3 = React.createRef(null);
   timerHighlightingLink = null;
   timerSelectionLink = null;
 
@@ -72,66 +30,150 @@ class App extends Component {
     this.state = {
       schematize: [],
       pathNames: [],
-      loading: true,
       actualWidth: 1,
       buttonsHeight: 0,
     };
     this.schematic = new PangenomeSchematic({ store: this.props.store }); //Read file, parse nothing
 
+    /* == State control flow --> redundancies here can waste processing time
+    * STEP #1: whenever jsonName changes, loadIndexFile
+    * STEP #2: chunkIndex contents loaded
+    * STEP #3: with new chunkIndex, this.openRelevantChunksFromIndex()
+    * STEP #4: Set switchChunkURLs
+    * STEP #5: once ChunkURLs are listed, go fetchAllChunks
+    * STEP #6: fetched chunks go into loadJsonCache
+    * STEP #7: JsonCache causes processArray to update chunksProcessed
+    * STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final rendering info for this loaded chunks
+      * STEP #9: reserveAirspace
+      * STEP #10: calcMaxNumRowsAcrossComponents
+    //TODO: separate processArray into its  own observer
+    * STEP #11: Y values calculated, trigger do the render
+    * */
+
+    //Arrays must be observed directly, simple objects are observed by name
+    //STEP #5: once ChunkURLs are listed, go fetchAllChunks
+    observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
+
+    // observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
+      observe(this.props.store, "useVerticalCompression", this.updateSchematicMetadata.bind(this));
+      observe(this.props.store, "useWidthCompression", this.recalcXLayout.bind(this));
+      observe(this.props.store, "useConnector", this.recalcXLayout.bind(this)); //TODO faster rerender
+      observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this)); //TODO faster rerender
+      observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this)); //TODO faster rerender
+
+    //STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final
+    // rendering info for this loaded chunks
     observe(
-      this.props.store.beginEndBin,
+      this.props.store.chunksProcessed,
       this.updateSchematicMetadata.bind(this)
     );
-    observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
-    //Arrays must be observed directly, simple objects are observed by name
-    observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
+
+    //STEP #11: Y values calculated, trigger do the render
+    observe(this.props.store, "loading", this.render.bind(this));
+
+    //STEP #3: with new chunkIndex, openRelevantChunksFromIndex
     observe(
       this.props.store,
-      "useVerticalCompression",
-      this.recalcY.bind(this)
+      "chunkIndex", //TODO: this is currently not triggering on input change. No idea why
+      this.openRelevantChunksFromIndex.bind(this)
     );
+
     observe(
       this.props.store,
-      "useWidthCompression",
-      this.recalcXLayout.bind(this)
+      "indexSelectedZoomLevel",
+      this.openRelevantChunksFromIndex.bind(this) // Whenever the selected zoom level changes
     );
-    observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
     observe(
-      this.props.store,
-      "binScalingFactor",
-      this.recalcXLayout.bind(this)
+      this.props.store.beginEndBin, //user moves start position
+      //This following part is important to scroll right and left on browser
+      this.openRelevantChunksFromIndex.bind(this)
     );
-    observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
-    observe(
-      this.props.store,
-      "pixelsPerColumn",
-      this.calculateBinWidthOfScreen.bind(this)
+
+    makeInspectable(this.props.store);
+  }
+
+  /** Compares bin2file @param indexContents with the beginBin and EndBin.
+   * It finds the appropriate chunk URLS from the index and updates
+   * switchChunkURLs which trigger json fetches for the new chunks. **/
+  openRelevantChunksFromIndex() {
+    console.log(
+      "STEP #3: with new chunkIndex, this.openRelevantChunksFromIndex()"
     );
+
+    if (
+      this.props.store.chunkIndex === null ||
+      !this.props.store.chunkIndex.zoom_levels.keys()
+    ) {
+      return; //before the class is fully initialized
+    }
+    const beginBin = this.props.store.getBeginBin();
+
+    // With new chunkIndex, it sets the available zoom levels
+    this.props.store.setAvailableZoomLevels(
+      this.props.store.chunkIndex["zoom_levels"].keys()
+    );
+    const selZoomLev = this.props.store.getSelectedZoomLevel();
+    let [endBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
+      beginBin,
+      selZoomLev,
+      this.props.store
+    );
+    //TODO: commented because maybe it creates problems
+    //this.props.store.updateBeginEndBin(beginBin, endBin);
+
+    console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
+    let URLprefix =
+      process.env.PUBLIC_URL +
+      "test_data/" +
+      this.props.store.jsonName +
+      "/" +
+      selZoomLev +
+      "/";
+    fileArray = fileArray.map((filename) => {
+      return URLprefix + filename;
+    });
+    fileArrayFasta = fileArrayFasta.map((filename) => {
+      return URLprefix + filename;
+    });
+
+    this.props.store.switchChunkFastaURLs(fileArrayFasta);
+
+    // If there are no new chunck, it has only to recalcualte the X layout
+    if (!this.props.store.switchChunkURLs(fileArray)) {
+      this.recalcXLayout();
+    }
   }
 
   fetchAllChunks() {
     /*Dispatches fetches for all chunk files
      * Read https://github.com/graph-genome/Schematize/issues/22 for details
      */
-    console.log("fetchAllChunks", this.props.store.getChunkURLs());
-    if (!this.props.store.getChunkURLs()[0]) {
+    console.log("STEP #5: once ChunkURLs are listed, go fetchAllChunks");
+    console.log("fetchAllChunks", this.props.store.chunkURLs);
+    if (!this.props.store.chunkURLs.get(0)) {
       console.warn("No chunk URL defined.");
       return;
     }
-    for (let chunk of this.props.store.chunkURLs) {
+    for (let chunkPath of this.props.store.chunkURLs) {
       //TODO: conditional on jsonCache not already having chunk
-      this.schematic
-        .jsonFetch(chunk)
-        .then((data) => this.schematic.loadJsonCache(chunk, data))
-        .then(this.updateSchematicMetadata.bind(this));
+      console.log("fetchAllChunks - START reading: " + chunkPath);
+      this.schematic.jsonFetch(chunkPath).then((data) => {
+        console.log("fetchAllChunks - END reading: " + chunkPath);
+        this.schematic.loadJsonCache(chunkPath, data);
+      });
     }
   }
 
   updateSchematicMetadata() {
-    if (this.schematic.processArray()) {
+    if (
+      arraysEqual(this.props.store.chunkURLs, this.props.store.chunksProcessed)
+    ) {
       console.log(
         "updateSchematicMetadata #components: " +
           this.schematic.components.length
+      );
+      console.log(
+        "STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final rendering info for this loaded chunks"
       );
 
       // console.log(this.schematic.components);
@@ -142,13 +184,14 @@ class App extends Component {
         },
         () => {
           this.recalcXLayout();
+
           this.compressed_row_mapping = compress_visible_rows(
             this.schematic.components
           );
           this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
             this.schematic.components
           ); // TODO add this to mobx-state-tree
-          this.setState({ loading: false });
+          this.props.store.setLoading(false);
         }
       );
     }
@@ -156,6 +199,13 @@ class App extends Component {
 
   recalcXLayout() {
     console.log("recalcXLayout");
+
+    // In this way the updated relativePixelX information is available everywhere for the rendering
+      for (const [i, schematizeComponent] of this.schematic.components.entries()) {
+          schematizeComponent.relativePixelX = this.leftXStart(schematizeComponent,
+              i, 0, 0);
+      }
+
     const sum = (accumulator, currentValue) => accumulator + currentValue;
     const columnsInComponents = this.schematic.components
       .map(
@@ -193,15 +243,6 @@ class App extends Component {
     this.setState({ highlightedLink: null }); // nothing code to force update.
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (
-      this.props.store.getBeginBin() !== prevProps.store.getBeginBin() ||
-      this.props.store.getEndBin() !== prevProps.store.getEndBin()
-    ) {
-      this.updateSchematicMetadata();
-    }
-  }
-
   calcMaxNumRowsAcrossComponents(components) {
     let maxNumberRowsInOneComponent = 0;
     for (let i = 0; i < components.length; i++) {
@@ -213,14 +254,11 @@ class App extends Component {
         maxNumberRowsInOneComponent
       );
     }
-    console.log(
-      "Max number of rows across components: " + maxNumberRowsInOneComponent
-    );
 
     return maxNumberRowsInOneComponent;
   }
 
-  visibleHeight() {
+  visibleHeightPixels() {
     if (
       this.props.store.useVerticalCompression ||
       !this.compressed_row_mapping
@@ -235,31 +273,17 @@ class App extends Component {
         "maxNumRowsAcrossComponents",
         this.maxNumRowsAcrossComponents
       );
+
       return (
         (this.maxNumRowsAcrossComponents + 2.5) * this.props.store.pixelsPerRow
       );
     } else {
       return (
+        //TODO: NOTE that Object.keys is wrong if you change compressed_row_mapping to a mobx object
         (Object.keys(this.compressed_row_mapping).length + 0.25) *
         this.props.store.pixelsPerRow
       );
     }
-  }
-
-  calculateBinWidthOfScreen() {
-    let deviceWidth = 1920; // TODO: get width from browser
-    let widthInCells = deviceWidth / this.props.store.pixelsPerColumn;
-
-    // let paddingBetweenComponents = this.props.store.pixelsPerColumn * 20; //guessing number of components
-    let b = this.props.store.getBeginBin();
-    this.props.store.updateBeginEndBin(b, b + widthInCells);
-    //TODO the logic here could be much more complex by looking at the average pixel
-    //width of components and whether vaious settings are on.  The consequence
-    //of overestimating widthInCells is to make the shift buttons step too big
-  }
-
-  UNSAFE_componentWillMount() {
-    this.updateSchematicMetadata();
   }
 
   componentDidMount = () => {
@@ -326,29 +350,45 @@ class App extends Component {
     }
   };
 
-  updateSelectedLink = (linkRect) => {
+  updateSelectedLink = (linkRect, newBeginBin, newEndBin) => {
     console.log("updateSelectedLink");
 
-    if (linkRect !== this.state.selectedLink) {
-      console.log("updateSelectedLink - NewSelection");
+    const [beginBin, endBin] = this.props.store.beginEndBin;
 
-      clearTimeout(this.timerHighlightingLink);
+    // if (linkRect !== this.state.selectedLink) //else it is a re-clik on the same link, so do nothing here
+    // TODO: simplify this part, avoiding operations if the arrow is already visibile in the screen
+    let update_state = false;
+    if (!(beginBin <= newBeginBin && newEndBin <= endBin)) {
+      console.log("updateSelectedLink - NewBeginEndBin");
+
+      this.props.store.updateBeginEndBin(newBeginBin, newEndBin);
+      update_state = true;
+    }
+
+    clearTimeout(this.timerHighlightingLink);
+
+    // Update the rendering if it is selected a new arrow (or deselected the last one) or
+    // if the range in changed (clicking on a new arrow or recliking on the same one)
+    if (linkRect !== this.selectedLink || update_state) {
+      console.log("updateSelectedLink - NewSelection");
 
       this.setState({
         highlightedLink: linkRect,
         selectedLink: linkRect,
       });
     }
-    //else it is a re-clik on the same link, so do nothing here
 
     // Auto de-selection after a delay
     if (linkRect) {
+      console.log("Timer deselection");
+
       // Eventually restart the timer if it was already ongoing
       clearTimeout(this.timerSelectionLink);
 
       this.timerSelectionLink = setTimeout(
         () => {
-          this.updateSelectedLink(null);
+          const [beginBin, endBin] = this.props.store.beginEndBin;
+          this.updateSelectedLink(null, beginBin, endBin);
         },
         5000 // TODO: to tune. Create a config file where all these hard-coded settings will be
       );
@@ -356,17 +396,33 @@ class App extends Component {
   };
 
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
-    /* Return the x coordinate pixel that starts the LinkColumn at i, j*/
+    /*
+    Return the x coordinate pixel that starts the LinkColumn at i, j
+    
+    If this.props.store.useWidthCompression is false:
+    - "schematizeComponent.columnX - this.props.store.beginColumnX" calculates the offset of the current chunk respect to the first chunk loaded
+    - "this.props.store.getBeginBin() - this.props.store.chunkBeginBin":" calculates the offset of the current visualized window respect to the starting bin coordinate
+    */
+
     let previousColumns = !this.props.store.useWidthCompression
-      ? schematizeComponent.firstBin -
-        this.props.store.getBeginBin() +
-        schematizeComponent.offset
-      : schematizeComponent.offset +
+      ? schematizeComponent.columnX -
+        this.props.store.beginColumnX -
+        (this.props.store.getBeginBin() - this.props.store.chunkBeginBin - 1)
+      : schematizeComponent.columnX +
         (schematizeComponent.index - this.schematic.components[0].index) *
           this.props.store.binScalingFactor;
+
     let pixelsFromColumns =
       (previousColumns + firstDepartureColumn + j) *
       this.props.store.pixelsPerColumn;
+
+    /*console.log(i, firstDepartureColumn, j)
+    console.log('previousColumns (' + previousColumns + ') = columnX (
+    ' + schematizeComponent.columnX + ') - beginColumnX (' + this.props.store.beginColumnX + ')
+     - (getBeginBin (' + this.props.store.getBeginBin() + ') -
+     chunkBeginBin (' + this.props.store.chunkBeginBin + ') - 1)')
+    console.log('pixelsFromColumns: ' + pixelsFromColumns)*/
+
     return pixelsFromColumns + i * this.props.store.pixelsPerColumn;
   }
 
@@ -376,9 +432,9 @@ class App extends Component {
         <ComponentRect
           store={this.props.store}
           item={schematizeComponent}
-          key={i}
-          height={this.visibleHeight()}
-          width={
+          key={"r" + i}
+          height={this.visibleHeightPixels()}
+          widthInColumns={
             schematizeComponent.arrivals.length +
             (this.props.store.useWidthCompression
               ? this.props.store.binScalingFactor
@@ -474,15 +530,17 @@ class App extends Component {
 
   renderNucleotidesSchematic = () => {
     if (
-      !this.state.loading &&
+      !this.props.store.loading &&
       // The conditions on bitWidht and useWidthCompression are lifted here,
       // avoiding any computation if nucleotides have not to be visualized.
-      this.props.store.binWidth === 1 &&
+      this.props.store.getBinWidth() === 1 &&
       !this.props.store.useWidthCompression &&
+      this.props.store.pixelsPerColumn >= 10 &&
       this.schematic.nucleotides.length > 0
     ) {
+      //console.log('renderNucleotidesSchematic - START')
       return this.schematic.components.map((schematizeComponent, i) => {
-        //TO_DO: maybe it is not necessary, to confirm its elimination
+        //TODO: maybe it is not necessary, to confirm its elimination
         // Check if there are nucleotides (which cover the range [this.schematic.first_bin, this.schematic.last_bin])
         // associated to the component to visualize (which cover the range [schematizeComponent.firstBin, schematizeComponent.lastBin])
         /*if (
@@ -495,10 +553,17 @@ class App extends Component {
           return null;
         }*/
 
-        const chunkBeginBin = this.props.store.getChunkBeginEndBin()[0];
+        /*if (
+          schematizeComponent.firstBin === schematizeComponent.lastBin &&
+          schematizeComponent.firstBin === 0
+        ) {
+          return null; // Dummy component
+        }*/
+
+        //TODO: question if this.props.store.chunkBeginBin is necessary
         const nucleotides_slice = this.schematic.nucleotides.slice(
-          schematizeComponent.firstBin - chunkBeginBin,
-          schematizeComponent.lastBin - chunkBeginBin + 1
+          schematizeComponent.firstBin - this.props.store.chunkBeginBin,
+          schematizeComponent.lastBin - this.props.store.chunkBeginBin + 1
         );
 
         //console.log("nucleotides_slice: " + nucleotides_slice);
@@ -509,7 +574,7 @@ class App extends Component {
               store={this.props.store}
               item={schematizeComponent}
               key={i}
-              height={this.visibleHeight()}
+              height={this.visibleHeightPixels()}
               width={
                 schematizeComponent.arrivals.length +
                 (this.props.store.useWidthCompression
@@ -524,14 +589,15 @@ class App extends Component {
         );
       });
     }
-
-    return;
   };
 
   renderSchematic() {
-    if (this.state.loading) {
+    console.log("renderSchematic");
+
+    if (this.props.store.loading) {
       return;
     }
+
     return this.schematic.components.map((schematizeComponent, i) => {
       return (
         <React.Fragment key={"f" + i}>
@@ -542,7 +608,7 @@ class App extends Component {
   }
 
   renderSortedLinks() {
-    if (this.state.loading) {
+    if (this.props.store.loading) {
       return;
     }
 
@@ -552,7 +618,7 @@ class App extends Component {
   }
 
   loadingMessage() {
-    if (this.state.loading) {
+    if (this.props.store.loading) {
       return (
         <Text
           y={100}
@@ -567,6 +633,7 @@ class App extends Component {
 
   render() {
     console.log("Start render");
+
     return (
       <>
         <div
@@ -603,7 +670,9 @@ class App extends Component {
           x={this.props.store.leftOffset} // removed leftOffset to simplify code. Relative coordinates are always better.
           y={-this.props.store.topOffset} // For some reason, I have to put this, but I'd like to put 0
           width={this.state.actualWidth + 60}
-          height={this.visibleHeight() + this.props.store.nucleotideHeight}
+          height={
+            this.visibleHeightPixels() + this.props.store.nucleotideHeight
+          }
         >
           <Layer ref={this.layerRef}>
             {this.loadingMessage()}

@@ -48,8 +48,7 @@ class LinkColumn extends React.Component {
               x={this.props.x}
               y={
                 this.props.store.topOffset +
-                y_coord +
-                this.props.store.nucleotideHeight
+                y_coord
               }
               width={this.props.store.pixelsPerColumn}
               height={this.props.store.pixelsPerRow}

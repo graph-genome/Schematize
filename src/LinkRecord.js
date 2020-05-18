@@ -34,7 +34,7 @@ export function calculateLinkCoordinates(
 
   for (let i = 0; i < schematic.length; i++) {
     let schematizeComponent = schematic[i];
-    schematizeComponent.x = leftXStart(schematizeComponent, i, 0, 0);
+    //schematizeComponent.relativePixelX = leftXStart(schematizeComponent, i, 0, 0);
     //ARRIVALS: Calculate all X
     for (let j = 0; j < schematizeComponent.arrivals.length; j++) {
       let arrival = schematizeComponent.arrivals[j];
@@ -128,7 +128,7 @@ function reserveElevationAirSpace(
         elevationOccupied
       );
     }
-    const stillSmall = true;//elevation < topOffset / 3;
+    const stillSmall = true; //elevation < topOffset / 3;
     elevation += stillSmall ? pixelsPerColumn : pixelsPerColumn / 4;
     for (let x = linkBegin; x < linkEnd && x < elevationOccupied.length; x++) {
       elevationOccupied[x] = elevation;

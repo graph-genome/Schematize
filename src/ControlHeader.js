@@ -1,6 +1,6 @@
 import React from "react";
-import { Observer } from "mobx-react";
-import { httpGetAsync } from "./URL";
+import {Observer} from "mobx-react";
+import {httpGetAsync} from "./URL";
 import PropTypes from "prop-types";
 
 class ControlHeader extends React.Component {
@@ -16,17 +16,16 @@ class ControlHeader extends React.Component {
   handleJump() {
     console.log(
       "JUMP: path name: " +
-        this.props.store.getPath() +
+        this.props.store.pathNucPos.path +
         " nucleotide position: " +
-        this.props.store.getNucPos()
+        this.props.store.pathNucPos.nucPos
     );
     // I don't know why, but in order for the CORS headers to exchange we need to make a first GET request to "/hi" which will not return anything
 
     const store = this.props.store;
     const addr = store.pathIndexServerAddress;
-    const path_name = store.getPath();
-    const nuc_pos = store.getNucPos();
-    const binWidth = store.binWidth;
+    const path_name = store.pathNucPos.path;
+    const nuc_pos = store.pathNucPos.nucPos;
 
     function handleOdgiServerResponse(result) {
       if (result === "0") {
@@ -37,7 +36,7 @@ class ControlHeader extends React.Component {
         console.log(result);
         // go from nucleotide position to bin
         result = parseInt(result);
-        const newBeginBin = Math.ceil(result / binWidth);
+        const newBeginBin = Math.ceil(result / this.props.store.getBinWidth());
         console.log(newBeginBin);
         store.updateBeginEndBin(newBeginBin, store.getEndBin());
       }
@@ -56,7 +55,6 @@ class ControlHeader extends React.Component {
         " ---" +
         target.options[target.selectedIndex].text
     );
-
     this.props.store.setIndexSelectedZoomLevel(parseInt(target.value));
   }
 
@@ -88,30 +86,36 @@ class ControlHeader extends React.Component {
           title={"File:"}
         />
         <span style={{ marginLeft: "30px" }}>
-          Bin width:
-          <button
-            className="button"
-            onClick={() => this.decIndexSelectedZoomLevel()}
-          >
-            -
-          </button>
-          <select
-            id="select_bin_width"
-            onChange={(val) => this.change_zoom_level(val.target)}
-            value={this.props.store.indexSelectedZoomLevel}
-          >
-            {this.props.store.availableZoomLevels.map((item, i) => (
-              <option key={i} value={i}>
-                {item}
-              </option>
-            ))}
-          </select>
-          <button
-            className="button"
-            onClick={() => this.incIndexSelectedZoomLevel()}
-          >
-            +
-          </button>
+          <Observer>
+            {() => (
+              <>
+                Bin width:
+                <button
+                  className="button"
+                  onClick={() => this.decIndexSelectedZoomLevel()}
+                >
+                  -
+                </button>
+                <select
+                  id="select_bin_width"
+                  onChange={(val) => this.change_zoom_level(val.target)}
+                  value={this.props.store.indexSelectedZoomLevel}
+                >
+                  {this.props.store.availableZoomLevels.map((item, i) => (
+                    <option key={i} value={i}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  className="button"
+                  onClick={() => this.incIndexSelectedZoomLevel()}
+                >
+                  +
+                </button>
+              </>
+            )}
+          </Observer>
         </span>
 
         <span style={{ marginLeft: "30px" }}>
@@ -162,7 +166,7 @@ class ControlHeader extends React.Component {
             onChange={(event) =>
               this.props.store.updatePathNucPos(
                 event.target.value,
-                this.props.store.getNucPos()
+                this.props.store.pathNucPos.nucPos
               )
             }
             style={{ width: "80px" }}
@@ -198,7 +202,7 @@ class ControlHeader extends React.Component {
           </span>
           <span>
             {" "}
-            Use Width Compression:
+              Show Only Rearrangements:
             <WidthCompressedViewSwitch store={this.props.store} />
           </span>
           {this.props.store.useWidthCompression ? (
@@ -208,21 +212,7 @@ class ControlHeader extends React.Component {
                 Render Connectors:
                 <RenderConnectorSwitch store={this.props.store} />
               </span>
-              <span>
-                {" "}
-                Component Width Scaling Factor:
-                <Observer>
-                  {() => (
-                    <input
-                      type="number"
-                      min={1}
-                      value={this.props.store.binScalingFactor}
-                      onChange={this.props.store.updateBinScalingFactor}
-                      style={{ width: "30px" }}
-                    />
-                  )}
-                </Observer>
-              </span>
+
             </React.Fragment>
           ) : (
             <></>
@@ -230,13 +220,16 @@ class ControlHeader extends React.Component {
           <span>
             {" "}
             Row Height:
-            <input
-              type="number"
-              min={1}
-              value={this.props.store.pixelsPerRow}
-              onChange={this.props.store.updateHeight}
-              style={{ width: "30px" }}
-            />
+            <Observer>
+              {() => (
+                  <input
+                      type="number"
+                      min={1}
+                      value={this.props.store.pixelsPerRow}
+                      onChange={this.props.store.updateHeight}
+                      style={{width: "30px"}}
+                  />)}
+            </Observer>
           </span>
           <span>
             {" "}
