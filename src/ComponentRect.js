@@ -99,7 +99,6 @@ class ComponentRect extends React.Component {
               row_number={row_n}
               width={width}
               height={this.props.store.pixelsPerRow}
-              color={"#838383"}
             />
           </>
         );
