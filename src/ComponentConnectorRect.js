@@ -54,7 +54,7 @@ export class MatrixCell extends React.Component {
     /**Reduced number of Text elements generated for inversions,
      * mouse events restored**/
     inversionText(inverted) {
-        if (this.props.store.pixelsPerRow > 7 && inverted) {
+        if (this.props.store.pixelsPerRow > 9 && inverted) {
             return <Text
                 x={this.props.x}
                 y={this.props.y}

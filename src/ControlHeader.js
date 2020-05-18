@@ -1,6 +1,6 @@
 import React from "react";
-import { Observer } from "mobx-react";
-import { httpGetAsync } from "./URL";
+import {Observer} from "mobx-react";
+import {httpGetAsync} from "./URL";
 import PropTypes from "prop-types";
 
 class ControlHeader extends React.Component {
@@ -202,7 +202,7 @@ class ControlHeader extends React.Component {
           </span>
           <span>
             {" "}
-            Use Width Compression:
+              Show Only Rearrangements:
             <WidthCompressedViewSwitch store={this.props.store} />
           </span>
           {this.props.store.useWidthCompression ? (
@@ -212,21 +212,7 @@ class ControlHeader extends React.Component {
                 Render Connectors:
                 <RenderConnectorSwitch store={this.props.store} />
               </span>
-              <span>
-                {" "}
-                Component Width Scaling Factor:
-                <Observer>
-                  {() => (
-                    <input
-                      type="number"
-                      min={1}
-                      value={this.props.store.binScalingFactor}
-                      onChange={this.props.store.updateBinScalingFactor}
-                      style={{ width: "30px" }}
-                    />
-                  )}
-                </Observer>
-              </span>
+
             </React.Fragment>
           ) : (
             <></>
@@ -234,13 +220,16 @@ class ControlHeader extends React.Component {
           <span>
             {" "}
             Row Height:
-            <input
-              type="number"
-              min={1}
-              value={this.props.store.pixelsPerRow}
-              onChange={this.props.store.updateHeight}
-              style={{ width: "30px" }}
-            />
+            <Observer>
+              {() => (
+                  <input
+                      type="number"
+                      min={1}
+                      value={this.props.store.pixelsPerRow}
+                      onChange={this.props.store.updateHeight}
+                      style={{width: "30px"}}
+                  />)}
+            </Observer>
           </span>
           <span>
             {" "}

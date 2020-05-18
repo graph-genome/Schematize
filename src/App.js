@@ -55,11 +55,11 @@ class App extends Component {
     observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
 
     // observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
-    // observe(this.props.store, "useVerticalCompression", this.recalcY.bind(this));
-    // observe(this.props.store, "useWidthCompression", this.recalcXLayout.bind(this));
-    // observe(this.props.store, "useConnector", this.recalcXLayout.bind(this));
-    // observe(this.props.store, "binScalingFactor", this.recalcXLayout.bind(this));
-    // observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this));
+      observe(this.props.store, "useVerticalCompression", this.updateSchematicMetadata.bind(this));
+      observe(this.props.store, "useWidthCompression", this.recalcXLayout.bind(this));
+      observe(this.props.store, "useConnector", this.recalcXLayout.bind(this)); //TODO faster rerender
+      observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this)); //TODO faster rerender
+      observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this)); //TODO faster rerender
 
     //STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final
     // rendering info for this loaded chunks
