@@ -1,17 +1,21 @@
-import {Layer, Stage, Text} from "react-konva";
-import React, {Component} from "react";
+import { Layer, Stage, Text } from "react-konva";
+import React, { Component } from "react";
 
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
-import ComponentRect, {compress_visible_rows} from "./ComponentRect";
+import ComponentRect, { compress_visible_rows } from "./ComponentRect";
 import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
-import {calculateLinkCoordinates} from "./LinkRecord";
+import { calculateLinkCoordinates } from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
-import {observe} from "mobx";
-import {arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "./utilities";
+import { observe } from "mobx";
+import {
+  arraysEqual,
+  calculateEndBinFromScreen,
+  stringToColorAndOpacity,
+} from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
 
@@ -55,11 +59,19 @@ class App extends Component {
     observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
 
     // observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
-      observe(this.props.store, "useVerticalCompression", this.updateSchematicMetadata.bind(this));
-      observe(this.props.store, "useWidthCompression", this.recalcXLayout.bind(this));
-      observe(this.props.store, "useConnector", this.recalcXLayout.bind(this)); //TODO faster rerender
-      observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this)); //TODO faster rerender
-      observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this)); //TODO faster rerender
+    observe(
+      this.props.store,
+      "useVerticalCompression",
+      this.updateSchematicMetadata.bind(this)
+    );
+    observe(
+      this.props.store,
+      "useWidthCompression",
+      this.recalcXLayout.bind(this)
+    );
+    observe(this.props.store, "useConnector", this.recalcXLayout.bind(this)); //TODO faster rerender
+    observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this)); //TODO faster rerender
+    observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this)); //TODO faster rerender
 
     //STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final
     // rendering info for this loaded chunks
@@ -201,10 +213,17 @@ class App extends Component {
     console.log("recalcXLayout");
 
     // In this way the updated relativePixelX information is available everywhere for the rendering
-      for (const [i, schematizeComponent] of this.schematic.components.entries()) {
-          schematizeComponent.relativePixelX = this.leftXStart(schematizeComponent,
-              i, 0, 0);
-      }
+    for (const [
+      i,
+      schematizeComponent,
+    ] of this.schematic.components.entries()) {
+      schematizeComponent.relativePixelX = this.leftXStart(
+        schematizeComponent,
+        i,
+        0,
+        0
+      );
+    }
 
     const sum = (accumulator, currentValue) => accumulator + currentValue;
     const columnsInComponents = this.schematic.components
@@ -540,26 +559,6 @@ class App extends Component {
     ) {
       //console.log('renderNucleotidesSchematic - START')
       return this.schematic.components.map((schematizeComponent, i) => {
-        //TODO: maybe it is not necessary, to confirm its elimination
-        // Check if there are nucleotides (which cover the range [this.schematic.first_bin, this.schematic.last_bin])
-        // associated to the component to visualize (which cover the range [schematizeComponent.firstBin, schematizeComponent.lastBin])
-        /*if (
-          !(
-            this.schematic.first_bin <= schematizeComponent.firstBin &&
-            schematizeComponent.firstBin <= schematizeComponent.lastBin &&
-            schematizeComponent.lastBin <= this.schematic.last_bin
-          )
-        ) {
-          return null;
-        }*/
-
-        /*if (
-          schematizeComponent.firstBin === schematizeComponent.lastBin &&
-          schematizeComponent.firstBin === 0
-        ) {
-          return null; // Dummy component
-        }*/
-
         //TODO: question if this.props.store.chunkBeginBin is necessary
         const nucleotides_slice = this.schematic.nucleotides.slice(
           schematizeComponent.firstBin - this.props.store.chunkBeginBin,
@@ -574,14 +573,6 @@ class App extends Component {
               store={this.props.store}
               item={schematizeComponent}
               key={i}
-              height={this.visibleHeightPixels()}
-              width={
-                schematizeComponent.arrivals.length +
-                (this.props.store.useWidthCompression
-                  ? this.props.store.binScalingFactor
-                  : schematizeComponent.num_bin) +
-                (schematizeComponent.departures.length - 1)
-              }
               // They are passed only the nucleotides associated to the current component
               nucleotides={nucleotides_slice}
             />

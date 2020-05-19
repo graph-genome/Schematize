@@ -37,8 +37,6 @@ class ComponentNucleotides extends React.Component {
 ComponentNucleotides.propTypes = {
   store: PropTypes.object,
   item: PropTypes.object,
-  width: PropTypes.node,
-  height: PropTypes.node,
 };
 
 export default ComponentNucleotides;
