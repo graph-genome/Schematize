@@ -15,7 +15,7 @@ export function compress_visible_rows(components) {
   let sorted = Array.from(all_visible).sort();
   let row_mapping = {};
   for (let [count, index] of sorted.entries()) {
-    row_mapping[count] = index;
+      row_mapping[index] = count;
   }
   return row_mapping;
 }
@@ -37,16 +37,21 @@ class ComponentRect extends React.Component {
   renderMatrix() {
     let parts = this.props.item.matrix.map((entry, vertical_rank) => {
       let row_n = entry[0];
-      let row = entry[1][1];
-      return this.renderMatrixRow(row, vertical_rank, row_n);
+        return this.renderMatrixRow(entry[1], vertical_rank, row_n);
     });
-    this.props.store.updateMaxHeight(this.props.item.matrix.length); //Set max observed occupants in mobx store for render height
+      this.props.store.updateMaxHeight(this.props.item.occupants.length); //Set max observed occupants in mobx store for render height
     return <>{parts}</>;
   }
 
-  renderMatrixRow(row, vertical_rank, uncompressed_y) {
+    renderMatrixRow(entry, vertical_rank, uncompressed_y) {
+        let row = entry[1];
     const parent = this.props.item;
-    const x_val =
+        //https://github.com/graph-genome/Schematize/issues/87
+        //Sparse matrix includes the relative columns for each bin inside a component
+        //Columns are not necessarily contiguous, but follow the same order as `row`
+        let iColumns = entry[0];
+        let pixelsX = iColumns.map((cX) => cX * this.props.store.pixelsPerColumn)
+        const xBase =
       parent.relativePixelX +
       parent.arrivals.length * this.props.store.pixelsPerColumn;
     const width = 1 * this.props.store.pixelsPerColumn;
@@ -67,7 +72,7 @@ class ComponentRect extends React.Component {
                 item={cell}
                 store={this.props.store}
                 pathName={this.props.pathNames[uncompressed_y]}
-                x={x_val + x * this.props.store.pixelsPerColumn}
+                x={xBase + pixelsX[x]}
                 y={
                 this_y * this.props.store.pixelsPerRow +
                 this.props.store.topOffset
