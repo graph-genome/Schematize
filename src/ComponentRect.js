@@ -1,45 +1,25 @@
 /* eslint-disable require-jsdoc */
 import React from "react";
-import { Rect } from "react-konva";
-import { MatrixCell, ConnectorRect } from "./ComponentConnectorRect";
+import {Rect} from "react-konva";
+import {ConnectorRect, MatrixCell} from "./ComponentConnectorRect";
 import PropTypes from "prop-types";
-
-const zip = (arr, ...arrs) => {
-  /*Credit: https://gist.github.com/renaudtertrais/25fc5a2e64fe5d0e86894094c6989e10*/
-  return arr.map((val, i) => arrs.reduce((a, arr) => [...a, arr[i]], [val]));
-};
+import {sum} from "./utilities";
 
 export function compress_visible_rows(components) {
   /*Returns a Map with key of the original row number and value of the new, compressed row number.
    * Use this for y values of occupancy and LinkColumn cells.  */
-  let rows_present = find_rows_visible_in_viewport(components);
+  let all_visible = new Set();
+  for (let c of components) {
+    c.occupants.map((row) => all_visible.add(row));
+  }
+  let sorted = Array.from(all_visible).sort();
   let row_mapping = {};
-  let rows_encountered = 0;
-  for (let i = 0; i < rows_present.length; i++) {
-    if (rows_present[i]) {
-      row_mapping[i] = rows_encountered;
-      rows_encountered++;
-    }
+  for (let [count, index] of sorted.entries()) {
+    row_mapping[count] = index;
   }
   return row_mapping;
 }
 
-function find_rows_visible_in_viewport(components) {
-  /*The only components passed to this method are the components on the screen.
-   * This returns a boolean list of which rows are on the screen. */
-  // let rows_present = new Array(components[0].occupants.length).fill(false);
-  if (components.length) {
-    let per_row = zip(...components.map((x) => x.occupants));
-    let rows_present = per_row.map((row) => row.some((x) => x));
-    return rows_present;
-  } else {
-    return [false];
-  }
-}
-
-function sum(a, b) {
-  return a + b;
-}
 
 class ComponentRect extends React.Component {
   state = {
@@ -55,31 +35,27 @@ class ComponentRect extends React.Component {
   };
 
   renderMatrix() {
-    let count = 0;
-    let parts = this.props.item.matrix.map((row, row_n) => {
-      if (row.length) {
-        count++;
-        return this.renderMatrixRow(row, count, row_n);
-      } else {
-        return null;
-      }
+    let parts = this.props.item.matrix.map((entry, vertical_rank) => {
+      let row_n = entry[0];
+      let row = entry[1][1];
+      return this.renderMatrixRow(row, vertical_rank, row_n);
     });
-    this.props.store.updateMaxHeight(count); //Set max observed occupants in mobx store for render height
+    this.props.store.updateMaxHeight(this.props.item.matrix.length); //Set max observed occupants in mobx store for render height
     return <>{parts}</>;
   }
 
-  renderMatrixRow(row, count, row_n) {
+  renderMatrixRow(row, vertical_rank, uncompressed_y) {
     const parent = this.props.item;
     const x_val =
       parent.relativePixelX +
       parent.arrivals.length * this.props.store.pixelsPerColumn;
     const width = 1 * this.props.store.pixelsPerColumn;
-    let this_y = count;
+    let this_y = vertical_rank;
     if (!this.props.store.useVerticalCompression) {
-      if (!this.props.compressed_row_mapping.hasOwnProperty(row_n)) {
+      if (!this.props.compressed_row_mapping.hasOwnProperty(uncompressed_y)) {
         return null; // we need compressed_y and we don't have it.  give up
       }
-      this_y = this.props.compressed_row_mapping[row_n];
+      this_y = this.props.compressed_row_mapping[uncompressed_y];
     }
 
     return row.map((cell, x) => {
@@ -87,18 +63,18 @@ class ComponentRect extends React.Component {
         return (
           <>
             <MatrixCell
-              key={"occupant" + row_n + x}
-              item={cell}
-              store={this.props.store}
-              pathName={this.props.pathNames[row_n]}
-              x={x_val + x * this.props.store.pixelsPerColumn}
-              y={
+                key={"occupant" + uncompressed_y + x}
+                item={cell}
+                store={this.props.store}
+                pathName={this.props.pathNames[uncompressed_y]}
+                x={x_val + x * this.props.store.pixelsPerColumn}
+                y={
                 this_y * this.props.store.pixelsPerRow +
                 this.props.store.topOffset
               }
-              row_number={row_n}
-              width={width}
-              height={this.props.store.pixelsPerRow}
+                row_number={uncompressed_y}
+                width={width}
+                height={this.props.store.pixelsPerRow}
             />
           </>
         );
@@ -114,24 +90,17 @@ class ComponentRect extends React.Component {
     if (connectorsColumn !== undefined) {
       //count starts at the sum(sum(departure columns)) so that it's clear
       // adjacent connectors are alternatives to LinkColumns
-      let count = 0;
-      if (departures.length > 1) {
-        count += departures
-          .slice(0, -1)
+      //offset the y to start below link columns when using vertical compression
+      let yOffset = departures.slice(0, -1)
           .map((column) => {
-            return column.participants.reduce(sum);
+            return column.participants.length;
           })
-          .reduce(sum); // sum of trues in all columns
-      }
+          .reduce(sum, 0); // sum of trues in all columns
       return (
         <>
-          {connectorsColumn.participants.map((useConnector, j) => {
-            if (useConnector) {
-              count++;
-              return this.renderComponentConnector(useConnector, count, j);
-            } else {
-              return null;
-            }
+          {connectorsColumn.participants.map((uncompressed_row) => {
+            yOffset++;// only used in vertical compression
+            return this.renderComponentConnector(yOffset, uncompressed_row);
           })}
         </>
       );
@@ -139,7 +108,8 @@ class ComponentRect extends React.Component {
       return null;
     }
   }
-  renderComponentConnector(useConnector, count, j) {
+
+  renderComponentConnector(verticalRank, uncompressedRow) {
     let component = this.props.item;
     // x is the (num_bins + num_arrivals + num_departures)*pixelsPerColumn
     const x_val =
@@ -151,18 +121,18 @@ class ComponentRect extends React.Component {
         component.departures.length -
         1) *
         this.props.store.pixelsPerColumn;
-    let this_y = count;
+    let this_y = verticalRank;
     if (!this.props.store.useVerticalCompression) {
-      this_y = this.props.compressed_row_mapping[j];
+      this_y = this.props.compressed_row_mapping[uncompressedRow];
     }
     return (
       <ConnectorRect
-        key={"connector" + j}
-        x={x_val}
-        y={this.props.store.topOffset + this_y * this.props.store.pixelsPerRow}
-        width={this.props.store.pixelsPerColumn} //Clarified and corrected adjacent connectors as based on pixelsPerColumn width #9
-        height={this.props.store.pixelsPerRow}
-        color={"#464646"}
+          key={"connector" + uncompressedRow}
+          x={x_val}
+          y={this.props.store.topOffset + this_y * this.props.store.pixelsPerRow}
+          width={this.props.store.pixelsPerColumn} //Clarified and corrected adjacent connectors as based on pixelsPerColumn width #9
+          height={this.props.store.pixelsPerRow}
+          color={"#464646"}
       />
     );
   }

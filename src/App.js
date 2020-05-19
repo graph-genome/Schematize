@@ -244,18 +244,10 @@ class App extends Component {
   }
 
   calcMaxNumRowsAcrossComponents(components) {
-    let maxNumberRowsInOneComponent = 0;
-    for (let i = 0; i < components.length; i++) {
-      const component = components[i];
-      const occupants = component.occupants;
-      const numberOccupants = occupants.filter(Boolean).length;
-      maxNumberRowsInOneComponent = Math.max(
-        numberOccupants,
-        maxNumberRowsInOneComponent
-      );
-    }
-
-    return maxNumberRowsInOneComponent;
+      let lengths = components.map((x) => {
+          return x.occupants.length;
+      })
+      return Math.max(...lengths); //this should likely be faster than doing a search for true values
   }
 
   visibleHeightPixels() {

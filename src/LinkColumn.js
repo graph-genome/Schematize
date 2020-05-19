@@ -1,5 +1,5 @@
 import React from "react";
-import { Rect } from "react-konva";
+import {Rect} from "react-konva";
 import PropTypes from "prop-types";
 
 class LinkColumn extends React.Component {
@@ -16,7 +16,7 @@ class LinkColumn extends React.Component {
   }
   linkCells() {
     let alpha = [];
-    let count = 1; // Link columns appear to be 1 higher than occupants and conncetors
+    let count = 1; // Link columns appear to be 1 higher than occupants and connectors
     for (const [i, isPresent] of this.props.item.participants.entries()) {
       if (isPresent) {
         let this_y = count++;
