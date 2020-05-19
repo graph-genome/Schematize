@@ -86,7 +86,7 @@ class App extends Component {
     //STEP #3: with new chunkIndex, openRelevantChunksFromIndex
     observe(
       this.props.store,
-      "chunkIndex", //TODO: this is currently not triggering on input change. No idea why
+      "chunkIndex",
       this.openRelevantChunksFromIndex.bind(this)
     );
 
@@ -232,9 +232,8 @@ class App extends Component {
           component.arrivals.length +
           (component.departures.length - 1) +
           (this.props.store.useWidthCompression
-            ? this.props.store.binScalingFactor
-            : component.lastBin - component.firstBin) +
-          1
+            ? this.props.store.binScalingFactor + 1
+            : component.num_bin)
       )
       .reduce(sum, 0);
     const paddingBetweenComponents =
@@ -427,9 +426,10 @@ class App extends Component {
       ? schematizeComponent.columnX -
         this.props.store.beginColumnX -
         (this.props.store.getBeginBin() - this.props.store.chunkBeginBin - 1)
-      : schematizeComponent.columnX +
-        (schematizeComponent.index - this.schematic.components[0].index) *
-          this.props.store.binScalingFactor;
+      : schematizeComponent.columnX -
+        this.props.store.beginColumnX +
+        (schematizeComponent.index - this.schematic.components[0].index) - //* this.props.store.binScalingFactor -
+        (this.props.store.getBeginBin() - this.props.store.chunkBeginBin - 1);
 
     let pixelsFromColumns =
       (previousColumns + firstDepartureColumn + j) *
@@ -550,7 +550,7 @@ class App extends Component {
   renderNucleotidesSchematic = () => {
     if (
       !this.props.store.loading &&
-      // The conditions on bitWidht and useWidthCompression are lifted here,
+      // The conditions on binWidht and useWidthCompression are lifted here,
       // avoiding any computation if nucleotides have not to be visualized.
       this.props.store.getBinWidth() === 1 &&
       !this.props.store.useWidthCompression &&
