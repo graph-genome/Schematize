@@ -44,7 +44,7 @@ RootStore = types
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
     // TODO: to change 'jsonName' in 'jsonNameDir'?
-    jsonName: "small_test",
+    jsonName: "run1.B1phi1.i1.seqwish",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
     indexSelectedZoomLevel: 0,
@@ -66,6 +66,7 @@ RootStore = types
     function setChunkIndex(json) {
       console.log("STEP #2: chunkIndex contents loaded");
       console.log("Index updated with content:", json);
+      self.chunkIndex = null; // TODO: TEMPORARY HACK before understanding more in depth mobx-state or change approach
       self.chunkIndex = json;
     }
     function updateBeginEndBin(newBegin, newEnd) {
