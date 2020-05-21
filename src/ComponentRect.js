@@ -10,7 +10,9 @@ export function compress_visible_rows(components) {
    * Use this for y values of occupancy and LinkColumn cells.  */
   let all_visible = new Set();
   for (let c of components) {
-    c.occupants.map((row) => all_visible.add(row));
+      for (let row of c.occupants) {
+          all_visible.add(row);
+      }
   }
   let sorted = Array.from(all_visible).sort();
   let row_mapping = {};
