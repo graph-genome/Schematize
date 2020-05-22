@@ -84,6 +84,7 @@ export class MatrixCell extends React.Component {
   }
   render() {
     const inverted = this.props.item[1] > 0.5;
+    const copyNumber = this.props.item[0];
 
     let color = "#838383";
 
@@ -91,8 +92,13 @@ export class MatrixCell extends React.Component {
       color = "#DE4B39";
     }
 
-    if (this.props.item[0] > 1) {
-      color = "#6A6A6A";
+    if (copyNumber > 1 && !inverted) {
+      // 11 items is number of colors in copyNumberColorArray
+      if (copyNumber < 10) {
+        color = this.props.store.copyNumberColorArray[copyNumber];
+      } else {
+        color = this.props.store.copyNumberColorArray[10];
+      }
     }
 
     // TODO: if possible, use HTML/CSS to write the '<', avoiding the <Text />s rendering, therefore improving the performance

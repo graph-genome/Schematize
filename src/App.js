@@ -15,6 +15,49 @@ import {arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "
 
 import makeInspectable from "mobx-devtools-mst";
 
+
+function Legend(props) {
+  const list = props.colorArray.map((color, index) => {
+    return (
+      <div style={{ align: "right" }}>
+        <div
+          style={{
+            display: "inline-block",
+            width: "30px",
+            fontSize: "small",
+            textAlign: "right",
+          }}
+        >
+          {index < 10 ? index : ">" + index}
+        </div>
+        <div
+          style={{
+            backgroundColor: color,
+            width: "10px",
+            height: "10px",
+            display: "inline-block",
+            margin: "1px 1px 1px 5px",
+          }}
+        ></div>
+      </div>
+    );
+  });
+  return (
+    <div
+      style={{
+        position: "fixed",
+        bottom: "0",
+        left: "0",
+        background: "white",
+        padding: "5px",
+      }}
+    >
+      <span style={{ fontSize: "small" }}> Copy number </span>
+      {list}
+    </div>
+  );
+}
+
 class App extends Component {
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
@@ -673,6 +716,7 @@ class App extends Component {
         </Stage>
 
         <NucleotideTooltip store={this.props.store} />
+        <Legend colorArray={this.props.store.copyNumberColorArray} />
       </>
     );
   }
