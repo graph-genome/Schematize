@@ -88,16 +88,21 @@ export class MatrixCell extends React.Component {
 
     let color = "#838383";
 
-    if (inverted) {
-      color = "#DE4B39";
-    }
-
     if (copyNumber > 1 && !inverted) {
       // 11 items is number of colors in copyNumberColorArray
       if (copyNumber < 10) {
         color = this.props.store.copyNumberColorArray[copyNumber];
       } else {
         color = this.props.store.copyNumberColorArray[10];
+      }
+    }
+
+    if (inverted) {
+      // 11 items is number of colors in invertedColorArray
+      if (copyNumber < 10) {
+        color = this.props.store.invertedColorArray[copyNumber];
+      } else {
+        color = this.props.store.invertedColorArray[10];
       }
     }
 

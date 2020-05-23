@@ -73,6 +73,20 @@ RootStore = types
       "#0a0a0a",
       "#000000",
     ]),
+    invertedColorArray: types.optional(types.array(types.string), [
+      "#de4b39",
+      "#e15d4c",
+      "#e46e60",
+      "#e78174",
+      "#eb9388",
+      "#eea59c",
+      "#f1b7af",
+      "#f5c9c3",
+      "#f8dbd7",
+      "#fbedeb",
+      "#ffffff",
+
+    ]),
   })
   .actions((self) => {
     function setChunkIndex(json) {

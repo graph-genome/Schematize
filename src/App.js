@@ -15,9 +15,8 @@ import {arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "
 
 import makeInspectable from "mobx-devtools-mst";
 
-
-function Legend(props) {
-  const list = props.colorArray.map((color, index) => {
+function LegendItem(props) {
+  return props.colorArray.map((color, index) => {
     return (
       <div style={{ align: "right" }}>
         <div
@@ -36,24 +35,41 @@ function Legend(props) {
             width: "10px",
             height: "10px",
             display: "inline-block",
+            border: "1px solid black",
             margin: "1px 1px 1px 5px",
           }}
         ></div>
       </div>
     );
   });
+}
+
+function LegendColumn(props) {
+  return (
+    <div style={{
+      display: "inline-block",
+      verticalAlign: "top",
+      padding: "5px",
+    }}>
+      <span style={{ fontSize: "small" }}> {props.name} </span>
+      <LegendItem colorArray={props.colorArray} />
+    </div>
+  );
+}
+
+function Legend(props) {
   return (
     <div
       style={{
         position: "fixed",
-        bottom: "0",
-        left: "0",
+        bottom: "20px",
+        left: "20px",
         background: "white",
-        padding: "5px",
+        align: "right",
       }}
     >
-      <span style={{ fontSize: "small" }}> Copy number </span>
-      {list}
+      <LegendColumn name="Copy Number" colorArray={props.store.copyNumberColorArray} />
+      <LegendColumn name="Inverted" colorArray={props.store.invertedColorArray} />
     </div>
   );
 }
@@ -716,7 +732,7 @@ class App extends Component {
         </Stage>
 
         <NucleotideTooltip store={this.props.store} />
-        <Legend colorArray={this.props.store.copyNumberColorArray} />
+        <Legend store={this.props.store} />
       </>
     );
   }
