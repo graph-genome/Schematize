@@ -1,7 +1,8 @@
 export function arraysEqual(A, B) {
-  return (A.length === 0 && B.length === 0) ||
-      (A.length === B.length &&
-          A.every((e) => B.indexOf(e) > -1));
+  return (
+    (A.length === 0 && B.length === 0) ||
+    (A.length === B.length && A.every((e) => B.indexOf(e) > -1))
+  );
 }
 
 export function calculateEndBinFromScreen(beginBin, selZoomLev, store) {
@@ -25,6 +26,7 @@ export function calculateEndBinFromScreen(beginBin, selZoomLev, store) {
         chunk["link_count"];
       let columnsLeftToAdd = widthInCells - workingWidth;
       workingWidth += width;
+
       chunkURLarray.push(chunk["file"]);
       if (chunk.fasta !== null) {
         fileArrayFasta.push(chunk.fasta);

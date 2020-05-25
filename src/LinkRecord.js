@@ -20,7 +20,8 @@ export function calculateLinkCoordinates(
   topOffset,
   useWidthCompression,
   binScalingFactor,
-  leftXStart
+  leftXStart,
+  component_indexes_to_visualize
 ) {
   //leftXStart is necessary as a method at the moment
   /** calculate the x coordinates of all components
@@ -34,49 +35,52 @@ export function calculateLinkCoordinates(
 
   for (let i = 0; i < schematic.length; i++) {
     let schematizeComponent = schematic[i];
-    //schematizeComponent.relativePixelX = leftXStart(schematizeComponent, i, 0, 0);
-    //ARRIVALS: Calculate all X
-    for (let j = 0; j < schematizeComponent.arrivals.length; j++) {
-      let arrival = schematizeComponent.arrivals[j];
-      let xCoordArrival = leftXStart(schematizeComponent, i, 0, j);
-      let paddedKey = arrival.key;
-      if (!(paddedKey in linkToXMapping)) {
-        //place holder value, go as far right as possible
-        // TODO place holder value in the same place
-        linkToXMapping[paddedKey] = new LinkRecord(
-          arrival,
-          xCoordArrival,
-          xCoordArrival,
-          true
-        );
-      } else {
-        linkToXMapping[paddedKey].xArrival = xCoordArrival; // set with real value
+
+    if (component_indexes_to_visualize.includes(schematizeComponent.index)) {
+      //schematizeComponent.relativePixelX = leftXStart(schematizeComponent, i, 0, 0);
+      //ARRIVALS: Calculate all X
+      for (let j = 0; j < schematizeComponent.arrivals.length; j++) {
+        let arrival = schematizeComponent.arrivals[j];
+        let xCoordArrival = leftXStart(schematizeComponent, i, 0, j);
+        let paddedKey = arrival.key;
+        if (!(paddedKey in linkToXMapping)) {
+          //place holder value, go as far right as possible
+          // TODO place holder value in the same place
+          linkToXMapping[paddedKey] = new LinkRecord(
+            arrival,
+            xCoordArrival,
+            xCoordArrival,
+            true
+          );
+        } else {
+          linkToXMapping[paddedKey].xArrival = xCoordArrival; // set with real value
+        }
       }
-    }
-    //DEPARTURES: Calculate all X
-    for (let k = 0; k < schematizeComponent.departures.length - 1; k++) {
-      let departure = schematizeComponent.departures[k];
-      let xCoordDeparture = leftXStart(
-        schematizeComponent,
-        i,
-        schematizeComponent.arrivals.length +
-          (useWidthCompression
-            ? binScalingFactor
-            : schematizeComponent.num_bin),
-        k
-      );
-      let paddedKey = departure.key;
-      if (!(paddedKey in linkToXMapping)) {
-        //place holder value, go as far left as possible
-        // linkToXMapping[paddedKey] = [this.state.actualWidth + 100, xCoordDeparture]
-        linkToXMapping[paddedKey] = new LinkRecord(
-          departure,
-          xCoordDeparture,
-          xCoordDeparture,
-          false
+      //DEPARTURES: Calculate all X
+      for (let k = 0; k < schematizeComponent.departures.length - 1; k++) {
+        let departure = schematizeComponent.departures[k];
+        let xCoordDeparture = leftXStart(
+          schematizeComponent,
+          i,
+          schematizeComponent.arrivals.length +
+            (useWidthCompression
+              ? binScalingFactor
+              : schematizeComponent.num_bin),
+          k
         );
-      } else {
-        linkToXMapping[paddedKey].xDepart = xCoordDeparture; // set real value
+        let paddedKey = departure.key;
+        if (!(paddedKey in linkToXMapping)) {
+          //place holder value, go as far left as possible
+          // linkToXMapping[paddedKey] = [this.state.actualWidth + 100, xCoordDeparture]
+          linkToXMapping[paddedKey] = new LinkRecord(
+            departure,
+            xCoordDeparture,
+            xCoordDeparture,
+            false
+          );
+        } else {
+          linkToXMapping[paddedKey].xDepart = xCoordDeparture; // set real value
+        }
       }
     }
   }
