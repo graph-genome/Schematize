@@ -20,6 +20,7 @@ import {
 import makeInspectable from "mobx-devtools-mst";
 
 let component_indexes_to_visualize = [];
+let first_visualized_component = null;
 
 class App extends Component {
   layerRef = React.createRef();
@@ -110,6 +111,26 @@ class App extends Component {
     makeInspectable(this.props.store);
   }
 
+  prepareWhichComponentsToVisualize() {
+    component_indexes_to_visualize = [];
+    first_visualized_component = null;
+    for (const schematizeComponent of this.schematic.components) {
+      //console.log(schematizeComponent.firstBin + ' - ' + schematizeComponent.arrivals.length + ' - ' + schematizeComponent.departures.length)
+      if (
+        (schematizeComponent.firstBin >= this.props.store.getBeginBin() &&
+          schematizeComponent.firstBin < this.props.store.getEndBin()) ||
+        (schematizeComponent.lastBin >= this.props.store.getBeginBin() &&
+          schematizeComponent.lastBin < this.props.store.getEndBin())
+      ) {
+        component_indexes_to_visualize.push(schematizeComponent.index);
+
+        if (first_visualized_component === null) {
+          first_visualized_component = schematizeComponent;
+        }
+      }
+    }
+  }
+
   /** Compares bin2file @param indexContents with the beginBin and EndBin.
    * It finds the appropriate chunk URLS from the index and updates
    * switchChunkURLs which trigger json fetches for the new chunks. **/
@@ -136,8 +157,11 @@ class App extends Component {
       selZoomLev,
       this.props.store
     );
+
     //TODO: commented because maybe it creates problems
     //this.props.store.updateBeginEndBin(beginBin, endBin);
+
+    this.prepareWhichComponentsToVisualize();
 
     //console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
     let URLprefix =
@@ -192,6 +216,8 @@ class App extends Component {
       console.log(
         "STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final rendering info for this loaded chunks"
       );
+
+      this.prepareWhichComponentsToVisualize();
 
       // console.log(this.schematic.components);
       this.setState(
@@ -421,25 +447,14 @@ class App extends Component {
 
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
     // TODO: avoid calling the function for not visualized components!
+    if (
+      first_visualized_component === null ||
+      !component_indexes_to_visualize.includes(schematizeComponent.index)
+    ) {
+      return;
+    }
 
     // TODO: to update only when  beginEndBin changesm, not here (too many for)! ///////////////////////////////////////////////////////////////
-    component_indexes_to_visualize = [];
-    let first_visualized_component = null;
-    for (const schematizeComponent of this.schematic.components) {
-      //console.log(schematizeComponent.firstBin + ' - ' + schematizeComponent.arrivals.length + ' - ' + schematizeComponent.departures.length)
-      if (
-        (schematizeComponent.firstBin >= this.props.store.getBeginBin() &&
-          schematizeComponent.firstBin < this.props.store.getEndBin()) ||
-        (schematizeComponent.lastBin >= this.props.store.getBeginBin() &&
-          schematizeComponent.lastBin < this.props.store.getEndBin())
-      ) {
-        component_indexes_to_visualize.push(schematizeComponent.index);
-
-        if (first_visualized_component === null) {
-          first_visualized_component = schematizeComponent;
-        }
-      }
-    }
 
     //console.log('component_indexes_to_visualize ' + component_indexes_to_visualize)
 
@@ -450,26 +465,25 @@ class App extends Component {
     - "first_visualized_component.arrivals.length + (this.props.store.getBeginBin() - first_visualized_component.firstBin": to hide the arrow on the left
     - "(schematizeComponent.index - this.schematic.components[0].index" calculates the number of padding white columns
     */
-    if (component_indexes_to_visualize.includes(schematizeComponent.index)) {
-      /* console.log('schematizeComponent.columnX ' + schematizeComponent.columnX)
+
+    /* console.log('schematizeComponent.columnX ' + schematizeComponent.columnX)
     console.log('schematizeComponent.relativePixelX ' + schematizeComponent.relativePixelX)
     console.log('first_visualized_component.columnX ' + first_visualized_component.columnX)
     console.log('first_visualized_component.arrivals.length ' + first_visualized_component.arrivals.length)
     console.log('first_visualized_component.firstBin ' + first_visualized_component.firstBin)
     console.log('schematizeComponent.firstBin ' + schematizeComponent.firstBin)*/
-      console.log(
-        "this.schematic.components[0].index: " +
-          this.schematic.components[0].index
-      );
-      console.log(
-        "first_visualized_component.index: " + first_visualized_component.index
-      );
-    }
+    /*console.log(
+      "this.schematic.components[0].index: " +
+        this.schematic.components[0].index
+    );
+    console.log(
+      "first_visualized_component.index: " + first_visualized_component.index
+    );*/
 
     let previousColumns = !this.props.store.useWidthCompression
       ? schematizeComponent.columnX -
         first_visualized_component.columnX -
-        (first_visualized_component.firstBin == this.props.store.getBeginBin()
+        (first_visualized_component.firstBin === this.props.store.getBeginBin()
           ? 0
           : first_visualized_component.arrivals.length +
             (this.props.store.getBeginBin() -
@@ -480,13 +494,11 @@ class App extends Component {
         (schematizeComponent.index - this.schematic.components[0].index);
 
     /*
-    let previousColumns = !this.props.store.useWidthCompression
-      ? (schematizeComponent.columnX - this.props.store.beginColumnX) -
-      first_visualized_component.columnX
-        //(this.props.store.getBeginBin() - this.props.store.chunkBeginBin - 1)
+
       : (schematizeComponent.columnX - this.props.store.beginColumnX) +
         (schematizeComponent.index - this.schematic.components[0].index) - //* this.props.store.binScalingFactor -
         (this.props.store.getBeginBin() - this.props.store.chunkBeginBin - 1);
+        
     */
 
     let pixelsFromColumns =
