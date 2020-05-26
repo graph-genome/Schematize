@@ -1,0 +1,96 @@
+[25/05/2020 11:21:28 - INFO - __main__ - 385] reading data/SARS-CoV-e.w16.json...
+
+[25/05/2020 11:21:34 - INFO - __main__ - 94] Starting Segmentation process on 1227 Paths.
+[25/05/2020 11:21:34 - INFO - __main__ - 243] Largest bin_id was 28458; Found 3153 dividers.
+[25/05/2020 11:21:34 - INFO - __main__ - 248] Input has 2186232 listed Links.  Segmentation eliminated 20.96534128125469% of them.
+[25/05/2020 11:21:34 - INFO - __main__ - 250] Found 1647098 unique links
+[25/05/2020 11:21:34 - INFO - __main__ - 101] Created dividers
+[25/05/2020 11:21:34 - INFO - __main__ - 114] Created 3343 components
+[25/05/2020 11:21:36 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[25/05/2020 11:21:36 - INFO - __main__ - 118] populated matrix
+[25/05/2020 11:21:36 - INFO - __main__ - 148] Created 8126 LinkColumns
+[25/05/2020 11:21:44 - INFO - __main__ - 394] Finished processing the file data/SARS-CoV-e.w16.json
+[25/05/2020 11:21:44 - INFO - __main__ - 385] reading data/SARS-CoV-e.w1000.json...
+
+[25/05/2020 11:21:44 - INFO - __main__ - 94] Starting Segmentation process on 1227 Paths.
+[25/05/2020 11:21:44 - INFO - __main__ - 243] Largest bin_id was 456; Found 156 dividers.
+[25/05/2020 11:21:44 - INFO - __main__ - 248] Input has 36611 listed Links.  Segmentation eliminated 66.22599765097921% of them.
+[25/05/2020 11:21:44 - INFO - __main__ - 250] Found 12361 unique links
+[25/05/2020 11:21:44 - INFO - __main__ - 101] Created dividers
+[25/05/2020 11:21:44 - INFO - __main__ - 114] Created 156 components
+[25/05/2020 11:21:45 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[25/05/2020 11:21:45 - INFO - __main__ - 118] populated matrix
+[25/05/2020 11:21:45 - INFO - __main__ - 148] Created 444 LinkColumns
+[25/05/2020 11:21:46 - INFO - __main__ - 394] Finished processing the file data/SARS-CoV-e.w1000.json
+[25/05/2020 11:21:46 - INFO - __main__ - 385] reading data/SARS-CoV-e.w16000.json...
+
+[25/05/2020 11:21:46 - INFO - __main__ - 94] Starting Segmentation process on 1227 Paths.
+[25/05/2020 11:21:46 - INFO - __main__ - 243] Largest bin_id was 29; Found 26 dividers.
+[25/05/2020 11:21:46 - INFO - __main__ - 248] Input has 11042 listed Links.  Segmentation eliminated 77.48596268791886% of them.
+[25/05/2020 11:21:46 - INFO - __main__ - 250] Found 2486 unique links
+[25/05/2020 11:21:46 - INFO - __main__ - 101] Created dividers
+[25/05/2020 11:21:46 - INFO - __main__ - 114] Created 26 components
+[25/05/2020 11:21:46 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[25/05/2020 11:21:46 - INFO - __main__ - 118] populated matrix
+[25/05/2020 11:21:46 - INFO - __main__ - 148] Created 76 LinkColumns
+[25/05/2020 11:21:46 - INFO - __main__ - 394] Finished processing the file data/SARS-CoV-e.w16000.json
+[25/05/2020 11:21:46 - INFO - __main__ - 385] reading data/SARS-CoV-e.w256.json...
+
+[25/05/2020 11:21:47 - INFO - __main__ - 94] Starting Segmentation process on 1227 Paths.
+[25/05/2020 11:21:47 - INFO - __main__ - 243] Largest bin_id was 1779; Found 409 dividers.
+[25/05/2020 11:21:47 - INFO - __main__ - 248] Input has 176754 listed Links.  Segmentation eliminated 38.4438258822997% of them.
+[25/05/2020 11:21:47 - INFO - __main__ - 250] Found 94318 unique links
+[25/05/2020 11:21:47 - INFO - __main__ - 101] Created dividers
+[25/05/2020 11:21:47 - INFO - __main__ - 114] Created 409 components
+[25/05/2020 11:21:48 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[25/05/2020 11:21:48 - INFO - __main__ - 118] populated matrix
+[25/05/2020 11:21:48 - INFO - __main__ - 148] Created 1320 LinkColumns
+[25/05/2020 11:21:49 - INFO - __main__ - 394] Finished processing the file data/SARS-CoV-e.w256.json
+[25/05/2020 11:21:49 - INFO - __main__ - 385] reading data/SARS-CoV-e.w64.json...
+
+[25/05/2020 11:21:51 - INFO - __main__ - 94] Starting Segmentation process on 1227 Paths.
+[25/05/2020 11:21:51 - INFO - __main__ - 243] Largest bin_id was 7115; Found 1247 dividers.
+[25/05/2020 11:21:51 - INFO - __main__ - 248] Input has 826909 listed Links.  Segmentation eliminated 31.41857205569174% of them.
+[25/05/2020 11:21:51 - INFO - __main__ - 250] Found 504631 unique links
+[25/05/2020 11:21:51 - INFO - __main__ - 101] Created dividers
+[25/05/2020 11:21:51 - INFO - __main__ - 114] Created 1282 components
+[25/05/2020 11:21:52 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[25/05/2020 11:21:52 - INFO - __main__ - 118] populated matrix
+[25/05/2020 11:21:52 - INFO - __main__ - 148] Created 3738 LinkColumns
+[25/05/2020 11:21:56 - INFO - __main__ - 394] Finished processing the file data/SARS-CoV-e.w64.json
+[25/05/2020 11:21:56 - INFO - __main__ - 385] reading data/SARS-CoV-e.w4.json...
+
+[25/05/2020 11:22:11 - INFO - __main__ - 94] Starting Segmentation process on 1227 Paths.
+[25/05/2020 11:22:11 - INFO - __main__ - 243] Largest bin_id was 113830; Found 5763 dividers.
+[25/05/2020 11:22:11 - INFO - __main__ - 248] Input has 3518946 listed Links.  Segmentation eliminated 14.439835109717514% of them.
+[25/05/2020 11:22:11 - INFO - __main__ - 250] Found 2985964 unique links
+[25/05/2020 11:22:11 - INFO - __main__ - 101] Created dividers
+[25/05/2020 11:22:11 - INFO - __main__ - 114] Created 6617 components
+[25/05/2020 11:22:17 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[25/05/2020 11:22:17 - INFO - __main__ - 118] populated matrix
+[25/05/2020 11:22:17 - INFO - __main__ - 148] Created 12792 LinkColumns
+[25/05/2020 11:22:37 - INFO - __main__ - 394] Finished processing the file data/SARS-CoV-e.w4.json
+[25/05/2020 11:22:37 - INFO - __main__ - 385] reading data/SARS-CoV-e.w4000.json...
+
+[25/05/2020 11:22:38 - INFO - __main__ - 94] Starting Segmentation process on 1227 Paths.
+[25/05/2020 11:22:38 - INFO - __main__ - 243] Largest bin_id was 114; Found 80 dividers.
+[25/05/2020 11:22:38 - INFO - __main__ - 248] Input has 30349 listed Links.  Segmentation eliminated 75.64334903950707% of them.
+[25/05/2020 11:22:38 - INFO - __main__ - 250] Found 7386 unique links
+[25/05/2020 11:22:38 - INFO - __main__ - 101] Created dividers
+[25/05/2020 11:22:38 - INFO - __main__ - 114] Created 80 components
+[25/05/2020 11:22:38 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[25/05/2020 11:22:38 - INFO - __main__ - 118] populated matrix
+[25/05/2020 11:22:38 - INFO - __main__ - 148] Created 220 LinkColumns
+[25/05/2020 11:22:39 - INFO - __main__ - 394] Finished processing the file data/SARS-CoV-e.w4000.json
+[25/05/2020 11:22:39 - INFO - __main__ - 385] reading data/SARS-CoV-e.w1.json...
+
+[25/05/2020 11:23:34 - INFO - __main__ - 94] Starting Segmentation process on 1227 Paths.
+[25/05/2020 11:23:34 - INFO - __main__ - 243] Largest bin_id was 455317; Found 7000 dividers.
+[25/05/2020 11:23:34 - INFO - __main__ - 248] Input has 4529055 listed Links.  Segmentation eliminated 14.69968900797186% of them.
+[25/05/2020 11:23:34 - INFO - __main__ - 250] Found 3861490 unique links
+[25/05/2020 11:23:34 - INFO - __main__ - 101] Created dividers
+[25/05/2020 11:23:34 - INFO - __main__ - 114] Created 10814 components
+[25/05/2020 11:23:49 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[25/05/2020 11:23:49 - INFO - __main__ - 118] populated matrix
+[25/05/2020 11:23:49 - INFO - __main__ - 148] Created 16228 LinkColumns
+[25/05/2020 11:24:47 - INFO - __main__ - 394] Finished processing the file data/SARS-CoV-e.w1.json
