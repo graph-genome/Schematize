@@ -38,7 +38,7 @@ RootStore = types
     useConnector: true,
     pixelsPerColumn: 10,
     pixelsPerRow: 10,
-    leftOffset: 0,
+    leftOffset: 1,
     topOffset: 400,
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,

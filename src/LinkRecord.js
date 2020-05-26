@@ -21,7 +21,7 @@ export function calculateLinkCoordinates(
   useWidthCompression,
   binScalingFactor,
   leftXStart,
-  component_indexes_to_visualize
+  index_to_component_to_visualize_dict
 ) {
   //leftXStart is necessary as a method at the moment
   /** calculate the x coordinates of all components
@@ -36,7 +36,7 @@ export function calculateLinkCoordinates(
   for (let i = 0; i < schematic.length; i++) {
     let schematizeComponent = schematic[i];
 
-    if (component_indexes_to_visualize.includes(schematizeComponent.index)) {
+    if (schematizeComponent.index in index_to_component_to_visualize_dict) {
       //schematizeComponent.relativePixelX = leftXStart(schematizeComponent, i, 0, 0);
       //ARRIVALS: Calculate all X
       for (let j = 0; j < schematizeComponent.arrivals.length; j++) {

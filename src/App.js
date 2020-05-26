@@ -19,8 +19,7 @@ import {
 
 import makeInspectable from "mobx-devtools-mst";
 
-let component_indexes_to_visualize = [];
-let first_visualized_component = null;
+let index_to_component_to_visualize_dict = [];
 
 class App extends Component {
   layerRef = React.createRef();
@@ -70,11 +69,12 @@ class App extends Component {
       "useVerticalCompression",
       this.updateSchematicMetadata.bind(this)
     );
-    observe(
-      this.props.store,
-      "useWidthCompression",
-      this.recalcXLayout.bind(this)
-    );
+    observe(this.props.store, "useWidthCompression", () => {
+      // For computing the relativeX in the selected visualization mode for the visualized components
+      this.prepareWhichComponentsToVisualize();
+
+      this.recalcXLayout();
+    });
     observe(this.props.store, "useConnector", this.recalcXLayout.bind(this)); //TODO faster rerender
     observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this)); //TODO faster rerender
     observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this)); //TODO faster rerender
@@ -112,8 +112,13 @@ class App extends Component {
   }
 
   prepareWhichComponentsToVisualize() {
-    component_indexes_to_visualize = [];
-    first_visualized_component = null;
+    // It prepares a dictionary with the components to visualize. It is improvable putting all the components
+    // in a dictionary (this.schematic.components becames a dictionary).
+
+    index_to_component_to_visualize_dict = {};
+
+    let num_col = 0;
+
     for (const schematizeComponent of this.schematic.components) {
       //console.log(schematizeComponent.firstBin + ' - ' + schematizeComponent.arrivals.length + ' - ' + schematizeComponent.departures.length)
       if (
@@ -122,15 +127,27 @@ class App extends Component {
         (schematizeComponent.lastBin >= this.props.store.getBeginBin() &&
           schematizeComponent.lastBin < this.props.store.getEndBin())
       ) {
-        component_indexes_to_visualize.push(schematizeComponent.index);
-
-        if (first_visualized_component === null) {
-          first_visualized_component = schematizeComponent;
+        if (this.props.store.useWidthCompression) {
+          schematizeComponent.relativeX = num_col;
+          num_col +=
+            schematizeComponent.arrivals.length +
+            schematizeComponent.departures.length +
+            this.props.store.binScalingFactor;
+        } else {
+          schematizeComponent.relativeX = schematizeComponent.columnX;
+        }
+        index_to_component_to_visualize_dict[
+          schematizeComponent.index
+        ] = schematizeComponent;
+      } else {
+        if (Object.keys(index_to_component_to_visualize_dict).length > 0) {
+          // The components to visualized was already taken
+          break;
         }
       }
     }
 
-    //console.log('component_indexes_to_visualize ' + component_indexes_to_visualize)
+    //console.log('index_to_component_to_visualize_dict: '  + Object.keys(index_to_component_to_visualize_dict))
   }
 
   /** Compares bin2file @param indexContents with the beginBin and EndBin.
@@ -284,7 +301,7 @@ class App extends Component {
       this.props.store.useWidthCompression,
       this.props.store.binScalingFactor,
       this.leftXStart.bind(this),
-      component_indexes_to_visualize
+      index_to_component_to_visualize_dict
     );
     this.distanceSortedLinks = links;
     this.props.store.updateTopOffset(parseInt(top));
@@ -449,10 +466,7 @@ class App extends Component {
 
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
     // Avoid calling the function too early or for not visualized components
-    if (
-      first_visualized_component === null ||
-      !component_indexes_to_visualize.includes(schematizeComponent.index)
-    ) {
+    if (!(schematizeComponent.index in index_to_component_to_visualize_dict)) {
       return;
     }
 
@@ -478,20 +492,24 @@ class App extends Component {
       "first_visualized_component.index: " + first_visualized_component.index
     );*/
 
-    let previousColumns = !this.props.store.useWidthCompression
-      ? schematizeComponent.columnX -
-        first_visualized_component.columnX -
-        (first_visualized_component.firstBin === this.props.store.getBeginBin()
-          ? 0
-          : first_visualized_component.arrivals.length +
-            (this.props.store.getBeginBin() -
-              first_visualized_component.firstBin)) -
-        (schematizeComponent.index - this.schematic.components[0].index)
-      : schematizeComponent.columnX -
-        first_visualized_component.columnX +
-        (schematizeComponent.index - this.schematic.components[0].index);
+    const first_visualized_component = Object.values(
+      index_to_component_to_visualize_dict
+    )[0];
 
-    let pixelsFromColumns =
+    const column_shift = !this.props.store.useWidthCompression
+      ? first_visualized_component.firstBin === this.props.store.getBeginBin()
+        ? 0
+        : first_visualized_component.arrivals.length +
+          (this.props.store.getBeginBin() - first_visualized_component.firstBin)
+      : 0; // When only rearrangements are shown, the width does not correspond to the number of bin, so for now we avoid any shifting
+
+    const previousColumns =
+      schematizeComponent.relativeX -
+      first_visualized_component.relativeX -
+      column_shift -
+      (schematizeComponent.index - this.schematic.components[0].index);
+
+    const pixelsFromColumns =
       (previousColumns + firstDepartureColumn + j) *
       this.props.store.pixelsPerColumn;
 
@@ -602,7 +620,6 @@ class App extends Component {
   }
 
   renderNucleotidesSchematic = () => {
-    console.log("first_visualized_component " + first_visualized_component);
     if (
       !this.props.store.loading &&
       // The conditions on binWidht and useWidthCompression are lifted here,
@@ -614,13 +631,11 @@ class App extends Component {
     ) {
       //console.log('renderNucleotidesSchematic - START')
       return this.schematic.components.map((schematizeComponent, i) => {
-        if (
-          component_indexes_to_visualize.includes(schematizeComponent.index)
-        ) {
+        if (schematizeComponent.index in index_to_component_to_visualize_dict) {
           // The dummy component (firstBin and lastBin equal to 0) is not loaded in this.schematic.components, but there is a nucleotide for it in the FASTA file.
           // If the first component has firstBin == 1, then in the FASTA there is a nucleotide not visualized, so the shift start from 0, and not 1
           const nt_shift =
-            this.schematic.components[0].firstBin == 1
+            this.schematic.components[0].firstBin === 1
               ? 0
               : this.schematic.components[0].firstBin;
 
@@ -657,7 +672,7 @@ class App extends Component {
     }
 
     return this.schematic.components.map((schematizeComponent, i) => {
-      if (component_indexes_to_visualize.includes(schematizeComponent.index)) {
+      if (schematizeComponent.index in index_to_component_to_visualize_dict) {
         return (
           <React.Fragment key={"f" + i}>
             {this.renderComponent(schematizeComponent, i, this.state.pathNames)}

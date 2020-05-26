@@ -180,9 +180,11 @@ class Component {
   //extends React.Component{
   constructor(component, index) {
     this.columnX = component.x;
+
     this.index = index;
     this.firstBin = component.first_bin;
     this.lastBin = component.last_bin;
+
     this.arrivals = [];
     for (let arrival of component.arrivals) {
       this.arrivals.push(new LinkColumn(arrival));
@@ -192,8 +194,10 @@ class Component {
       //don't slice off adjacent here
       this.departures.push(new LinkColumn(departure));
     }
-    // we do not know the x val for this component, yet
-    this.relativePixelX = component.x;
+
+    this.relativeX = -1;
+    this.relativePixelX = -1;
+
     // deep copy of occupants
     this.occupants = Array.from(component.occupants);
     this.matrix = Array.from(component.matrix);
