@@ -129,6 +129,8 @@ class App extends Component {
         }
       }
     }
+
+    //console.log('component_indexes_to_visualize ' + component_indexes_to_visualize)
   }
 
   /** Compares bin2file @param indexContents with the beginBin and EndBin.
@@ -446,17 +448,13 @@ class App extends Component {
   };
 
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
-    // TODO: avoid calling the function for not visualized components!
+    // Avoid calling the function too early or for not visualized components
     if (
       first_visualized_component === null ||
       !component_indexes_to_visualize.includes(schematizeComponent.index)
     ) {
       return;
     }
-
-    // TODO: to update only when  beginEndBin changesm, not here (too many for)! ///////////////////////////////////////////////////////////////
-
-    //console.log('component_indexes_to_visualize ' + component_indexes_to_visualize)
 
     /*
     Return the x coordinate pixel that starts the LinkColumn at i, j
@@ -493,21 +491,9 @@ class App extends Component {
         first_visualized_component.columnX +
         (schematizeComponent.index - this.schematic.components[0].index);
 
-    /*
-
-      : (schematizeComponent.columnX - this.props.store.beginColumnX) +
-        (schematizeComponent.index - this.schematic.components[0].index) - //* this.props.store.binScalingFactor -
-        (this.props.store.getBeginBin() - this.props.store.chunkBeginBin - 1);
-        
-    */
-
     let pixelsFromColumns =
       (previousColumns + firstDepartureColumn + j) *
       this.props.store.pixelsPerColumn;
-
-    /*console.log(i, firstDepartureColumn, j)
-    console.log('previousColumns (' + previousColumns + ') = columnX (' + schematizeComponent.columnX + ') - beginColumnX (' + this.props.store.beginColumnX + ') - (getBeginBin (' + this.props.store.getBeginBin() + ') - chunkBeginBin (' + this.props.store.chunkBeginBin + ') - 1)')
-    console.log('pixelsFromColumns: ' + pixelsFromColumns)*/
 
     return pixelsFromColumns + i * this.props.store.pixelsPerColumn;
   }
@@ -616,6 +602,7 @@ class App extends Component {
   }
 
   renderNucleotidesSchematic = () => {
+    console.log("first_visualized_component " + first_visualized_component);
     if (
       !this.props.store.loading &&
       // The conditions on binWidht and useWidthCompression are lifted here,
@@ -630,10 +617,16 @@ class App extends Component {
         if (
           component_indexes_to_visualize.includes(schematizeComponent.index)
         ) {
-          //TODO: question if this.props.store.chunkBeginBin is necessary
+          // The dummy component (firstBin and lastBin equal to 0) is not loaded in this.schematic.components, but there is a nucleotide for it in the FASTA file.
+          // If the first component has firstBin == 1, then in the FASTA there is a nucleotide not visualized, so the shift start from 0, and not 1
+          const nt_shift =
+            this.schematic.components[0].firstBin == 1
+              ? 0
+              : this.schematic.components[0].firstBin;
+
           const nucleotides_slice = this.schematic.nucleotides.slice(
-            schematizeComponent.firstBin - this.props.store.chunkBeginBin,
-            schematizeComponent.lastBin - this.props.store.chunkBeginBin + 1
+            schematizeComponent.firstBin - nt_shift,
+            schematizeComponent.lastBin - nt_shift + 1
           );
 
           //console.log("nucleotides_slice: " + nucleotides_slice);

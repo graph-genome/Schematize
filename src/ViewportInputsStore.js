@@ -52,14 +52,12 @@ RootStore = types
     chunkFastaURLs: types.optional(types.array(types.string), []),
     //to be compared against chunkURLs
     chunksProcessed: types.optional(types.array(types.string), []),
-    chunkBeginBin: -1,
 
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
     nucleotideHeight: 10,
     pangenomelast_bin: -1, //TODO: don't add values unless they're needed
-    // TODO: Set when bin2file is read
-    beginColumnX: 0, //TODO: copied and stored from bin2file.json in calculateEndBinFromScreen()
+
     loading: true,
   })
   .actions((self) => {
@@ -203,12 +201,6 @@ RootStore = types
       }
       self.pathNucPos = { path: path, nucPos: nucPos };
     }
-    function setBeginColumnX(x) {
-      self.beginColumnX = x;
-    }
-    function setChunkBeginBin(x) {
-      self.chunkBeginBin = x;
-    }
 
     function setLoading(val) {
       self.loading = val;
@@ -236,8 +228,7 @@ RootStore = types
       getBeginBin,
       getEndBin,
       updatePathNucPos,
-      setBeginColumnX,
-      setChunkBeginBin,
+
       //NOTE: DO NOT ADD GETTERS here.  They are not necessary in mobx.
       // You can reference store.val directly without store.getVal()
       //Only write getters to encapsulate useful logic for derived values

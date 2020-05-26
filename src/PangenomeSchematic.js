@@ -145,14 +145,6 @@ class PangenomeSchematic extends React.Component {
             "processArray - jsonChunk.components[0].x: " +
               jsonChunk.components[0].x
           );
-          if (urlIndex === 0) {
-            // first component in the render
-            store.setBeginColumnX(jsonChunk.components[0].x);
-            console.log(
-              "processArray - jsonChunk.first_bin: " + jsonChunk.first_bin
-            );
-            store.setChunkBeginBin(jsonChunk.first_bin);
-          }
 
           for (let [index, component] of jsonChunk.components.entries()) {
             if (component.first_bin > 0) {
