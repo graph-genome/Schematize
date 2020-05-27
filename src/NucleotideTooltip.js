@@ -10,7 +10,7 @@ export default class NucleotideTooltip extends React.Component {
         visible={true}
         offsetX={15}
         offsetY={-20}
-        style={{ background: "white", zIndex: 4, "white-space": "pre-line" }}
+        style={{ background: "white", zIndex: 4, whiteSpace: "pre-line" }}
       >
         <Observer>
           {() => <span>{this.props.store.cellToolTipContent}</span>}
