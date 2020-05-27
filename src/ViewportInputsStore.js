@@ -63,7 +63,7 @@ RootStore = types
   .actions((self) => {
     function setChunkIndex(json) {
       console.log("STEP #2: chunkIndex contents loaded");
-      console.log("Index updated with content:", json);
+      //console.log("Index updated with content:", json);
 
       self.chunkIndex = null; // TODO: TEMPORARY HACK before understanding more in depth mobx-state or change approach
 

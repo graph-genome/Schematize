@@ -5,39 +5,52 @@ export function arraysEqual(A, B) {
   );
 }
 
-export function calculateEndBinFromScreen(beginBin, selZoomLev, store) {
-  let deviceWidth = 1920; // TODO: get width from browser
-  let widthInCells = deviceWidth / store.pixelsPerColumn;
+export function areOverlapping(startA, endA, startB, endB) {
+  if (startB < startA) {
+    return endB >= startA;
+  } else if (startB > startA) {
+    return startB <= endA;
+  } else {
+    return true;
+  }
+}
+
+export function calculateEndBinFromScreen(beginBin, endBin, selZoomLev, store) {
+  /*let deviceWidth = 1920; // TODO: get width from browser
+  let widthInCells = deviceWidth / store.pixelsPerColumn;*/
   let chunkURLarray = [];
   let fileArrayFasta = [];
 
-  let currEnd = beginBin + 1;
-  let workingWidth = 0;
+  let currEnd = endBin;
+  /*let currEnd = beginBin + 1;
+  let workingWidth = 0;*/
   //this loop will automatically cap out at the last bin of the file
   let level = store.chunkIndex.zoom_levels.get(selZoomLev);
   for (let ichunk = 0; ichunk < level.files.length; ichunk++) {
     // The "x" info is not here
     let chunk = level.files[ichunk];
-    if (chunk.last_bin >= beginBin) {
-      let width =
+    //if ((beginBin >= chunk.first_bin && beginBin <= chunk.last_bin) || (endBin >= chunk.first_bin & endBin <= chunk.last_bin)) {
+    if (areOverlapping(beginBin, endBin, chunk.first_bin, chunk.last_bin)) {
+      /*let width =
         chunk["last_bin"] -
         chunk["first_bin"] +
         chunk["component_count"] +
         chunk["link_count"];
       let columnsLeftToAdd = widthInCells - workingWidth;
       workingWidth += width;
+      console.log('workingWidth ' + workingWidth)*/
 
       chunkURLarray.push(chunk["file"]);
       if (chunk.fasta !== null) {
         fileArrayFasta.push(chunk.fasta);
       }
-      if (workingWidth > widthInCells) {
+      /*if (workingWidth > widthInCells) {
         // fractional chunk to add, could cut a Component in half
         let density = (chunk["last_bin"] - chunk["first_bin"]) / width;
         currEnd = Math.round(columnsLeftToAdd * density);
         // currEnd = chunk["last_bin"];
         break;
-      }
+      }*/
     }
   }
 

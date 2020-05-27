@@ -90,7 +90,7 @@ class PangenomeSchematic extends React.Component {
     // This loop will automatically cap out at the fasta file corrisponding to the last loaded chunk
     for (let path_fasta of this.props.store.chunkFastaURLs) {
       if (urlExists(path_fasta)) {
-        console.log("loadFasta - START: ", path_fasta);
+        //console.log("loadFasta - START: ", path_fasta);
 
         fetch(path_fasta)
           .then((response) => {
@@ -141,14 +141,19 @@ class PangenomeSchematic extends React.Component {
           let url = store.chunkURLs[urlIndex];
           let jsonChunk = this.jsonCache[url];
 
-          console.log(
+          /*console.log(
             "processArray - jsonChunk.components[0].x: " +
               jsonChunk.components[0].x
-          );
+          );*/
 
+          const num_components_already_loaded =
+            this.components.length > 0 ? this.components.length + 1 : 0;
           for (let [index, component] of jsonChunk.components.entries()) {
             if (component.first_bin > 0) {
-              let componentItem = new Component(component, index);
+              let componentItem = new Component(
+                component,
+                num_components_already_loaded + index
+              );
               this.components.push(componentItem); //TODO: concurrent modification?
               //if (component.last_bin >= beginBin) { NOTE: we are now reading in whole chunk, this may place
               //xOffset further right than it was intended when beginBin > chunk.first_bin

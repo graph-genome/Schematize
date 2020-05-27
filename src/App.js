@@ -15,6 +15,7 @@ import {
   arraysEqual,
   calculateEndBinFromScreen,
   stringToColorAndOpacity,
+  areOverlapping,
 } from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
@@ -120,12 +121,18 @@ class App extends Component {
     let num_col = 0;
 
     for (const schematizeComponent of this.schematic.components) {
-      //console.log(schematizeComponent.firstBin + ' - ' + schematizeComponent.arrivals.length + ' - ' + schematizeComponent.departures.length)
+      //console.log('PREPARE: ' + schematizeComponent.index + ': [' + schematizeComponent.firstBin + ',' + schematizeComponent.lastBin + '] - ' + schematizeComponent.arrivals.length + ' - ' + schematizeComponent.departures.length)
       if (
-        (schematizeComponent.firstBin >= this.props.store.getBeginBin() &&
-          schematizeComponent.firstBin < this.props.store.getEndBin()) ||
+        areOverlapping(
+          this.props.store.getBeginBin(),
+          this.props.store.getEndBin(),
+          schematizeComponent.firstBin,
+          schematizeComponent.lastBin
+        )
+        /*(schematizeComponent.firstBin >= this.props.store.getBeginBin() &&
+          schematizeComponent.firstBin <= this.props.store.getEndBin()) ||
         (schematizeComponent.lastBin >= this.props.store.getBeginBin() &&
-          schematizeComponent.lastBin < this.props.store.getEndBin())
+          schematizeComponent.lastBin <= this.props.store.getEndBin())*/
       ) {
         if (this.props.store.useWidthCompression) {
           schematizeComponent.relativeX = num_col;
@@ -134,7 +141,13 @@ class App extends Component {
             schematizeComponent.departures.length +
             this.props.store.binScalingFactor;
         } else {
-          schematizeComponent.relativeX = schematizeComponent.columnX;
+          //TO_DO: should we remove x from JSON?
+          //schematizeComponent.relativeX = schematizeComponent.columnX;
+          schematizeComponent.relativeX = num_col;
+          num_col +=
+            schematizeComponent.arrivals.length +
+            schematizeComponent.departures.length +
+            schematizeComponent.num_bin;
         }
         index_to_component_to_visualize_dict[
           schematizeComponent.index
@@ -147,6 +160,8 @@ class App extends Component {
       }
     }
 
+    //console.log(this.schematic.components.length)
+    //console.log(this.props.store.getBeginBin() + ' - ' + this.props.store.getEndBin())
     //console.log('index_to_component_to_visualize_dict: '  + Object.keys(index_to_component_to_visualize_dict))
   }
 
@@ -173,6 +188,7 @@ class App extends Component {
     const selZoomLev = this.props.store.getSelectedZoomLevel();
     let [endBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
       beginBin,
+      this.props.store.getEndBin(),
       selZoomLev,
       this.props.store
     );
@@ -198,7 +214,7 @@ class App extends Component {
 
     this.props.store.switchChunkFastaURLs(fileArrayFasta);
 
-    // If there are no new chunck, it has only to recalcualte the X layout
+    // If there are no new chunck, it has only to recalculate the X layout
     if (!this.props.store.switchChunkURLs(fileArray)) {
       this.recalcXLayout();
     }
@@ -209,14 +225,14 @@ class App extends Component {
      * Read https://github.com/graph-genome/Schematize/issues/22 for details
      */
     console.log("STEP #5: once ChunkURLs are listed, go fetchAllChunks");
-    console.log("fetchAllChunks", this.props.store.chunkURLs);
+    //console.log("fetchAllChunks", this.props.store.chunkURLs);
     if (!this.props.store.chunkURLs.get(0)) {
       console.warn("No chunk URL defined.");
       return;
     }
     for (let chunkPath of this.props.store.chunkURLs) {
       //TODO: conditional on jsonCache not already having chunk
-      console.log("fetchAllChunks - START reading: " + chunkPath);
+      //console.log("fetchAllChunks - START reading: " + chunkPath);
       this.schematic.jsonFetch(chunkPath).then((data) => {
         console.log("fetchAllChunks - END reading: " + chunkPath);
         this.schematic.loadJsonCache(chunkPath, data);
@@ -698,6 +714,7 @@ class App extends Component {
     if (this.props.store.loading) {
       return (
         <Text
+          key="loading"
           y={100}
           fontSize={60}
           width={300}
