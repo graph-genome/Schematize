@@ -72,12 +72,19 @@ RootStore = types
     function updateBeginEndBin(newBegin, newEnd) {
       console.log("updateBeginEndBin - " + newBegin + " - " + newEnd);
 
-      /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
-      newBegin = Math.max(1, Math.round(newBegin));
-      newEnd = Math.max(1, Math.round(newEnd));
       const beginBin = getBeginBin();
       const endBin = getEndBin();
-      if (newEnd === endBin) {
+
+      let diff = endBin - beginBin;
+
+      //TO_DO: check the end of the pangenome
+      //TO_DO: remove endBin and manage beginBin and widthBinRange (100 by default)
+      /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
+      newBegin = Math.max(1, Math.round(newBegin));
+      newEnd = Math.max(1, Math.round(newBegin + diff));
+
+      // the width of the range cannot change.
+      /*if (newEnd === endBin) {
         //end has not changed
         let diff = endBin - beginBin;
         newEnd = newBegin + diff; //Allows start to push End to new chunks
@@ -85,7 +92,7 @@ RootStore = types
       if (newEnd < newBegin) {
         //crush newStart
         newBegin = newEnd - 1;
-      }
+      }*/
       if (newBegin !== beginBin) {
         setBeginEndBin(newBegin, newEnd);
         console.log("updated begin and end: " + newBegin + " " + newEnd);
