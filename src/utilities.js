@@ -1,3 +1,12 @@
+export const zip = (arr, ...arrs) => {
+  /*Credit: https://gist.github.com/renaudtertrais/25fc5a2e64fe5d0e86894094c6989e10*/
+  return arr.map((val, i) => arrs.reduce((a, arr) => [...a, arr[i]], [val]));
+};
+
+export function sum(a, b) {
+  return a + b;
+}
+
 export function arraysEqual(A, B) {
   return (
     (A.length === 0 && B.length === 0) ||
@@ -22,14 +31,11 @@ export function calculateEndBinFromScreen(beginBin, endBin, selZoomLev, store) {
   let fileArrayFasta = [];
 
   let currEnd = endBin;
-  /*let currEnd = beginBin + 1;
-  let workingWidth = 0;*/
   //this loop will automatically cap out at the last bin of the file
   let level = store.chunkIndex.zoom_levels.get(selZoomLev);
   for (let ichunk = 0; ichunk < level.files.length; ichunk++) {
     // The "x" info is not here
     let chunk = level.files[ichunk];
-    //if ((beginBin >= chunk.first_bin && beginBin <= chunk.last_bin) || (endBin >= chunk.first_bin & endBin <= chunk.last_bin)) {
     if (areOverlapping(beginBin, endBin, chunk.first_bin, chunk.last_bin)) {
       // TO_DO: future releases will visualzied partial chuncks
       /*let width =
@@ -67,19 +73,19 @@ export function range(start, end) {
 }
 
 export function stringToColorAndOpacity(
-  linkColumn,
-  highlightedLinkColumn,
-  selectedLink
+    linkColumn,
+    highlightedLinkColumn,
+    selectedLink
 ) {
   const whichLinkToConsider = selectedLink
-    ? selectedLink
-    : highlightedLinkColumn;
+      ? selectedLink
+      : highlightedLinkColumn;
 
   const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
   if (whichLinkToConsider) {
     // When the mouse in on a Link, all the other ones will become gray and fade out
     let matchColor =
-      (whichLinkToConsider.downstream + 1) * (whichLinkToConsider.upstream + 1);
+        (whichLinkToConsider.downstream + 1) * (whichLinkToConsider.upstream + 1);
     // Check if the mouse in on a Link (highlightedLinkColumn) or if a Link was clicked (selectedLink)
     if ((!highlightedLinkColumn && !selectedLink) || colorKey === matchColor) {
       return [

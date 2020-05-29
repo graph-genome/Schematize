@@ -1,6 +1,7 @@
 import React from "react";
-import { Rect } from "react-konva";
+import {Rect} from "react-konva";
 import PropTypes from "prop-types";
+import {range} from "./utilities";
 
 class LinkColumn extends React.Component {
   constructor(props) {
@@ -15,22 +16,13 @@ class LinkColumn extends React.Component {
     this.props.updateHighlightedNode(null);
   }
   linkCells() {
-    let alpha = [];
-    let count = 1; // Link columns appear to be 1 higher than occupants and conncetors
-    for (const [i, isPresent] of this.props.item.participants.entries()) {
-      if (isPresent) {
-        let this_y = count++;
-        if (!this.props.store.useVerticalCompression) {
-          if (!this.props.compressed_row_mapping.hasOwnProperty(i)) {
-            continue; //we're stuck: we need row_mapping but it's not present
-          }
-          this_y = this.props.compressed_row_mapping[i];
-        }
-        let row = this_y * this.props.store.pixelsPerRow;
-        alpha.push(row); //relative compressed Y coordinate
+      if (!this.props.store.useVerticalCompression) { //regular layout
+          return this.props.item.participants.map((pathIndex) =>
+              this.props.compressed_row_mapping[pathIndex] * this.props.store.pixelsPerRow);
       }
-    }
-    return alpha;
+      //else, just stack each up at the top of the screen
+      return range(0, this.props.item.participants.length).map(
+          (y) => y * this.props.store.pixelsPerRow);
   }
   componentDidMount() {
     this.setState({

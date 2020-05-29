@@ -1,6 +1,6 @@
 import React from "react";
-import { observe } from "mobx";
-import { urlExists } from "./URL";
+import {observe} from "mobx";
+import {urlExists} from "./URL";
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
@@ -66,12 +66,12 @@ class PangenomeSchematic extends React.Component {
   loadJsonCache(url, data) {
     console.log("STEP #6: fetched chunks go into loadJsonCache");
 
-    if (data.json_version !== 14) {
+      if (data.json_version !== 15) {
       throw MediaError(
-        "Wrong Data JSON version: was expecting version 14, got " +
+          "Wrong Data JSON version: was expecting version 15, got " +
         data.json_version +
         ".  " +
-        "This version added precaculated X values.  " + // KEEP THIS UP TO DATE!
+          "This version switched to sparse JSON.  " + // KEEP THIS UP TO DATE!
           "Using a mismatched data file and renderer will cause unpredictable behavior," +
           " instead generate a new data file using github.com/graph-genome/component_segmentation."
       );
@@ -204,8 +204,8 @@ class Component {
     this.relativePixelX = -1;
 
     // deep copy of occupants
-    this.occupants = Array.from(component.occupants);
-    this.matrix = Array.from(component.matrix);
+      this.occupants = component.occupants; //Array.from(
+      this.matrix = component.matrix; // Array.from(
     this.num_bin = this.lastBin - this.firstBin + 1;
   }
 }
