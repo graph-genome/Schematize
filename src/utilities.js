@@ -31,6 +31,7 @@ export function calculateEndBinFromScreen(beginBin, endBin, selZoomLev, store) {
     let chunk = level.files[ichunk];
     //if ((beginBin >= chunk.first_bin && beginBin <= chunk.last_bin) || (endBin >= chunk.first_bin & endBin <= chunk.last_bin)) {
     if (areOverlapping(beginBin, endBin, chunk.first_bin, chunk.last_bin)) {
+      // TO_DO: future releases will visualzied partial chuncks
       /*let width =
         chunk["last_bin"] -
         chunk["first_bin"] +

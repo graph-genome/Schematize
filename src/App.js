@@ -20,7 +20,8 @@ import {
 
 import makeInspectable from "mobx-devtools-mst";
 
-let index_to_component_to_visualize_dict = [];
+// TO_DO: improve the management of visualzied components
+let index_to_component_to_visualize_dict;
 
 class App extends Component {
   layerRef = React.createRef();
@@ -129,10 +130,6 @@ class App extends Component {
           schematizeComponent.firstBin,
           schematizeComponent.lastBin
         )
-        /*(schematizeComponent.firstBin >= this.props.store.getBeginBin() &&
-          schematizeComponent.firstBin <= this.props.store.getEndBin()) ||
-        (schematizeComponent.lastBin >= this.props.store.getBeginBin() &&
-          schematizeComponent.lastBin <= this.props.store.getEndBin())*/
       ) {
         if (this.props.store.useWidthCompression) {
           schematizeComponent.relativeX = num_col;
@@ -142,12 +139,12 @@ class App extends Component {
             this.props.store.binScalingFactor;
         } else {
           //TO_DO: should we remove x from JSON?
-          //schematizeComponent.relativeX = schematizeComponent.columnX;
-          schematizeComponent.relativeX = num_col;
+          schematizeComponent.relativeX = schematizeComponent.columnX;
+          /*schematizeComponent.relativeX = num_col;
           num_col +=
             schematizeComponent.arrivals.length +
             schematizeComponent.departures.length +
-            schematizeComponent.num_bin;
+            schematizeComponent.num_bin;*/
         }
         index_to_component_to_visualize_dict[
           schematizeComponent.index
@@ -292,21 +289,26 @@ class App extends Component {
     }
 
     const sum = (accumulator, currentValue) => accumulator + currentValue;
-    const columnsInComponents = this.schematic.components
+
+    // The actualWidth is calculated on the visualized components
+    const columnsInComponents = Object.values(
+      index_to_component_to_visualize_dict
+    )
       .map(
         (component) =>
           component.arrivals.length +
-          (component.departures.length - 1) +
+          component.departures.length +
           (this.props.store.useWidthCompression
-            ? this.props.store.binScalingFactor + 1
+            ? this.props.store.binScalingFactor
             : component.num_bin)
       )
       .reduce(sum, 0);
-    const paddingBetweenComponents =
-      this.props.store.pixelsPerColumn * this.schematic.components.length;
-    const actualWidth =
-      columnsInComponents * this.props.store.pixelsPerColumn +
-      paddingBetweenComponents;
+
+    //TO_DO: to remove?
+    /*const paddingBetweenComponents =
+      this.props.store.pixelsPerColumn * this.schematic.components.length;*/
+    const actualWidth = columnsInComponents * this.props.store.pixelsPerColumn;
+    //+ paddingBetweenComponents;
     this.setState({
       actualWidth: actualWidth,
     });
@@ -394,7 +396,6 @@ class App extends Component {
   // Now it is wrapped in the updateHighlightedNode() function
   _updateHighlightedNode = (linkRect) => {
     this.setState({ highlightedLink: linkRect });
-    this.recalcXLayout();
   };
 
   // Wrapper function to wrap the logic (no link selected and time delay)
@@ -765,7 +766,7 @@ class App extends Component {
 
             // To keep the matrix under the container with the vertical scrolling
             // when the matrix is larger than the page
-            width: this.state.actualWidth + 60,
+            width: this.state.actualWidth,
 
             // To avoid width too low with large bin_width
             minWidth: "100%",
@@ -776,7 +777,7 @@ class App extends Component {
           <Stage
             x={this.props.store.leftOffset}
             y={this.props.topOffset}
-            width={this.state.actualWidth + 60}
+            width={this.state.actualWidth}
             height={this.props.store.topOffset}
           >
             <Layer ref={this.layerRef2}>
@@ -789,7 +790,7 @@ class App extends Component {
         <Stage
           x={this.props.store.leftOffset} // removed leftOffset to simplify code. Relative coordinates are always better.
           y={-this.props.store.topOffset} // For some reason, I have to put this, but I'd like to put 0
-          width={this.state.actualWidth + 60}
+          width={this.state.actualWidth}
           height={
             this.visibleHeightPixels() + this.props.store.nucleotideHeight
           }

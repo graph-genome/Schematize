@@ -77,12 +77,12 @@ RootStore = types
 
       let diff = endBin - beginBin;
 
-      //TO_DO: check the end of the pangenome
-      //TO_DO: remove endBin and manage beginBin and widthBinRange (100 by default)
       /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
+
+      //TO_DO: check the end of the pangenome
+      //TO_DO: remove endBin and manage beginBin and widthBinRange (100 by default)?
       newBegin = Math.max(1, Math.round(newBegin));
       newEnd = Math.max(1, Math.round(newBegin + diff));
-
       // the width of the range cannot change.
       /*if (newEnd === endBin) {
         //end has not changed
@@ -93,6 +93,7 @@ RootStore = types
         //crush newStart
         newBegin = newEnd - 1;
       }*/
+
       if (newBegin !== beginBin) {
         setBeginEndBin(newBegin, newEnd);
         console.log("updated begin and end: " + newBegin + " " + newEnd);
