@@ -435,19 +435,44 @@ class App extends Component {
     }
   };
 
-  updateSelectedLink = (linkRect, newBeginBin, newEndBin) => {
+  updateSelectedLink = (linkRect) => {
     console.log("updateSelectedLink");
 
-    const [beginBin, endBin] = this.props.store.beginEndBin;
-
-    // if (linkRect !== this.state.selectedLink) //else it is a re-clik on the same link, so do nothing here
-    // TODO: simplify this part, avoiding operations if the arrow is already visibile in the screen
     let update_state = false;
-    if (!(beginBin <= newBeginBin && newEndBin <= endBin)) {
-      console.log("updateSelectedLink - NewBeginEndBin");
 
-      this.props.store.updateBeginEndBin(newBeginBin, newEndBin);
-      update_state = true;
+    if (linkRect) {
+      //TO_DO: lift down this logic when it will be visualized partial chunks (or
+      // pass info about the visualized chunks to the LinkArrow tags)
+      const [bin1, bin2] = [linkRect.upstream, linkRect.downstream].sort(
+        function (a, b) {
+          return a - b;
+        }
+      );
+
+      /*console.log([linkRect.upstream, linkRect.downstream])
+      console.log(bin1, bin2)*/
+
+      const last_bin_last_visualized_component = Object.values(
+        index_to_component_to_visualize_dict
+      ).slice(-1)[0].lastBin;
+      // if (linkRect !== this.state.selectedLink) //else it is a re-clik on the same link, so do nothing here
+
+      const [beginBin, endBin] = this.props.store.beginEndBin;
+      if (bin1 < beginBin || bin2 > last_bin_last_visualized_component) {
+        console.log("updateSelectedLink - NewBeginEndBin");
+
+        const end_closer = Math.abs(beginBin - bin1) < Math.abs(endBin - bin2);
+
+        let [newBeginBin, newEndBin] = this.props.store.beginEndBin;
+        if (!end_closer) {
+          [newBeginBin, newEndBin] = [bin1, bin1 + (endBin - beginBin)];
+        } else {
+          [newBeginBin, newEndBin] = [bin2 - (endBin - beginBin), bin2];
+        }
+
+        this.props.store.updateBeginEndBin(newBeginBin, newEndBin);
+        update_state = true;
+      }
     }
 
     clearTimeout(this.timerHighlightingLink);
@@ -472,8 +497,7 @@ class App extends Component {
 
       this.timerSelectionLink = setTimeout(
         () => {
-          const [beginBin, endBin] = this.props.store.beginEndBin;
-          this.updateSelectedLink(null, beginBin, endBin);
+          this.updateSelectedLink(null);
         },
         5000 // TODO: to tune. Create a config file where all these hard-coded settings will be
       );
