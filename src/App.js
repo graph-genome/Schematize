@@ -1,22 +1,17 @@
-import { Layer, Stage, Text } from "react-konva";
-import React, { Component } from "react";
+import {Layer, Stage, Text} from "react-konva";
+import React, {Component} from "react";
 
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
-import ComponentRect, { compress_visible_rows } from "./ComponentRect";
+import ComponentRect, {compress_visible_rows} from "./ComponentRect";
 import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
-import { calculateLinkCoordinates } from "./LinkRecord";
+import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
-import { observe } from "mobx";
-import {
-  arraysEqual,
-  calculateEndBinFromScreen,
-  stringToColorAndOpacity,
-  areOverlapping,
-} from "./utilities";
+import {observe} from "mobx";
+import {areOverlapping, arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
 
@@ -197,7 +192,7 @@ class App extends Component {
 
     //console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
     let URLprefix =
-      process.env.PUBLIC_URL +
+        process.env.PUBLIC_URL + 'test_data/' +
       this.props.store.jsonName +
       "/" +
       selZoomLev +

@@ -6,7 +6,7 @@ export function urlExists(dataName) {
   } else {
     //source: https://stackoverflow.com/a/22011478/3067894
     var http = new XMLHttpRequest();
-    http.open("HEAD", process.env.PUBLIC_URL + dataName, false);
+      http.open("HEAD", dataName, false);
     http.send();
     return http.status !== 404;
   }
