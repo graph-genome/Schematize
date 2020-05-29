@@ -1,17 +1,22 @@
-import {Layer, Stage, Text} from "react-konva";
-import React, {Component} from "react";
+import { Layer, Stage, Text } from "react-konva";
+import React, { Component } from "react";
 
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
-import ComponentRect, {compress_visible_rows} from "./ComponentRect";
+import ComponentRect, { compress_visible_rows } from "./ComponentRect";
 import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
-import {calculateLinkCoordinates} from "./LinkRecord";
+import { calculateLinkCoordinates } from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
-import {observe} from "mobx";
-import {areOverlapping, arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "./utilities";
+import { observe } from "mobx";
+import {
+  areOverlapping,
+  arraysEqual,
+  calculateEndBinFromScreen,
+  stringToColorAndOpacity,
+} from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
 
@@ -67,9 +72,6 @@ class App extends Component {
       this.updateSchematicMetadata.bind(this)
     );
     observe(this.props.store, "useWidthCompression", () => {
-      // For computing the relativeX in the selected visualization mode for the visualized components
-      this.prepareWhichComponentsToVisualize();
-
       this.recalcXLayout();
     });
     observe(this.props.store, "useConnector", this.recalcXLayout.bind(this)); //TODO faster rerender
@@ -114,8 +116,6 @@ class App extends Component {
 
     index_to_component_to_visualize_dict = {};
 
-    let num_col = 0;
-
     for (const schematizeComponent of this.schematic.components) {
       //console.log('PREPARE: ' + schematizeComponent.index + ': [' + schematizeComponent.firstBin + ',' + schematizeComponent.lastBin + '] - ' + schematizeComponent.arrivals.length + ' - ' + schematizeComponent.departures.length)
       if (
@@ -126,21 +126,6 @@ class App extends Component {
           schematizeComponent.lastBin
         )
       ) {
-        if (this.props.store.useWidthCompression) {
-          schematizeComponent.relativeX = num_col;
-          num_col +=
-            schematizeComponent.arrivals.length +
-            schematizeComponent.departures.length +
-            this.props.store.binScalingFactor;
-        } else {
-          //TO_DO: should we remove x from JSON?
-          schematizeComponent.relativeX = schematizeComponent.columnX;
-          /*schematizeComponent.relativeX = num_col;
-          num_col +=
-            schematizeComponent.arrivals.length +
-            schematizeComponent.departures.length +
-            schematizeComponent.num_bin;*/
-        }
         index_to_component_to_visualize_dict[
           schematizeComponent.index
         ] = schematizeComponent;
@@ -192,7 +177,8 @@ class App extends Component {
 
     //console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
     let URLprefix =
-        process.env.PUBLIC_URL + 'test_data/' +
+      process.env.PUBLIC_URL +
+      "test_data/" +
       this.props.store.jsonName +
       "/" +
       selZoomLev +
@@ -326,10 +312,10 @@ class App extends Component {
   }
 
   calcMaxNumRowsAcrossComponents(components) {
-      let lengths = components.map((x) => {
-          return x.occupants.length;
-      })
-      return Math.max(...lengths); //this should likely be faster than doing a search for true values
+    let lengths = components.map((x) => {
+      return x.occupants.length;
+    });
+    return Math.max(...lengths); //this should likely be faster than doing a search for true values
   }
 
   visibleHeightPixels() {
@@ -532,8 +518,10 @@ class App extends Component {
       : 0; // When only rearrangements are shown, the width does not correspond to the number of bin, so for now we avoid any shifting
 
     const previousColumns =
-      schematizeComponent.relativeX -
-      first_visualized_component.relativeX -
+      schematizeComponent.getColumnX(this.props.store.useWidthCompression) -
+      first_visualized_component.getColumnX(
+        this.props.store.useWidthCompression
+      ) -
       column_shift -
       (schematizeComponent.index - this.schematic.components[0].index);
 

@@ -1,6 +1,6 @@
 import React from "react";
-import {observe} from "mobx";
-import {urlExists} from "./URL";
+import { observe } from "mobx";
+import { urlExists } from "./URL";
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
@@ -41,7 +41,8 @@ class PangenomeSchematic extends React.Component {
   loadIndexFile(jsonFilename) {
     console.log("STEP #1: whenever jsonName changes, loadIndexFile");
 
-    let indexPath = process.env.PUBLIC_URL + 'test_data/' + jsonFilename + "/bin2file.json";
+    let indexPath =
+      process.env.PUBLIC_URL + "test_data/" + jsonFilename + "/bin2file.json";
     //console.log("loadIndexFile - START reading", indexPath);
 
     return fetch(indexPath)
@@ -66,12 +67,12 @@ class PangenomeSchematic extends React.Component {
   loadJsonCache(url, data) {
     console.log("STEP #6: fetched chunks go into loadJsonCache");
 
-      if (data.json_version !== 15) {
+    if (data.json_version !== 15) {
       throw MediaError(
-          "Wrong Data JSON version: was expecting version 15, got " +
+        "Wrong Data JSON version: was expecting version 15, got " +
         data.json_version +
         ".  " +
-          "This version switched to sparse JSON.  " + // KEEP THIS UP TO DATE!
+        "This version switched to sparse JSON.  " + // KEEP THIS UP TO DATE!
           "Using a mismatched data file and renderer will cause unpredictable behavior," +
           " instead generate a new data file using github.com/graph-genome/component_segmentation."
       );
@@ -185,6 +186,7 @@ class Component {
   //extends React.Component{
   constructor(component, index) {
     this.columnX = component.x;
+    this.compressedColumnX = component.compressedX;
 
     this.index = index;
     this.firstBin = component.first_bin;
@@ -200,13 +202,16 @@ class Component {
       this.departures.push(new LinkColumn(departure));
     }
 
-    this.relativeX = -1;
     this.relativePixelX = -1;
 
     // deep copy of occupants
-      this.occupants = component.occupants; //Array.from(
-      this.matrix = component.matrix; // Array.from(
+    this.occupants = component.occupants; //Array.from(
+    this.matrix = component.matrix; // Array.from(
     this.num_bin = this.lastBin - this.firstBin + 1;
+  }
+
+  getColumnX(useWidthCompression) {
+    return useWidthCompression ? this.compressedColumnX : this.columnX;
   }
 }
 
