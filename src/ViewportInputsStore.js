@@ -75,17 +75,16 @@ RootStore = types
     ]),
     invertedColorArray: types.optional(types.array(types.string), [
       "#de4b39",
-      "#e15d4c",
-      "#e46e60",
-      "#e78174",
-      "#eb9388",
-      "#eea59c",
-      "#f1b7af",
-      "#f5c9c3",
-      "#f8dbd7",
-      "#fbedeb",
-      "#ffffff",
-
+      "#c74333",
+      "#b13c2d",
+      "#9b3427",
+      "#852d22",
+      "#6f251c",
+      "#581e16",
+      "#421611",
+      "#2c0f0b",
+      "#160705",
+      "#000000",
     ]),
   })
   .actions((self) => {
