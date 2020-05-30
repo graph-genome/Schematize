@@ -269,6 +269,9 @@ class App extends Component {
       );
     }
 
+    const first_visualized_component = Object.values(
+      index_to_component_to_visualize_dict
+    )[0];
     const last_visualized_component = Object.values(
       index_to_component_to_visualize_dict
     )[Object.values(index_to_component_to_visualize_dict).length - 1];
@@ -278,14 +281,15 @@ class App extends Component {
       last_visualized_component.getColumnX(
         this.props.store.useWidthCompression
       ) -
-      Object.values(index_to_component_to_visualize_dict)[0].getColumnX(
+      first_visualized_component.getColumnX(
         this.props.store.useWidthCompression
       ) +
       last_visualized_component.arrivals.length +
       last_visualized_component.departures.length +
       (this.props.store.useWidthCompression
         ? this.props.store.binScalingFactor
-        : last_visualized_component.num_bin);
+        : last_visualized_component.num_bin) -
+      this._column_shift(first_visualized_component);
 
     //TO_DO: to remove?
     /*const paddingBetweenComponents =
@@ -480,51 +484,39 @@ class App extends Component {
     }
   };
 
+  // Specific utility function to calculate the visualization shift for the first partial visualized component
+  _column_shift(first_visualized_component) {
+    return !this.props.store.useWidthCompression
+      ? first_visualized_component.firstBin === this.props.store.getBeginBin()
+        ? 0
+        : first_visualized_component.arrivals.length +
+          (this.props.store.getBeginBin() - first_visualized_component.firstBin)
+      : 0; // When only rearrangements are shown, the width does not correspond to the number of bin, so for now we avoid any shifting
+  }
+
   leftXStart(schematizeComponent, i, firstDepartureColumn, j) {
     // Avoid calling the function too early or for not visualized components
     if (!(schematizeComponent.index in index_to_component_to_visualize_dict)) {
       return;
     }
 
-    /*
-    Return the x coordinate pixel that starts the LinkColumn at i, j
-    
-    - "schematizeComponent.columnX - first_visualized_component.columnX" calculates the offset of the current component respect to the first visualized component
-    - "first_visualized_component.arrivals.length + (this.props.store.getBeginBin() - first_visualized_component.firstBin": to hide the arrow on the left
-    - "(schematizeComponent.index - this.schematic.components[0].index" calculates the number of padding white columns
-    */
-
-    /* console.log('schematizeComponent.columnX ' + schematizeComponent.columnX)
-    console.log('schematizeComponent.relativePixelX ' + schematizeComponent.relativePixelX)
-    console.log('first_visualized_component.columnX ' + first_visualized_component.columnX)
-    console.log('first_visualized_component.arrivals.length ' + first_visualized_component.arrivals.length)
-    console.log('first_visualized_component.firstBin ' + first_visualized_component.firstBin)
-    console.log('schematizeComponent.firstBin ' + schematizeComponent.firstBin)*/
-    /*console.log(
-      "this.schematic.components[0].index: " +
-        this.schematic.components[0].index
-    );
-    console.log(
-      "first_visualized_component.index: " + first_visualized_component.index
-    );*/
+    //Return the x coordinate pixel that starts the LinkColumn at i, j
 
     const first_visualized_component = Object.values(
       index_to_component_to_visualize_dict
     )[0];
 
-    const column_shift = !this.props.store.useWidthCompression
-      ? first_visualized_component.firstBin === this.props.store.getBeginBin()
-        ? 0
-        : first_visualized_component.arrivals.length +
-          (this.props.store.getBeginBin() - first_visualized_component.firstBin)
-      : 0; // When only rearrangements are shown, the width does not correspond to the number of bin, so for now we avoid any shifting
-
+    /*
+    - "schematizeComponent.getColumnX(...) - first_visualized_component.getColumnX(..)": offset of the current component respect to the first visualized one
+    - "this._column_shift(first_visualized_component)"": to hide the arrow on the left
+    - "(schematizeComponent.index - this.schematic.components[0].index": number of padding white columns
+    */
     const previousColumns =
       schematizeComponent.getColumnX(this.props.store.useWidthCompression) -
       first_visualized_component.getColumnX(
         this.props.store.useWidthCompression
       ) -
-      column_shift -
+      this._column_shift(first_visualized_component) -
       (schematizeComponent.index - this.schematic.components[0].index);
 
     const pixelsFromColumns =
