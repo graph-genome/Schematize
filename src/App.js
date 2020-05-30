@@ -269,21 +269,23 @@ class App extends Component {
       );
     }
 
-    const sum = (accumulator, currentValue) => accumulator + currentValue;
+    const last_visualized_component = Object.values(
+      index_to_component_to_visualize_dict
+    )[Object.values(index_to_component_to_visualize_dict).length - 1];
 
     // The actualWidth is calculated on the visualized components
-    const columnsInComponents = Object.values(
-      index_to_component_to_visualize_dict
-    )
-      .map(
-        (component) =>
-          component.arrivals.length +
-          component.departures.length +
-          (this.props.store.useWidthCompression
-            ? this.props.store.binScalingFactor
-            : component.num_bin)
-      )
-      .reduce(sum, 0);
+    const columnsInComponents =
+      last_visualized_component.getColumnX(
+        this.props.store.useWidthCompression
+      ) -
+      Object.values(index_to_component_to_visualize_dict)[0].getColumnX(
+        this.props.store.useWidthCompression
+      ) +
+      last_visualized_component.arrivals.length +
+      last_visualized_component.departures.length +
+      (this.props.store.useWidthCompression
+        ? this.props.store.binScalingFactor
+        : last_visualized_component.num_bin);
 
     //TO_DO: to remove?
     /*const paddingBetweenComponents =
