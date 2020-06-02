@@ -15,6 +15,24 @@ import {arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "
 
 import makeInspectable from "mobx-devtools-mst";
 
+function Legend(props) {
+  return (
+    <img
+      src={process.env.PUBLIC_URL + "Schematize legend.gif"}
+      alt="legend"
+      style={{
+        position: "fixed",
+        bottom: "20px",
+        left: "20px",
+        background: "white",
+        align: "right",
+        width: "100px",
+        height: "200px",
+      }}
+    />
+  );
+}
+
 class App extends Component {
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
@@ -673,6 +691,7 @@ class App extends Component {
         </Stage>
 
         <NucleotideTooltip store={this.props.store} />
+        <Legend store={this.props.store} />
       </>
     );
   }
