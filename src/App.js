@@ -1,22 +1,17 @@
-import { Layer, Stage, Text } from "react-konva";
-import React, { Component } from "react";
+import {Layer, Stage, Text} from "react-konva";
+import React, {Component} from "react";
 
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
-import ComponentRect, { compress_visible_rows } from "./ComponentRect";
+import ComponentRect, {compress_visible_rows} from "./ComponentRect";
 import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
-import { calculateLinkCoordinates } from "./LinkRecord";
+import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
-import { observe } from "mobx";
-import {
-  areOverlapping,
-  arraysEqual,
-  calculateEndBinFromScreen,
-  stringToColorAndOpacity,
-} from "./utilities";
+import {observe} from "mobx";
+import {areOverlapping, arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
 // TO_DO: improve the management of visualzied components
@@ -49,10 +44,6 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-
-    // TODO: Are these 2 instructions necessary?
-    //this.updateHighlightedNode = this.updateHighlightedNode.bind(this);
-    //this.updateSelectedLink = this.updateSelectedLink.bind(this);
 
     this.state = {
       schematize: [],
@@ -455,13 +446,15 @@ class App extends Component {
       if (bin1 < beginBin || bin2 > last_bin_last_visualized_component) {
         console.log("updateSelectedLink - NewBeginEndBin");
 
-        const end_closer = Math.abs(beginBin - bin1) < Math.abs(endBin - bin2);
+          const end_closer = Math.abs(beginBin - bin1) > Math.abs(endBin - bin2);
 
         let [newBeginBin, newEndBin] = this.props.store.beginEndBin;
-        if (!end_closer) {
-          [newBeginBin, newEndBin] = [bin1, bin1 + (endBin - beginBin)];
+          let screenWidth = endBin - beginBin;
+          let half = Math.floor(screenWidth / 2);
+          if (end_closer) {
+              [newBeginBin, newEndBin] = [bin1 - half, bin1 + half];
         } else {
-          [newBeginBin, newEndBin] = [bin2 - (endBin - beginBin), bin2];
+              [newBeginBin, newEndBin] = [bin2 - half, bin2 + half];
         }
 
         this.props.store.updateBeginEndBin(newBeginBin, newEndBin);

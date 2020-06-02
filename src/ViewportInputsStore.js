@@ -43,7 +43,7 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "run1.B1phi1.i1.seqwish",
+    jsonName: "run1.B1phi1.i1.seqwish.v16",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
     indexSelectedZoomLevel: 0,
