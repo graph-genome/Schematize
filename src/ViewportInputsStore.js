@@ -58,6 +58,32 @@ RootStore = types
     pangenomelast_bin: -1, //TODO: don't add values unless they're needed
 
     loading: true,
+    copyNumberColorArray: types.optional(types.array(types.string), [
+      "#6a6a6a",
+      "#5f5f5f",
+      "#545454",
+      "#4a4a4a",
+      "#3f3f3f",
+      "#353535",
+      "#2a2a2a",
+      "#1f1f1f",
+      "#151515",
+      "#0a0a0a",
+      "#000000",
+    ]),
+    invertedColorArray: types.optional(types.array(types.string), [
+      "#de4b39",
+      "#c74333",
+      "#b13c2d",
+      "#9b3427",
+      "#852d22",
+      "#6f251c",
+      "#581e16",
+      "#421611",
+      "#2c0f0b",
+      "#160705",
+      "#000000",
+    ]),
   })
   .actions((self) => {
     function setChunkIndex(json) {

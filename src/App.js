@@ -19,14 +19,30 @@ import {
 } from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
-
 // TO_DO: improve the management of visualzied components
 let index_to_component_to_visualize_dict;
+
+function Legend(props) {
+  return (
+    <img
+      src={process.env.PUBLIC_URL + "Schematize legend.gif"}
+      alt="legend"
+      style={{
+        position: "fixed",
+        bottom: "20px",
+        left: "20px",
+        background: "white",
+        align: "right",
+        width: "100px",
+        height: "200px",
+      }}
+    />
+  );
+}
 
 class App extends Component {
   layerRef = React.createRef();
   layerRef2 = React.createRef(null);
-
   // Timer for the LinkArrow highlighting and selection (clicking on it)
   timerHighlightingLink = null;
   timerSelectionLink = null;
@@ -767,6 +783,7 @@ class App extends Component {
         </Stage>
 
         <NucleotideTooltip store={this.props.store} />
+        <Legend store={this.props.store} />
       </>
     );
   }
