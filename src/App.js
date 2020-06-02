@@ -15,62 +15,21 @@ import {arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "
 
 import makeInspectable from "mobx-devtools-mst";
 
-function LegendItem(props) {
-  return props.colorArray.map((color, index) => {
-    return (
-      <div style={{ align: "right" }}>
-        <div
-          style={{
-            display: "inline-block",
-            width: "30px",
-            fontSize: "small",
-            textAlign: "right",
-          }}
-        >
-          {index < 10 ? index : ">" + index}
-        </div>
-        <div
-          style={{
-            backgroundColor: color,
-            width: "10px",
-            height: "10px",
-            display: "inline-block",
-            border: "1px solid black",
-            margin: "1px 1px 1px 5px",
-          }}
-        ></div>
-      </div>
-    );
-  });
-}
-
-function LegendColumn(props) {
-  return (
-    <div style={{
-      display: "inline-block",
-      verticalAlign: "top",
-      padding: "5px",
-    }}>
-      <span style={{ fontSize: "small" }}> {props.name} </span>
-      <LegendItem colorArray={props.colorArray} />
-    </div>
-  );
-}
-
 function Legend(props) {
   return (
-    <div
+    <img
+      src={process.env.PUBLIC_URL + "Schematize legend.gif"}
+      alt="legend"
       style={{
         position: "fixed",
         bottom: "20px",
         left: "20px",
         background: "white",
         align: "right",
+        width: "100px",
+        height: "200px",
       }}
-    >
-      <LegendColumn name="Copy Number" colorArray={props.store.copyNumberColorArray} />
-      <LegendColumn name="Inverted" colorArray={props.store.invertedColorArray} />
-    </div>
+    />
   );
 }
 
