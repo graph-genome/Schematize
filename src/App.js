@@ -129,11 +129,9 @@ class App extends Component {
         index_to_component_to_visualize_dict[
           schematizeComponent.index
         ] = schematizeComponent;
-      } else {
-        if (Object.keys(index_to_component_to_visualize_dict).length > 0) {
-          // The components to visualized was already taken
-          break;
-        }
+      } else if (schematizeComponent.firstBin > this.props.store.getEndBin()) {
+        // The components to visualized was already taken
+        break;
       }
     }
 
@@ -640,8 +638,8 @@ class App extends Component {
       this.schematic.nucleotides.length > 0
     ) {
       //console.log('renderNucleotidesSchematic - START')
-      return this.schematic.components.map((schematizeComponent, i) => {
-        if (schematizeComponent.index in index_to_component_to_visualize_dict) {
+      return Object.values(index_to_component_to_visualize_dict).map(
+        (schematizeComponent, i) => {
           // The dummy component (firstBin and lastBin equal to 0) is not loaded in this.schematic.components, but there is a nucleotide for it in the FASTA file.
           // If the first component has firstBin == 1, then in the FASTA there is a nucleotide not visualized, so the shift start from 0, and not 1
           const nt_shift =
@@ -667,10 +665,8 @@ class App extends Component {
               />
             </React.Fragment>
           );
-        } else {
-          return null;
         }
-      });
+      );
     }
   };
 
