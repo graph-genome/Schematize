@@ -1,6 +1,6 @@
-import {types} from "mobx-state-tree";
-import {urlExists} from "./URL";
-import {arraysEqual} from "./utilities";
+import { types } from "mobx-state-tree";
+import { urlExists } from "./URL";
+import { arraysEqual } from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
@@ -33,7 +33,7 @@ RootStore = types
     chunkIndex: ChunkIndex,
     beginEndBin: types.optional(types.array(types.integer), [1, 100]),
     useVerticalCompression: false,
-    useWidthCompression: false,
+    useWidthCompression: true,
     binScalingFactor: 3,
     useConnector: true,
     pixelsPerColumn: 10,
@@ -43,7 +43,7 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "run1.B1phi1.i1.seqwish.v16",
+    jsonName: "SARS-CoV-b",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
     indexSelectedZoomLevel: 0,
@@ -160,10 +160,10 @@ RootStore = types
       self.useConnector = !self.useConnector;
     }
     function updateHeight(event) {
-      self.pixelsPerRow = Math.max(1, Number(event.target.value));
+      self.pixelsPerRow = Math.max(4, Number(event.target.value));
     }
     function updateWidth(event) {
-      self.pixelsPerColumn = Number(event.target.value);
+      self.pixelsPerColumn = Math.max(4, Number(event.target.value));
     }
 
     function tryJSONpath(event) {
