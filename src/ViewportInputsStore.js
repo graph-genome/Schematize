@@ -33,7 +33,7 @@ RootStore = types
     chunkIndex: ChunkIndex,
     beginEndBin: types.optional(types.array(types.integer), [1, 100]),
     useVerticalCompression: false,
-    useWidthCompression: true,
+      useWidthCompression: false,
     binScalingFactor: 3,
     useConnector: true,
     pixelsPerColumn: 10,
@@ -43,7 +43,7 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "SARS-CoV-b2",
+      jsonName: "run1.B1phi1.i1.seqwish.v16",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
     indexSelectedZoomLevel: 0,
