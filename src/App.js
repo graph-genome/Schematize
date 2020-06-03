@@ -651,14 +651,11 @@ class App extends Component {
         (schematizeComponent, i) => {
           // The dummy component (firstBin and lastBin equal to 0) is not loaded in this.schematic.components, but there is a nucleotide for it in the FASTA file.
           // If the first component has firstBin == 1, then in the FASTA there is a nucleotide not visualized, so the shift start from 0, and not 1
-          const nt_shift =
-            this.schematic.components[0].firstBin === 1
-              ? 0
-              : this.schematic.components[0].firstBin;
+          const nt_shift = this.schematic.components[0].firstBin || 1;
 
           const nucleotides_slice = this.schematic.nucleotides.slice(
-            schematizeComponent.firstBin - nt_shift,
-            schematizeComponent.lastBin - nt_shift + 1
+              schematizeComponent.firstBin - nt_shift, // firstBin is 1 indexed, but this is canceled by nt_shift
+              schematizeComponent.lastBin - nt_shift + 1 // inclusive end
           );
 
           //console.log("nucleotides_slice: " + nucleotides_slice);
