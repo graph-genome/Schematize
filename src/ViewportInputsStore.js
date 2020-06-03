@@ -33,7 +33,7 @@ RootStore = types
     chunkIndex: ChunkIndex,
     beginEndBin: types.optional(types.array(types.integer), [1, 100]),
     useVerticalCompression: false,
-      useWidthCompression: false,
+      useWidthCompression: true,
     binScalingFactor: 3,
     useConnector: true,
     pixelsPerColumn: 10,
@@ -160,10 +160,10 @@ RootStore = types
       self.useConnector = !self.useConnector;
     }
     function updateHeight(event) {
-      self.pixelsPerRow = Math.max(1, Number(event.target.value));
+        self.pixelsPerRow = Math.max(4, Number(event.target.value));
     }
     function updateWidth(event) {
-      self.pixelsPerColumn = Number(event.target.value);
+        self.pixelsPerColumn = Math.max(4, Number(event.target.value));
     }
 
     function tryJSONpath(event) {

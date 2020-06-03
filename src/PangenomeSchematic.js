@@ -147,8 +147,11 @@ class PangenomeSchematic extends React.Component {
               jsonChunk.components[0].x
           );*/
 
+            // At the moment, the index is used as a rank of the component, then it has to be progressive between chunks
           const num_components_already_loaded =
-            this.components.length > 0 ? this.components.length + 1 : 0;
+              this.components.length > 0
+                  ? this.components[this.components.length - 1].index + 1
+                  : 0;
           for (let [index, component] of jsonChunk.components.entries()) {
             if (component.first_bin > 0) {
               let componentItem = new Component(

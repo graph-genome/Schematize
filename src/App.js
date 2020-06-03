@@ -13,7 +13,7 @@ import ControlHeader from "./ControlHeader";
 import {observe} from "mobx";
 import {areOverlapping, arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "./utilities";
 
-import makeInspectable from "mobx-devtools-mst";
+//import makeInspectable from "mobx-devtools-mst";
 // TO_DO: improve the management of visualized components
 let index_to_component_to_visualize_dict;
 
@@ -114,7 +114,7 @@ class App extends Component {
     );
 
     // For debugging purposes
-    makeInspectable(this.props.store);
+      //makeInspectable(this.props.store);
   }
 
   prepareWhichComponentsToVisualize() {
@@ -124,7 +124,6 @@ class App extends Component {
     index_to_component_to_visualize_dict = {};
 
     for (const schematizeComponent of this.schematic.components) {
-      //console.log('PREPARE: ' + schematizeComponent.index + ': [' + schematizeComponent.firstBin + ',' + schematizeComponent.lastBin + '] - ' + schematizeComponent.arrivals.length + ' - ' + schematizeComponent.departures.length)
       if (
         areOverlapping(
           this.props.store.getBeginBin(),
@@ -133,6 +132,8 @@ class App extends Component {
           schematizeComponent.lastBin
         )
       ) {
+          //console.log('PREPARE: ' + schematizeComponent.index + ': [' + schematizeComponent.firstBin + ',' + schematizeComponent.lastBin + '] - ' + schematizeComponent.arrivals.length + ' - ' + schematizeComponent.departures.length)
+
         index_to_component_to_visualize_dict[
           schematizeComponent.index
         ] = schematizeComponent;
