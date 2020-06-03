@@ -116,7 +116,6 @@ export class SpanCell extends React.Component {
         //https://github.com/graph-genome/Schematize/issues/87
         //Sparse matrix includes the relative columns for each bin inside a component
         //Columns are not necessarily contiguous, but follow the same order as `row`
-        this.pixelsX = this.props.iColumns.map((cX) => cX * this.props.store.pixelsPerColumn)
         this.xBase =
             this.props.parent.relativePixelX +
             this.props.parent.arrivals.length * this.props.store.pixelsPerColumn;
@@ -128,30 +127,46 @@ export class SpanCell extends React.Component {
         if (!this.props.row.length) {
             return null;
         }
-        let cell = this.props.row[0];
-        let x = 0;
-        return (
+        let prev = this.props.iColumns[0] - 1;
+        let spans = [];
+        let newSpan = {width: 0, x: this.props.iColumns[0], cell: this.props.row[0]}
+        for (let i = 0; i < this.props.iColumns.length; i++) {
+            let column = this.props.iColumns[i];
+            if (column === prev + 1) {//contiguous
+                newSpan.width += 1;
+                newSpan.cell = this.props.row[i];//TODO aggregate ranges
+            } else {//non-contiguous
+                spans.push(newSpan)
+                //create new newSpan
+                newSpan = {width: 1, x: column, cell: this.props.row[i]};
+            }
+            prev = column;
+        }
+        spans.push(newSpan)
+        return <>
+            {spans.map((span) =>
             <MatrixCell
-                key={"span" + this.props.rowNumber + "," + x}
-                item={cell}
+                key={"span" + this.props.rowNumber + "," + span.x}
+                item={span.cell}
                 store={this.props.store}
                 pathName={this.props.pathName}
-                x={this.xBase + this.pixelsX[x]}
+                x={this.xBase + span.x * this.props.store.pixelsPerColumn}
                 y={this.props.y}
                 rowNumber={this.props.rowNumber}
-                width={this.props.row.length * this.props.store.pixelsPerColumn}
+                width={span.width * this.props.store.pixelsPerColumn}
                 height={this.props.store.pixelsPerRow}
-            />
-        );
+            />)}
+        </>;
     }
 }
 
 MatrixCell.propTypes = {
-    store: PropTypes.object,
     row: PropTypes.node,
-    y: PropTypes.number,
-    height: PropTypes.number,
-    color: PropTypes.node,
+    iColumns: PropTypes.node,
+    parent: PropTypes.object,
+    store: PropTypes.object,
     pathName: PropTypes.node,
+    y: PropTypes.number,
     rowNumber: PropTypes.number,
+    verticalRank: PropTypes.number,
 };

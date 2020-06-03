@@ -46,7 +46,7 @@ RootStore = types
       jsonName: "run1.B1phi1.i1.seqwish.v16",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
-    indexSelectedZoomLevel: 0,
+    indexSelectedZoomLevel: 2,
     chunkURLs: types.optional(types.array(types.string), []),
     chunkFastaURLs: types.optional(types.array(types.string), []),
     //to be compared against chunkURLs

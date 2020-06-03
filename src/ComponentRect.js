@@ -66,7 +66,6 @@ class ComponentRect extends React.Component {
                 this.props.store.topOffset
             }
             rowNumber={uncompressed_y}
-            height={this.props.store.pixelsPerRow}
             verticalRank={verticalRank}
         />
     }

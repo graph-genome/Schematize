@@ -14,7 +14,7 @@ import {observe} from "mobx";
 import {areOverlapping, arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "./utilities";
 
 import makeInspectable from "mobx-devtools-mst";
-// TO_DO: improve the management of visualzied components
+// TO_DO: improve the management of visualized components
 let index_to_component_to_visualize_dict;
 
 function Legend(props) {
