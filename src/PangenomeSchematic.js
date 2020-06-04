@@ -1,6 +1,6 @@
 import React from "react";
-import {observe} from "mobx";
-import {urlExists} from "./URL";
+import { observe } from "mobx";
+import { urlExists } from "./URL";
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
@@ -67,18 +67,19 @@ class PangenomeSchematic extends React.Component {
   loadJsonCache(url, data) {
     console.log("STEP #6: fetched chunks go into loadJsonCache");
 
-      if (data.json_version !== 16) {
+    if (data.json_version !== 16) {
       throw MediaError(
-          "Wrong Data JSON version: was expecting version 16, got " +
-          data.json_version +
-          ".  " +
-          "This version added compressedX.  " + // KEEP THIS UP TO DATE!
+        "Wrong Data JSON version: was expecting version 16, got " +
+        data.json_version +
+        ".  " +
+        "This version added compressedX.  " + // KEEP THIS UP TO DATE!
           "Using a mismatched data file and renderer will cause unpredictable behavior," +
           " instead generate a new data file using github.com/graph-genome/component_segmentation."
       );
     }
     this.jsonCache[url] = data;
     this.pathNames = data.path_names; //TODO: in later JSON versions path_names gets moved to bin2file.json
+      console.log(this.pathNames.length, " path names loaded")
     this.processArray();
   }
 
@@ -147,8 +148,11 @@ class PangenomeSchematic extends React.Component {
               jsonChunk.components[0].x
           );*/
 
+            // At the moment, the index is used as a rank of the component, then it has to be progressive between chunks
           const num_components_already_loaded =
-            this.components.length > 0 ? this.components.length + 1 : 0;
+              this.components.length > 0
+                  ? this.components[this.components.length - 1].index + 1
+                  : 0;
           for (let [index, component] of jsonChunk.components.entries()) {
             if (component.first_bin > 0) {
               let componentItem = new Component(

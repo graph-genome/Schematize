@@ -25,39 +25,19 @@ export function areOverlapping(startA, endA, startB, endB) {
 }
 
 export function calculateEndBinFromScreen(beginBin, endBin, selZoomLev, store) {
-  /*let deviceWidth = 1920; // TODO: get width from browser
-  let widthInCells = deviceWidth / store.pixelsPerColumn;*/
   let chunkURLarray = [];
   let fileArrayFasta = [];
 
-  let currEnd = endBin;
-  //this loop will automatically cap out at the last bin of the file
   let level = store.chunkIndex.zoom_levels.get(selZoomLev);
+  //this loop will automatically cap out at the last bin of the file
   for (let ichunk = 0; ichunk < level.files.length; ichunk++) {
     // The "x" info is not here
     let chunk = level.files[ichunk];
     if (areOverlapping(beginBin, endBin, chunk.first_bin, chunk.last_bin)) {
-      // TO_DO: future releases will visualzied partial chuncks
-      /*let width =
-        chunk["last_bin"] -
-        chunk["first_bin"] +
-        chunk["component_count"] +
-        chunk["link_count"];
-      let columnsLeftToAdd = widthInCells - workingWidth;
-      workingWidth += width;
-      console.log('workingWidth ' + workingWidth)*/
-
       chunkURLarray.push(chunk["file"]);
       if (chunk.fasta !== null) {
         fileArrayFasta.push(chunk.fasta);
       }
-      /*if (workingWidth > widthInCells) {
-        // fractional chunk to add, could cut a Component in half
-        let density = (chunk["last_bin"] - chunk["first_bin"]) / width;
-        currEnd = Math.round(columnsLeftToAdd * density);
-        // currEnd = chunk["last_bin"];
-        break;
-      }*/
     }
   }
 
@@ -65,7 +45,7 @@ export function calculateEndBinFromScreen(beginBin, endBin, selZoomLev, store) {
   //TODO the logic in let width = could be much more complex by looking at
   //width of components and whether various settings are on.  The consequence
   //of overestimating widthInCells is to make the shift buttons step too big
-  return [currEnd, chunkURLarray, fileArrayFasta];
+  return [chunkURLarray, fileArrayFasta];
 }
 
 export function range(start, end) {
@@ -73,19 +53,19 @@ export function range(start, end) {
 }
 
 export function stringToColorAndOpacity(
-    linkColumn,
-    highlightedLinkColumn,
-    selectedLink
+  linkColumn,
+  highlightedLinkColumn,
+  selectedLink
 ) {
   const whichLinkToConsider = selectedLink
-      ? selectedLink
-      : highlightedLinkColumn;
+    ? selectedLink
+    : highlightedLinkColumn;
 
   const colorKey = (linkColumn.downstream + 1) * (linkColumn.upstream + 1);
   if (whichLinkToConsider) {
     // When the mouse in on a Link, all the other ones will become gray and fade out
     let matchColor =
-        (whichLinkToConsider.downstream + 1) * (whichLinkToConsider.upstream + 1);
+      (whichLinkToConsider.downstream + 1) * (whichLinkToConsider.upstream + 1);
     // Check if the mouse in on a Link (highlightedLinkColumn) or if a Link was clicked (selectedLink)
     if ((!highlightedLinkColumn && !selectedLink) || colorKey === matchColor) {
       return [

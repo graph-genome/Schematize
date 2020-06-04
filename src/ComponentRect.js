@@ -1,7 +1,8 @@
 /* eslint-disable require-jsdoc */
 import React from "react";
 import {Rect} from "react-konva";
-import {ConnectorRect, MatrixCell} from "./ComponentConnectorRect";
+import {ConnectorRect} from "./ComponentConnectorRect";
+import {SpanCell} from "./SpanCell";
 import PropTypes from "prop-types";
 import {sum} from "./utilities";
 
@@ -45,51 +46,29 @@ class ComponentRect extends React.Component {
     return <>{parts}</>;
   }
 
-    renderMatrixRow(entry, vertical_rank, uncompressed_y) {
-        let row = entry[1];
-    const parent = this.props.item;
-        //https://github.com/graph-genome/Schematize/issues/87
-        //Sparse matrix includes the relative columns for each bin inside a component
-        //Columns are not necessarily contiguous, but follow the same order as `row`
-        let iColumns = entry[0];
-        let pixelsX = iColumns.map((cX) => cX * this.props.store.pixelsPerColumn)
-        const xBase =
-      parent.relativePixelX +
-      parent.arrivals.length * this.props.store.pixelsPerColumn;
-    const width = 1 * this.props.store.pixelsPerColumn;
-    let this_y = vertical_rank;
-    if (!this.props.store.useVerticalCompression) {
-      if (!this.props.compressed_row_mapping.hasOwnProperty(uncompressed_y)) {
-        return null; // we need compressed_y and we don't have it.  give up
-      }
-      this_y = this.props.compressed_row_mapping[uncompressed_y];
+    renderMatrixRow(entry, verticalRank, uncompressed_y) {
+        let this_y = verticalRank;
+        if (!this.props.store.useVerticalCompression) {
+            if (!this.props.compressed_row_mapping.hasOwnProperty(uncompressed_y)) {
+                return null; // we need compressed_y and we don't have it.  give up
+            }
+            this_y = this.props.compressed_row_mapping[uncompressed_y];
+        }
+        return <SpanCell
+            key={"occupant" + uncompressed_y}
+            row={entry[1]}
+            iColumns={entry[0]}
+            parent={this.props.item}
+            store={this.props.store}
+            pathName={this.props.pathNames[uncompressed_y]}
+            x={this.props.item.relativePixelX +
+            this.props.item.arrivals.length * this.props.store.pixelsPerColumn}
+            y={this_y * this.props.store.pixelsPerRow +
+            this.props.store.topOffset}
+            rowNumber={uncompressed_y}
+            verticalRank={verticalRank}
+        />
     }
-
-    return row.map((cell, x) => {
-      if (cell.length) {
-        return (
-          <>
-            <MatrixCell
-                key={"occupant" + uncompressed_y + x}
-                item={cell}
-                store={this.props.store}
-                pathName={this.props.pathNames[uncompressed_y]}
-                x={xBase + pixelsX[x]}
-                y={
-                this_y * this.props.store.pixelsPerRow +
-                this.props.store.topOffset
-              }
-                row_number={uncompressed_y}
-                width={width}
-                height={this.props.store.pixelsPerRow}
-            />
-          </>
-        );
-      } else {
-        return null;
-      }
-    });
-  }
 
   renderAllConnectors() {
     const departures = this.props.item.departures;

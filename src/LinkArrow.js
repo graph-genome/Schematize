@@ -16,7 +16,7 @@ class LinkArrow extends React.Component {
     this.handleMouseOver = this.handleMouseOver.bind(this);
   }
   componentDidUpdate() {
-    //this.calculatePoints(); // AG: is it necessary?
+    //this.calculatePoints();
   }
 
   calculatePoints() {
@@ -116,32 +116,7 @@ class LinkArrow extends React.Component {
     this.props.updateHighlightedNode(null);
   };
   handleClick = (event) => {
-    /*Jump on Link click rough draft. Detects which end is closest to the view and
-    jumps to the other side. TODO: Still needs visual highlighting at destination.*/
     console.log("Click", event, this.props.link);
-
-    // TO_DO: to confirm the new logic about the new start/end
-    // Find middle position of viewport
-    /*let width = endBin - beginBin;
-    let mid_bin = beginBin + width / 2;
-
-    // Compare with ends of arrow coordinates
-    let end_closer =
-      Math.abs(this.props.link.linkColumn.upstream - mid_bin) <
-      Math.abs(this.props.link.linkColumn.downstream - mid_bin);
-
-    // Identify more distant end
-    let destination_bin = end_closer
-      ? this.props.link.linkColumn.downstream
-      : this.props.link.linkColumn.upstream;
-
-    if ((destination_bin < beginBin || destination_bin > endBin)) {
-      // Calculate beginBin that will place distant end in middle of viewport
-      // The ~~ operator is a double NOT bitwise operator. It is used as a faster substitute for Math.floor().
-      newBeginBin = Math.max(1, ~~(destination_bin - width / 2));
-      newEndBin = newBeginBin + width;
-      // Called after the bin updating to start the timers after the rendering
-    }*/
 
     this.props.updateSelectedLink(this.props.link.linkColumn);
   };
@@ -151,8 +126,6 @@ LinkArrow.propTypes = {
   store: PropTypes.object,
   link: PropTypes.object,
   color: PropTypes.node,
-  updateHighlightedNode: PropTypes.func,
-  updateSelectedLink: PropTypes.func,
 };
 
 export default LinkArrow;
