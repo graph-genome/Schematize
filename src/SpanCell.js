@@ -125,11 +125,6 @@ export class SpanCell extends React.Component {
         //https://github.com/graph-genome/Schematize/issues/87
         //Sparse matrix includes the relative columns for each bin inside a component
         //Columns are not necessarily contiguous, but follow the same order as `row`
-        this.xBase =
-            this.props.parent.relativePixelX +
-            this.props.parent.arrivals.length * this.props.store.pixelsPerColumn;
-
-        let x = 0;
     }
 
     render() {
@@ -159,7 +154,7 @@ export class SpanCell extends React.Component {
                 range={span.range}
                 store={this.props.store}
                 pathName={this.props.pathName}
-                x={this.xBase + span.x * this.props.store.pixelsPerColumn}
+                x={this.props.x + span.x * this.props.store.pixelsPerColumn}
                 y={this.props.y}
                 rowNumber={this.props.rowNumber}
                 width={span.width * this.props.store.pixelsPerColumn}

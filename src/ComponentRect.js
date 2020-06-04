@@ -61,10 +61,10 @@ class ComponentRect extends React.Component {
             parent={this.props.item}
             store={this.props.store}
             pathName={this.props.pathNames[uncompressed_y]}
-            y={
-                this_y * this.props.store.pixelsPerRow +
-                this.props.store.topOffset
-            }
+            x={this.props.item.relativePixelX +
+            this.props.item.arrivals.length * this.props.store.pixelsPerColumn}
+            y={this_y * this.props.store.pixelsPerRow +
+            this.props.store.topOffset}
             rowNumber={uncompressed_y}
             verticalRank={verticalRank}
         />
