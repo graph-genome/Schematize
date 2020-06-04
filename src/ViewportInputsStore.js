@@ -1,6 +1,6 @@
-import {types} from "mobx-state-tree";
-import {urlExists} from "./URL";
-import {arraysEqual, checkAndForceMinOrMaxValue, isInt} from "./utilities";
+import { types } from "mobx-state-tree";
+import { urlExists } from "./URL";
+import { arraysEqual, checkAndForceMinOrMaxValue, isInt } from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
@@ -37,13 +37,13 @@ RootStore = types
     binScalingFactor: 3,
     useConnector: true,
     pixelsPerColumn: 10,
-    pixelsPerRow: 4,
+    pixelsPerRow: 3,
     leftOffset: 1,
     topOffset: 400,
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "SARS-CoV-b-v17",
+    jsonName: "SARS-CoV-b",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
 
@@ -167,10 +167,7 @@ RootStore = types
 
     function tryJSONpath(event) {
       const url =
-        process.env.PUBLIC_URL +
-          "/test_data/" +
-        event.target.value +
-        "/bin2file.json";
+        process.env.REACT_APP_FETCH + event.target.value + "/bin2file.json";
       if (urlExists(url)) {
         console.log("STEP#1: New Data Source: " + event.target.value);
         self.jsonName = event.target.value;
