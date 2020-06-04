@@ -3,21 +3,27 @@ import {Rect, Text} from "react-konva";
 import PropTypes from "prop-types";
 
 export class MatrixCell extends React.Component {
-    onHover() {
+    onHover(event) {
         //tooltip: this.props.item.mean_pos
 
         // An example: Path_name, Coverage: 0.23, Inversion: 0.0, Pos: 2365-27289
 
+        //TODO: calculate relative X and select item from this.props.range
+        let relColumnX = Math.floor(Math.max(0, event.evt.layerX - this.props.x) / this.props.store.pixelsPerColumn);
+        //console.log(event, this.props.range, relColumnX);
+
+
+        let item = this.props.range[Math.min(this.props.range.length - 1, relColumnX)];
         let tooltipContent = '"';
         tooltipContent +=
             this.props.pathName +
             '"\nCoverage: ' +
-            this.props.item[0] +
+            item[0] +
             "\nInversion: " +
-            this.props.item[1] +
+            item[1] +
             "\nPos: ";
 
-        const ranges = this.props.item[2];
+        const ranges = item[2];
         for (let j = 0; j < ranges.length; j++) {
             let start = ranges[j][0];
             let end = ranges[j][1];
@@ -47,7 +53,7 @@ export class MatrixCell extends React.Component {
                     align={"center"}
                     verticalAlign={"center"}
                     text={inverted ? "<" : " "}
-                    onMouseEnter={this.onHover.bind(this)}
+                    onMouseMove={this.onHover.bind(this)}
                     onMouseLeave={this.onLeave.bind(this)}
                 />
             );
@@ -57,8 +63,11 @@ export class MatrixCell extends React.Component {
     }
 
     render() {
-        const inverted = this.props.item[1] > 0.5;
-        const copyNumber = this.props.item[0];
+        if (this.props.range === undefined || this.props.range.length === 0) {
+            return null; //giving up
+        }
+        const inverted = this.props.range[0][1] > 0.5;
+        const copyNumber = this.props.range[0][0];
 
         let color = "#838383";
 
@@ -89,9 +98,9 @@ export class MatrixCell extends React.Component {
                     width={this.props.width}
                     height={this.props.height || 1}
                     fill={color}
-                    onMouseEnter={this.onHover.bind(this)}
+                    onMouseMove={this.onHover.bind(this)}
                     onMouseLeave={this.onLeave.bind(this)}
-                ></Rect>
+                />
                 {this.inversionText(inverted)}
             </>
         );
@@ -100,7 +109,7 @@ export class MatrixCell extends React.Component {
 
 MatrixCell.propTypes = {
     store: PropTypes.object,
-    item: PropTypes.node,
+    range: PropTypes.object,
     x: PropTypes.number,
     y: PropTypes.number,
     width: PropTypes.number,
@@ -124,21 +133,21 @@ export class SpanCell extends React.Component {
     }
 
     render() {
-        if (!this.props.row.length) {
+        if (!this.props.row.length || !this.props.iColumns.length) {
             return null;
         }
         let prev = this.props.iColumns[0] - 1;
         let spans = [];
-        let newSpan = {width: 0, x: this.props.iColumns[0], cell: this.props.row[0]}
+        let newSpan = {width: 0, x: this.props.iColumns[0], range: []}
         for (let i = 0; i < this.props.iColumns.length; i++) {
             let column = this.props.iColumns[i];
             if (column === prev + 1) {//contiguous
                 newSpan.width += 1;
-                newSpan.cell = this.props.row[i];//TODO aggregate ranges
+                newSpan.range.push(this.props.row[i]);
             } else {//non-contiguous
                 spans.push(newSpan)
                 //create new newSpan
-                newSpan = {width: 1, x: column, cell: this.props.row[i]};
+                newSpan = {width: 1, x: column, range: [this.props.row[i]]};
             }
             prev = column;
         }
@@ -147,7 +156,7 @@ export class SpanCell extends React.Component {
             {spans.map((span) =>
             <MatrixCell
                 key={"span" + this.props.rowNumber + "," + span.x}
-                item={span.cell}
+                range={span.range}
                 store={this.props.store}
                 pathName={this.props.pathName}
                 x={this.xBase + span.x * this.props.store.pixelsPerColumn}
