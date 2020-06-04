@@ -107,11 +107,11 @@ class App extends Component {
       this.openRelevantChunksFromIndex.bind(this)
     );
 
-    observe(
+    /*observe(
       this.props.store,
       "indexSelectedZoomLevel",
       this.openRelevantChunksFromIndex.bind(this) // Whenever the selected zoom level changes
-    );
+    );*/
     observe(
       this.props.store.beginEndBin, //user moves start position
       //This following part is important to scroll right and left on browser
@@ -156,7 +156,7 @@ class App extends Component {
   /** Compares bin2file @param indexContents with the beginBin and EndBin.
    * It finds the appropriate chunk URLS from the index and updates
    * switchChunkURLs which trigger json fetches for the new chunks. **/
-  openRelevantChunksFromIndex() {
+  openRelevantChunksFromIndex(lastIndexSelectedZoomLevel = -1) {
     console.log(
       "STEP #3: with new chunkIndex, this.openRelevantChunksFromIndex()"
     );
@@ -174,7 +174,7 @@ class App extends Component {
       this.props.store.chunkIndex["zoom_levels"].keys()
     );
     const selZoomLev = this.props.store.getSelectedZoomLevel();
-    let [endBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
+    let [fileArray, fileArrayFasta] = calculateEndBinFromScreen(
       beginBin,
       this.props.store.getEndBin(),
       selZoomLev,
@@ -184,31 +184,43 @@ class App extends Component {
       this.props.store.chunkIndex.zoom_levels.get(selZoomLev)["last_bin"]
     );
 
-    //TODO: commented because maybe it creates problems
-    //this.props.store.updateBeginEndBin(beginBin, endBin);
+    let bin_range_changed = false;
+    if (lastIndexSelectedZoomLevel > -1) {
+      const scaling_factor =
+        this.props.store.getSelectedZoomLevel(lastIndexSelectedZoomLevel) /
+        this.props.store.getSelectedZoomLevel();
+      console.log("scaling_factor: " + scaling_factor);
+      bin_range_changed = this.props.store.updateBeginEndBin(
+        Math.round((beginBin - 1) * scaling_factor),
+        Math.round((this.props.store.getEndBin() - 1) * scaling_factor)
+      );
+    }
 
-    this.prepareWhichComponentsToVisualize();
+    // To avoid to do the preparation and the following operations two times
+    if (!bin_range_changed) {
+      this.prepareWhichComponentsToVisualize();
 
-    //console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
-    let URLprefix =
-      process.env.PUBLIC_URL +
-      "test_data/" +
-      this.props.store.jsonName +
-      "/" +
-      selZoomLev +
-      "/";
-    fileArray = fileArray.map((filename) => {
-      return URLprefix + filename;
-    });
-    fileArrayFasta = fileArrayFasta.map((filename) => {
-      return URLprefix + filename;
-    });
+      //console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
+      let URLprefix =
+        process.env.PUBLIC_URL +
+        "test_data/" +
+        this.props.store.jsonName +
+        "/" +
+        selZoomLev +
+        "/";
+      fileArray = fileArray.map((filename) => {
+        return URLprefix + filename;
+      });
+      fileArrayFasta = fileArrayFasta.map((filename) => {
+        return URLprefix + filename;
+      });
 
-    this.props.store.switchChunkFastaURLs(fileArrayFasta);
+      this.props.store.switchChunkFastaURLs(fileArrayFasta);
 
-    // If there are no new chunck, it has only to recalculate the X layout
-    if (!this.props.store.switchChunkURLs(fileArray)) {
-      this.recalcXLayout();
+      // If there are no new chunck, it has only to recalculate the X layout
+      if (!this.props.store.switchChunkURLs(fileArray)) {
+        this.recalcXLayout();
+      }
     }
   }
 
@@ -437,14 +449,14 @@ class App extends Component {
     if (linkRect) {
       //TO_DO: lift down this logic when it will be visualized partial chunks (or
       // pass info about the visualized chunks to the LinkArrow tags)
-      const [bin1, bin2] = [linkRect.upstream, linkRect.downstream].sort(
+      const [binLeft, binRight] = [linkRect.upstream, linkRect.downstream].sort(
         function (a, b) {
           return a - b;
         }
       );
 
       /*console.log([linkRect.upstream, linkRect.downstream])
-      console.log(bin1, bin2)*/
+      console.log(binLeft, binRight)*/
 
       const last_bin_last_visualized_component = Object.values(
         index_to_component_to_visualize_dict
@@ -452,18 +464,19 @@ class App extends Component {
       // if (linkRect !== this.state.selectedLink) //else it is a re-clik on the same link, so do nothing here
 
       const [beginBin, endBin] = this.props.store.beginEndBin;
-      if (bin1 < beginBin || bin2 > last_bin_last_visualized_component) {
+      if (binLeft < beginBin || binRight > last_bin_last_visualized_component) {
         console.log("updateSelectedLink - NewBeginEndBin");
 
-        const end_closer = Math.abs(beginBin - bin1) > Math.abs(endBin - bin2);
+        const end_closer =
+          Math.abs(beginBin - binLeft) > Math.abs(endBin - binRight);
 
         let [newBeginBin, newEndBin] = this.props.store.beginEndBin;
         let screenWidth = endBin - beginBin;
         let half = Math.floor(screenWidth / 2);
         if (end_closer) {
-          [newBeginBin, newEndBin] = [bin1 - half, bin1 + half];
+          [newBeginBin, newEndBin] = [binLeft - half, binLeft + half];
         } else {
-          [newBeginBin, newEndBin] = [bin2 - half, bin2 + half];
+          [newBeginBin, newEndBin] = [binRight - half, binRight + half];
         }
 
         this.props.store.updateBeginEndBin(newBeginBin, newEndBin);
@@ -755,7 +768,13 @@ class App extends Component {
             minWidth: "100%",
           }}
         >
-          <ControlHeader store={this.props.store} schematic={this.schematic} />
+          <ControlHeader
+            store={this.props.store}
+            openRelevantChunksFromIndex={(lastIndexSelectedZoomLevel) =>
+              this.openRelevantChunksFromIndex(lastIndexSelectedZoomLevel)
+            }
+            schematic={this.schematic}
+          />
 
           <Stage
             x={this.props.store.leftOffset}

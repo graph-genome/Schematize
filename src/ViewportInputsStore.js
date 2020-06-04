@@ -32,6 +32,7 @@ RootStore = types
   .model({
     chunkIndex: ChunkIndex,
     beginEndBin: types.optional(types.array(types.integer), [1, 100]),
+    maxWidthBinRange: 99,
     useVerticalCompression: false,
     useWidthCompression: true,
     binScalingFactor: 3,
@@ -101,26 +102,29 @@ RootStore = types
       const beginBin = getBeginBin();
       const endBin = getEndBin();
 
-      let diff = endBin - beginBin;
+      //let diff = endBin - beginBin;
 
       /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
 
       //TO_DO: remove endBin and manage beginBin and widthBinRange (100 by default)?
       newBegin = Math.max(1, Math.round(newBegin));
-      newEnd = Math.max(1, Math.round(newBegin + diff));
+      newEnd = Math.max(2, Math.round(newBegin + self.maxWidthBinRange));
 
       // So that the end bin is at the most the end of the pangenome
       if (newEnd > self.last_bin_pangenome) {
         let excess_bins = newEnd - self.last_bin_pangenome;
-        self.updateBeginEndBin(newBegin - excess_bins, newEnd - excess_bins);
-      } else {
-        if (newBegin !== beginBin) {
-          setBeginEndBin(newBegin, newEnd);
-          console.log("updated begin and end: " + newBegin + " " + newEnd);
-        } else {
-          self.beginEndBin[1] = newEnd; // quietly update without refresh
-        }
+
+        newBegin = Math.max(1, newBegin - excess_bins);
+        newEnd = Math.max(2, newEnd - excess_bins);
       }
+
+      if (newBegin !== beginBin || newEnd !== endBin) {
+        setBeginEndBin(newBegin, newEnd);
+        console.log("updated begin and end: " + newBegin + " " + newEnd);
+        return true;
+      }
+
+      return false;
     }
     function updateTopOffset(newTopOffset) {
       if (Number.isFinite(newTopOffset) && Number.isSafeInteger(newTopOffset)) {
@@ -207,9 +211,14 @@ RootStore = types
       //Zoom level and BinWidth are actually the same thing
       return Number(self.getSelectedZoomLevel());
     }
-    function getSelectedZoomLevel() {
+    function getSelectedZoomLevel(indexSelectedZoomLevel = -1) {
       //This is a genuinely useful getter
-      let a = self.availableZoomLevels[self.indexSelectedZoomLevel];
+      let a =
+        self.availableZoomLevels[
+          indexSelectedZoomLevel > -1
+            ? indexSelectedZoomLevel
+            : self.indexSelectedZoomLevel
+        ];
       return a ? a : "1";
     }
     function setIndexSelectedZoomLevel(index) {
