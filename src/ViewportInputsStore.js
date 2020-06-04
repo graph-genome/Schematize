@@ -55,7 +55,6 @@ RootStore = types
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
     nucleotideHeight: 10,
-    pangenomelast_bin: -1, //TODO: don't add values unless they're needed
 
     loading: true,
     copyNumberColorArray: types.optional(types.array(types.string), [
@@ -84,6 +83,8 @@ RootStore = types
       "#160705",
       "#000000",
     ]),
+
+    last_bin_pangenome: 0,
   })
   .actions((self) => {
     function setChunkIndex(json) {
@@ -104,26 +105,21 @@ RootStore = types
 
       /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
 
-      //TO_DO: check the end of the pangenome
       //TO_DO: remove endBin and manage beginBin and widthBinRange (100 by default)?
       newBegin = Math.max(1, Math.round(newBegin));
       newEnd = Math.max(1, Math.round(newBegin + diff));
-      // the width of the range cannot change.
-      /*if (newEnd === endBin) {
-        //end has not changed
-        let diff = endBin - beginBin;
-        newEnd = newBegin + diff; //Allows start to push End to new chunks
-      }
-      if (newEnd < newBegin) {
-        //crush newStart
-        newBegin = newEnd - 1;
-      }*/
 
-      if (newBegin !== beginBin) {
-        setBeginEndBin(newBegin, newEnd);
-        console.log("updated begin and end: " + newBegin + " " + newEnd);
+      // So that the end bin is at the most the end of the pangenome
+      if (newEnd > self.last_bin_pangenome) {
+        let excess_bins = newEnd - self.last_bin_pangenome;
+        self.updateBeginEndBin(newBegin - excess_bins, newEnd - excess_bins);
       } else {
-        self.beginEndBin[1] = newEnd; // quietly update without refresh
+        if (newBegin !== beginBin) {
+          setBeginEndBin(newBegin, newEnd);
+          console.log("updated begin and end: " + newBegin + " " + newEnd);
+        } else {
+          self.beginEndBin[1] = newEnd; // quietly update without refresh
+        }
       }
     }
     function updateTopOffset(newTopOffset) {
@@ -241,6 +237,9 @@ RootStore = types
     function setLoading(val) {
       self.loading = val;
     }
+    function setLastBinPangenome(val) {
+      self.last_bin_pangenome = val;
+    }
     return {
       setChunkIndex,
       updateBeginEndBin,
@@ -276,6 +275,8 @@ RootStore = types
       setAvailableZoomLevels,
 
       setLoading,
+
+      setLastBinPangenome,
     };
   })
   .views((self) => ({}));

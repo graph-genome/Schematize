@@ -180,6 +180,9 @@ class App extends Component {
       selZoomLev,
       this.props.store
     );
+    this.props.store.setLastBinPangenome(
+      this.props.store.chunkIndex.zoom_levels.get(selZoomLev)["last_bin"]
+    );
 
     //TODO: commented because maybe it creates problems
     //this.props.store.updateBeginEndBin(beginBin, endBin);
