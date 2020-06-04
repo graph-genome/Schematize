@@ -1,6 +1,6 @@
-import { types } from "mobx-state-tree";
-import { urlExists } from "./URL";
-import { arraysEqual } from "./utilities";
+import {types} from "mobx-state-tree";
+import {urlExists} from "./URL";
+import {arraysEqual} from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
@@ -158,10 +158,10 @@ RootStore = types
       self.useConnector = !self.useConnector;
     }
     function updateHeight(event) {
-      self.pixelsPerRow = Math.max(4, Number(event.target.value));
+        self.pixelsPerRow = Math.max(1, Number(event.target.value));
     }
     function updateWidth(event) {
-      self.pixelsPerColumn = Math.max(4, Number(event.target.value));
+        self.pixelsPerColumn = Math.max(3, Number(event.target.value));
     }
 
     function tryJSONpath(event) {
