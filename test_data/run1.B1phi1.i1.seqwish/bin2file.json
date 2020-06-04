@@ -1,0 +1,2211 @@
+{
+    "json_version": 15,
+    "pangenome_length": 52441,
+    "zoom_levels": {
+        "1000": {
+            "bin_width": 1000,
+            "last_bin": 53,
+            "files": [
+                {
+                    "file": "chunk0_bin1000.schematic.json",
+                    "first_bin": 0,
+                    "last_bin": 21,
+                    "component_count": 2,
+                    "link_count": 0
+                },
+                {
+                    "file": "chunk1_bin1000.schematic.json",
+                    "first_bin": 22,
+                    "last_bin": 53,
+                    "component_count": 4,
+                    "link_count": 4
+                }
+            ]
+        },
+        "100": {
+            "bin_width": 100,
+            "last_bin": 525,
+            "files": [
+                {
+                    "file": "chunk00_bin100.schematic.json",
+                    "first_bin": 0,
+                    "last_bin": 42,
+                    "component_count": 23,
+                    "link_count": 34
+                },
+                {
+                    "file": "chunk01_bin100.schematic.json",
+                    "first_bin": 43,
+                    "last_bin": 122,
+                    "component_count": 9,
+                    "link_count": 10
+                },
+                {
+                    "file": "chunk02_bin100.schematic.json",
+                    "first_bin": 123,
+                    "last_bin": 176,
+                    "component_count": 8,
+                    "link_count": 8
+                },
+                {
+                    "file": "chunk03_bin100.schematic.json",
+                    "first_bin": 177,
+                    "last_bin": 258,
+                    "component_count": 4,
+                    "link_count": 4
+                },
+                {
+                    "file": "chunk04_bin100.schematic.json",
+                    "first_bin": 259,
+                    "last_bin": 359,
+                    "component_count": 4,
+                    "link_count": 4
+                },
+                {
+                    "file": "chunk05_bin100.schematic.json",
+                    "first_bin": 360,
+                    "last_bin": 425,
+                    "component_count": 2,
+                    "link_count": 3
+                },
+                {
+                    "file": "chunk06_bin100.schematic.json",
+                    "first_bin": 426,
+                    "last_bin": 482,
+                    "component_count": 6,
+                    "link_count": 5
+                },
+                {
+                    "file": "chunk07_bin100.schematic.json",
+                    "first_bin": 483,
+                    "last_bin": 521,
+                    "component_count": 5,
+                    "link_count": 8
+                },
+                {
+                    "file": "chunk08_bin100.schematic.json",
+                    "first_bin": 522,
+                    "last_bin": 525,
+                    "component_count": 2,
+                    "link_count": 2
+                }
+            ]
+        },
+        "10": {
+            "bin_width": 10,
+            "last_bin": 5245,
+            "files": [
+                {
+                    "file": "chunk00_bin10.schematic.json",
+                    "first_bin": 0,
+                    "last_bin": 86,
+                    "component_count": 66,
+                    "link_count": 164
+                },
+                {
+                    "file": "chunk01_bin10.schematic.json",
+                    "first_bin": 87,
+                    "last_bin": 170,
+                    "component_count": 70,
+                    "link_count": 161
+                },
+                {
+                    "file": "chunk02_bin10.schematic.json",
+                    "first_bin": 171,
+                    "last_bin": 261,
+                    "component_count": 63,
+                    "link_count": 156
+                },
+                {
+                    "file": "chunk03_bin10.schematic.json",
+                    "first_bin": 262,
+                    "last_bin": 349,
+                    "component_count": 58,
+                    "link_count": 162
+                },
+                {
+                    "file": "chunk04_bin10.schematic.json",
+                    "first_bin": 350,
+                    "last_bin": 428,
+                    "component_count": 49,
+                    "link_count": 165
+                },
+                {
+                    "file": "chunk05_bin10.schematic.json",
+                    "first_bin": 429,
+                    "last_bin": 516,
+                    "component_count": 51,
+                    "link_count": 160
+                },
+                {
+                    "file": "chunk06_bin10.schematic.json",
+                    "first_bin": 517,
+                    "last_bin": 636,
+                    "component_count": 67,
+                    "link_count": 129
+                },
+                {
+                    "file": "chunk07_bin10.schematic.json",
+                    "first_bin": 637,
+                    "last_bin": 767,
+                    "component_count": 66,
+                    "link_count": 113
+                },
+                {
+                    "file": "chunk08_bin10.schematic.json",
+                    "first_bin": 768,
+                    "last_bin": 906,
+                    "component_count": 79,
+                    "link_count": 113
+                },
+                {
+                    "file": "chunk09_bin10.schematic.json",
+                    "first_bin": 907,
+                    "last_bin": 1046,
+                    "component_count": 72,
+                    "link_count": 102
+                },
+                {
+                    "file": "chunk10_bin10.schematic.json",
+                    "first_bin": 1047,
+                    "last_bin": 1179,
+                    "component_count": 74,
+                    "link_count": 115
+                },
+                {
+                    "file": "chunk11_bin10.schematic.json",
+                    "first_bin": 1180,
+                    "last_bin": 1328,
+                    "component_count": 62,
+                    "link_count": 98
+                },
+                {
+                    "file": "chunk12_bin10.schematic.json",
+                    "first_bin": 1329,
+                    "last_bin": 1476,
+                    "component_count": 58,
+                    "link_count": 101
+                },
+                {
+                    "file": "chunk13_bin10.schematic.json",
+                    "first_bin": 1477,
+                    "last_bin": 1609,
+                    "component_count": 59,
+                    "link_count": 112
+                },
+                {
+                    "file": "chunk14_bin10.schematic.json",
+                    "first_bin": 1610,
+                    "last_bin": 1752,
+                    "component_count": 69,
+                    "link_count": 103
+                },
+                {
+                    "file": "chunk15_bin10.schematic.json",
+                    "first_bin": 1753,
+                    "last_bin": 1878,
+                    "component_count": 74,
+                    "link_count": 122
+                },
+                {
+                    "file": "chunk16_bin10.schematic.json",
+                    "first_bin": 1879,
+                    "last_bin": 2015,
+                    "component_count": 70,
+                    "link_count": 109
+                },
+                {
+                    "file": "chunk17_bin10.schematic.json",
+                    "first_bin": 2016,
+                    "last_bin": 2240,
+                    "component_count": 66,
+                    "link_count": 101
+                },
+                {
+                    "file": "chunk18_bin10.schematic.json",
+                    "first_bin": 2241,
+                    "last_bin": 2440,
+                    "component_count": 2,
+                    "link_count": 0
+                },
+                {
+                    "file": "chunk19_bin10.schematic.json",
+                    "first_bin": 2441,
+                    "last_bin": 2628,
+                    "component_count": 21,
+                    "link_count": 27
+                },
+                {
+                    "file": "chunk20_bin10.schematic.json",
+                    "first_bin": 2629,
+                    "last_bin": 2776,
+                    "component_count": 73,
+                    "link_count": 102
+                },
+                {
+                    "file": "chunk21_bin10.schematic.json",
+                    "first_bin": 2777,
+                    "last_bin": 2908,
+                    "component_count": 71,
+                    "link_count": 115
+                },
+                {
+                    "file": "chunk22_bin10.schematic.json",
+                    "first_bin": 2909,
+                    "last_bin": 3032,
+                    "component_count": 75,
+                    "link_count": 122
+                },
+                {
+                    "file": "chunk23_bin10.schematic.json",
+                    "first_bin": 3033,
+                    "last_bin": 3159,
+                    "component_count": 71,
+                    "link_count": 118
+                },
+                {
+                    "file": "chunk24_bin10.schematic.json",
+                    "first_bin": 3160,
+                    "last_bin": 3276,
+                    "component_count": 77,
+                    "link_count": 133
+                },
+                {
+                    "file": "chunk25_bin10.schematic.json",
+                    "first_bin": 3277,
+                    "last_bin": 3411,
+                    "component_count": 71,
+                    "link_count": 111
+                },
+                {
+                    "file": "chunk26_bin10.schematic.json",
+                    "first_bin": 3412,
+                    "last_bin": 3543,
+                    "component_count": 71,
+                    "link_count": 114
+                },
+                {
+                    "file": "chunk27_bin10.schematic.json",
+                    "first_bin": 3544,
+                    "last_bin": 3683,
+                    "component_count": 73,
+                    "link_count": 106
+                },
+                {
+                    "file": "chunk28_bin10.schematic.json",
+                    "first_bin": 3684,
+                    "last_bin": 3820,
+                    "component_count": 74,
+                    "link_count": 115
+                },
+                {
+                    "file": "chunk29_bin10.schematic.json",
+                    "first_bin": 3821,
+                    "last_bin": 3950,
+                    "component_count": 77,
+                    "link_count": 113
+                },
+                {
+                    "file": "chunk30_bin10.schematic.json",
+                    "first_bin": 3951,
+                    "last_bin": 4079,
+                    "component_count": 73,
+                    "link_count": 118
+                },
+                {
+                    "file": "chunk31_bin10.schematic.json",
+                    "first_bin": 4080,
+                    "last_bin": 4214,
+                    "component_count": 71,
+                    "link_count": 112
+                },
+                {
+                    "file": "chunk32_bin10.schematic.json",
+                    "first_bin": 4215,
+                    "last_bin": 4338,
+                    "component_count": 75,
+                    "link_count": 124
+                },
+                {
+                    "file": "chunk33_bin10.schematic.json",
+                    "first_bin": 4339,
+                    "last_bin": 4479,
+                    "component_count": 71,
+                    "link_count": 104
+                },
+                {
+                    "file": "chunk34_bin10.schematic.json",
+                    "first_bin": 4480,
+                    "last_bin": 4606,
+                    "component_count": 80,
+                    "link_count": 120
+                },
+                {
+                    "file": "chunk35_bin10.schematic.json",
+                    "first_bin": 4607,
+                    "last_bin": 4736,
+                    "component_count": 75,
+                    "link_count": 118
+                },
+                {
+                    "file": "chunk36_bin10.schematic.json",
+                    "first_bin": 4737,
+                    "last_bin": 4876,
+                    "component_count": 67,
+                    "link_count": 107
+                },
+                {
+                    "file": "chunk37_bin10.schematic.json",
+                    "first_bin": 4877,
+                    "last_bin": 5016,
+                    "component_count": 71,
+                    "link_count": 112
+                },
+                {
+                    "file": "chunk38_bin10.schematic.json",
+                    "first_bin": 5017,
+                    "last_bin": 5148,
+                    "component_count": 75,
+                    "link_count": 109
+                },
+                {
+                    "file": "chunk39_bin10.schematic.json",
+                    "first_bin": 5149,
+                    "last_bin": 5245,
+                    "component_count": 60,
+                    "link_count": 90
+                }
+            ]
+        },
+        "1": {
+            "bin_width": 1,
+            "last_bin": 52441,
+            "files": [
+                {
+                    "file": "chunk000_bin1.schematic.json",
+                    "first_bin": 0,
+                    "last_bin": 203,
+                    "component_count": 45,
+                    "link_count": 121,
+                    "fasta": "seq_chunk000_bin1.fa"
+                },
+                {
+                    "file": "chunk001_bin1.schematic.json",
+                    "first_bin": 204,
+                    "last_bin": 430,
+                    "component_count": 31,
+                    "link_count": 94,
+                    "fasta": "seq_chunk001_bin1.fa"
+                },
+                {
+                    "file": "chunk002_bin1.schematic.json",
+                    "first_bin": 431,
+                    "last_bin": 610,
+                    "component_count": 31,
+                    "link_count": 95,
+                    "fasta": "seq_chunk002_bin1.fa"
+                },
+                {
+                    "file": "chunk003_bin1.schematic.json",
+                    "first_bin": 611,
+                    "last_bin": 837,
+                    "component_count": 27,
+                    "link_count": 80,
+                    "fasta": "seq_chunk003_bin1.fa"
+                },
+                {
+                    "file": "chunk004_bin1.schematic.json",
+                    "first_bin": 838,
+                    "last_bin": 1064,
+                    "component_count": 31,
+                    "link_count": 86,
+                    "fasta": "seq_chunk004_bin1.fa"
+                },
+                {
+                    "file": "chunk005_bin1.schematic.json",
+                    "first_bin": 1065,
+                    "last_bin": 1262,
+                    "component_count": 34,
+                    "link_count": 93,
+                    "fasta": "seq_chunk005_bin1.fa"
+                },
+                {
+                    "file": "chunk006_bin1.schematic.json",
+                    "first_bin": 1263,
+                    "last_bin": 1444,
+                    "component_count": 41,
+                    "link_count": 125,
+                    "fasta": "seq_chunk006_bin1.fa"
+                },
+                {
+                    "file": "chunk007_bin1.schematic.json",
+                    "first_bin": 1445,
+                    "last_bin": 1667,
+                    "component_count": 47,
+                    "link_count": 113,
+                    "fasta": "seq_chunk007_bin1.fa"
+                },
+                {
+                    "file": "chunk008_bin1.schematic.json",
+                    "first_bin": 1668,
+                    "last_bin": 1853,
+                    "component_count": 37,
+                    "link_count": 99,
+                    "fasta": "seq_chunk008_bin1.fa"
+                },
+                {
+                    "file": "chunk009_bin1.schematic.json",
+                    "first_bin": 1854,
+                    "last_bin": 1996,
+                    "component_count": 43,
+                    "link_count": 152,
+                    "fasta": "seq_chunk009_bin1.fa"
+                },
+                {
+                    "file": "chunk010_bin1.schematic.json",
+                    "first_bin": 1997,
+                    "last_bin": 2187,
+                    "component_count": 38,
+                    "link_count": 118,
+                    "fasta": "seq_chunk010_bin1.fa"
+                },
+                {
+                    "file": "chunk011_bin1.schematic.json",
+                    "first_bin": 2188,
+                    "last_bin": 2379,
+                    "component_count": 44,
+                    "link_count": 118,
+                    "fasta": "seq_chunk011_bin1.fa"
+                },
+                {
+                    "file": "chunk012_bin1.schematic.json",
+                    "first_bin": 2380,
+                    "last_bin": 2616,
+                    "component_count": 22,
+                    "link_count": 59,
+                    "fasta": "seq_chunk012_bin1.fa"
+                },
+                {
+                    "file": "chunk013_bin1.schematic.json",
+                    "first_bin": 2617,
+                    "last_bin": 2860,
+                    "component_count": 29,
+                    "link_count": 68,
+                    "fasta": "seq_chunk013_bin1.fa"
+                },
+                {
+                    "file": "chunk014_bin1.schematic.json",
+                    "first_bin": 2861,
+                    "last_bin": 3100,
+                    "component_count": 29,
+                    "link_count": 74,
+                    "fasta": "seq_chunk014_bin1.fa"
+                },
+                {
+                    "file": "chunk015_bin1.schematic.json",
+                    "first_bin": 3101,
+                    "last_bin": 3275,
+                    "component_count": 40,
+                    "link_count": 112,
+                    "fasta": "seq_chunk015_bin1.fa"
+                },
+                {
+                    "file": "chunk016_bin1.schematic.json",
+                    "first_bin": 3276,
+                    "last_bin": 3508,
+                    "component_count": 32,
+                    "link_count": 88,
+                    "fasta": "seq_chunk016_bin1.fa"
+                },
+                {
+                    "file": "chunk017_bin1.schematic.json",
+                    "first_bin": 3509,
+                    "last_bin": 3702,
+                    "component_count": 41,
+                    "link_count": 101,
+                    "fasta": "seq_chunk017_bin1.fa"
+                },
+                {
+                    "file": "chunk018_bin1.schematic.json",
+                    "first_bin": 3703,
+                    "last_bin": 3879,
+                    "component_count": 35,
+                    "link_count": 128,
+                    "fasta": "seq_chunk018_bin1.fa"
+                },
+                {
+                    "file": "chunk019_bin1.schematic.json",
+                    "first_bin": 3880,
+                    "last_bin": 4127,
+                    "component_count": 16,
+                    "link_count": 57,
+                    "fasta": "seq_chunk019_bin1.fa"
+                },
+                {
+                    "file": "chunk020_bin1.schematic.json",
+                    "first_bin": 4128,
+                    "last_bin": 4335,
+                    "component_count": 33,
+                    "link_count": 91,
+                    "fasta": "seq_chunk020_bin1.fa"
+                },
+                {
+                    "file": "chunk021_bin1.schematic.json",
+                    "first_bin": 4336,
+                    "last_bin": 4561,
+                    "component_count": 29,
+                    "link_count": 81,
+                    "fasta": "seq_chunk021_bin1.fa"
+                },
+                {
+                    "file": "chunk022_bin1.schematic.json",
+                    "first_bin": 4562,
+                    "last_bin": 4806,
+                    "component_count": 32,
+                    "link_count": 76,
+                    "fasta": "seq_chunk022_bin1.fa"
+                },
+                {
+                    "file": "chunk023_bin1.schematic.json",
+                    "first_bin": 4807,
+                    "last_bin": 5049,
+                    "component_count": 30,
+                    "link_count": 90,
+                    "fasta": "seq_chunk023_bin1.fa"
+                },
+                {
+                    "file": "chunk024_bin1.schematic.json",
+                    "first_bin": 5050,
+                    "last_bin": 5242,
+                    "component_count": 33,
+                    "link_count": 67,
+                    "fasta": "seq_chunk024_bin1.fa"
+                },
+                {
+                    "file": "chunk025_bin1.schematic.json",
+                    "first_bin": 5243,
+                    "last_bin": 5451,
+                    "component_count": 35,
+                    "link_count": 99,
+                    "fasta": "seq_chunk025_bin1.fa"
+                },
+                {
+                    "file": "chunk026_bin1.schematic.json",
+                    "first_bin": 5452,
+                    "last_bin": 5680,
+                    "component_count": 35,
+                    "link_count": 71,
+                    "fasta": "seq_chunk026_bin1.fa"
+                },
+                {
+                    "file": "chunk027_bin1.schematic.json",
+                    "first_bin": 5681,
+                    "last_bin": 5924,
+                    "component_count": 24,
+                    "link_count": 64,
+                    "fasta": "seq_chunk027_bin1.fa"
+                },
+                {
+                    "file": "chunk028_bin1.schematic.json",
+                    "first_bin": 5925,
+                    "last_bin": 6162,
+                    "component_count": 32,
+                    "link_count": 64,
+                    "fasta": "seq_chunk028_bin1.fa"
+                },
+                {
+                    "file": "chunk029_bin1.schematic.json",
+                    "first_bin": 6163,
+                    "last_bin": 6450,
+                    "component_count": 14,
+                    "link_count": 42,
+                    "fasta": "seq_chunk029_bin1.fa"
+                },
+                {
+                    "file": "chunk030_bin1.schematic.json",
+                    "first_bin": 6451,
+                    "last_bin": 6721,
+                    "component_count": 25,
+                    "link_count": 50,
+                    "fasta": "seq_chunk030_bin1.fa"
+                },
+                {
+                    "file": "chunk031_bin1.schematic.json",
+                    "first_bin": 6722,
+                    "last_bin": 6933,
+                    "component_count": 28,
+                    "link_count": 53,
+                    "fasta": "seq_chunk031_bin1.fa"
+                },
+                {
+                    "file": "chunk032_bin1.schematic.json",
+                    "first_bin": 6934,
+                    "last_bin": 7164,
+                    "component_count": 39,
+                    "link_count": 87,
+                    "fasta": "seq_chunk032_bin1.fa"
+                },
+                {
+                    "file": "chunk033_bin1.schematic.json",
+                    "first_bin": 7165,
+                    "last_bin": 7407,
+                    "component_count": 26,
+                    "link_count": 57,
+                    "fasta": "seq_chunk033_bin1.fa"
+                },
+                {
+                    "file": "chunk034_bin1.schematic.json",
+                    "first_bin": 7408,
+                    "last_bin": 7653,
+                    "component_count": 30,
+                    "link_count": 69,
+                    "fasta": "seq_chunk034_bin1.fa"
+                },
+                {
+                    "file": "chunk035_bin1.schematic.json",
+                    "first_bin": 7654,
+                    "last_bin": 7869,
+                    "component_count": 36,
+                    "link_count": 71,
+                    "fasta": "seq_chunk035_bin1.fa"
+                },
+                {
+                    "file": "chunk036_bin1.schematic.json",
+                    "first_bin": 7870,
+                    "last_bin": 8130,
+                    "component_count": 36,
+                    "link_count": 83,
+                    "fasta": "seq_chunk036_bin1.fa"
+                },
+                {
+                    "file": "chunk037_bin1.schematic.json",
+                    "first_bin": 8131,
+                    "last_bin": 8349,
+                    "component_count": 26,
+                    "link_count": 53,
+                    "fasta": "seq_chunk037_bin1.fa"
+                },
+                {
+                    "file": "chunk038_bin1.schematic.json",
+                    "first_bin": 8350,
+                    "last_bin": 8576,
+                    "component_count": 34,
+                    "link_count": 79,
+                    "fasta": "seq_chunk038_bin1.fa"
+                },
+                {
+                    "file": "chunk039_bin1.schematic.json",
+                    "first_bin": 8577,
+                    "last_bin": 8786,
+                    "component_count": 38,
+                    "link_count": 87,
+                    "fasta": "seq_chunk039_bin1.fa"
+                },
+                {
+                    "file": "chunk040_bin1.schematic.json",
+                    "first_bin": 8787,
+                    "last_bin": 8999,
+                    "component_count": 51,
+                    "link_count": 95,
+                    "fasta": "seq_chunk040_bin1.fa"
+                },
+                {
+                    "file": "chunk041_bin1.schematic.json",
+                    "first_bin": 9000,
+                    "last_bin": 9213,
+                    "component_count": 40,
+                    "link_count": 88,
+                    "fasta": "seq_chunk041_bin1.fa"
+                },
+                {
+                    "file": "chunk042_bin1.schematic.json",
+                    "first_bin": 9214,
+                    "last_bin": 9426,
+                    "component_count": 50,
+                    "link_count": 104,
+                    "fasta": "seq_chunk042_bin1.fa"
+                },
+                {
+                    "file": "chunk043_bin1.schematic.json",
+                    "first_bin": 9427,
+                    "last_bin": 9657,
+                    "component_count": 27,
+                    "link_count": 62,
+                    "fasta": "seq_chunk043_bin1.fa"
+                },
+                {
+                    "file": "chunk044_bin1.schematic.json",
+                    "first_bin": 9658,
+                    "last_bin": 9917,
+                    "component_count": 25,
+                    "link_count": 62,
+                    "fasta": "seq_chunk044_bin1.fa"
+                },
+                {
+                    "file": "chunk045_bin1.schematic.json",
+                    "first_bin": 9918,
+                    "last_bin": 10172,
+                    "component_count": 37,
+                    "link_count": 73,
+                    "fasta": "seq_chunk045_bin1.fa"
+                },
+                {
+                    "file": "chunk046_bin1.schematic.json",
+                    "first_bin": 10173,
+                    "last_bin": 10358,
+                    "component_count": 36,
+                    "link_count": 81,
+                    "fasta": "seq_chunk046_bin1.fa"
+                },
+                {
+                    "file": "chunk047_bin1.schematic.json",
+                    "first_bin": 10359,
+                    "last_bin": 10587,
+                    "component_count": 32,
+                    "link_count": 78,
+                    "fasta": "seq_chunk047_bin1.fa"
+                },
+                {
+                    "file": "chunk048_bin1.schematic.json",
+                    "first_bin": 10588,
+                    "last_bin": 10814,
+                    "component_count": 43,
+                    "link_count": 85,
+                    "fasta": "seq_chunk048_bin1.fa"
+                },
+                {
+                    "file": "chunk049_bin1.schematic.json",
+                    "first_bin": 10815,
+                    "last_bin": 11062,
+                    "component_count": 25,
+                    "link_count": 67,
+                    "fasta": "seq_chunk049_bin1.fa"
+                },
+                {
+                    "file": "chunk050_bin1.schematic.json",
+                    "first_bin": 11063,
+                    "last_bin": 11282,
+                    "component_count": 33,
+                    "link_count": 70,
+                    "fasta": "seq_chunk050_bin1.fa"
+                },
+                {
+                    "file": "chunk051_bin1.schematic.json",
+                    "first_bin": 11283,
+                    "last_bin": 11504,
+                    "component_count": 37,
+                    "link_count": 82,
+                    "fasta": "seq_chunk051_bin1.fa"
+                },
+                {
+                    "file": "chunk052_bin1.schematic.json",
+                    "first_bin": 11505,
+                    "last_bin": 11724,
+                    "component_count": 41,
+                    "link_count": 81,
+                    "fasta": "seq_chunk052_bin1.fa"
+                },
+                {
+                    "file": "chunk053_bin1.schematic.json",
+                    "first_bin": 11725,
+                    "last_bin": 11972,
+                    "component_count": 35,
+                    "link_count": 82,
+                    "fasta": "seq_chunk053_bin1.fa"
+                },
+                {
+                    "file": "chunk054_bin1.schematic.json",
+                    "first_bin": 11973,
+                    "last_bin": 12183,
+                    "component_count": 34,
+                    "link_count": 69,
+                    "fasta": "seq_chunk054_bin1.fa"
+                },
+                {
+                    "file": "chunk055_bin1.schematic.json",
+                    "first_bin": 12184,
+                    "last_bin": 12462,
+                    "component_count": 16,
+                    "link_count": 27,
+                    "fasta": "seq_chunk055_bin1.fa"
+                },
+                {
+                    "file": "chunk056_bin1.schematic.json",
+                    "first_bin": 12463,
+                    "last_bin": 12758,
+                    "component_count": 29,
+                    "link_count": 70,
+                    "fasta": "seq_chunk056_bin1.fa"
+                },
+                {
+                    "file": "chunk057_bin1.schematic.json",
+                    "first_bin": 12759,
+                    "last_bin": 12945,
+                    "component_count": 25,
+                    "link_count": 56,
+                    "fasta": "seq_chunk057_bin1.fa"
+                },
+                {
+                    "file": "chunk058_bin1.schematic.json",
+                    "first_bin": 12946,
+                    "last_bin": 13191,
+                    "component_count": 27,
+                    "link_count": 58,
+                    "fasta": "seq_chunk058_bin1.fa"
+                },
+                {
+                    "file": "chunk059_bin1.schematic.json",
+                    "first_bin": 13192,
+                    "last_bin": 13413,
+                    "component_count": 40,
+                    "link_count": 85,
+                    "fasta": "seq_chunk059_bin1.fa"
+                },
+                {
+                    "file": "chunk060_bin1.schematic.json",
+                    "first_bin": 13414,
+                    "last_bin": 13638,
+                    "component_count": 36,
+                    "link_count": 82,
+                    "fasta": "seq_chunk060_bin1.fa"
+                },
+                {
+                    "file": "chunk061_bin1.schematic.json",
+                    "first_bin": 13639,
+                    "last_bin": 13901,
+                    "component_count": 25,
+                    "link_count": 72,
+                    "fasta": "seq_chunk061_bin1.fa"
+                },
+                {
+                    "file": "chunk062_bin1.schematic.json",
+                    "first_bin": 13902,
+                    "last_bin": 14164,
+                    "component_count": 16,
+                    "link_count": 39,
+                    "fasta": "seq_chunk062_bin1.fa"
+                },
+                {
+                    "file": "chunk063_bin1.schematic.json",
+                    "first_bin": 14165,
+                    "last_bin": 14415,
+                    "component_count": 31,
+                    "link_count": 59,
+                    "fasta": "seq_chunk063_bin1.fa"
+                },
+                {
+                    "file": "chunk064_bin1.schematic.json",
+                    "first_bin": 14416,
+                    "last_bin": 14649,
+                    "component_count": 25,
+                    "link_count": 52,
+                    "fasta": "seq_chunk064_bin1.fa"
+                },
+                {
+                    "file": "chunk065_bin1.schematic.json",
+                    "first_bin": 14650,
+                    "last_bin": 14864,
+                    "component_count": 34,
+                    "link_count": 78,
+                    "fasta": "seq_chunk065_bin1.fa"
+                },
+                {
+                    "file": "chunk066_bin1.schematic.json",
+                    "first_bin": 14865,
+                    "last_bin": 15150,
+                    "component_count": 24,
+                    "link_count": 54,
+                    "fasta": "seq_chunk066_bin1.fa"
+                },
+                {
+                    "file": "chunk067_bin1.schematic.json",
+                    "first_bin": 15151,
+                    "last_bin": 15371,
+                    "component_count": 22,
+                    "link_count": 45,
+                    "fasta": "seq_chunk067_bin1.fa"
+                },
+                {
+                    "file": "chunk068_bin1.schematic.json",
+                    "first_bin": 15372,
+                    "last_bin": 15641,
+                    "component_count": 33,
+                    "link_count": 69,
+                    "fasta": "seq_chunk068_bin1.fa"
+                },
+                {
+                    "file": "chunk069_bin1.schematic.json",
+                    "first_bin": 15642,
+                    "last_bin": 15865,
+                    "component_count": 34,
+                    "link_count": 70,
+                    "fasta": "seq_chunk069_bin1.fa"
+                },
+                {
+                    "file": "chunk070_bin1.schematic.json",
+                    "first_bin": 15866,
+                    "last_bin": 16089,
+                    "component_count": 30,
+                    "link_count": 66,
+                    "fasta": "seq_chunk070_bin1.fa"
+                },
+                {
+                    "file": "chunk071_bin1.schematic.json",
+                    "first_bin": 16090,
+                    "last_bin": 16330,
+                    "component_count": 31,
+                    "link_count": 66,
+                    "fasta": "seq_chunk071_bin1.fa"
+                },
+                {
+                    "file": "chunk072_bin1.schematic.json",
+                    "first_bin": 16331,
+                    "last_bin": 16581,
+                    "component_count": 18,
+                    "link_count": 45,
+                    "fasta": "seq_chunk072_bin1.fa"
+                },
+                {
+                    "file": "chunk073_bin1.schematic.json",
+                    "first_bin": 16582,
+                    "last_bin": 16859,
+                    "component_count": 27,
+                    "link_count": 60,
+                    "fasta": "seq_chunk073_bin1.fa"
+                },
+                {
+                    "file": "chunk074_bin1.schematic.json",
+                    "first_bin": 16860,
+                    "last_bin": 17047,
+                    "component_count": 41,
+                    "link_count": 94,
+                    "fasta": "seq_chunk074_bin1.fa"
+                },
+                {
+                    "file": "chunk075_bin1.schematic.json",
+                    "first_bin": 17048,
+                    "last_bin": 17275,
+                    "component_count": 31,
+                    "link_count": 80,
+                    "fasta": "seq_chunk075_bin1.fa"
+                },
+                {
+                    "file": "chunk076_bin1.schematic.json",
+                    "first_bin": 17276,
+                    "last_bin": 17468,
+                    "component_count": 42,
+                    "link_count": 98,
+                    "fasta": "seq_chunk076_bin1.fa"
+                },
+                {
+                    "file": "chunk077_bin1.schematic.json",
+                    "first_bin": 17469,
+                    "last_bin": 17677,
+                    "component_count": 41,
+                    "link_count": 97,
+                    "fasta": "seq_chunk077_bin1.fa"
+                },
+                {
+                    "file": "chunk078_bin1.schematic.json",
+                    "first_bin": 17678,
+                    "last_bin": 17934,
+                    "component_count": 21,
+                    "link_count": 57,
+                    "fasta": "seq_chunk078_bin1.fa"
+                },
+                {
+                    "file": "chunk079_bin1.schematic.json",
+                    "first_bin": 17935,
+                    "last_bin": 18140,
+                    "component_count": 35,
+                    "link_count": 90,
+                    "fasta": "seq_chunk079_bin1.fa"
+                },
+                {
+                    "file": "chunk080_bin1.schematic.json",
+                    "first_bin": 18141,
+                    "last_bin": 18373,
+                    "component_count": 31,
+                    "link_count": 72,
+                    "fasta": "seq_chunk080_bin1.fa"
+                },
+                {
+                    "file": "chunk081_bin1.schematic.json",
+                    "first_bin": 18374,
+                    "last_bin": 18593,
+                    "component_count": 36,
+                    "link_count": 83,
+                    "fasta": "seq_chunk081_bin1.fa"
+                },
+                {
+                    "file": "chunk082_bin1.schematic.json",
+                    "first_bin": 18594,
+                    "last_bin": 18803,
+                    "component_count": 43,
+                    "link_count": 100,
+                    "fasta": "seq_chunk082_bin1.fa"
+                },
+                {
+                    "file": "chunk083_bin1.schematic.json",
+                    "first_bin": 18804,
+                    "last_bin": 19070,
+                    "component_count": 30,
+                    "link_count": 65,
+                    "fasta": "seq_chunk083_bin1.fa"
+                },
+                {
+                    "file": "chunk084_bin1.schematic.json",
+                    "first_bin": 19071,
+                    "last_bin": 19267,
+                    "component_count": 35,
+                    "link_count": 76,
+                    "fasta": "seq_chunk084_bin1.fa"
+                },
+                {
+                    "file": "chunk085_bin1.schematic.json",
+                    "first_bin": 19268,
+                    "last_bin": 19554,
+                    "component_count": 31,
+                    "link_count": 71,
+                    "fasta": "seq_chunk085_bin1.fa"
+                },
+                {
+                    "file": "chunk086_bin1.schematic.json",
+                    "first_bin": 19555,
+                    "last_bin": 19760,
+                    "component_count": 26,
+                    "link_count": 51,
+                    "fasta": "seq_chunk086_bin1.fa"
+                },
+                {
+                    "file": "chunk087_bin1.schematic.json",
+                    "first_bin": 19761,
+                    "last_bin": 19989,
+                    "component_count": 28,
+                    "link_count": 71,
+                    "fasta": "seq_chunk087_bin1.fa"
+                },
+                {
+                    "file": "chunk088_bin1.schematic.json",
+                    "first_bin": 19990,
+                    "last_bin": 20212,
+                    "component_count": 40,
+                    "link_count": 100,
+                    "fasta": "seq_chunk088_bin1.fa"
+                },
+                {
+                    "file": "chunk089_bin1.schematic.json",
+                    "first_bin": 20213,
+                    "last_bin": 20425,
+                    "component_count": 35,
+                    "link_count": 86,
+                    "fasta": "seq_chunk089_bin1.fa"
+                },
+                {
+                    "file": "chunk090_bin1.schematic.json",
+                    "first_bin": 20426,
+                    "last_bin": 20670,
+                    "component_count": 31,
+                    "link_count": 73,
+                    "fasta": "seq_chunk090_bin1.fa"
+                },
+                {
+                    "file": "chunk091_bin1.schematic.json",
+                    "first_bin": 20671,
+                    "last_bin": 20880,
+                    "component_count": 37,
+                    "link_count": 74,
+                    "fasta": "seq_chunk091_bin1.fa"
+                },
+                {
+                    "file": "chunk092_bin1.schematic.json",
+                    "first_bin": 20881,
+                    "last_bin": 21160,
+                    "component_count": 33,
+                    "link_count": 63,
+                    "fasta": "seq_chunk092_bin1.fa"
+                },
+                {
+                    "file": "chunk093_bin1.schematic.json",
+                    "first_bin": 21161,
+                    "last_bin": 21369,
+                    "component_count": 23,
+                    "link_count": 56,
+                    "fasta": "seq_chunk093_bin1.fa"
+                },
+                {
+                    "file": "chunk094_bin1.schematic.json",
+                    "first_bin": 21370,
+                    "last_bin": 21695,
+                    "component_count": 9,
+                    "link_count": 17,
+                    "fasta": "seq_chunk094_bin1.fa"
+                },
+                {
+                    "file": "chunk095_bin1.schematic.json",
+                    "first_bin": 21696,
+                    "last_bin": 21995,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk095_bin1.fa"
+                },
+                {
+                    "file": "chunk096_bin1.schematic.json",
+                    "first_bin": 21996,
+                    "last_bin": 22295,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk096_bin1.fa"
+                },
+                {
+                    "file": "chunk097_bin1.schematic.json",
+                    "first_bin": 22296,
+                    "last_bin": 22595,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk097_bin1.fa"
+                },
+                {
+                    "file": "chunk098_bin1.schematic.json",
+                    "first_bin": 22596,
+                    "last_bin": 22895,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk098_bin1.fa"
+                },
+                {
+                    "file": "chunk099_bin1.schematic.json",
+                    "first_bin": 22896,
+                    "last_bin": 23195,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk099_bin1.fa"
+                },
+                {
+                    "file": "chunk100_bin1.schematic.json",
+                    "first_bin": 23196,
+                    "last_bin": 23495,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk100_bin1.fa"
+                },
+                {
+                    "file": "chunk101_bin1.schematic.json",
+                    "first_bin": 23496,
+                    "last_bin": 23795,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk101_bin1.fa"
+                },
+                {
+                    "file": "chunk102_bin1.schematic.json",
+                    "first_bin": 23796,
+                    "last_bin": 24095,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk102_bin1.fa"
+                },
+                {
+                    "file": "chunk103_bin1.schematic.json",
+                    "first_bin": 24096,
+                    "last_bin": 24495,
+                    "component_count": 4,
+                    "link_count": 0,
+                    "fasta": "seq_chunk103_bin1.fa"
+                },
+                {
+                    "file": "chunk104_bin1.schematic.json",
+                    "first_bin": 24496,
+                    "last_bin": 24795,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk104_bin1.fa"
+                },
+                {
+                    "file": "chunk105_bin1.schematic.json",
+                    "first_bin": 24796,
+                    "last_bin": 25095,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk105_bin1.fa"
+                },
+                {
+                    "file": "chunk106_bin1.schematic.json",
+                    "first_bin": 25096,
+                    "last_bin": 25395,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk106_bin1.fa"
+                },
+                {
+                    "file": "chunk107_bin1.schematic.json",
+                    "first_bin": 25396,
+                    "last_bin": 25695,
+                    "component_count": 3,
+                    "link_count": 0,
+                    "fasta": "seq_chunk107_bin1.fa"
+                },
+                {
+                    "file": "chunk108_bin1.schematic.json",
+                    "first_bin": 25696,
+                    "last_bin": 25923,
+                    "component_count": 9,
+                    "link_count": 20,
+                    "fasta": "seq_chunk108_bin1.fa"
+                },
+                {
+                    "file": "chunk109_bin1.schematic.json",
+                    "first_bin": 25924,
+                    "last_bin": 26182,
+                    "component_count": 32,
+                    "link_count": 66,
+                    "fasta": "seq_chunk109_bin1.fa"
+                },
+                {
+                    "file": "chunk110_bin1.schematic.json",
+                    "first_bin": 26183,
+                    "last_bin": 26390,
+                    "component_count": 26,
+                    "link_count": 62,
+                    "fasta": "seq_chunk110_bin1.fa"
+                },
+                {
+                    "file": "chunk111_bin1.schematic.json",
+                    "first_bin": 26391,
+                    "last_bin": 26601,
+                    "component_count": 36,
+                    "link_count": 95,
+                    "fasta": "seq_chunk111_bin1.fa"
+                },
+                {
+                    "file": "chunk112_bin1.schematic.json",
+                    "first_bin": 26602,
+                    "last_bin": 26852,
+                    "component_count": 24,
+                    "link_count": 53,
+                    "fasta": "seq_chunk112_bin1.fa"
+                },
+                {
+                    "file": "chunk113_bin1.schematic.json",
+                    "first_bin": 26853,
+                    "last_bin": 27074,
+                    "component_count": 37,
+                    "link_count": 83,
+                    "fasta": "seq_chunk113_bin1.fa"
+                },
+                {
+                    "file": "chunk114_bin1.schematic.json",
+                    "first_bin": 27075,
+                    "last_bin": 27323,
+                    "component_count": 27,
+                    "link_count": 55,
+                    "fasta": "seq_chunk114_bin1.fa"
+                },
+                {
+                    "file": "chunk115_bin1.schematic.json",
+                    "first_bin": 27324,
+                    "last_bin": 27566,
+                    "component_count": 29,
+                    "link_count": 67,
+                    "fasta": "seq_chunk115_bin1.fa"
+                },
+                {
+                    "file": "chunk116_bin1.schematic.json",
+                    "first_bin": 27567,
+                    "last_bin": 27811,
+                    "component_count": 21,
+                    "link_count": 53,
+                    "fasta": "seq_chunk116_bin1.fa"
+                },
+                {
+                    "file": "chunk117_bin1.schematic.json",
+                    "first_bin": 27812,
+                    "last_bin": 28043,
+                    "component_count": 38,
+                    "link_count": 80,
+                    "fasta": "seq_chunk117_bin1.fa"
+                },
+                {
+                    "file": "chunk118_bin1.schematic.json",
+                    "first_bin": 28044,
+                    "last_bin": 28274,
+                    "component_count": 32,
+                    "link_count": 71,
+                    "fasta": "seq_chunk118_bin1.fa"
+                },
+                {
+                    "file": "chunk119_bin1.schematic.json",
+                    "first_bin": 28275,
+                    "last_bin": 28512,
+                    "component_count": 34,
+                    "link_count": 68,
+                    "fasta": "seq_chunk119_bin1.fa"
+                },
+                {
+                    "file": "chunk120_bin1.schematic.json",
+                    "first_bin": 28513,
+                    "last_bin": 28707,
+                    "component_count": 46,
+                    "link_count": 106,
+                    "fasta": "seq_chunk120_bin1.fa"
+                },
+                {
+                    "file": "chunk121_bin1.schematic.json",
+                    "first_bin": 28708,
+                    "last_bin": 28953,
+                    "component_count": 28,
+                    "link_count": 63,
+                    "fasta": "seq_chunk121_bin1.fa"
+                },
+                {
+                    "file": "chunk122_bin1.schematic.json",
+                    "first_bin": 28954,
+                    "last_bin": 29166,
+                    "component_count": 49,
+                    "link_count": 107,
+                    "fasta": "seq_chunk122_bin1.fa"
+                },
+                {
+                    "file": "chunk123_bin1.schematic.json",
+                    "first_bin": 29167,
+                    "last_bin": 29388,
+                    "component_count": 29,
+                    "link_count": 64,
+                    "fasta": "seq_chunk123_bin1.fa"
+                },
+                {
+                    "file": "chunk124_bin1.schematic.json",
+                    "first_bin": 29389,
+                    "last_bin": 29639,
+                    "component_count": 35,
+                    "link_count": 89,
+                    "fasta": "seq_chunk124_bin1.fa"
+                },
+                {
+                    "file": "chunk125_bin1.schematic.json",
+                    "first_bin": 29640,
+                    "last_bin": 29830,
+                    "component_count": 35,
+                    "link_count": 78,
+                    "fasta": "seq_chunk125_bin1.fa"
+                },
+                {
+                    "file": "chunk126_bin1.schematic.json",
+                    "first_bin": 29831,
+                    "last_bin": 30063,
+                    "component_count": 42,
+                    "link_count": 91,
+                    "fasta": "seq_chunk126_bin1.fa"
+                },
+                {
+                    "file": "chunk127_bin1.schematic.json",
+                    "first_bin": 30064,
+                    "last_bin": 30290,
+                    "component_count": 30,
+                    "link_count": 67,
+                    "fasta": "seq_chunk127_bin1.fa"
+                },
+                {
+                    "file": "chunk128_bin1.schematic.json",
+                    "first_bin": 30291,
+                    "last_bin": 30554,
+                    "component_count": 36,
+                    "link_count": 77,
+                    "fasta": "seq_chunk128_bin1.fa"
+                },
+                {
+                    "file": "chunk129_bin1.schematic.json",
+                    "first_bin": 30555,
+                    "last_bin": 30758,
+                    "component_count": 28,
+                    "link_count": 58,
+                    "fasta": "seq_chunk129_bin1.fa"
+                },
+                {
+                    "file": "chunk130_bin1.schematic.json",
+                    "first_bin": 30759,
+                    "last_bin": 30979,
+                    "component_count": 35,
+                    "link_count": 90,
+                    "fasta": "seq_chunk130_bin1.fa"
+                },
+                {
+                    "file": "chunk131_bin1.schematic.json",
+                    "first_bin": 30980,
+                    "last_bin": 31225,
+                    "component_count": 31,
+                    "link_count": 59,
+                    "fasta": "seq_chunk131_bin1.fa"
+                },
+                {
+                    "file": "chunk132_bin1.schematic.json",
+                    "first_bin": 31226,
+                    "last_bin": 31497,
+                    "component_count": 26,
+                    "link_count": 70,
+                    "fasta": "seq_chunk132_bin1.fa"
+                },
+                {
+                    "file": "chunk133_bin1.schematic.json",
+                    "first_bin": 31498,
+                    "last_bin": 31689,
+                    "component_count": 28,
+                    "link_count": 71,
+                    "fasta": "seq_chunk133_bin1.fa"
+                },
+                {
+                    "file": "chunk134_bin1.schematic.json",
+                    "first_bin": 31690,
+                    "last_bin": 31936,
+                    "component_count": 34,
+                    "link_count": 70,
+                    "fasta": "seq_chunk134_bin1.fa"
+                },
+                {
+                    "file": "chunk135_bin1.schematic.json",
+                    "first_bin": 31937,
+                    "last_bin": 32165,
+                    "component_count": 33,
+                    "link_count": 62,
+                    "fasta": "seq_chunk135_bin1.fa"
+                },
+                {
+                    "file": "chunk136_bin1.schematic.json",
+                    "first_bin": 32166,
+                    "last_bin": 32390,
+                    "component_count": 42,
+                    "link_count": 90,
+                    "fasta": "seq_chunk136_bin1.fa"
+                },
+                {
+                    "file": "chunk137_bin1.schematic.json",
+                    "first_bin": 32391,
+                    "last_bin": 32619,
+                    "component_count": 31,
+                    "link_count": 74,
+                    "fasta": "seq_chunk137_bin1.fa"
+                },
+                {
+                    "file": "chunk138_bin1.schematic.json",
+                    "first_bin": 32620,
+                    "last_bin": 32834,
+                    "component_count": 33,
+                    "link_count": 83,
+                    "fasta": "seq_chunk138_bin1.fa"
+                },
+                {
+                    "file": "chunk139_bin1.schematic.json",
+                    "first_bin": 32835,
+                    "last_bin": 33071,
+                    "component_count": 29,
+                    "link_count": 76,
+                    "fasta": "seq_chunk139_bin1.fa"
+                },
+                {
+                    "file": "chunk140_bin1.schematic.json",
+                    "first_bin": 33072,
+                    "last_bin": 33280,
+                    "component_count": 37,
+                    "link_count": 89,
+                    "fasta": "seq_chunk140_bin1.fa"
+                },
+                {
+                    "file": "chunk141_bin1.schematic.json",
+                    "first_bin": 33281,
+                    "last_bin": 33511,
+                    "component_count": 31,
+                    "link_count": 75,
+                    "fasta": "seq_chunk141_bin1.fa"
+                },
+                {
+                    "file": "chunk142_bin1.schematic.json",
+                    "first_bin": 33512,
+                    "last_bin": 33712,
+                    "component_count": 45,
+                    "link_count": 101,
+                    "fasta": "seq_chunk142_bin1.fa"
+                },
+                {
+                    "file": "chunk143_bin1.schematic.json",
+                    "first_bin": 33713,
+                    "last_bin": 33939,
+                    "component_count": 38,
+                    "link_count": 86,
+                    "fasta": "seq_chunk143_bin1.fa"
+                },
+                {
+                    "file": "chunk144_bin1.schematic.json",
+                    "first_bin": 33940,
+                    "last_bin": 34168,
+                    "component_count": 31,
+                    "link_count": 69,
+                    "fasta": "seq_chunk144_bin1.fa"
+                },
+                {
+                    "file": "chunk145_bin1.schematic.json",
+                    "first_bin": 34169,
+                    "last_bin": 34463,
+                    "component_count": 35,
+                    "link_count": 57,
+                    "fasta": "seq_chunk145_bin1.fa"
+                },
+                {
+                    "file": "chunk146_bin1.schematic.json",
+                    "first_bin": 34464,
+                    "last_bin": 34676,
+                    "component_count": 27,
+                    "link_count": 59,
+                    "fasta": "seq_chunk146_bin1.fa"
+                },
+                {
+                    "file": "chunk147_bin1.schematic.json",
+                    "first_bin": 34677,
+                    "last_bin": 34893,
+                    "component_count": 35,
+                    "link_count": 75,
+                    "fasta": "seq_chunk147_bin1.fa"
+                },
+                {
+                    "file": "chunk148_bin1.schematic.json",
+                    "first_bin": 34894,
+                    "last_bin": 35141,
+                    "component_count": 38,
+                    "link_count": 72,
+                    "fasta": "seq_chunk148_bin1.fa"
+                },
+                {
+                    "file": "chunk149_bin1.schematic.json",
+                    "first_bin": 35142,
+                    "last_bin": 35336,
+                    "component_count": 47,
+                    "link_count": 100,
+                    "fasta": "seq_chunk149_bin1.fa"
+                },
+                {
+                    "file": "chunk150_bin1.schematic.json",
+                    "first_bin": 35337,
+                    "last_bin": 35562,
+                    "component_count": 33,
+                    "link_count": 73,
+                    "fasta": "seq_chunk150_bin1.fa"
+                },
+                {
+                    "file": "chunk151_bin1.schematic.json",
+                    "first_bin": 35563,
+                    "last_bin": 35779,
+                    "component_count": 42,
+                    "link_count": 88,
+                    "fasta": "seq_chunk151_bin1.fa"
+                },
+                {
+                    "file": "chunk152_bin1.schematic.json",
+                    "first_bin": 35780,
+                    "last_bin": 36085,
+                    "component_count": 20,
+                    "link_count": 35,
+                    "fasta": "seq_chunk152_bin1.fa"
+                },
+                {
+                    "file": "chunk153_bin1.schematic.json",
+                    "first_bin": 36086,
+                    "last_bin": 36284,
+                    "component_count": 34,
+                    "link_count": 77,
+                    "fasta": "seq_chunk153_bin1.fa"
+                },
+                {
+                    "file": "chunk154_bin1.schematic.json",
+                    "first_bin": 36285,
+                    "last_bin": 36516,
+                    "component_count": 25,
+                    "link_count": 72,
+                    "fasta": "seq_chunk154_bin1.fa"
+                },
+                {
+                    "file": "chunk155_bin1.schematic.json",
+                    "first_bin": 36517,
+                    "last_bin": 36716,
+                    "component_count": 40,
+                    "link_count": 100,
+                    "fasta": "seq_chunk155_bin1.fa"
+                },
+                {
+                    "file": "chunk156_bin1.schematic.json",
+                    "first_bin": 36717,
+                    "last_bin": 36944,
+                    "component_count": 42,
+                    "link_count": 86,
+                    "fasta": "seq_chunk156_bin1.fa"
+                },
+                {
+                    "file": "chunk157_bin1.schematic.json",
+                    "first_bin": 36945,
+                    "last_bin": 37193,
+                    "component_count": 31,
+                    "link_count": 77,
+                    "fasta": "seq_chunk157_bin1.fa"
+                },
+                {
+                    "file": "chunk158_bin1.schematic.json",
+                    "first_bin": 37194,
+                    "last_bin": 37437,
+                    "component_count": 34,
+                    "link_count": 73,
+                    "fasta": "seq_chunk158_bin1.fa"
+                },
+                {
+                    "file": "chunk159_bin1.schematic.json",
+                    "first_bin": 37438,
+                    "last_bin": 37628,
+                    "component_count": 39,
+                    "link_count": 81,
+                    "fasta": "seq_chunk159_bin1.fa"
+                },
+                {
+                    "file": "chunk160_bin1.schematic.json",
+                    "first_bin": 37629,
+                    "last_bin": 37839,
+                    "component_count": 37,
+                    "link_count": 84,
+                    "fasta": "seq_chunk160_bin1.fa"
+                },
+                {
+                    "file": "chunk161_bin1.schematic.json",
+                    "first_bin": 37840,
+                    "last_bin": 38099,
+                    "component_count": 44,
+                    "link_count": 92,
+                    "fasta": "seq_chunk161_bin1.fa"
+                },
+                {
+                    "file": "chunk162_bin1.schematic.json",
+                    "first_bin": 38100,
+                    "last_bin": 38284,
+                    "component_count": 36,
+                    "link_count": 82,
+                    "fasta": "seq_chunk162_bin1.fa"
+                },
+                {
+                    "file": "chunk163_bin1.schematic.json",
+                    "first_bin": 38285,
+                    "last_bin": 38493,
+                    "component_count": 38,
+                    "link_count": 88,
+                    "fasta": "seq_chunk163_bin1.fa"
+                },
+                {
+                    "file": "chunk164_bin1.schematic.json",
+                    "first_bin": 38494,
+                    "last_bin": 38718,
+                    "component_count": 38,
+                    "link_count": 81,
+                    "fasta": "seq_chunk164_bin1.fa"
+                },
+                {
+                    "file": "chunk165_bin1.schematic.json",
+                    "first_bin": 38719,
+                    "last_bin": 38916,
+                    "component_count": 47,
+                    "link_count": 106,
+                    "fasta": "seq_chunk165_bin1.fa"
+                },
+                {
+                    "file": "chunk166_bin1.schematic.json",
+                    "first_bin": 38917,
+                    "last_bin": 39159,
+                    "component_count": 28,
+                    "link_count": 60,
+                    "fasta": "seq_chunk166_bin1.fa"
+                },
+                {
+                    "file": "chunk167_bin1.schematic.json",
+                    "first_bin": 39160,
+                    "last_bin": 39397,
+                    "component_count": 35,
+                    "link_count": 74,
+                    "fasta": "seq_chunk167_bin1.fa"
+                },
+                {
+                    "file": "chunk168_bin1.schematic.json",
+                    "first_bin": 39398,
+                    "last_bin": 39584,
+                    "component_count": 48,
+                    "link_count": 113,
+                    "fasta": "seq_chunk168_bin1.fa"
+                },
+                {
+                    "file": "chunk169_bin1.schematic.json",
+                    "first_bin": 39585,
+                    "last_bin": 39794,
+                    "component_count": 51,
+                    "link_count": 99,
+                    "fasta": "seq_chunk169_bin1.fa"
+                },
+                {
+                    "file": "chunk170_bin1.schematic.json",
+                    "first_bin": 39795,
+                    "last_bin": 40010,
+                    "component_count": 43,
+                    "link_count": 88,
+                    "fasta": "seq_chunk170_bin1.fa"
+                },
+                {
+                    "file": "chunk171_bin1.schematic.json",
+                    "first_bin": 40011,
+                    "last_bin": 40246,
+                    "component_count": 29,
+                    "link_count": 71,
+                    "fasta": "seq_chunk171_bin1.fa"
+                },
+                {
+                    "file": "chunk172_bin1.schematic.json",
+                    "first_bin": 40247,
+                    "last_bin": 40481,
+                    "component_count": 31,
+                    "link_count": 66,
+                    "fasta": "seq_chunk172_bin1.fa"
+                },
+                {
+                    "file": "chunk173_bin1.schematic.json",
+                    "first_bin": 40482,
+                    "last_bin": 40727,
+                    "component_count": 27,
+                    "link_count": 60,
+                    "fasta": "seq_chunk173_bin1.fa"
+                },
+                {
+                    "file": "chunk174_bin1.schematic.json",
+                    "first_bin": 40728,
+                    "last_bin": 40970,
+                    "component_count": 27,
+                    "link_count": 61,
+                    "fasta": "seq_chunk174_bin1.fa"
+                },
+                {
+                    "file": "chunk175_bin1.schematic.json",
+                    "first_bin": 40971,
+                    "last_bin": 41206,
+                    "component_count": 31,
+                    "link_count": 73,
+                    "fasta": "seq_chunk175_bin1.fa"
+                },
+                {
+                    "file": "chunk176_bin1.schematic.json",
+                    "first_bin": 41207,
+                    "last_bin": 41424,
+                    "component_count": 32,
+                    "link_count": 83,
+                    "fasta": "seq_chunk176_bin1.fa"
+                },
+                {
+                    "file": "chunk177_bin1.schematic.json",
+                    "first_bin": 41425,
+                    "last_bin": 41646,
+                    "component_count": 41,
+                    "link_count": 104,
+                    "fasta": "seq_chunk177_bin1.fa"
+                },
+                {
+                    "file": "chunk178_bin1.schematic.json",
+                    "first_bin": 41647,
+                    "last_bin": 41855,
+                    "component_count": 35,
+                    "link_count": 80,
+                    "fasta": "seq_chunk178_bin1.fa"
+                },
+                {
+                    "file": "chunk179_bin1.schematic.json",
+                    "first_bin": 41856,
+                    "last_bin": 42064,
+                    "component_count": 38,
+                    "link_count": 89,
+                    "fasta": "seq_chunk179_bin1.fa"
+                },
+                {
+                    "file": "chunk180_bin1.schematic.json",
+                    "first_bin": 42065,
+                    "last_bin": 42268,
+                    "component_count": 52,
+                    "link_count": 104,
+                    "fasta": "seq_chunk180_bin1.fa"
+                },
+                {
+                    "file": "chunk181_bin1.schematic.json",
+                    "first_bin": 42269,
+                    "last_bin": 42488,
+                    "component_count": 37,
+                    "link_count": 92,
+                    "fasta": "seq_chunk181_bin1.fa"
+                },
+                {
+                    "file": "chunk182_bin1.schematic.json",
+                    "first_bin": 42489,
+                    "last_bin": 42705,
+                    "component_count": 28,
+                    "link_count": 77,
+                    "fasta": "seq_chunk182_bin1.fa"
+                },
+                {
+                    "file": "chunk183_bin1.schematic.json",
+                    "first_bin": 42706,
+                    "last_bin": 42924,
+                    "component_count": 43,
+                    "link_count": 104,
+                    "fasta": "seq_chunk183_bin1.fa"
+                },
+                {
+                    "file": "chunk184_bin1.schematic.json",
+                    "first_bin": 42925,
+                    "last_bin": 43116,
+                    "component_count": 47,
+                    "link_count": 96,
+                    "fasta": "seq_chunk184_bin1.fa"
+                },
+                {
+                    "file": "chunk185_bin1.schematic.json",
+                    "first_bin": 43117,
+                    "last_bin": 43371,
+                    "component_count": 30,
+                    "link_count": 70,
+                    "fasta": "seq_chunk185_bin1.fa"
+                },
+                {
+                    "file": "chunk186_bin1.schematic.json",
+                    "first_bin": 43372,
+                    "last_bin": 43560,
+                    "component_count": 41,
+                    "link_count": 95,
+                    "fasta": "seq_chunk186_bin1.fa"
+                },
+                {
+                    "file": "chunk187_bin1.schematic.json",
+                    "first_bin": 43561,
+                    "last_bin": 43776,
+                    "component_count": 44,
+                    "link_count": 94,
+                    "fasta": "seq_chunk187_bin1.fa"
+                },
+                {
+                    "file": "chunk188_bin1.schematic.json",
+                    "first_bin": 43777,
+                    "last_bin": 44017,
+                    "component_count": 30,
+                    "link_count": 62,
+                    "fasta": "seq_chunk188_bin1.fa"
+                },
+                {
+                    "file": "chunk189_bin1.schematic.json",
+                    "first_bin": 44018,
+                    "last_bin": 44235,
+                    "component_count": 36,
+                    "link_count": 88,
+                    "fasta": "seq_chunk189_bin1.fa"
+                },
+                {
+                    "file": "chunk190_bin1.schematic.json",
+                    "first_bin": 44236,
+                    "last_bin": 44469,
+                    "component_count": 36,
+                    "link_count": 76,
+                    "fasta": "seq_chunk190_bin1.fa"
+                },
+                {
+                    "file": "chunk191_bin1.schematic.json",
+                    "first_bin": 44470,
+                    "last_bin": 44670,
+                    "component_count": 46,
+                    "link_count": 98,
+                    "fasta": "seq_chunk191_bin1.fa"
+                },
+                {
+                    "file": "chunk192_bin1.schematic.json",
+                    "first_bin": 44671,
+                    "last_bin": 44897,
+                    "component_count": 36,
+                    "link_count": 83,
+                    "fasta": "seq_chunk192_bin1.fa"
+                },
+                {
+                    "file": "chunk193_bin1.schematic.json",
+                    "first_bin": 44898,
+                    "last_bin": 45146,
+                    "component_count": 37,
+                    "link_count": 85,
+                    "fasta": "seq_chunk193_bin1.fa"
+                },
+                {
+                    "file": "chunk194_bin1.schematic.json",
+                    "first_bin": 45147,
+                    "last_bin": 45343,
+                    "component_count": 36,
+                    "link_count": 74,
+                    "fasta": "seq_chunk194_bin1.fa"
+                },
+                {
+                    "file": "chunk195_bin1.schematic.json",
+                    "first_bin": 45344,
+                    "last_bin": 45551,
+                    "component_count": 48,
+                    "link_count": 96,
+                    "fasta": "seq_chunk195_bin1.fa"
+                },
+                {
+                    "file": "chunk196_bin1.schematic.json",
+                    "first_bin": 45552,
+                    "last_bin": 45790,
+                    "component_count": 40,
+                    "link_count": 86,
+                    "fasta": "seq_chunk196_bin1.fa"
+                },
+                {
+                    "file": "chunk197_bin1.schematic.json",
+                    "first_bin": 45791,
+                    "last_bin": 45955,
+                    "component_count": 50,
+                    "link_count": 121,
+                    "fasta": "seq_chunk197_bin1.fa"
+                },
+                {
+                    "file": "chunk198_bin1.schematic.json",
+                    "first_bin": 45956,
+                    "last_bin": 46178,
+                    "component_count": 37,
+                    "link_count": 87,
+                    "fasta": "seq_chunk198_bin1.fa"
+                },
+                {
+                    "file": "chunk199_bin1.schematic.json",
+                    "first_bin": 46179,
+                    "last_bin": 46420,
+                    "component_count": 35,
+                    "link_count": 75,
+                    "fasta": "seq_chunk199_bin1.fa"
+                },
+                {
+                    "file": "chunk200_bin1.schematic.json",
+                    "first_bin": 46421,
+                    "last_bin": 46662,
+                    "component_count": 32,
+                    "link_count": 70,
+                    "fasta": "seq_chunk200_bin1.fa"
+                },
+                {
+                    "file": "chunk201_bin1.schematic.json",
+                    "first_bin": 46663,
+                    "last_bin": 46840,
+                    "component_count": 41,
+                    "link_count": 102,
+                    "fasta": "seq_chunk201_bin1.fa"
+                },
+                {
+                    "file": "chunk202_bin1.schematic.json",
+                    "first_bin": 46841,
+                    "last_bin": 47049,
+                    "component_count": 47,
+                    "link_count": 95,
+                    "fasta": "seq_chunk202_bin1.fa"
+                },
+                {
+                    "file": "chunk203_bin1.schematic.json",
+                    "first_bin": 47050,
+                    "last_bin": 47256,
+                    "component_count": 41,
+                    "link_count": 101,
+                    "fasta": "seq_chunk203_bin1.fa"
+                },
+                {
+                    "file": "chunk204_bin1.schematic.json",
+                    "first_bin": 47257,
+                    "last_bin": 47483,
+                    "component_count": 35,
+                    "link_count": 82,
+                    "fasta": "seq_chunk204_bin1.fa"
+                },
+                {
+                    "file": "chunk205_bin1.schematic.json",
+                    "first_bin": 47484,
+                    "last_bin": 47694,
+                    "component_count": 39,
+                    "link_count": 90,
+                    "fasta": "seq_chunk205_bin1.fa"
+                },
+                {
+                    "file": "chunk206_bin1.schematic.json",
+                    "first_bin": 47695,
+                    "last_bin": 47901,
+                    "component_count": 48,
+                    "link_count": 97,
+                    "fasta": "seq_chunk206_bin1.fa"
+                },
+                {
+                    "file": "chunk207_bin1.schematic.json",
+                    "first_bin": 47902,
+                    "last_bin": 48102,
+                    "component_count": 45,
+                    "link_count": 104,
+                    "fasta": "seq_chunk207_bin1.fa"
+                },
+                {
+                    "file": "chunk208_bin1.schematic.json",
+                    "first_bin": 48103,
+                    "last_bin": 48290,
+                    "component_count": 58,
+                    "link_count": 116,
+                    "fasta": "seq_chunk208_bin1.fa"
+                },
+                {
+                    "file": "chunk209_bin1.schematic.json",
+                    "first_bin": 48291,
+                    "last_bin": 48496,
+                    "component_count": 39,
+                    "link_count": 100,
+                    "fasta": "seq_chunk209_bin1.fa"
+                },
+                {
+                    "file": "chunk210_bin1.schematic.json",
+                    "first_bin": 48497,
+                    "last_bin": 48707,
+                    "component_count": 45,
+                    "link_count": 91,
+                    "fasta": "seq_chunk210_bin1.fa"
+                },
+                {
+                    "file": "chunk211_bin1.schematic.json",
+                    "first_bin": 48708,
+                    "last_bin": 48926,
+                    "component_count": 44,
+                    "link_count": 86,
+                    "fasta": "seq_chunk211_bin1.fa"
+                },
+                {
+                    "file": "chunk212_bin1.schematic.json",
+                    "first_bin": 48927,
+                    "last_bin": 49146,
+                    "component_count": 39,
+                    "link_count": 85,
+                    "fasta": "seq_chunk212_bin1.fa"
+                },
+                {
+                    "file": "chunk213_bin1.schematic.json",
+                    "first_bin": 49147,
+                    "last_bin": 49382,
+                    "component_count": 42,
+                    "link_count": 83,
+                    "fasta": "seq_chunk213_bin1.fa"
+                },
+                {
+                    "file": "chunk214_bin1.schematic.json",
+                    "first_bin": 49383,
+                    "last_bin": 49609,
+                    "component_count": 48,
+                    "link_count": 100,
+                    "fasta": "seq_chunk214_bin1.fa"
+                },
+                {
+                    "file": "chunk215_bin1.schematic.json",
+                    "first_bin": 49610,
+                    "last_bin": 49811,
+                    "component_count": 32,
+                    "link_count": 69,
+                    "fasta": "seq_chunk215_bin1.fa"
+                },
+                {
+                    "file": "chunk216_bin1.schematic.json",
+                    "first_bin": 49812,
+                    "last_bin": 50063,
+                    "component_count": 26,
+                    "link_count": 65,
+                    "fasta": "seq_chunk216_bin1.fa"
+                },
+                {
+                    "file": "chunk217_bin1.schematic.json",
+                    "first_bin": 50064,
+                    "last_bin": 50285,
+                    "component_count": 30,
+                    "link_count": 75,
+                    "fasta": "seq_chunk217_bin1.fa"
+                },
+                {
+                    "file": "chunk218_bin1.schematic.json",
+                    "first_bin": 50286,
+                    "last_bin": 50513,
+                    "component_count": 30,
+                    "link_count": 75,
+                    "fasta": "seq_chunk218_bin1.fa"
+                },
+                {
+                    "file": "chunk219_bin1.schematic.json",
+                    "first_bin": 50514,
+                    "last_bin": 50708,
+                    "component_count": 46,
+                    "link_count": 107,
+                    "fasta": "seq_chunk219_bin1.fa"
+                },
+                {
+                    "file": "chunk220_bin1.schematic.json",
+                    "first_bin": 50709,
+                    "last_bin": 50929,
+                    "component_count": 37,
+                    "link_count": 88,
+                    "fasta": "seq_chunk220_bin1.fa"
+                },
+                {
+                    "file": "chunk221_bin1.schematic.json",
+                    "first_bin": 50930,
+                    "last_bin": 51196,
+                    "component_count": 33,
+                    "link_count": 81,
+                    "fasta": "seq_chunk221_bin1.fa"
+                },
+                {
+                    "file": "chunk222_bin1.schematic.json",
+                    "first_bin": 51197,
+                    "last_bin": 51367,
+                    "component_count": 35,
+                    "link_count": 87,
+                    "fasta": "seq_chunk222_bin1.fa"
+                },
+                {
+                    "file": "chunk223_bin1.schematic.json",
+                    "first_bin": 51368,
+                    "last_bin": 51584,
+                    "component_count": 38,
+                    "link_count": 87,
+                    "fasta": "seq_chunk223_bin1.fa"
+                },
+                {
+                    "file": "chunk224_bin1.schematic.json",
+                    "first_bin": 51585,
+                    "last_bin": 51800,
+                    "component_count": 47,
+                    "link_count": 91,
+                    "fasta": "seq_chunk224_bin1.fa"
+                },
+                {
+                    "file": "chunk225_bin1.schematic.json",
+                    "first_bin": 51801,
+                    "last_bin": 52056,
+                    "component_count": 25,
+                    "link_count": 54,
+                    "fasta": "seq_chunk225_bin1.fa"
+                },
+                {
+                    "file": "chunk226_bin1.schematic.json",
+                    "first_bin": 52057,
+                    "last_bin": 52302,
+                    "component_count": 31,
+                    "link_count": 77,
+                    "fasta": "seq_chunk226_bin1.fa"
+                },
+                {
+                    "file": "chunk227_bin1.schematic.json",
+                    "first_bin": 52303,
+                    "last_bin": 52441,
+                    "component_count": 17,
+                    "link_count": 31,
+                    "fasta": "seq_chunk227_bin1.fa"
+                }
+            ]
+        }
+    }
+}
