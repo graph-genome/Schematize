@@ -1,6 +1,6 @@
-import {types} from "mobx-state-tree";
-import {urlExists} from "./URL";
-import {arraysEqual} from "./utilities";
+import { types } from "mobx-state-tree";
+import { urlExists } from "./URL";
+import { arraysEqual } from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
@@ -32,8 +32,9 @@ RootStore = types
   .model({
     chunkIndex: ChunkIndex,
     beginEndBin: types.optional(types.array(types.integer), [1, 100]),
+    maxWidthBinRange: 99,
     useVerticalCompression: false,
-      useWidthCompression: true,
+    useWidthCompression: false,
     binScalingFactor: 3,
     useConnector: true,
     pixelsPerColumn: 10,
@@ -43,10 +44,10 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-      jsonName: "run1.B1phi1.i1.seqwish.v16",
+    jsonName: "SARS-CoV-b",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
-      indexSelectedZoomLevel: 0,
+    indexSelectedZoomLevel: 0,
     chunkURLs: types.optional(types.array(types.string), []),
     chunkFastaURLs: types.optional(types.array(types.string), []),
     //to be compared against chunkURLs
@@ -55,7 +56,6 @@ RootStore = types
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
     nucleotideHeight: 10,
-    pangenomelast_bin: -1, //TODO: don't add values unless they're needed
 
     loading: true,
     copyNumberColorArray: types.optional(types.array(types.string), [
@@ -84,6 +84,8 @@ RootStore = types
       "#160705",
       "#000000",
     ]),
+
+    last_bin_pangenome: 0,
   })
   .actions((self) => {
     function setChunkIndex(json) {
@@ -100,31 +102,27 @@ RootStore = types
       const beginBin = getBeginBin();
       const endBin = getEndBin();
 
-      let diff = endBin - beginBin;
-
       /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
 
-      //TO_DO: check the end of the pangenome
       //TO_DO: remove endBin and manage beginBin and widthBinRange (100 by default)?
       newBegin = Math.max(1, Math.round(newBegin));
-      newEnd = Math.max(1, Math.round(newBegin + diff));
-      // the width of the range cannot change.
-      /*if (newEnd === endBin) {
-        //end has not changed
-        let diff = endBin - beginBin;
-        newEnd = newBegin + diff; //Allows start to push End to new chunks
-      }
-      if (newEnd < newBegin) {
-        //crush newStart
-        newBegin = newEnd - 1;
-      }*/
+      newEnd = Math.max(2, Math.round(newBegin + self.maxWidthBinRange));
 
-      if (newBegin !== beginBin) {
+      // So that the end bin is at the most the end of the pangenome
+      if (newEnd > self.last_bin_pangenome) {
+        let excess_bins = newEnd - self.last_bin_pangenome;
+
+        newBegin = Math.max(1, newBegin - excess_bins);
+        newEnd = Math.max(2, newEnd - excess_bins);
+      }
+
+      if (newBegin !== beginBin || newEnd !== endBin) {
         setBeginEndBin(newBegin, newEnd);
         console.log("updated begin and end: " + newBegin + " " + newEnd);
-      } else {
-        self.beginEndBin[1] = newEnd; // quietly update without refresh
+        return true;
       }
+
+      return false;
     }
     function updateTopOffset(newTopOffset) {
       if (Number.isFinite(newTopOffset) && Number.isSafeInteger(newTopOffset)) {
@@ -160,10 +158,10 @@ RootStore = types
       self.useConnector = !self.useConnector;
     }
     function updateHeight(event) {
-        self.pixelsPerRow = Math.max(4, Number(event.target.value));
+      self.pixelsPerRow = Math.max(4, Number(event.target.value));
     }
     function updateWidth(event) {
-        self.pixelsPerColumn = Math.max(4, Number(event.target.value));
+      self.pixelsPerColumn = Math.max(4, Number(event.target.value));
     }
 
     function tryJSONpath(event) {
@@ -211,9 +209,14 @@ RootStore = types
       //Zoom level and BinWidth are actually the same thing
       return Number(self.getSelectedZoomLevel());
     }
-    function getSelectedZoomLevel() {
+    function getSelectedZoomLevel(indexSelectedZoomLevel = -1) {
       //This is a genuinely useful getter
-      let a = self.availableZoomLevels[self.indexSelectedZoomLevel];
+      let a =
+        self.availableZoomLevels[
+          indexSelectedZoomLevel > -1
+            ? indexSelectedZoomLevel
+            : self.indexSelectedZoomLevel
+        ];
       return a ? a : "1";
     }
     function setIndexSelectedZoomLevel(index) {
@@ -240,6 +243,9 @@ RootStore = types
 
     function setLoading(val) {
       self.loading = val;
+    }
+    function setLastBinPangenome(val) {
+      self.last_bin_pangenome = val;
     }
     return {
       setChunkIndex,
@@ -276,6 +282,8 @@ RootStore = types
       setAvailableZoomLevels,
 
       setLoading,
+
+      setLastBinPangenome,
     };
   })
   .views((self) => ({}));
