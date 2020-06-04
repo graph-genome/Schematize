@@ -79,6 +79,7 @@ class PangenomeSchematic extends React.Component {
     }
     this.jsonCache[url] = data;
     this.pathNames = data.path_names; //TODO: in later JSON versions path_names gets moved to bin2file.json
+      console.log(this.pathNames.length, " path names loaded")
     this.processArray();
   }
 
