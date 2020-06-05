@@ -67,12 +67,12 @@ class PangenomeSchematic extends React.Component {
   loadJsonCache(url, data) {
     console.log("STEP #6: fetched chunks go into loadJsonCache");
 
-    if (data.json_version !== 16) {
+    if (data.json_version !== 17) {
       throw MediaError(
-        "Wrong Data JSON version: was expecting version 16, got " +
+          "Wrong Data JSON version: was expecting version 17, got " +
         data.json_version +
         ".  " +
-        "This version added compressedX.  " + // KEEP THIS UP TO DATE!
+          "This version added compressedX to bin2file.json.  " + // KEEP THIS UP TO DATE!
           "Using a mismatched data file and renderer will cause unpredictable behavior," +
           " instead generate a new data file using github.com/graph-genome/component_segmentation."
       );
