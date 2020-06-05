@@ -74,6 +74,50 @@ class ControlHeader extends React.Component {
   }
 
   render() {
+    let showJumpPath = false; // TODO: unlock once the data is there
+    let pathRow = null;
+    if (showJumpPath) {
+      pathRow = (
+        <div className={"row"}>
+          Jump to path at nucleotide position:
+          <input
+            type="string"
+            list="path"
+            placeholder={"path"}
+            onChange={(event) =>
+              this.props.store.updatePathNucPos(
+                event.target.value,
+                this.props.store.pathNucPos.nucPos
+              )
+            }
+            style={{ width: "80px" }}
+          />
+          <datalist id="path">
+            {this.props.schematic.pathNames.map((item, key) => (
+              <option key={key} value={item} />
+            ))}
+          </datalist>
+          -
+          <input
+            type="number"
+            placeholder={"position"}
+            onChange={(event) =>
+              this.props.store.updatePathNucPos(
+                this.props.store.getPath(),
+                event.target.value
+              )
+            }
+            style={{ width: "80px" }}
+          />
+          <span style={{ marginLeft: "2px" }}>
+            <button className="button" onClick={() => this.handleJump()}>
+              Jump
+            </button>
+          </span>
+        </div>
+      );
+    }
+
     return (
       <div id="button-container">
         {/*<button className="button" id="btn-download">*/}

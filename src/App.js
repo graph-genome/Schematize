@@ -437,7 +437,25 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {}
+  componentDidMount = () => {
+    let buttonContainerDiv = document.getElementById("button-container");
+    let clientHeight = buttonContainerDiv.clientHeight;
+
+    const arrowsDiv = document.getElementsByClassName("konvajs-content")[0];
+    arrowsDiv.style.position = "relative";
+
+    this.setState({ buttonsHeight: clientHeight });
+
+    this.layerRef.current.getCanvas()._canvas.id = "cnvs";
+    this.layerRef.current.getCanvas()._canvas.position = "relative";
+
+    this.layerRef2.current.getCanvas()._canvas.id = "arrow";
+    this.layerRef2.current.getCanvas()._canvas.position = "relative";
+    //this.layerRef2.current.getCanvas()._canvas.style.top = "95px";
+    /*if(this.props.store.useVerticalCompression) {
+      this.props.store.resetRenderStats(); //FIXME: should not require two renders to get the correct number
+    }*/
+  };
 
   // Now it is wrapped in the updateHighlightedNode() function
   _updateHighlightedNode(linkRect) {
