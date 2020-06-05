@@ -165,7 +165,7 @@ class ControlHeader extends React.Component {
         </span>
         <div className={"row"}>
           Jump to path at nucleotide position:
-          <span class="myarrow">
+          <span className="myarrow">
             <input
               type="string"
               list="path"
@@ -192,7 +192,7 @@ class ControlHeader extends React.Component {
             placeholder={"position"}
             onChange={(event) =>
               this.props.store.updatePathNucPos(
-                this.props.store.getPath(),
+                this.props.store.pathNucPos.path,
                 event.target.value
               )
             }
