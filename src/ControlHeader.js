@@ -2,7 +2,7 @@ import React from "react";
 import { Observer } from "mobx-react";
 import { httpGetAsync } from "./URL";
 import PropTypes from "prop-types";
-
+import "./App.css";
 class ControlHeader extends React.Component {
   shift(percentage) {
     const beginBin = this.props.store.getBeginBin();
@@ -165,18 +165,22 @@ class ControlHeader extends React.Component {
         </span>
         <div className={"row"}>
           Jump to path at nucleotide position:
-          <input
-            type="string"
-            list="path"
-            placeholder={"path"}
-            onChange={(event) =>
-              this.props.store.updatePathNucPos(
-                event.target.value,
-                this.props.store.pathNucPos.nucPos
-              )
-            }
-            style={{ width: "80px" }}
-          />
+          <span class="myarrow">
+            <input
+              type="string"
+              list="path"
+              name="path"
+              placeholder={"path"}
+              id="#show-suggestions"
+              onChange={(event) =>
+                this.props.store.updatePathNucPos(
+                  event.target.value,
+                  this.props.store.pathNucPos.nucPos
+                )
+              }
+              style={{ width: "80px" }}
+            />
+          </span>
           <datalist id="path">
             {this.props.schematic.pathNames.map((item, key) => (
               <option key={key} value={item} />
