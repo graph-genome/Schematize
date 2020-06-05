@@ -1,6 +1,6 @@
-import {types} from "mobx-state-tree";
-import {urlExists} from "./URL";
-import {arraysEqual} from "./utilities";
+import { types } from "mobx-state-tree";
+import { urlExists } from "./URL";
+import { arraysEqual, isInt } from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
@@ -158,10 +158,10 @@ RootStore = types
       self.useConnector = !self.useConnector;
     }
     function updateHeight(event) {
-        self.pixelsPerRow = Math.max(1, Number(event.target.value));
+      self.pixelsPerRow = Math.max(1, Number(event.target.value));
     }
     function updateWidth(event) {
-        self.pixelsPerColumn = Math.max(3, Number(event.target.value));
+      self.pixelsPerColumn = Math.max(3, Number(event.target.value));
     }
 
     function tryJSONpath(event) {
@@ -233,12 +233,16 @@ RootStore = types
       self.beginEndBin = [newBeginBin, newEndBin];
     }
     function updatePathNucPos(path, nucPos) {
-      if (nucPos) {
-        nucPos = parseInt(nucPos);
-      } else {
-        nucPos = 0;
+      //console.log('updatePathNucPos: ' + path + ' --- ' + nucPos)
+
+      if (path !== undefined) {
+        if (nucPos) {
+          nucPos = Math.abs(parseInt(nucPos));
+        } else {
+          nucPos = 0;
+        }
+        self.pathNucPos = { path: path, nucPos: nucPos };
       }
-      self.pathNucPos = { path: path, nucPos: nucPos };
     }
 
     function setLoading(val) {
