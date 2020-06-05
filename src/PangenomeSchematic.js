@@ -1,6 +1,6 @@
 import React from "react";
-import { observe } from "mobx";
-import { urlExists } from "./URL";
+import {observe} from "mobx";
+import {urlExists} from "./URL";
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
@@ -42,7 +42,7 @@ class PangenomeSchematic extends React.Component {
     console.log("STEP #1: whenever jsonName changes, loadIndexFile");
 
     let indexPath =
-      process.env.PUBLIC_URL + "test_data/" + jsonFilename + "/bin2file.json";
+        process.env.PUBLIC_URL + "/test_data/" + jsonFilename + "/bin2file.json";
     //console.log("loadIndexFile - START reading", indexPath);
 
     return fetch(indexPath)
@@ -61,7 +61,7 @@ class PangenomeSchematic extends React.Component {
         "No filepath given. Ensure chunknames in bin2file.json are correct."
       );
     console.log("Fetching", filepath);
-    return fetch(process.env.PUBLIC_URL + filepath).then((res) => res.json());
+      return fetch(filepath).then((res) => res.json());
   }
 
   loadJsonCache(url, data) {
