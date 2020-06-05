@@ -1,14 +1,14 @@
 import { types } from "mobx-state-tree";
 import { urlExists } from "./URL";
-import { arraysEqual, isInt } from "./utilities";
+import { arraysEqual } from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
   fasta: types.maybeNull(types.string),
   first_bin: types.integer,
   last_bin: types.integer,
-  component_count: types.integer,
-  link_count: types.integer,
+  x: types.integer,
+  compressedX: types.integer,
 });
 const ZoomLevel = types.model({
   bin_width: types.integer,
@@ -44,7 +44,7 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "SARS-CoV-b",
+    jsonName: "SARS-CoV-b.v17",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
     indexSelectedZoomLevel: 0,
