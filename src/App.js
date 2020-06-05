@@ -114,7 +114,7 @@ class App extends Component {
     );
 
     // For debugging purposes
-      //makeInspectable(this.props.store);
+    //makeInspectable(this.props.store);
   }
 
   prepareWhichComponentsToVisualize() {
@@ -132,7 +132,7 @@ class App extends Component {
           schematizeComponent.lastBin
         )
       ) {
-          //console.log('PREPARE: ' + schematizeComponent.index + ': [' + schematizeComponent.firstBin + ',' + schematizeComponent.lastBin + '] - ' + schematizeComponent.arrivals.length + ' - ' + schematizeComponent.departures.length)
+        //console.log('PREPARE: ' + schematizeComponent.index + ': [' + schematizeComponent.firstBin + ',' + schematizeComponent.lastBin + '] - ' + schematizeComponent.arrivals.length + ' - ' + schematizeComponent.departures.length)
 
         index_to_component_to_visualize_dict[
           schematizeComponent.index
@@ -169,7 +169,7 @@ class App extends Component {
       this.props.store.chunkIndex["zoom_levels"].keys()
     );
     const selZoomLev = this.props.store.getSelectedZoomLevel();
-    let [fileArray, fileArrayFasta] = calculateEndBinFromScreen(
+    let [newEndBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
       beginBin,
       this.props.store.getEndBin(),
       selZoomLev,
@@ -189,7 +189,14 @@ class App extends Component {
         Math.round((beginBin - 1) * scaling_factor),
         Math.round((this.props.store.getEndBin() - 1) * scaling_factor)
       );
+    } else if (this.props.store.getEndBin() !== newEndBin) {
+      bin_range_changed = this.props.store.updateBeginEndBin(
+        beginBin,
+        newEndBin
+      );
     }
+
+    console.log("newEndBin: " + newEndBin);
 
     // To avoid to do the preparation and the following operations two times
     if (!bin_range_changed) {
@@ -654,8 +661,8 @@ class App extends Component {
           const nt_shift = this.schematic.components[0].firstBin || 1;
 
           const nucleotides_slice = this.schematic.nucleotides.slice(
-              schematizeComponent.firstBin - nt_shift, // firstBin is 1 indexed, but this is canceled by nt_shift
-              schematizeComponent.lastBin - nt_shift + 1 // inclusive end
+            schematizeComponent.firstBin - nt_shift, // firstBin is 1 indexed, but this is canceled by nt_shift
+            schematizeComponent.lastBin - nt_shift + 1 // inclusive end
           );
 
           //console.log("nucleotides_slice: " + nucleotides_slice);

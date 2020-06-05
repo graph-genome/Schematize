@@ -25,19 +25,45 @@ export function areOverlapping(startA, endA, startB, endB) {
 }
 
 export function calculateEndBinFromScreen(beginBin, endBin, selZoomLev, store) {
+  const deviceWidth = window.innerWidth;
+  let widthInCells = deviceWidth / store.pixelsPerColumn;
+
+  console.log("calculateEndBinFromScreen: deviceWidth --> " + deviceWidth);
+
+  let newEndBin = endBin;
+
   let chunkURLarray = [];
   let fileArrayFasta = [];
+
+  let firstFieldX = -1;
 
   let level = store.chunkIndex.zoom_levels.get(selZoomLev);
   //this loop will automatically cap out at the last bin of the file
   for (let ichunk = 0; ichunk < level.files.length; ichunk++) {
     // The "x" info is not here
     let chunk = level.files[ichunk];
-    if (areOverlapping(beginBin, endBin, chunk.first_bin, chunk.last_bin)) {
+
+    //if (areOverlapping(beginBin, endBin, chunk.first_bin, chunk.last_bin)){
+    if (chunk.last_bin >= beginBin) {
+      const fieldX = store.useWidthCompression ? chunk.compressedX : chunk.x;
+      console.log("fieldX: " + fieldX);
+      console.log("chunk.last_bin: " + chunk.last_bin);
+
+      if (firstFieldX === -1) {
+        firstFieldX = fieldX;
+      }
+
+      // If the new chunck is outside the windows, the chunk-pushing is over
+      if (fieldX - firstFieldX >= widthInCells) {
+        break;
+      }
+
       chunkURLarray.push(chunk["file"]);
       if (chunk.fasta !== null) {
         fileArrayFasta.push(chunk.fasta);
       }
+
+      newEndBin = chunk.last_bin;
     }
   }
 
@@ -45,7 +71,7 @@ export function calculateEndBinFromScreen(beginBin, endBin, selZoomLev, store) {
   //TODO the logic in let width = could be much more complex by looking at
   //width of components and whether various settings are on.  The consequence
   //of overestimating widthInCells is to make the shift buttons step too big
-  return [chunkURLarray, fileArrayFasta];
+  return [newEndBin, chunkURLarray, fileArrayFasta];
 }
 
 export function range(start, end) {

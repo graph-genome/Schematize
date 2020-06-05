@@ -1,6 +1,6 @@
 import { types } from "mobx-state-tree";
 import { urlExists } from "./URL";
-import { arraysEqual, isInt } from "./utilities";
+import { arraysEqual } from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
