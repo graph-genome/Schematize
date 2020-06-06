@@ -1,17 +1,22 @@
-import {Layer, Stage, Text} from "react-konva";
-import React, {Component} from "react";
+import { Layer, Stage, Text } from "react-konva";
+import React, { Component } from "react";
 
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
-import ComponentRect, {compress_visible_rows} from "./ComponentRect";
+import ComponentRect, { compress_visible_rows } from "./ComponentRect";
 import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
-import {calculateLinkCoordinates} from "./LinkRecord";
+import { calculateLinkCoordinates } from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
-import {observe} from "mobx";
-import {areOverlapping, arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "./utilities";
+import { observe } from "mobx";
+import {
+  areOverlapping,
+  arraysEqual,
+  calculateEndBinFromScreen,
+  stringToColorAndOpacity,
+} from "./utilities";
 
 //import makeInspectable from "mobx-devtools-mst";
 // TO_DO: improve the management of visualized components
@@ -20,9 +25,9 @@ let index_to_component_to_visualize_dict;
 function Legend(props) {
   return (
     <img
-        src={process.env.PUBLIC_URL + "/Schematize legend.gif"}
-        alt="legend"
-        style={{
+      src={process.env.PUBLIC_URL + "/Schematize legend.gif"}
+      alt="legend"
+      style={{
         position: "fixed",
         bottom: "20px",
         left: "20px",
@@ -168,12 +173,16 @@ class App extends Component {
     this.props.store.setAvailableZoomLevels(
       this.props.store.chunkIndex["zoom_levels"].keys()
     );
+
+    const deviceWidth = window.innerWidth;
+
     const selZoomLev = this.props.store.getSelectedZoomLevel();
     let [newEndBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
       beginBin,
       this.props.store.getEndBin(),
       selZoomLev,
-      this.props.store
+      this.props.store,
+      deviceWidth
     );
     this.props.store.setLastBinPangenome(
       this.props.store.chunkIndex.zoom_levels.get(selZoomLev)["last_bin"]
@@ -205,7 +214,7 @@ class App extends Component {
       //console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
       let URLprefix =
         process.env.PUBLIC_URL +
-          "/test_data/" +
+        "/test_data/" +
         this.props.store.jsonName +
         "/" +
         selZoomLev +
@@ -380,13 +389,12 @@ class App extends Component {
     }
   }
 
-    componentDidMount() {
-  };
+  componentDidMount() {}
 
   // Now it is wrapped in the updateHighlightedNode() function
-    _updateHighlightedNode(linkRect) {
+  _updateHighlightedNode(linkRect) {
     this.setState({ highlightedLink: linkRect });
-  };
+  }
 
   // Wrapper function to wrap the logic (no link selected and time delay)
   updateHighlightedNode = (linkRect) => {

@@ -104,9 +104,10 @@ RootStore = types
 
       /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
 
-      //TO_DO: remove endBin and manage beginBin and widthBinRange (100 by default)?
-      newBegin = Math.max(1, Math.round(newBegin));
-      newEnd = Math.max(2, Math.round(newBegin + self.maxWidthBinRange));
+      newBegin = Math.min(
+        self.last_bin_pangenome,
+        Math.max(1, Math.round(newBegin))
+      );
 
       // So that the end bin is at the most the end of the pangenome
       if (newEnd > self.last_bin_pangenome) {

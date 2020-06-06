@@ -24,11 +24,21 @@ export function areOverlapping(startA, endA, startB, endB) {
   }
 }
 
-export function calculateEndBinFromScreen(beginBin, endBin, selZoomLev, store) {
-  const deviceWidth = window.innerWidth;
+export function calculateEndBinFromScreen(
+  beginBin,
+  endBin,
+  selZoomLev,
+  store,
+  deviceWidth
+) {
   let widthInCells = deviceWidth / store.pixelsPerColumn;
 
-  console.log("calculateEndBinFromScreen: deviceWidth --> " + deviceWidth);
+  console.log(
+    "calculateEndBinFromScreen: deviceWidth/deviceWidth --> " +
+      deviceWidth +
+      "/" +
+      widthInCells
+  );
 
   let newEndBin = endBin;
 
@@ -46,17 +56,14 @@ export function calculateEndBinFromScreen(beginBin, endBin, selZoomLev, store) {
     //if (areOverlapping(beginBin, endBin, chunk.first_bin, chunk.last_bin)){
     if (chunk.last_bin >= beginBin) {
       const fieldX = store.useWidthCompression ? chunk.compressedX : chunk.x;
-      console.log("fieldX: " + fieldX);
-      console.log("chunk.last_bin: " + chunk.last_bin);
 
       if (firstFieldX === -1) {
         firstFieldX = fieldX;
       }
 
-      // If the new chunck is outside the windows, the chunk-pushing is over
-      if (fieldX - firstFieldX >= widthInCells) {
-        break;
-      }
+      /*console.log("fieldX: " + fieldX);
+      console.log('fieldX - firstFieldX: ' + (fieldX - firstFieldX))
+      console.log("chunk.last_bin: " + chunk.last_bin);*/
 
       chunkURLarray.push(chunk["file"]);
       if (chunk.fasta !== null) {
@@ -64,6 +71,11 @@ export function calculateEndBinFromScreen(beginBin, endBin, selZoomLev, store) {
       }
 
       newEndBin = chunk.last_bin;
+
+      // If the new chunck is outside the windows, the chunk-pushing is over
+      if (fieldX - firstFieldX >= widthInCells) {
+        break;
+      }
     }
   }
 
