@@ -137,7 +137,7 @@ class ComponentRect extends React.Component {
           height={this.props.height - 2} //TODO: change to compressed height
           fill={this.state.color}
           onClick={this.handleClick}
-          onMouseMove={this.onHover.bind(this)}
+          onMouseOver={this.onHover.bind(this)}
           onMouseLeave={this.onLeave.bind(this)}
         />
         {!this.props.store.useWidthCompression ? this.renderMatrix() : null}
@@ -153,7 +153,7 @@ class ComponentRect extends React.Component {
   }
 
   onLeave() {
-    this.props.store.updateCellTooltipContent(""); // we don't want any tooltip displayed if we leave the cell
+    this.props.store.updateCellTooltipContent("");
   }
 }
 

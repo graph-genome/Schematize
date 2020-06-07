@@ -110,9 +110,18 @@ class LinkArrow extends React.Component {
   }
 
   handleMouseOver = () => {
+    this.props.store.updateCellTooltipContent(
+      "Bin upstream: " +
+        this.props.link.linkColumn.upstream +
+        "\nBin downstream: " +
+        this.props.link.linkColumn.downstream
+    );
+
     this.props.updateHighlightedNode(this.props.link.linkColumn);
   };
   handleMouseOut = () => {
+    this.props.store.updateCellTooltipContent("");
+
     this.props.updateHighlightedNode(null);
   };
   handleClick = (event) => {
