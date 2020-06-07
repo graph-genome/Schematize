@@ -89,7 +89,7 @@ class LinkArrow extends React.Component {
     return (
       <Arrow
         x={this.arrowXCoord}
-        y={this.props.store.topOffset - 10}
+        y={this.props.store.topOffset - this.props.store.pixelsPerColumn}
         width={this.props.store.pixelsPerColumn}
         points={this.points}
         bezier={false}

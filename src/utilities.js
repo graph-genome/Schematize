@@ -14,6 +14,16 @@ export function arraysEqual(A, B) {
   );
 }
 
+export function checkAndForceMinOrMaxValue(value, minValue, maxValue) {
+  if (value < minValue) {
+    value = minValue;
+  } else if (value > maxValue) {
+    value = maxValue;
+  }
+
+  return value;
+}
+
 export function areOverlapping(startA, endA, startB, endB) {
   if (startB < startA) {
     return endB >= startA;
