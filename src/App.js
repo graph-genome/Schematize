@@ -810,9 +810,7 @@ class App extends Component {
           x={this.props.store.leftOffset} // removed leftOffset to simplify code. Relative coordinates are always better.
           y={-this.props.store.topOffset} // For some reason, I have to put this, but I'd like to put 0
           width={this.state.actualWidth}
-          height={
-            this.visibleHeightPixels() + this.props.store.nucleotideHeight
-          }
+          height={this.visibleHeightPixels() + this.props.store.pixelsPerColumn}
         >
           <Layer ref={this.layerRef}>
             {this.loadingMessage()}

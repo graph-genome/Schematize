@@ -17,11 +17,12 @@ class ComponentNucleotides extends React.Component {
         <Text
           key={"nuc_text" + x}
           x={x_val + x * this.props.store.pixelsPerColumn}
-          y={this.props.store.topOffset - this.props.store.nucleotideHeight}
+          y={this.props.store.topOffset - this.props.store.pixelsPerColumn}
           text={this.props.nucleotides[x]}
           align="center"
-          height={this.props.store.nucleotideHeight}
+          height={this.props.store.pixelsPerColumn}
           width={this.props.store.pixelsPerColumn}
+          fontSize={this.props.store.pixelsPerColumn + 2}
         />
       );
     }

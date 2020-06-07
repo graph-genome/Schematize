@@ -55,7 +55,6 @@ RootStore = types
 
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
-    nucleotideHeight: 10,
 
     loading: true,
     copyNumberColorArray: types.optional(types.array(types.string), [
