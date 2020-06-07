@@ -267,7 +267,7 @@ class App extends Component {
       //TODO: conditional on jsonCache not already having chunk
       //console.log("fetchAllChunks - START reading: " + chunkPath);
       this.schematic.jsonFetch(chunkPath).then((data) => {
-        console.log("fetchAllChunks - END reading: " + chunkPath);
+        //console.log("fetchAllChunks - END reading: " + chunkPath);
         this.schematic.loadJsonCache(chunkPath, data);
       });
     }
@@ -389,6 +389,10 @@ class App extends Component {
   }
 
   visibleHeightPixels() {
+    if (index_to_component_to_visualize_dict === undefined) {
+      return 0;
+    }
+
     if (
       this.props.store.useVerticalCompression ||
       !this.compressed_row_mapping
@@ -396,7 +400,7 @@ class App extends Component {
       // this.state.schematize.forEach(value => Math.max(value.occupants.filter(Boolean).length, maxNumberRowsInOneComponent));
       if (this.maxNumRowsAcrossComponents === undefined) {
         this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
-          this.schematic.components
+          Object.values(index_to_component_to_visualize_dict)
         );
       }
       /*console.log(
@@ -405,7 +409,7 @@ class App extends Component {
       );*/
 
       return (
-        (this.maxNumRowsAcrossComponents + 2.5) * this.props.store.pixelsPerRow
+        (this.maxNumRowsAcrossComponents + 1) * this.props.store.pixelsPerRow
       );
     } else {
       return (
