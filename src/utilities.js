@@ -47,11 +47,11 @@ export function calculateEndBinFromScreen(
 
   let firstFieldX = -1;
 
-  let level = store.chunkIndex.zoom_levels.get(selZoomLev);
+  const level = store.chunkIndex.zoom_levels.get(selZoomLev);
   //this loop will automatically cap out at the last bin of the file
   for (let ichunk = 0; ichunk < level.files.length; ichunk++) {
     // The "x" info is not here
-    let chunk = level.files[ichunk];
+    const chunk = level.files[ichunk];
 
     //if (areOverlapping(beginBin, endBin, chunk.first_bin, chunk.last_bin)){
     if (chunk.last_bin >= beginBin) {

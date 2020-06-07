@@ -149,7 +149,7 @@ class PangenomeSchematic extends React.Component {
             this.components.length > 0
               ? this.components[this.components.length - 1].index + 1
               : 0;
-          for (let [index, component] of jsonChunk.components.entries()) {
+          for (const [index, component] of jsonChunk.components.entries()) {
             if (component.first_bin > 0) {
               let componentItem = new Component(
                 component,

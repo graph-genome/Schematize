@@ -118,7 +118,12 @@ class App extends Component {
     observe(
       this.props.store.beginEndBin, //user moves start position
       //This following part is important to scroll right and left on browser
-      this.openRelevantChunksFromIndex.bind(this)
+      () => {
+        console.log(
+          "Updated Begin and End bin: " + this.props.store.beginEndBin
+        );
+        this.openRelevantChunksFromIndex();
+      }
     );
 
     // For debugging purposes
@@ -213,7 +218,7 @@ class App extends Component {
       this.props.store.getSelectedZoomLevel(true) /
       this.props.store.getSelectedZoomLevel();
 
-    console.log("scaling_factor: " + scaling_factor);
+    //console.log("scaling_factor: " + scaling_factor);
 
     if (scaling_factor !== 1) {
       this.props.store.updateBeginEndBin(
@@ -223,10 +228,7 @@ class App extends Component {
       // The updating will re-trigger openRelevantChunksFromIndex
     } else {
       const newEndBin = this.prepareWhichComponentsToVisualize(widthInColumns);
-
-      if (this.props.store.getEndBin() !== newEndBin) {
-        this.props.store.updateBeginEndBin(beginBin, newEndBin);
-      }
+      this.props.store.updateBeginEndBin(beginBin, newEndBin);
 
       //console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
       let URLprefix =
@@ -291,8 +293,12 @@ class App extends Component {
         "STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final rendering info for this loaded chunks"
       );
 
-      this.prepareWhichComponentsToVisualize(
+      const newEndBin = this.prepareWhichComponentsToVisualize(
         window.innerWidth / this.props.store.pixelsPerColumn
+      );
+      this.props.store.updateBeginEndBin(
+        this.props.store.getBeginBin(),
+        newEndBin
       );
 
       // console.log(this.schematic.components);

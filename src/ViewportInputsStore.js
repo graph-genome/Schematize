@@ -99,13 +99,16 @@ RootStore = types
       self.chunkIndex = json;
     }
     function updateBeginEndBin(newBegin, newEnd) {
-      console.log("updateBeginEndBin - " + newBegin + " - " + newEnd);
-
-      const beginBin = getBeginBin();
-      const endBin = getEndBin();
-
       /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
 
+      console.log("updateBeginEndBin - " + newBegin + " - " + newEnd);
+
+      // To avoid too many columns to render
+      if (newEnd - newBegin > 15000) {
+        newEnd = newBegin + 15000;
+      }
+
+      // TODO: manage a maxBeginBin based on the width of the last components in the genome
       newBegin = Math.min(
         self.last_bin_pangenome - 1,
         Math.max(1, Math.round(newBegin))
@@ -119,13 +122,7 @@ RootStore = types
         newEnd = Math.max(2, newEnd - excess_bins);
       }*/
 
-      if (newBegin !== beginBin || newEnd !== endBin) {
-        setBeginEndBin(newBegin, newEnd);
-        console.log("updated begin and end: " + newBegin + " " + newEnd);
-        return true;
-      }
-
-      return false;
+      setBeginEndBin(newBegin, newEnd);
     }
     function updateTopOffset(newTopOffset) {
       if (Number.isFinite(newTopOffset) && Number.isSafeInteger(newTopOffset)) {
