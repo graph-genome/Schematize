@@ -26,21 +26,11 @@ export function areOverlapping(startA, endA, startB, endB) {
 
 export function calculateEndBinFromScreen(
   beginBin,
-  endBin,
   selZoomLev,
   store,
-  deviceWidth
+  widthInColumns
 ) {
-  let widthInCells = deviceWidth / store.pixelsPerColumn;
-
-  console.log(
-    "calculateEndBinFromScreen: deviceWidth/deviceWidth --> " +
-      deviceWidth +
-      "/" +
-      widthInCells
-  );
-
-  let newEndBin = endBin;
+  //console.log("calculateEndBinFromScreen: widthInColumns --> " + widthInColumns);
 
   let chunkURLarray = [];
   let fileArrayFasta = [];
@@ -70,20 +60,18 @@ export function calculateEndBinFromScreen(
         fileArrayFasta.push(chunk.fasta);
       }
 
-      newEndBin = chunk.last_bin;
-
       // If the new chunck is outside the windows, the chunk-pushing is over
-      if (fieldX - firstFieldX >= widthInCells) {
+      if (fieldX - firstFieldX >= widthInColumns) {
         break;
       }
     }
   }
 
-  // store.updateBeginEndBin(b, b + widthInCells);
+  // store.updateBeginEndBin(b, b + widthInColumns);
   //TODO the logic in let width = could be much more complex by looking at
   //width of components and whether various settings are on.  The consequence
-  //of overestimating widthInCells is to make the shift buttons step too big
-  return [newEndBin, chunkURLarray, fileArrayFasta];
+  //of overestimating widthInColumns is to make the shift buttons step too big
+  return [chunkURLarray, fileArrayFasta];
 }
 
 export function range(start, end) {

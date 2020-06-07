@@ -12,7 +12,6 @@ import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
 import { observe } from "mobx";
 import {
-  areOverlapping,
   arraysEqual,
   calculateEndBinFromScreen,
   stringToColorAndOpacity,
@@ -22,7 +21,7 @@ import {
 // TO_DO: improve the management of visualized components
 let index_to_component_to_visualize_dict;
 
-function Legend(props) {
+function Legend() {
   return (
     <img
       src={process.env.PUBLIC_URL + "/Schematize legend.gif"}
@@ -84,7 +83,7 @@ class App extends Component {
       this.updateSchematicMetadata.bind(this)
     );
     observe(this.props.store, "useWidthCompression", () => {
-      this.recalcXLayout();
+      this.openRelevantChunksFromIndex();
     });
     observe(this.props.store, "useConnector", this.recalcXLayout.bind(this)); //TODO faster rerender
     observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this)); //TODO faster rerender
@@ -94,6 +93,10 @@ class App extends Component {
     // rendering info for this loaded chunks
     observe(
       this.props.store.chunksProcessed,
+      this.updateSchematicMetadata.bind(this)
+    );
+    observe(
+      this.props.store.chunksProcessedFasta,
       this.updateSchematicMetadata.bind(this)
     );
 
@@ -122,35 +125,54 @@ class App extends Component {
     //makeInspectable(this.props.store);
   }
 
-  prepareWhichComponentsToVisualize() {
+  prepareWhichComponentsToVisualize(widthInColumns) {
+    //console.log("prepareWhichComponentsToVisualize: widthInColumns --> " + widthInColumns);
+
     // It prepares a dictionary with the components to visualize. It is improvable putting all the components
     // in a dictionary (this.schematic.components becames a dictionary).
 
     index_to_component_to_visualize_dict = {};
 
+    const beginBin = this.props.store.getBeginBin();
+    let newEndBin = this.props.store.getEndBin();
+
+    let firstFieldX = -1;
+
     for (const schematizeComponent of this.schematic.components) {
-      if (
-        areOverlapping(
-          this.props.store.getBeginBin(),
-          this.props.store.getEndBin(),
-          schematizeComponent.firstBin,
-          schematizeComponent.lastBin
-        )
-      ) {
-        //console.log('PREPARE: ' + schematizeComponent.index + ': [' + schematizeComponent.firstBin + ',' + schematizeComponent.lastBin + '] - ' + schematizeComponent.arrivals.length + ' - ' + schematizeComponent.departures.length)
+      if (schematizeComponent.lastBin >= beginBin) {
+        const fieldX = schematizeComponent.getColumnX(
+          this.props.store.useWidthCompression
+        );
+
+        if (firstFieldX === -1) {
+          firstFieldX = fieldX;
+        }
+
+        /*console.log("fieldX: " + fieldX);
+        console.log('fieldX - firstFieldX: ' + (fieldX - firstFieldX))
+        console.log("schematizeComponent.lastBin: " + schematizeComponent.lastBin);*/
+
+        // If the new component is outside the windows, the preparation is over
+        // TO_DO: take into account the shifted columns in the normal visualization mode (rearrangements + full components)
+        if (fieldX - firstFieldX >= widthInColumns) {
+          break;
+        }
 
         index_to_component_to_visualize_dict[
           schematizeComponent.index
         ] = schematizeComponent;
-      } else if (schematizeComponent.firstBin > this.props.store.getEndBin()) {
-        // The components to visualized was already taken
-        break;
+
+        newEndBin = schematizeComponent.lastBin;
       }
+
+      //console.log('newEndBin: ' + newEndBin)
     }
 
     //console.log(this.schematic.components.length)
     //console.log(this.props.store.getBeginBin() + ' - ' + this.props.store.getEndBin())
     //console.log('index_to_component_to_visualize_dict: '  + Object.keys(index_to_component_to_visualize_dict))
+
+    return newEndBin;
   }
 
   /** Compares bin2file @param indexContents with the beginBin and EndBin.
@@ -174,15 +196,14 @@ class App extends Component {
       this.props.store.chunkIndex["zoom_levels"].keys()
     );
 
-    const deviceWidth = window.innerWidth;
+    const widthInColumns = window.innerWidth / this.props.store.pixelsPerColumn;
 
     const selZoomLev = this.props.store.getSelectedZoomLevel();
-    let [newEndBin, fileArray, fileArrayFasta] = calculateEndBinFromScreen(
+    let [fileArray, fileArrayFasta] = calculateEndBinFromScreen(
       beginBin,
-      this.props.store.getEndBin(),
       selZoomLev,
       this.props.store,
-      deviceWidth
+      widthInColumns
     );
     this.props.store.setLastBinPangenome(
       this.props.store.chunkIndex.zoom_levels.get(selZoomLev)["last_bin"]
@@ -198,18 +219,15 @@ class App extends Component {
         Math.round((beginBin - 1) * scaling_factor),
         Math.round((this.props.store.getEndBin() - 1) * scaling_factor)
       );
-    } else if (this.props.store.getEndBin() !== newEndBin) {
-      bin_range_changed = this.props.store.updateBeginEndBin(
-        beginBin,
-        newEndBin
-      );
     }
-
-    console.log("newEndBin: " + newEndBin);
 
     // To avoid to do the preparation and the following operations two times
     if (!bin_range_changed) {
-      this.prepareWhichComponentsToVisualize();
+      const newEndBin = this.prepareWhichComponentsToVisualize(widthInColumns);
+
+      if (this.props.store.getEndBin() !== newEndBin) {
+        this.props.store.updateBeginEndBin(beginBin, newEndBin);
+      }
 
       //console.log([selZoomLev, endBin, fileArray, fileArrayFasta]);
       let URLprefix =
@@ -257,7 +275,14 @@ class App extends Component {
 
   updateSchematicMetadata() {
     if (
-      arraysEqual(this.props.store.chunkURLs, this.props.store.chunksProcessed)
+      arraysEqual(
+        this.props.store.chunkURLs,
+        this.props.store.chunksProcessed
+      ) &&
+      arraysEqual(
+        this.props.store.chunkFastaURLs,
+        this.props.store.chunksProcessedFasta
+      )
     ) {
       console.log(
         "updateSchematicMetadata #components: " +
@@ -267,7 +292,9 @@ class App extends Component {
         "STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final rendering info for this loaded chunks"
       );
 
-      this.prepareWhichComponentsToVisualize();
+      this.prepareWhichComponentsToVisualize(
+        window.innerWidth / this.props.store.pixelsPerColumn
+      );
 
       // console.log(this.schematic.components);
       this.setState(

@@ -1,6 +1,6 @@
 import React from "react";
-import {observe} from "mobx";
-import {urlExists} from "./URL";
+import { observe } from "mobx";
+import { urlExists } from "./URL";
 
 class PangenomeSchematic extends React.Component {
   constructor(props) {
@@ -42,7 +42,7 @@ class PangenomeSchematic extends React.Component {
     console.log("STEP #1: whenever jsonName changes, loadIndexFile");
 
     let indexPath =
-        process.env.PUBLIC_URL + "/test_data/" + jsonFilename + "/bin2file.json";
+      process.env.PUBLIC_URL + "/test_data/" + jsonFilename + "/bin2file.json";
     //console.log("loadIndexFile - START reading", indexPath);
 
     return fetch(indexPath)
@@ -61,7 +61,7 @@ class PangenomeSchematic extends React.Component {
         "No filepath given. Ensure chunknames in bin2file.json are correct."
       );
     console.log("Fetching", filepath);
-      return fetch(filepath).then((res) => res.json());
+    return fetch(filepath).then((res) => res.json());
   }
 
   loadJsonCache(url, data) {
@@ -69,7 +69,7 @@ class PangenomeSchematic extends React.Component {
 
     if (data.json_version !== 17) {
       throw MediaError(
-          "Wrong Data JSON version: was expecting version 17, got " +
+        "Wrong Data JSON version: was expecting version 17, got " +
         data.json_version +
         ".  " +
         "This version added x and compressedX fields for the chunks too.  " + // KEEP THIS UP TO DATE!
@@ -107,7 +107,8 @@ class PangenomeSchematic extends React.Component {
             //split into array of nucleotides
             this.nucleotides.push(...sequence);
 
-            console.log("loadFasta - END: ", path_fasta);
+            //console.log("loadFasta - END: ", path_fasta);
+            this.props.store.addChunkProcessedFasta(path_fasta);
           });
       }
     }
@@ -123,8 +124,8 @@ class PangenomeSchematic extends React.Component {
     console.log(
       "STEP #7: JsonCache causes processArray to update chunksProcessed"
     );
-    let store = this.props.store;
-    let [beginBin, endBin] = [store.getBeginBin(), store.getEndBin()];
+    const store = this.props.store;
+    const [beginBin, endBin] = [store.getBeginBin(), store.getEndBin()];
 
     if (
       store.chunksProcessed.length === 0 ||
@@ -142,11 +143,6 @@ class PangenomeSchematic extends React.Component {
         if (store.chunkURLs[urlIndex] in this.jsonCache) {
           let url = store.chunkURLs[urlIndex];
           let jsonChunk = this.jsonCache[url];
-
-          /*console.log(
-            "processArray - jsonChunk.components[0].x: " +
-              jsonChunk.components[0].x
-          );*/
 
           // At the moment, the index is used as a rank of the component, then it has to be progressive between chunks
           const num_components_already_loaded =

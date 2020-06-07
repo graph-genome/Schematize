@@ -32,7 +32,6 @@ RootStore = types
   .model({
     chunkIndex: ChunkIndex,
     beginEndBin: types.optional(types.array(types.integer), [1, 100]),
-    maxWidthBinRange: 99,
     useVerticalCompression: false,
     useWidthCompression: false,
     binScalingFactor: 3,
@@ -52,6 +51,7 @@ RootStore = types
     chunkFastaURLs: types.optional(types.array(types.string), []),
     //to be compared against chunkURLs
     chunksProcessed: types.optional(types.array(types.string), []),
+    chunksProcessedFasta: types.optional(types.array(types.string), []),
 
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
@@ -105,17 +105,17 @@ RootStore = types
       /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
 
       newBegin = Math.min(
-        self.last_bin_pangenome,
+        self.last_bin_pangenome - 1,
         Math.max(1, Math.round(newBegin))
       );
 
       // So that the end bin is at the most the end of the pangenome
-      if (newEnd > self.last_bin_pangenome) {
+      /*if (newEnd > self.last_bin_pangenome) {
         let excess_bins = newEnd - self.last_bin_pangenome;
 
         newBegin = Math.max(1, newBegin - excess_bins);
         newEnd = Math.max(2, newEnd - excess_bins);
-      }
+      }*/
 
       if (newBegin !== beginBin || newEnd !== endBin) {
         setBeginEndBin(newBegin, newEnd);
@@ -182,7 +182,8 @@ RootStore = types
       if (!arraysEqual(arrayOfFile, self.chunkURLs)) {
         console.log("STEP #4: Set switchChunkURLs: " + arrayOfFile);
         self.chunkURLs = arrayOfFile;
-        self.chunksProcessed = []; //clear
+
+        self.chunksProcessed = []; // Clear
 
         return true;
       }
@@ -192,11 +193,17 @@ RootStore = types
       if (!arraysEqual(arrayOfFile, self.chunkFastaURLs)) {
         console.log("STEP #4.fasta: Set switchChunkFastaURLs: " + arrayOfFile);
         self.chunkFastaURLs = arrayOfFile;
+
+        self.chunksProcessedFasta = []; // Clear
       }
     }
     function addChunkProcessed(singleChunk) {
       console.log("STEP #7: processed " + singleChunk);
       self.chunksProcessed.push(singleChunk);
+    }
+    function addChunkProcessedFasta(singleChunkFasta) {
+      console.log("STEP #7.FASTA: processed " + singleChunkFasta);
+      self.chunksProcessedFasta.push(singleChunkFasta);
     }
     function getBeginBin() {
       return self.beginEndBin[0];
@@ -271,6 +278,7 @@ RootStore = types
       switchChunkURLs,
       switchChunkFastaURLs,
       addChunkProcessed,
+      addChunkProcessedFasta,
 
       getBeginBin,
       getEndBin,

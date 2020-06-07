@@ -163,6 +163,9 @@ class ControlHeader extends React.Component {
             &gt;&gt;
           </button>
         </span>
+        <span style={{ marginLeft: "30px" }}>
+          Pangenome Last Bin Position: {this.props.store.last_bin_pangenome}
+        </span>
         <div className={"row"}>
           Jump to path at nucleotide position:
           <span className="myarrow">
