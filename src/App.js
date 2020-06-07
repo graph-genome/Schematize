@@ -110,11 +110,11 @@ class App extends Component {
       this.openRelevantChunksFromIndex.bind(this)
     );
 
-    /*observe(
+    observe(
       this.props.store,
       "indexSelectedZoomLevel",
       this.openRelevantChunksFromIndex.bind(this) // Whenever the selected zoom level changes
-    );*/
+    );
     observe(
       this.props.store.beginEndBin, //user moves start position
       //This following part is important to scroll right and left on browser
@@ -178,7 +178,7 @@ class App extends Component {
   /** Compares bin2file @param indexContents with the beginBin and EndBin.
    * It finds the appropriate chunk URLS from the index and updates
    * switchChunkURLs which trigger json fetches for the new chunks. **/
-  openRelevantChunksFromIndex(lastIndexSelectedZoomLevel = -1) {
+  openRelevantChunksFromIndex() {
     console.log(
       "STEP #3: with new chunkIndex, this.openRelevantChunksFromIndex()"
     );
@@ -209,20 +209,19 @@ class App extends Component {
       this.props.store.chunkIndex.zoom_levels.get(selZoomLev)["last_bin"]
     );
 
-    let bin_range_changed = false;
-    if (lastIndexSelectedZoomLevel > -1) {
-      const scaling_factor =
-        this.props.store.getSelectedZoomLevel(lastIndexSelectedZoomLevel) /
-        this.props.store.getSelectedZoomLevel();
-      console.log("scaling_factor: " + scaling_factor);
-      bin_range_changed = this.props.store.updateBeginEndBin(
+    const scaling_factor =
+      this.props.store.getSelectedZoomLevel(true) /
+      this.props.store.getSelectedZoomLevel();
+
+    console.log("scaling_factor: " + scaling_factor);
+
+    if (scaling_factor !== 1) {
+      this.props.store.updateBeginEndBin(
         Math.round((beginBin - 1) * scaling_factor),
         Math.round((this.props.store.getEndBin() - 1) * scaling_factor)
       );
-    }
-
-    // To avoid to do the preparation and the following operations two times
-    if (!bin_range_changed) {
+      // The updating will re-trigger openRelevantChunksFromIndex
+    } else {
       const newEndBin = this.prepareWhichComponentsToVisualize(widthInColumns);
 
       if (this.props.store.getEndBin() !== newEndBin) {
@@ -789,13 +788,7 @@ class App extends Component {
             minWidth: "100%",
           }}
         >
-          <ControlHeader
-            store={this.props.store}
-            openRelevantChunksFromIndex={(lastIndexSelectedZoomLevel) =>
-              this.openRelevantChunksFromIndex(lastIndexSelectedZoomLevel)
-            }
-            schematic={this.schematic}
-          />
+          <ControlHeader store={this.props.store} schematic={this.schematic} />
 
           <Stage
             x={this.props.store.leftOffset}

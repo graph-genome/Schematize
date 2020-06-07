@@ -46,7 +46,10 @@ RootStore = types
     jsonName: "SARS-CoV-b-v17",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
+
+    precIndexSelectedZoomLevel: 0,
     indexSelectedZoomLevel: 0,
+
     chunkURLs: types.optional(types.array(types.string), []),
     chunkFastaURLs: types.optional(types.array(types.string), []),
     //to be compared against chunkURLs
@@ -224,17 +227,24 @@ RootStore = types
       //Zoom level and BinWidth are actually the same thing
       return Number(self.getSelectedZoomLevel());
     }
-    function getSelectedZoomLevel(indexSelectedZoomLevel = -1) {
+    function getSelectedZoomLevel(get_prec_zoom_level = false) {
       //This is a genuinely useful getter
       let a =
         self.availableZoomLevels[
-          indexSelectedZoomLevel > -1
-            ? indexSelectedZoomLevel
+          get_prec_zoom_level
+            ? self.precIndexSelectedZoomLevel
             : self.indexSelectedZoomLevel
         ];
+
+      // Clear precIndexSelectedZoomLevel (it is usable only one time)
+      if (get_prec_zoom_level) {
+        self.precIndexSelectedZoomLevel = self.indexSelectedZoomLevel;
+      }
+
       return a ? a : "1";
     }
     function setIndexSelectedZoomLevel(index) {
+      self.precIndexSelectedZoomLevel = self.indexSelectedZoomLevel;
       self.indexSelectedZoomLevel = index;
     }
 

@@ -47,12 +47,6 @@ class ControlHeader extends React.Component {
     httpGetAsync(addr + path_name + "/" + nuc_pos, handleOdgiServerResponse);
   }
 
-  _change_zoom_level(newIndexSelectedZoomLevel) {
-    const lastIndexSelectedZoomLevel = this.props.store.indexSelectedZoomLevel;
-    this.props.store.setIndexSelectedZoomLevel(newIndexSelectedZoomLevel);
-    this.props.openRelevantChunksFromIndex(lastIndexSelectedZoomLevel);
-  }
-
   change_zoom_level(target) {
     console.log(
       "change_zoom_level: " +
@@ -61,20 +55,20 @@ class ControlHeader extends React.Component {
         target.options[target.selectedIndex].text
     );
 
-    this._change_zoom_level(parseInt(target.value));
+    this.props.store.setIndexSelectedZoomLevel(parseInt(target.value));
   }
 
   decIndexSelectedZoomLevel() {
     let indexSelZoomLevel = this.props.store.indexSelectedZoomLevel;
     if (indexSelZoomLevel > 0) {
-      this._change_zoom_level(indexSelZoomLevel - 1);
+      this.props.store.setIndexSelectedZoomLevel(indexSelZoomLevel - 1);
     }
   }
 
   incIndexSelectedZoomLevel() {
     let indexSelZoomLevel = this.props.store.indexSelectedZoomLevel;
     if (indexSelZoomLevel < this.props.store.availableZoomLevels.length - 1) {
-      this._change_zoom_level(indexSelZoomLevel + 1);
+      this.props.store.setIndexSelectedZoomLevel(indexSelZoomLevel + 1);
     }
   }
 
