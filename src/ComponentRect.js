@@ -1,28 +1,27 @@
 /* eslint-disable require-jsdoc */
 import React from "react";
-import {Rect} from "react-konva";
-import {ConnectorRect} from "./ComponentConnectorRect";
-import {SpanCell} from "./SpanCell";
+import { Rect } from "react-konva";
+import { ConnectorRect } from "./ComponentConnectorRect";
+import { SpanCell } from "./SpanCell";
 import PropTypes from "prop-types";
-import {sum} from "./utilities";
+import { sum } from "./utilities";
 
 export function compress_visible_rows(components) {
   /*Returns a Map with key of the original row number and value of the new, compressed row number.
    * Use this for y values of occupancy and LinkColumn cells.  */
   let all_visible = new Set();
   for (let c of components) {
-      for (let row of c.occupants) {
-          all_visible.add(row);
-      }
+    for (let row of c.occupants) {
+      all_visible.add(row);
+    }
   }
   let sorted = Array.from(all_visible).sort();
   let row_mapping = {};
   for (let [count, index] of sorted.entries()) {
-      row_mapping[index] = count;
+    row_mapping[index] = count;
   }
   return row_mapping;
 }
-
 
 class ComponentRect extends React.Component {
   state = {
@@ -40,35 +39,38 @@ class ComponentRect extends React.Component {
   renderMatrix() {
     let parts = this.props.item.matrix.map((entry, vertical_rank) => {
       let row_n = entry[0];
-        return this.renderMatrixRow(entry[1], vertical_rank, row_n);
+      return this.renderMatrixRow(entry[1], vertical_rank, row_n);
     });
-      this.props.store.updateMaxHeight(this.props.item.occupants.length); //Set max observed occupants in mobx store for render height
+    this.props.store.updateMaxHeight(this.props.item.occupants.length); //Set max observed occupants in mobx store for render height
     return <>{parts}</>;
   }
 
-    renderMatrixRow(entry, verticalRank, uncompressed_y) {
-        let this_y = verticalRank;
-        if (!this.props.store.useVerticalCompression) {
-            if (!this.props.compressed_row_mapping.hasOwnProperty(uncompressed_y)) {
-                return null; // we need compressed_y and we don't have it.  give up
-            }
-            this_y = this.props.compressed_row_mapping[uncompressed_y];
-        }
-        return <SpanCell
-            key={"occupant" + uncompressed_y}
-            row={entry[1]}
-            iColumns={entry[0]}
-            parent={this.props.item}
-            store={this.props.store}
-            pathName={this.props.pathNames[uncompressed_y]}
-            x={this.props.item.relativePixelX +
-            this.props.item.arrivals.length * this.props.store.pixelsPerColumn}
-            y={this_y * this.props.store.pixelsPerRow +
-            this.props.store.topOffset}
-            rowNumber={uncompressed_y}
-            verticalRank={verticalRank}
-        />
+  renderMatrixRow(entry, verticalRank, uncompressed_y) {
+    let this_y = verticalRank;
+    if (!this.props.store.useVerticalCompression) {
+      if (!this.props.compressed_row_mapping.hasOwnProperty(uncompressed_y)) {
+        return null; // we need compressed_y and we don't have it.  give up
+      }
+      this_y = this.props.compressed_row_mapping[uncompressed_y];
     }
+    return (
+      <SpanCell
+        key={"occupant" + uncompressed_y}
+        row={entry[1]}
+        iColumns={entry[0]}
+        parent={this.props.item}
+        store={this.props.store}
+        pathName={this.props.pathNames[uncompressed_y]}
+        x={
+          this.props.item.relativePixelX +
+          this.props.item.arrivals.length * this.props.store.pixelsPerColumn
+        }
+        y={this_y * this.props.store.pixelsPerRow + this.props.store.topOffset}
+        rowNumber={uncompressed_y}
+        verticalRank={verticalRank}
+      />
+    );
+  }
 
   renderAllConnectors() {
     const departures = this.props.item.departures;
@@ -77,15 +79,16 @@ class ComponentRect extends React.Component {
       //count starts at the sum(sum(departure columns)) so that it's clear
       // adjacent connectors are alternatives to LinkColumns
       //offset the y to start below link columns when using vertical compression
-      let yOffset = departures.slice(0, -1)
-          .map((column) => {
-            return column.participants.length;
-          })
-          .reduce(sum, 0); // sum of trues in all columns
+      let yOffset = departures
+        .slice(0, -1)
+        .map((column) => {
+          return column.participants.length;
+        })
+        .reduce(sum, 0); // sum of trues in all columns
       return (
         <>
           {connectorsColumn.participants.map((uncompressed_row) => {
-            yOffset++;// only used in vertical compression
+            yOffset++; // only used in vertical compression
             return this.renderComponentConnector(yOffset, uncompressed_row);
           })}
         </>
@@ -113,12 +116,12 @@ class ComponentRect extends React.Component {
     }
     return (
       <ConnectorRect
-          key={"connector" + uncompressedRow}
-          x={x_val}
-          y={this.props.store.topOffset + this_y * this.props.store.pixelsPerRow}
-          width={this.props.store.pixelsPerColumn} //Clarified and corrected adjacent connectors as based on pixelsPerColumn width #9
-          height={this.props.store.pixelsPerRow}
-          color={"#AAAABE"}
+        key={"connector" + uncompressedRow}
+        x={x_val}
+        y={this.props.store.topOffset + this_y * this.props.store.pixelsPerRow}
+        width={this.props.store.pixelsPerColumn} //Clarified and corrected adjacent connectors as based on pixelsPerColumn width #9
+        height={this.props.store.pixelsPerRow}
+        color={"#AAAABE"}
       />
     );
   }
@@ -134,11 +137,23 @@ class ComponentRect extends React.Component {
           height={this.props.height - 2} //TODO: change to compressed height
           fill={this.state.color}
           onClick={this.handleClick}
+          onMouseMove={this.onHover.bind(this)}
+          onMouseLeave={this.onLeave.bind(this)}
         />
         {!this.props.store.useWidthCompression ? this.renderMatrix() : null}
         {this.props.store.useConnector ? this.renderAllConnectors() : null}
       </>
     );
+  }
+
+  onHover() {
+    this.props.store.updateCellTooltipContent(
+      "Bin range: " + this.props.item.firstBin + " - " + this.props.item.lastBin
+    );
+  }
+
+  onLeave() {
+    this.props.store.updateCellTooltipContent(""); // we don't want any tooltip displayed if we leave the cell
   }
 }
 
