@@ -151,6 +151,9 @@ class App extends Component {
 
         if (firstFieldX === -1) {
           firstFieldX = fieldX;
+
+          // The first component can be partially visualized
+          widthInColumns += this._column_shift(schematizeComponent);
         }
 
         /*console.log("fieldX: " + fieldX);
