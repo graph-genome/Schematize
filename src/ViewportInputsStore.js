@@ -108,7 +108,7 @@ RootStore = types
         newEnd = newBegin + 15000;
       }
 
-      // TODO: manage a maxBeginBin based on the width of the last components in the genome
+      // TODO: manage a maxBeginBin based on the width of the last components in the pangenome
       newBegin = Math.min(
         self.last_bin_pangenome - 1,
         Math.max(1, Math.round(newBegin))

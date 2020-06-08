@@ -130,3 +130,15 @@ export function stringToColourSave(colorKey) {
   }
   return colour;
 }
+
+// From https://stackoverflow.com/questions/42623071/maximum-call-stack-size-exceeded-with-math-min-and-math-max/52613386#52613386
+// Not-recursive implementation of Math.max to avoid 'RangeError: Maximum call stack size exceeded' for big arrays
+export function getMax(arr) {
+  let len = arr.length;
+  let max = -Infinity;
+
+  while (len--) {
+    max = arr[len] > max ? arr[len] : max;
+  }
+  return max;
+}
