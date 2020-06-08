@@ -341,36 +341,39 @@ class App extends Component {
       );
     }
 
-    const first_visualized_component = Object.values(
-      index_to_component_to_visualize_dict
-    )[0];
-    const last_visualized_component = Object.values(
-      index_to_component_to_visualize_dict
-    )[Object.values(index_to_component_to_visualize_dict).length - 1];
+    let actualWidth = 0;
+    if (Object.values(index_to_component_to_visualize_dict).length > 0) {
+      // The actualWidth is calculated on the visualized components
 
-    // The actualWidth is calculated on the visualized components
-    const columnsInComponents =
-      last_visualized_component.getColumnX(
-        this.props.store.useWidthCompression
-      ) -
-      first_visualized_component.getColumnX(
-        this.props.store.useWidthCompression
-      ) +
-      last_visualized_component.arrivals.length +
-      last_visualized_component.departures.length +
-      (this.props.store.useWidthCompression
-        ? this.props.store.binScalingFactor
-        : last_visualized_component.num_bin) -
-      this._column_shift(first_visualized_component);
+      const first_visualized_component = Object.values(
+        index_to_component_to_visualize_dict
+      )[0];
+      const last_visualized_component = Object.values(
+        index_to_component_to_visualize_dict
+      )[Object.values(index_to_component_to_visualize_dict).length - 1];
 
-    //TO_DO: to remove?
-    /*const paddingBetweenComponents =
-      this.props.store.pixelsPerColumn * this.schematic.components.length;*/
-    const actualWidth = columnsInComponents * this.props.store.pixelsPerColumn;
-    //+ paddingBetweenComponents;
+      const columnsInComponents =
+        last_visualized_component.getColumnX(
+          this.props.store.useWidthCompression
+        ) -
+        first_visualized_component.getColumnX(
+          this.props.store.useWidthCompression
+        ) +
+        last_visualized_component.arrivals.length +
+        last_visualized_component.departures.length +
+        (this.props.store.useWidthCompression
+          ? this.props.store.binScalingFactor
+          : last_visualized_component.num_bin) -
+        this._column_shift(first_visualized_component);
+
+      actualWidth = columnsInComponents * this.props.store.pixelsPerColumn;
+      //+ paddingBetweenComponents;
+    }
+
     this.setState({
       actualWidth: actualWidth,
     });
+
     const [links, top] = calculateLinkCoordinates(
       this.schematic.components,
       this.props.store.pixelsPerColumn,

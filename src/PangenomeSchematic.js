@@ -79,7 +79,7 @@ class PangenomeSchematic extends React.Component {
     }
     this.jsonCache[url] = data;
     this.pathNames = data.path_names; //TODO: in later JSON versions path_names gets moved to bin2file.json
-    console.log(this.pathNames.length, " path names loaded");
+    //console.log(this.pathNames.length, " path names loaded");
     this.processArray();
   }
 
@@ -125,16 +125,16 @@ class PangenomeSchematic extends React.Component {
       "STEP #7: JsonCache causes processArray to update chunksProcessed"
     );
     const store = this.props.store;
-    const [beginBin, endBin] = [store.getBeginBin(), store.getEndBin()];
 
     if (
       store.chunksProcessed.length === 0 ||
-      store.chunksProcessed[0] !== this.props.store.chunkURLs[0]
+      store.chunksProcessed[0] !== store.chunkURLs[0]
     ) {
       this.components = []; // clear all pre-render data
     }
+
     // may have additional chunks to pre-render
-    console.log("processArray - parsing components ", beginBin, " - ", endBin);
+    //console.log("processArray - parsing components ", store.getBeginBin(), " - ", store.getEndBin());
 
     for (let urlIndex = 0; urlIndex < store.chunkURLs.length; urlIndex++) {
       //if end of pre-render is earlier than end of contiguous available chunks, process new data
