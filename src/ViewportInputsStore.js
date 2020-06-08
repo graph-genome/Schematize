@@ -1,6 +1,6 @@
 import { types } from "mobx-state-tree";
 import { urlExists } from "./URL";
-import { arraysEqual, checkAndForceMinOrMaxValue } from "./utilities";
+import { arraysEqual, checkAndForceMinOrMaxValue, isInt } from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
@@ -103,9 +103,10 @@ RootStore = types
 
       console.log("updateBeginEndBin - " + newBegin + " - " + newEnd);
 
-      // To avoid too many columns to render
-      if (newEnd - newBegin > 15000) {
-        newEnd = newBegin + 15000;
+      // Sometimes, typing new bin, it arrives something that is not a valid integer
+      if (!isInt(newBegin) || !isInt(newEnd)) {
+        newBegin = 1;
+        newEnd = 100;
       }
 
       // TODO: manage a maxBeginBin based on the width of the last components in the pangenome
@@ -113,14 +114,6 @@ RootStore = types
         self.last_bin_pangenome - 1,
         Math.max(1, Math.round(newBegin))
       );
-
-      // So that the end bin is at the most the end of the pangenome
-      /*if (newEnd > self.last_bin_pangenome) {
-        let excess_bins = newEnd - self.last_bin_pangenome;
-
-        newBegin = Math.max(1, newBegin - excess_bins);
-        newEnd = Math.max(2, newEnd - excess_bins);
-      }*/
 
       setBeginEndBin(newBegin, newEnd);
     }

@@ -34,6 +34,16 @@ export function areOverlapping(startA, endA, startB, endB) {
   }
 }
 
+// Short-circuiting, and saving a parse operation
+export function isInt(value) {
+  var x;
+  if (isNaN(value)) {
+    return false;
+  }
+  x = parseFloat(value);
+  return (x | 0) === x;
+}
+
 export function calculateEndBinFromScreen(
   beginBin,
   selZoomLev,

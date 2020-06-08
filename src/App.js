@@ -76,17 +76,24 @@ class App extends Component {
     //STEP #5: once ChunkURLs are listed, go fetchAllChunks
     observe(this.props.store.chunkURLs, this.fetchAllChunks.bind(this));
 
-    // observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this));
     observe(
       this.props.store,
       "useVerticalCompression",
       this.updateSchematicMetadata.bind(this)
     );
-    observe(this.props.store, "useWidthCompression", () => {
-      this.openRelevantChunksFromIndex();
-    });
+    observe(
+      this.props.store,
+      "useWidthCompression",
+      this.openRelevantChunksFromIndex.bind(this)
+    );
+
     observe(this.props.store, "useConnector", this.recalcXLayout.bind(this)); //TODO faster rerender
-    observe(this.props.store, "pixelsPerColumn", this.recalcXLayout.bind(this)); //TODO faster rerender
+
+    observe(
+      this.props.store,
+      "pixelsPerColumn",
+      this.openRelevantChunksFromIndex.bind(this)
+    ); //TODO faster rerender
     observe(this.props.store, "pixelsPerRow", this.recalcY.bind(this)); //TODO faster rerender
 
     //STEP #8: chunksProcessed finishing triggers updateSchematicMetadata with final
