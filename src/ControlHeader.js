@@ -204,7 +204,7 @@ class ControlHeader extends React.Component {
         <div className={"row"}>
           <span>
             {" "}
-            Use Vertical Compression:
+            Allele Frequency Histogram:
             <VerticalCompressedViewSwitch store={this.props.store} />
           </span>
           <span>
