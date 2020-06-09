@@ -1,0 +1,96 @@
+[04/06/2020 10:57:38 - INFO - __main__ - 386] reading data/odgi_1316.w4.json...
+
+[04/06/2020 10:57:55 - INFO - __main__ - 94] Starting Segmentation process on 1190 Paths.
+[04/06/2020 10:57:55 - INFO - __main__ - 244] Largest bin_id was 32420; Found 250 dividers.
+[04/06/2020 10:57:55 - INFO - __main__ - 249] Input has 1188370 listed Links.  Segmentation eliminated 99.5558622314599% of them.
+[04/06/2020 10:57:55 - INFO - __main__ - 251] Found 4094 unique links
+[04/06/2020 10:57:55 - INFO - __main__ - 102] Created dividers
+[04/06/2020 10:57:55 - INFO - __main__ - 115] Created 558 components
+[04/06/2020 10:57:58 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[04/06/2020 10:57:58 - INFO - __main__ - 119] populated matrix
+[04/06/2020 10:57:58 - INFO - __main__ - 149] Created 1110 LinkColumns
+[04/06/2020 10:58:09 - INFO - __main__ - 396] Finished processing the file data/odgi_1316.w4.json
+[04/06/2020 10:58:09 - INFO - __main__ - 386] reading data/odgi_1316.w1.json...
+
+[04/06/2020 10:59:08 - INFO - __main__ - 94] Starting Segmentation process on 1190 Paths.
+[04/06/2020 10:59:08 - INFO - __main__ - 244] Largest bin_id was 129679; Found 330 dividers.
+[04/06/2020 10:59:08 - INFO - __main__ - 249] Input has 2599171 listed Links.  Segmentation eliminated 99.7964350941127% of them.
+[04/06/2020 10:59:08 - INFO - __main__ - 251] Found 4112 unique links
+[04/06/2020 10:59:08 - INFO - __main__ - 102] Created dividers
+[04/06/2020 10:59:08 - INFO - __main__ - 115] Created 1592 components
+[04/06/2020 10:59:18 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[04/06/2020 10:59:18 - INFO - __main__ - 119] populated matrix
+[04/06/2020 10:59:18 - INFO - __main__ - 149] Created 2226 LinkColumns
+[04/06/2020 11:00:00 - INFO - __main__ - 396] Finished processing the file data/odgi_1316.w1.json
+[04/06/2020 11:00:00 - INFO - __main__ - 386] reading data/odgi_1316.w1000.json...
+
+[04/06/2020 11:00:00 - INFO - __main__ - 94] Starting Segmentation process on 1190 Paths.
+[04/06/2020 11:00:00 - INFO - __main__ - 244] Largest bin_id was 130; Found 10 dividers.
+[04/06/2020 11:00:00 - INFO - __main__ - 249] Input has 8669 listed Links.  Segmentation eliminated 96.94313069558196% of them.
+[04/06/2020 11:00:00 - INFO - __main__ - 251] Found 265 unique links
+[04/06/2020 11:00:00 - INFO - __main__ - 102] Created dividers
+[04/06/2020 11:00:00 - INFO - __main__ - 115] Created 11 components
+[04/06/2020 11:00:01 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[04/06/2020 11:00:01 - INFO - __main__ - 119] populated matrix
+[04/06/2020 11:00:01 - INFO - __main__ - 149] Created 31 LinkColumns
+[04/06/2020 11:00:02 - INFO - __main__ - 396] Finished processing the file data/odgi_1316.w1000.json
+[04/06/2020 11:00:02 - INFO - __main__ - 386] reading data/odgi_1316.w4000.json...
+
+[04/06/2020 11:00:02 - INFO - __main__ - 94] Starting Segmentation process on 1190 Paths.
+[04/06/2020 11:00:02 - INFO - __main__ - 244] Largest bin_id was 33; Found 3 dividers.
+[04/06/2020 11:00:02 - INFO - __main__ - 249] Input has 5031 listed Links.  Segmentation eliminated 94.79228781554363% of them.
+[04/06/2020 11:00:02 - INFO - __main__ - 251] Found 262 unique links
+[04/06/2020 11:00:02 - INFO - __main__ - 102] Created dividers
+[04/06/2020 11:00:02 - INFO - __main__ - 115] Created 3 components
+[04/06/2020 11:00:02 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[04/06/2020 11:00:02 - INFO - __main__ - 119] populated matrix
+[04/06/2020 11:00:02 - INFO - __main__ - 149] Created 7 LinkColumns
+[04/06/2020 11:00:02 - INFO - __main__ - 396] Finished processing the file data/odgi_1316.w4000.json
+[04/06/2020 11:00:02 - INFO - __main__ - 386] reading data/odgi_1316.w16000.json...
+
+[04/06/2020 11:00:02 - INFO - __main__ - 94] Starting Segmentation process on 1190 Paths.
+[04/06/2020 11:00:02 - INFO - __main__ - 244] Largest bin_id was 9; Found 2 dividers.
+[04/06/2020 11:00:02 - INFO - __main__ - 249] Input has 2642 listed Links.  Segmentation eliminated 90.08327024981075% of them.
+[04/06/2020 11:00:02 - INFO - __main__ - 251] Found 262 unique links
+[04/06/2020 11:00:02 - INFO - __main__ - 102] Created dividers
+[04/06/2020 11:00:02 - INFO - __main__ - 115] Created 2 components
+[04/06/2020 11:00:02 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[04/06/2020 11:00:02 - INFO - __main__ - 119] populated matrix
+[04/06/2020 11:00:02 - INFO - __main__ - 149] Created 4 LinkColumns
+[04/06/2020 11:00:03 - INFO - __main__ - 396] Finished processing the file data/odgi_1316.w16000.json
+[04/06/2020 11:00:03 - INFO - __main__ - 386] reading data/odgi_1316.w256.json...
+
+[04/06/2020 11:00:03 - INFO - __main__ - 94] Starting Segmentation process on 1190 Paths.
+[04/06/2020 11:00:03 - INFO - __main__ - 244] Largest bin_id was 507; Found 26 dividers.
+[04/06/2020 11:00:03 - INFO - __main__ - 249] Input has 47056 listed Links.  Segmentation eliminated 93.9858891533492% of them.
+[04/06/2020 11:00:03 - INFO - __main__ - 251] Found 2801 unique links
+[04/06/2020 11:00:03 - INFO - __main__ - 102] Created dividers
+[04/06/2020 11:00:03 - INFO - __main__ - 115] Created 30 components
+[04/06/2020 11:00:04 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[04/06/2020 11:00:04 - INFO - __main__ - 119] populated matrix
+[04/06/2020 11:00:04 - INFO - __main__ - 149] Created 112 LinkColumns
+[04/06/2020 11:00:04 - INFO - __main__ - 396] Finished processing the file data/odgi_1316.w256.json
+[04/06/2020 11:00:04 - INFO - __main__ - 386] reading data/odgi_1316.w16.json...
+
+[04/06/2020 11:00:10 - INFO - __main__ - 94] Starting Segmentation process on 1190 Paths.
+[04/06/2020 11:00:10 - INFO - __main__ - 244] Largest bin_id was 8105; Found 130 dividers.
+[04/06/2020 11:00:10 - INFO - __main__ - 249] Input has 714535 listed Links.  Segmentation eliminated 99.26931500906184% of them.
+[04/06/2020 11:00:10 - INFO - __main__ - 251] Found 4038 unique links
+[04/06/2020 11:00:10 - INFO - __main__ - 102] Created dividers
+[04/06/2020 11:00:10 - INFO - __main__ - 115] Created 205 components
+[04/06/2020 11:00:11 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[04/06/2020 11:00:11 - INFO - __main__ - 119] populated matrix
+[04/06/2020 11:00:11 - INFO - __main__ - 149] Created 635 LinkColumns
+[04/06/2020 11:00:15 - INFO - __main__ - 396] Finished processing the file data/odgi_1316.w16.json
+[04/06/2020 11:00:15 - INFO - __main__ - 386] reading data/odgi_1316.w64.json...
+
+[04/06/2020 11:00:18 - INFO - __main__ - 94] Starting Segmentation process on 1190 Paths.
+[04/06/2020 11:00:18 - INFO - __main__ - 244] Largest bin_id was 2027; Found 57 dividers.
+[04/06/2020 11:00:18 - INFO - __main__ - 249] Input has 260748 listed Links.  Segmentation eliminated 98.0582784911102% of them.
+[04/06/2020 11:00:18 - INFO - __main__ - 251] Found 3868 unique links
+[04/06/2020 11:00:18 - INFO - __main__ - 102] Created dividers
+[04/06/2020 11:00:18 - INFO - __main__ - 115] Created 75 components
+[04/06/2020 11:00:18 - INFO - __main__ - 89] Populated Matrix and Occupancy per component per path.
+[04/06/2020 11:00:18 - INFO - __main__ - 119] populated matrix
+[04/06/2020 11:00:18 - INFO - __main__ - 149] Created 317 LinkColumns
+[04/06/2020 11:00:20 - INFO - __main__ - 396] Finished processing the file data/odgi_1316.w64.json
