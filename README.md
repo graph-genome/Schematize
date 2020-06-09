@@ -1,6 +1,8 @@
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+# Schematize
 
-This [project](https://graph-genome.github.io//project.html#teamwork-documents) was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Visualization component of Pangenome Schematics for 1,000s of individuals and gigabase genomes.
+
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 ## Getting Started
 
@@ -14,16 +16,15 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+The page will reload if you make edits. You will also see any lint errors in the console.
 
-### `npm run build`
+### Build
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm run build
+```
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Builds the app for production to the `build` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
 ## JBrowse2 Integration
 
