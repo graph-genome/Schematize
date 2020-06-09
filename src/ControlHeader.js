@@ -157,12 +157,6 @@ class ControlHeader extends React.Component {
             &gt;&gt;
           </button>
         </span>
-        <span style={{ marginLeft: "30px" }}>
-          Pangenome Length: {this.props.store.last_bin_pangenome}
-        </span>
-        <span style={{ marginLeft: "30px" }}>
-          Num. of individuals: {this.props.schematic.pathNames.length}
-        </span>
         <div className={"row"}>
           Jump to path at nucleotide position:
           <span className="myarrow">
@@ -202,6 +196,12 @@ class ControlHeader extends React.Component {
             <button className="button" onClick={() => this.handleJump()}>
               Jump
             </button>
+          </span>
+          <span style={{ marginLeft: "30px" }}>
+            Pangenome Last Bin: {this.props.store.last_bin_pangenome}
+          </span>
+          <span style={{ marginLeft: "30px" }}>
+            Num. of individuals: {this.props.schematic.pathNames.length}
           </span>
         </div>
         <div className={"row"}>
