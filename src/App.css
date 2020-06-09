@@ -21,4 +21,12 @@
   color: #09d3ac;
 }
 
-
+input::-webkit-calendar-picker-indicator {
+  display: none;/* remove default arrow */
+}
+.myarrow:after {
+    content: url(images/arrow.png);
+    margin-left: -20px; 
+    padding: .1em;
+    pointer-events:none;
+}

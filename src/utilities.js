@@ -14,6 +14,16 @@ export function arraysEqual(A, B) {
   );
 }
 
+export function checkAndForceMinOrMaxValue(value, minValue, maxValue) {
+  if (value < minValue) {
+    value = minValue;
+  } else if (value > maxValue) {
+    value = maxValue;
+  }
+
+  return value;
+}
+
 export function areOverlapping(startA, endA, startB, endB) {
   if (startB < startA) {
     return endB >= startA;
@@ -24,27 +34,63 @@ export function areOverlapping(startA, endA, startB, endB) {
   }
 }
 
-export function calculateEndBinFromScreen(beginBin, endBin, selZoomLev, store) {
+// Short-circuiting, and saving a parse operation
+export function isInt(value) {
+  var x;
+  if (isNaN(value)) {
+    return false;
+  }
+  x = parseFloat(value);
+  return (x | 0) === x;
+}
+
+export function calculateEndBinFromScreen(
+  beginBin,
+  selZoomLev,
+  store,
+  widthInColumns
+) {
+  //console.log("calculateEndBinFromScreen: widthInColumns --> " + widthInColumns);
+
   let chunkURLarray = [];
   let fileArrayFasta = [];
 
-  let level = store.chunkIndex.zoom_levels.get(selZoomLev);
+  let firstFieldX = -1;
+
+  const level = store.chunkIndex.zoom_levels.get(selZoomLev);
   //this loop will automatically cap out at the last bin of the file
   for (let ichunk = 0; ichunk < level.files.length; ichunk++) {
     // The "x" info is not here
-    let chunk = level.files[ichunk];
-    if (areOverlapping(beginBin, endBin, chunk.first_bin, chunk.last_bin)) {
+    const chunk = level.files[ichunk];
+
+    //if (areOverlapping(beginBin, endBin, chunk.first_bin, chunk.last_bin)){
+    if (chunk.last_bin >= beginBin) {
+      const fieldX = store.useWidthCompression ? chunk.compressedX : chunk.x;
+
+      if (firstFieldX === -1) {
+        firstFieldX = fieldX;
+      }
+
+      /*console.log("fieldX: " + fieldX);
+      console.log('fieldX - firstFieldX: ' + (fieldX - firstFieldX))
+      console.log("chunk.last_bin: " + chunk.last_bin);*/
+
       chunkURLarray.push(chunk["file"]);
       if (chunk.fasta !== null) {
         fileArrayFasta.push(chunk.fasta);
       }
+
+      // If the new chunck is outside the windows, the chunk-pushing is over
+      if (fieldX - firstFieldX >= widthInColumns) {
+        break;
+      }
     }
   }
 
-  // store.updateBeginEndBin(b, b + widthInCells);
+  // store.updateBeginEndBin(b, b + widthInColumns);
   //TODO the logic in let width = could be much more complex by looking at
   //width of components and whether various settings are on.  The consequence
-  //of overestimating widthInCells is to make the shift buttons step too big
+  //of overestimating widthInColumns is to make the shift buttons step too big
   return [chunkURLarray, fileArrayFasta];
 }
 
@@ -93,4 +139,16 @@ export function stringToColourSave(colorKey) {
     colour += ("00" + value.toString(16)).substr(-2);
   }
   return colour;
+}
+
+// From https://stackoverflow.com/questions/42623071/maximum-call-stack-size-exceeded-with-math-min-and-math-max/52613386#52613386
+// Not-recursive implementation of Math.max to avoid 'RangeError: Maximum call stack size exceeded' for big arrays
+export function getMax(arr) {
+  let len = arr.length;
+  let max = -Infinity;
+
+  while (len--) {
+    max = arr[len] > max ? arr[len] : max;
+  }
+  return max;
 }

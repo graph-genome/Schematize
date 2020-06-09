@@ -1,3 +1,5 @@
+import { getMax } from "./utilities";
+
 export class LinkRecord {
   constructor(linkColumn, xCoordArrival = 0, xCoordDeparture = 0, isArrival) {
     this.linkColumn = linkColumn;
@@ -93,15 +95,16 @@ function calculateLinkElevations(linkToXmapping, pixelsPerColumn, topOffset) {
    * This claims the "air space" for that link to travel through without colliding with anything.
    * The longest link should end up on top.  We'll probably need a "link gutter" maximum to keep
    * this from getting unreasonably tall.**/
-  let distanceSortedLinks = Object.values(linkToXmapping).sort(
+  const distanceSortedLinks = Object.values(linkToXmapping).sort(
     (a, b) => a.distance() - b.distance()
   );
-  let elevationOccupied = reserveElevationAirSpace(
+  const elevationOccupied = reserveElevationAirSpace(
     distanceSortedLinks,
     pixelsPerColumn,
     topOffset
   );
-  let top = Math.max(...elevationOccupied) + pixelsPerColumn * 3;
+  const top = getMax(elevationOccupied) + pixelsPerColumn * 3;
+
   return [distanceSortedLinks, top];
 }
 
@@ -112,10 +115,12 @@ function reserveElevationAirSpace(
 ) {
   /* Set up an array of zeros, then gradually fill it with height stacking
    * @Simon this section is largely done, it just needs a sorted distanceSortedLinks as input*/
-  let length = Math.max(
+
+  const length = Math.max(
     0,
-    ...distanceSortedLinks.map((x) => Math.max(x.xDepart, x.xArrival))
-  ); //this.props.endBin - this.props.beginBin;
+    getMax(distanceSortedLinks.map((x) => Math.max(x.xDepart, x.xArrival)))
+  );
+
   let elevationOccupied = new Array(length).fill(15);
   for (let record of distanceSortedLinks) {
     let linkBegin = Math.max(0, Math.min(record.xArrival, record.xDepart));

@@ -1,14 +1,14 @@
 import {types} from "mobx-state-tree";
 import {urlExists} from "./URL";
-import {arraysEqual} from "./utilities";
+import {arraysEqual, checkAndForceMinOrMaxValue, isInt} from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
   fasta: types.maybeNull(types.string),
   first_bin: types.integer,
   last_bin: types.integer,
-  component_count: types.integer,
-  link_count: types.integer,
+  x: types.integer,
+  compressedX: types.integer,
 });
 const ZoomLevel = types.model({
   bin_width: types.integer,
@@ -32,30 +32,32 @@ RootStore = types
   .model({
     chunkIndex: ChunkIndex,
     beginEndBin: types.optional(types.array(types.integer), [1, 100]),
-    maxWidthBinRange: 99,
     useVerticalCompression: false,
     useWidthCompression: false,
     binScalingFactor: 3,
     useConnector: true,
     pixelsPerColumn: 10,
-    pixelsPerRow: 10,
+    pixelsPerRow: 4,
     leftOffset: 1,
     topOffset: 400,
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "SARS-CoV-b",
+    jsonName: "SARS-CoV-b-v17",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
+
+    precIndexSelectedZoomLevel: 0,
     indexSelectedZoomLevel: 0,
+
     chunkURLs: types.optional(types.array(types.string), []),
     chunkFastaURLs: types.optional(types.array(types.string), []),
     //to be compared against chunkURLs
     chunksProcessed: types.optional(types.array(types.string), []),
+    chunksProcessedFasta: types.optional(types.array(types.string), []),
 
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
     pathIndexServerAddress: "http://193.196.29.24:3010/",
-    nucleotideHeight: 10,
 
     loading: true,
     copyNumberColorArray: types.optional(types.array(types.string), [
@@ -97,32 +99,23 @@ RootStore = types
       self.chunkIndex = json;
     }
     function updateBeginEndBin(newBegin, newEnd) {
-      console.log("updateBeginEndBin - " + newBegin + " - " + newEnd);
-
-      const beginBin = getBeginBin();
-      const endBin = getEndBin();
-
       /*This method needs to be atomic to avoid spurious updates and out of date validation.*/
 
-      //TO_DO: remove endBin and manage beginBin and widthBinRange (100 by default)?
-      newBegin = Math.max(1, Math.round(newBegin));
-      newEnd = Math.max(2, Math.round(newBegin + self.maxWidthBinRange));
+      console.log("updateBeginEndBin - " + newBegin + " - " + newEnd);
 
-      // So that the end bin is at the most the end of the pangenome
-      if (newEnd > self.last_bin_pangenome) {
-        let excess_bins = newEnd - self.last_bin_pangenome;
-
-        newBegin = Math.max(1, newBegin - excess_bins);
-        newEnd = Math.max(2, newEnd - excess_bins);
+      // Sometimes, typing new bin, it arrives something that is not a valid integer
+      if (!isInt(newBegin) || !isInt(newEnd)) {
+        newBegin = 1;
+        newEnd = 100;
       }
 
-      if (newBegin !== beginBin || newEnd !== endBin) {
-        setBeginEndBin(newBegin, newEnd);
-        console.log("updated begin and end: " + newBegin + " " + newEnd);
-        return true;
-      }
+      // TODO: manage a maxBeginBin based on the width of the last components in the pangenome
+      newBegin = Math.min(
+        self.last_bin_pangenome - 1,
+        Math.max(1, Math.round(newBegin))
+      );
 
-      return false;
+      setBeginEndBin(newBegin, newEnd);
     }
     function updateTopOffset(newTopOffset) {
       if (Number.isFinite(newTopOffset) && Number.isSafeInteger(newTopOffset)) {
@@ -158,16 +151,24 @@ RootStore = types
       self.useConnector = !self.useConnector;
     }
     function updateHeight(event) {
-        self.pixelsPerRow = Math.max(1, Number(event.target.value));
+      self.pixelsPerRow = checkAndForceMinOrMaxValue(
+        Number(event.target.value),
+        1,
+        30
+      );
     }
     function updateWidth(event) {
-        self.pixelsPerColumn = Math.max(3, Number(event.target.value));
+      self.pixelsPerColumn = checkAndForceMinOrMaxValue(
+        Number(event.target.value),
+        3,
+        30
+      );
     }
 
     function tryJSONpath(event) {
       const url =
         process.env.PUBLIC_URL +
-        "test_data/" +
+          "/test_data/" +
         event.target.value +
         "/bin2file.json";
       if (urlExists(url)) {
@@ -181,7 +182,8 @@ RootStore = types
       if (!arraysEqual(arrayOfFile, self.chunkURLs)) {
         console.log("STEP #4: Set switchChunkURLs: " + arrayOfFile);
         self.chunkURLs = arrayOfFile;
-        self.chunksProcessed = []; //clear
+
+        self.chunksProcessed = []; // Clear
 
         return true;
       }
@@ -191,11 +193,17 @@ RootStore = types
       if (!arraysEqual(arrayOfFile, self.chunkFastaURLs)) {
         console.log("STEP #4.fasta: Set switchChunkFastaURLs: " + arrayOfFile);
         self.chunkFastaURLs = arrayOfFile;
+
+        self.chunksProcessedFasta = []; // Clear
       }
     }
     function addChunkProcessed(singleChunk) {
       console.log("STEP #7: processed " + singleChunk);
       self.chunksProcessed.push(singleChunk);
+    }
+    function addChunkProcessedFasta(singleChunkFasta) {
+      console.log("STEP #7.FASTA: processed " + singleChunkFasta);
+      self.chunksProcessedFasta.push(singleChunkFasta);
     }
     function getBeginBin() {
       return self.beginEndBin[0];
@@ -209,17 +217,24 @@ RootStore = types
       //Zoom level and BinWidth are actually the same thing
       return Number(self.getSelectedZoomLevel());
     }
-    function getSelectedZoomLevel(indexSelectedZoomLevel = -1) {
+    function getSelectedZoomLevel(get_prec_zoom_level = false) {
       //This is a genuinely useful getter
       let a =
         self.availableZoomLevels[
-          indexSelectedZoomLevel > -1
-            ? indexSelectedZoomLevel
+          get_prec_zoom_level
+            ? self.precIndexSelectedZoomLevel
             : self.indexSelectedZoomLevel
         ];
+
+      // Clear precIndexSelectedZoomLevel (it is usable only one time)
+      if (get_prec_zoom_level) {
+        self.precIndexSelectedZoomLevel = self.indexSelectedZoomLevel;
+      }
+
       return a ? a : "1";
     }
     function setIndexSelectedZoomLevel(index) {
+      self.precIndexSelectedZoomLevel = self.indexSelectedZoomLevel;
       self.indexSelectedZoomLevel = index;
     }
 
@@ -233,12 +248,16 @@ RootStore = types
       self.beginEndBin = [newBeginBin, newEndBin];
     }
     function updatePathNucPos(path, nucPos) {
-      if (nucPos) {
-        nucPos = parseInt(nucPos);
-      } else {
-        nucPos = 0;
+      //console.log('updatePathNucPos: ' + path + ' --- ' + nucPos)
+
+      if (path !== undefined) {
+        if (nucPos) {
+          nucPos = Math.abs(parseInt(nucPos));
+        } else {
+          nucPos = 0;
+        }
+        self.pathNucPos = { path: path, nucPos: nucPos };
       }
-      self.pathNucPos = { path: path, nucPos: nucPos };
     }
 
     function setLoading(val) {
@@ -266,6 +285,7 @@ RootStore = types
       switchChunkURLs,
       switchChunkFastaURLs,
       addChunkProcessed,
+      addChunkProcessedFasta,
 
       getBeginBin,
       getEndBin,

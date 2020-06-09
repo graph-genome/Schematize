@@ -42,7 +42,7 @@ class PangenomeSchematic extends React.Component {
     console.log("STEP #1: whenever jsonName changes, loadIndexFile");
 
     let indexPath =
-      process.env.PUBLIC_URL + "test_data/" + jsonFilename + "/bin2file.json";
+      process.env.PUBLIC_URL + "/test_data/" + jsonFilename + "/bin2file.json";
     //console.log("loadIndexFile - START reading", indexPath);
 
     return fetch(indexPath)
@@ -61,25 +61,25 @@ class PangenomeSchematic extends React.Component {
         "No filepath given. Ensure chunknames in bin2file.json are correct."
       );
     console.log("Fetching", filepath);
-    return fetch(process.env.PUBLIC_URL + filepath).then((res) => res.json());
+    return fetch(filepath).then((res) => res.json());
   }
 
   loadJsonCache(url, data) {
     console.log("STEP #6: fetched chunks go into loadJsonCache");
 
-    if (data.json_version !== 16) {
+    if (data.json_version !== 17) {
       throw MediaError(
-        "Wrong Data JSON version: was expecting version 16, got " +
+        "Wrong Data JSON version: was expecting version 17, got " +
         data.json_version +
         ".  " +
-        "This version added compressedX.  " + // KEEP THIS UP TO DATE!
+        "This version added x and compressedX fields for the chunks too.  " + // KEEP THIS UP TO DATE!
           "Using a mismatched data file and renderer will cause unpredictable behavior," +
           " instead generate a new data file using github.com/graph-genome/component_segmentation."
       );
     }
     this.jsonCache[url] = data;
     this.pathNames = data.path_names; //TODO: in later JSON versions path_names gets moved to bin2file.json
-      console.log(this.pathNames.length, " path names loaded")
+    //console.log(this.pathNames.length, " path names loaded");
     this.processArray();
   }
 
@@ -107,7 +107,8 @@ class PangenomeSchematic extends React.Component {
             //split into array of nucleotides
             this.nucleotides.push(...sequence);
 
-            console.log("loadFasta - END: ", path_fasta);
+            //console.log("loadFasta - END: ", path_fasta);
+            this.props.store.addChunkProcessedFasta(path_fasta);
           });
       }
     }
@@ -123,17 +124,17 @@ class PangenomeSchematic extends React.Component {
     console.log(
       "STEP #7: JsonCache causes processArray to update chunksProcessed"
     );
-    let store = this.props.store;
-    let [beginBin, endBin] = [store.getBeginBin(), store.getEndBin()];
+    const store = this.props.store;
 
     if (
       store.chunksProcessed.length === 0 ||
-      store.chunksProcessed[0] !== this.props.store.chunkURLs[0]
+      store.chunksProcessed[0] !== store.chunkURLs[0]
     ) {
       this.components = []; // clear all pre-render data
     }
+
     // may have additional chunks to pre-render
-    console.log("processArray - parsing components ", beginBin, " - ", endBin);
+    //console.log("processArray - parsing components ", store.getBeginBin(), " - ", store.getEndBin());
 
     for (let urlIndex = 0; urlIndex < store.chunkURLs.length; urlIndex++) {
       //if end of pre-render is earlier than end of contiguous available chunks, process new data
@@ -143,17 +144,12 @@ class PangenomeSchematic extends React.Component {
           let url = store.chunkURLs[urlIndex];
           let jsonChunk = this.jsonCache[url];
 
-          /*console.log(
-            "processArray - jsonChunk.components[0].x: " +
-              jsonChunk.components[0].x
-          );*/
-
-            // At the moment, the index is used as a rank of the component, then it has to be progressive between chunks
+          // At the moment, the index is used as a rank of the component, then it has to be progressive between chunks
           const num_components_already_loaded =
-              this.components.length > 0
-                  ? this.components[this.components.length - 1].index + 1
-                  : 0;
-          for (let [index, component] of jsonChunk.components.entries()) {
+            this.components.length > 0
+              ? this.components[this.components.length - 1].index + 1
+              : 0;
+          for (const [index, component] of jsonChunk.components.entries()) {
             if (component.first_bin > 0) {
               let componentItem = new Component(
                 component,

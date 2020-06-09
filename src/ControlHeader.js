@@ -1,7 +1,8 @@
 import React from "react";
-import { Observer } from "mobx-react";
-import { httpGetAsync } from "./URL";
+import {Observer} from "mobx-react";
+import {httpGetAsync} from "./URL";
 import PropTypes from "prop-types";
+import "./App.css";
 
 class ControlHeader extends React.Component {
   shift(percentage) {
@@ -47,12 +48,6 @@ class ControlHeader extends React.Component {
     httpGetAsync(addr + path_name + "/" + nuc_pos, handleOdgiServerResponse);
   }
 
-  _change_zoom_level(newIndexSelectedZoomLevel) {
-    const lastIndexSelectedZoomLevel = this.props.store.indexSelectedZoomLevel;
-    this.props.store.setIndexSelectedZoomLevel(newIndexSelectedZoomLevel);
-    this.props.openRelevantChunksFromIndex(lastIndexSelectedZoomLevel);
-  }
-
   change_zoom_level(target) {
     console.log(
       "change_zoom_level: " +
@@ -61,29 +56,29 @@ class ControlHeader extends React.Component {
         target.options[target.selectedIndex].text
     );
 
-    this._change_zoom_level(parseInt(target.value));
+    this.props.store.setIndexSelectedZoomLevel(parseInt(target.value));
   }
 
   decIndexSelectedZoomLevel() {
     let indexSelZoomLevel = this.props.store.indexSelectedZoomLevel;
     if (indexSelZoomLevel > 0) {
-      this._change_zoom_level(indexSelZoomLevel - 1);
+      this.props.store.setIndexSelectedZoomLevel(indexSelZoomLevel - 1);
     }
   }
 
   incIndexSelectedZoomLevel() {
     let indexSelZoomLevel = this.props.store.indexSelectedZoomLevel;
     if (indexSelZoomLevel < this.props.store.availableZoomLevels.length - 1) {
-      this._change_zoom_level(indexSelZoomLevel + 1);
+      this.props.store.setIndexSelectedZoomLevel(indexSelZoomLevel + 1);
     }
   }
 
   render() {
     return (
       <div id="button-container">
-        <button className="button" id="btn-download">
-          Save Image
-        </button>
+          {/*<button className="button" id="btn-download">*/}
+          {/*  Save Image*/}
+          {/*</button>*/}
         <input
           type="text"
           defaultValue={this.props.store.jsonName}
@@ -165,18 +160,22 @@ class ControlHeader extends React.Component {
         </span>
         <div className={"row"}>
           Jump to path at nucleotide position:
-          <input
-            type="string"
-            list="path"
-            placeholder={"path"}
-            onChange={(event) =>
-              this.props.store.updatePathNucPos(
-                event.target.value,
-                this.props.store.pathNucPos.nucPos
-              )
-            }
-            style={{ width: "80px" }}
-          />
+          <span className="myarrow">
+            <input
+              type="string"
+              list="path"
+              name="path"
+              placeholder={"path"}
+              id="#show-suggestions"
+              onChange={(event) =>
+                this.props.store.updatePathNucPos(
+                  event.target.value,
+                  this.props.store.pathNucPos.nucPos
+                )
+              }
+              style={{ width: "80px" }}
+            />
+          </span>
           <datalist id="path">
             {this.props.schematic.pathNames.map((item, key) => (
               <option key={key} value={item} />
@@ -188,7 +187,7 @@ class ControlHeader extends React.Component {
             placeholder={"position"}
             onChange={(event) =>
               this.props.store.updatePathNucPos(
-                this.props.store.getPath(),
+                this.props.store.pathNucPos.path,
                 event.target.value
               )
             }
@@ -199,11 +198,17 @@ class ControlHeader extends React.Component {
               Jump
             </button>
           </span>
+          <span style={{ marginLeft: "30px" }}>
+            Pangenome Last Bin: {this.props.store.last_bin_pangenome}
+          </span>
+          <span style={{ marginLeft: "30px" }}>
+            Num. of individuals: {this.props.schematic.pathNames.length}
+          </span>
         </div>
         <div className={"row"}>
           <span>
             {" "}
-            Use Vertical Compression:
+            Allele Frequency Histogram:
             <VerticalCompressedViewSwitch store={this.props.store} />
           </span>
           <span>
@@ -248,6 +253,9 @@ class ControlHeader extends React.Component {
               style={{ width: "30px" }}
             />
           </span>
+            <span>&nbsp;<a href={"https://github.com/graph-genome/Schematize/wiki"} target="_blank"
+                           rel="noopener noreferrer">
+            <strong>Pantograph Tutorial</strong></a></span>
         </div>
       </div>
     );

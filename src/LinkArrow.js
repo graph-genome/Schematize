@@ -89,7 +89,7 @@ class LinkArrow extends React.Component {
     return (
       <Arrow
         x={this.arrowXCoord}
-        y={this.props.store.topOffset - 10}
+        y={this.props.store.topOffset - this.props.store.pixelsPerColumn}
         width={this.props.store.pixelsPerColumn}
         points={this.points}
         bezier={false}
@@ -110,9 +110,18 @@ class LinkArrow extends React.Component {
   }
 
   handleMouseOver = () => {
+    this.props.store.updateCellTooltipContent(
+      "Bin upstream: " +
+        this.props.link.linkColumn.upstream +
+        "\nBin downstream: " +
+        this.props.link.linkColumn.downstream
+    );
+
     this.props.updateHighlightedNode(this.props.link.linkColumn);
   };
   handleMouseOut = () => {
+    this.props.store.updateCellTooltipContent("");
+
     this.props.updateHighlightedNode(null);
   };
   handleClick = (event) => {
