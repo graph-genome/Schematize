@@ -1,21 +1,17 @@
-import { Layer, Stage, Text } from "react-konva";
-import React, { Component } from "react";
+import {Layer, Stage, Text} from "react-konva";
+import React, {Component} from "react";
 
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
-import ComponentRect, { compress_visible_rows } from "./ComponentRect";
+import ComponentRect, {compress_visible_rows} from "./ComponentRect";
 import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
-import { calculateLinkCoordinates } from "./LinkRecord";
+import {calculateLinkCoordinates} from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
-import { observe } from "mobx";
-import {
-  arraysEqual,
-  calculateEndBinFromScreen,
-  stringToColorAndOpacity,
-} from "./utilities";
+import {observe} from "mobx";
+import {arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "./utilities";
 
 //import makeInspectable from "mobx-devtools-mst";
 // TO_DO: improve the management of visualized components
@@ -499,7 +495,9 @@ class App extends Component {
 
       /*console.log([linkRect.upstream, linkRect.downstream])
       console.log(binLeft, binRight)*/
-
+        if (Object.values(index_to_component_to_visualize_dict).length === 0) {
+            return; //bug: inconsistent state, just cancel the click event
+        }
       const last_bin_last_visualized_component = Object.values(
         index_to_component_to_visualize_dict
       ).slice(-1)[0].lastBin;

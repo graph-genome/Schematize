@@ -1,6 +1,6 @@
-import { types } from "mobx-state-tree";
-import { urlExists } from "./URL";
-import { arraysEqual, checkAndForceMinOrMaxValue, isInt } from "./utilities";
+import {types} from "mobx-state-tree";
+import {urlExists} from "./URL";
+import {arraysEqual, checkAndForceMinOrMaxValue, isInt} from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
@@ -168,7 +168,7 @@ RootStore = types
     function tryJSONpath(event) {
       const url =
         process.env.PUBLIC_URL +
-        "test_data/" +
+          "/test_data/" +
         event.target.value +
         "/bin2file.json";
       if (urlExists(url)) {
