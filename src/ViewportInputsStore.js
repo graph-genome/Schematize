@@ -37,7 +37,7 @@ RootStore = types
     binScalingFactor: 3,
     useConnector: true,
     pixelsPerColumn: 10,
-    pixelsPerRow: 10,
+    pixelsPerRow: 4,
     leftOffset: 1,
     topOffset: 400,
     highlightedLink: 0, // we will compare linkColumns
