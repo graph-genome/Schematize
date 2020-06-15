@@ -1,6 +1,6 @@
 import React from "react";
-import {Observer} from "mobx-react";
-import {httpGetAsync} from "./URL";
+import { Observer } from "mobx-react";
+import { httpGetAsync } from "./URL";
 import PropTypes from "prop-types";
 import "./App.css";
 
@@ -37,7 +37,7 @@ class ControlHeader extends React.Component {
         console.log(result);
         // go from nucleotide position to bin
         result = parseInt(result);
-        const newBeginBin = Math.ceil(result / this.props.store.getBinWidth());
+        const newBeginBin = Math.ceil(result / store.getBinWidth());
         console.log(newBeginBin);
         store.updateBeginEndBin(newBeginBin, store.getEndBin());
       }
@@ -76,9 +76,9 @@ class ControlHeader extends React.Component {
   render() {
     return (
       <div id="button-container">
-          {/*<button className="button" id="btn-download">*/}
-          {/*  Save Image*/}
-          {/*</button>*/}
+        {/*<button className="button" id="btn-download">*/}
+        {/*  Save Image*/}
+        {/*</button>*/}
         <input
           type="text"
           defaultValue={this.props.store.jsonName}
@@ -253,9 +253,16 @@ class ControlHeader extends React.Component {
               style={{ width: "30px" }}
             />
           </span>
-            <span>&nbsp;<a href={"https://github.com/graph-genome/Schematize/wiki"} target="_blank"
-                           rel="noopener noreferrer">
-            <strong>Pantograph Tutorial</strong></a></span>
+          <span>
+            &nbsp;
+            <a
+              href={"https://github.com/graph-genome/Schematize/wiki"}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <strong>Pantograph Tutorial</strong>
+            </a>
+          </span>
         </div>
       </div>
     );
