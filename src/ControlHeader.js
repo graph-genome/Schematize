@@ -74,7 +74,7 @@ class ControlHeader extends React.Component {
   }
 
   render() {
-    let showJumpPath = false; // TODO: unlock once the data is there
+    let showJumpPath = true; // TODO: unlock once the data is there
     let pathRow = null;
     if (showJumpPath) {
       pathRow = (
@@ -103,7 +103,7 @@ class ControlHeader extends React.Component {
             placeholder={"position"}
             onChange={(event) =>
               this.props.store.updatePathNucPos(
-                this.props.store.getPath(),
+                this.props.store.pathNucPos.path,
                 event.target.value
               )
             }
