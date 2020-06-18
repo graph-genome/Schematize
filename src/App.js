@@ -1,17 +1,21 @@
-import {Layer, Stage, Text} from "react-konva";
-import React, {Component} from "react";
+import { Layer, Stage, Text, Rect } from "react-konva";
+import React, { Component } from "react";
 
 import "./App.css";
 import PangenomeSchematic from "./PangenomeSchematic";
-import ComponentRect, {compress_visible_rows} from "./ComponentRect";
+import ComponentRect, { compress_visible_rows } from "./ComponentRect";
 import ComponentNucleotides from "./ComponentNucleotides";
 import LinkColumn from "./LinkColumn";
 import LinkArrow from "./LinkArrow";
-import {calculateLinkCoordinates} from "./LinkRecord";
+import { calculateLinkCoordinates } from "./LinkRecord";
 import NucleotideTooltip from "./NucleotideTooltip";
 import ControlHeader from "./ControlHeader";
-import {observe} from "mobx";
-import {arraysEqual, calculateEndBinFromScreen, stringToColorAndOpacity,} from "./utilities";
+import { observe } from "mobx";
+import {
+  arraysEqual,
+  calculateEndBinFromScreen,
+  stringToColorAndOpacity,
+} from "./utilities";
 
 //import makeInspectable from "mobx-devtools-mst";
 // TO_DO: improve the management of visualized components
@@ -37,7 +41,9 @@ function Legend() {
 
 class App extends Component {
   layerRef = React.createRef();
-  layerRef2 = React.createRef(null);
+  layerRef2 = React.createRef();
+  layerNavigationBar = React.createRef();
+
   // Timer for the LinkArrow highlighting and selection (clicking on it)
   timerHighlightingLink = null;
   timerSelectionLink = null;
@@ -495,9 +501,9 @@ class App extends Component {
 
       /*console.log([linkRect.upstream, linkRect.downstream])
       console.log(binLeft, binRight)*/
-        if (Object.values(index_to_component_to_visualize_dict).length === 0) {
-            return; //bug: inconsistent state, just cancel the click event
-        }
+      if (Object.values(index_to_component_to_visualize_dict).length === 0) {
+        return; //bug: inconsistent state, just cancel the click event
+      }
       const last_bin_last_visualized_component = Object.values(
         index_to_component_to_visualize_dict
       ).slice(-1)[0].lastBin;
@@ -806,6 +812,43 @@ class App extends Component {
           }}
         >
           <ControlHeader store={this.props.store} schematic={this.schematic} />
+
+          <Stage
+            x={this.props.store.leftOffset}
+            y={this.props.topOffset}
+            width={this.state.actualWidth}
+            height={this.props.store.heightNavigationBar + 4}
+          >
+            <Layer ref={this.layerNavigationBar}>
+              <Rect
+                y={2}
+                width={this.state.actualWidth - 2}
+                height={this.props.store.heightNavigationBar}
+                fill={"lightblue"}
+                stroke={"gray"}
+                strokeWidth={2}
+              />
+              <Rect
+                x={
+                  (this.props.store.getBeginBin() /
+                    this.props.store.last_bin_pangenome) *
+                  (this.state.actualWidth - 2)
+                }
+                y={2}
+                width={
+                  ((this.props.store.getEndBin() -
+                    this.props.store.getBeginBin()) /
+                    this.props.store.last_bin_pangenome) *
+                  (this.state.actualWidth - 2)
+                }
+                height={this.props.store.heightNavigationBar}
+                fill={"orange"}
+                stroke={"brown"}
+                strokeWidth={2}
+                opacity={0.7}
+              />
+            </Layer>
+          </Stage>
 
           <Stage
             x={this.props.store.leftOffset}
