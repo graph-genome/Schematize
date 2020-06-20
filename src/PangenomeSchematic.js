@@ -42,7 +42,7 @@ class PangenomeSchematic extends React.Component {
     console.log("STEP #1: whenever jsonName changes, loadIndexFile");
 
     let indexPath =
-      process.env.PUBLIC_URL + "/test_data/" + jsonFilename + "/bin2file.json";
+      process.env.REACT_APP_FETCH + jsonFilename + "/bin2file.json";
     //console.log("loadIndexFile - START reading", indexPath);
 
     return fetch(indexPath)

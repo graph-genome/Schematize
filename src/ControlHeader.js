@@ -307,6 +307,16 @@ class ControlHeader extends React.Component {
               <strong>Pantograph Tutorial</strong>
             </a>
           </span>
+          <span>
+            &nbsp; &nbsp; &nbsp;
+            <a
+              href={"http://covid-19.genenetwork.org/"}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <strong>Source Dataset</strong>
+            </a>
+          </span>
         </div>
       </div>
     );
