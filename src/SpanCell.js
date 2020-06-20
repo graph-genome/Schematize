@@ -29,13 +29,23 @@ export class MatrixCell extends React.Component {
 
     const ranges = item[2];
     for (let j = 0; j < ranges.length; j++) {
-      let start = ranges[j][0];
-      let end = ranges[j][1];
-      if (j === 0) {
-        tooltipContent += start + "-" + end;
+      const start = ranges[j][0];
+      const end = ranges[j][1];
+      let new_content = "";
+
+      if (start === 0) {
+        new_content = end + "+";
+      } else if (end === 0) {
+        new_content = start + "-";
       } else {
-        tooltipContent += "," + start + "-" + end;
+        new_content = start + "-" + end;
       }
+
+      if (j > 0) {
+        new_content = "," + new_content;
+      }
+
+      tooltipContent += new_content;
     }
     this.props.store.updateCellTooltipContent(tooltipContent); //item[2] is array of ranges
   }
