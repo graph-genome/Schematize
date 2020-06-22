@@ -57,7 +57,7 @@ RootStore = types
     chunksProcessedFasta: types.optional(types.array(types.string), []),
 
     pathNucPos: types.optional(PathNucPos, { path: "path", nucPos: 0 }), // OR: types.maybe(PathNucPos)
-    pathIndexServerAddress: "http://193.196.29.94:3010/",
+    pathIndexServerAddress: "https://pantograph.lugli.arvadosapi.com/hi",
 
     loading: true,
     copyNumberColorArray: types.optional(types.array(types.string), [
