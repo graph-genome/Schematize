@@ -1,4 +1,4 @@
-import { Layer, Stage, Text, Rect } from "react-konva";
+import { Layer, Stage, Text, Rect, Arrow } from "react-konva";
 import React, { Component } from "react";
 
 import "./App.css";
@@ -789,10 +789,56 @@ class App extends Component {
     }
   }
 
+  handleClick = (event) => {
+    this.props.store.updateBeginEndBin(
+      Math.floor(
+        (this.props.store.last_bin_pangenome * event.evt.offsetX) /
+          (event.currentTarget.attrs.width +
+            event.currentTarget.attrs.strokeWidth)
+      ),
+      this.props.store.getEndBin()
+    );
+  };
+  handleMouseOver = (event) => {
+    this.props.store.updateCellTooltipContent(
+      "Go to bin: " +
+        Math.floor(
+          (this.props.store.last_bin_pangenome * event.evt.offsetX) /
+            (event.currentTarget.attrs.width +
+              event.currentTarget.attrs.strokeWidth)
+        )
+    );
+  };
+  handleMouseOut = () => {
+    this.props.store.updateCellTooltipContent("");
+  };
+
   render() {
     console.log("Start render");
 
     //console.log('renderNucleotidesSchematic - START')
+
+    //this.state.actualWidth - 2
+    const navigation_bar_width = window.innerWidth - 2;
+
+    let x_navigation = Math.floor(
+      (this.props.store.getBeginBin() / this.props.store.last_bin_pangenome) *
+        navigation_bar_width
+    );
+
+    let width_navigation = Math.ceil(
+      ((this.props.store.getEndBin() - this.props.store.getBeginBin()) /
+        this.props.store.last_bin_pangenome) *
+        navigation_bar_width
+    );
+
+    if (x_navigation + width_navigation > navigation_bar_width) {
+      width_navigation = navigation_bar_width - x_navigation;
+    }
+
+    console.log("navigation_bar_width " + navigation_bar_width);
+    console.log("x_navigation " + x_navigation);
+    console.log("width_navigation " + width_navigation);
 
     return (
       <>
@@ -816,31 +862,25 @@ class App extends Component {
           <Stage
             x={this.props.store.leftOffset}
             y={this.props.topOffset}
-            width={this.state.actualWidth}
+            width={navigation_bar_width + 2}
             height={this.props.store.heightNavigationBar + 4}
           >
             <Layer ref={this.layerNavigationBar}>
               <Rect
                 y={2}
-                width={this.state.actualWidth - 2}
+                width={navigation_bar_width}
                 height={this.props.store.heightNavigationBar}
                 fill={"lightblue"}
                 stroke={"gray"}
                 strokeWidth={2}
+                onMouseOver={this.handleMouseOver}
+                onMouseOut={this.handleMouseOut}
+                onClick={this.handleClick}
               />
               <Rect
-                x={
-                  (this.props.store.getBeginBin() /
-                    this.props.store.last_bin_pangenome) *
-                  (this.state.actualWidth - 2)
-                }
+                x={x_navigation}
                 y={2}
-                width={
-                  ((this.props.store.getEndBin() -
-                    this.props.store.getBeginBin()) /
-                    this.props.store.last_bin_pangenome) *
-                  (this.state.actualWidth - 2)
-                }
+                width={width_navigation}
                 height={this.props.store.heightNavigationBar}
                 fill={"orange"}
                 stroke={"brown"}
