@@ -1,5 +1,5 @@
 import React from "react";
-import { Rect, Text } from "react-konva";
+import {Rect, Text} from "react-konva";
 import PropTypes from "prop-types";
 
 export class MatrixCell extends React.Component {
@@ -18,9 +18,10 @@ export class MatrixCell extends React.Component {
     let item = this.props.range[
       Math.min(this.props.range.length - 1, relColumnX)
     ];
+      let pathName = this.props.pathName === "NC_045512" ? "Reference: NC_045512" : this.props.pathName;
     let tooltipContent = '"';
     tooltipContent +=
-      this.props.pathName +
+        pathName +
       '"\nCoverage: ' +
       item[0] +
       "\nInversion: " +
