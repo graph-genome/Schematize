@@ -799,7 +799,7 @@ class App extends Component {
       this.props.store.getEndBin()
     );
   };
-  handleMouseOver = (event) => {
+  handleMouseMove = (event) => {
     this.props.store.updateCellTooltipContent(
       "Go to bin: " +
         Math.floor(
@@ -862,6 +862,7 @@ class App extends Component {
           <Stage
             x={this.props.store.leftOffset}
             y={this.props.topOffset}
+            style={{ cursor: "pointer" }}
             width={navigation_bar_width + 2}
             height={this.props.store.heightNavigationBar + 4}
           >
@@ -873,7 +874,7 @@ class App extends Component {
                 fill={"lightblue"}
                 stroke={"gray"}
                 strokeWidth={2}
-                onMouseOver={this.handleMouseOver}
+                onMouseMove={this.handleMouseMove}
                 onMouseOut={this.handleMouseOut}
                 onClick={this.handleClick}
               />
