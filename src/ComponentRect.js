@@ -70,10 +70,10 @@ class ComponentRect extends React.Component {
 
     let pathName = this.props.pathNames[uncompressed_y];
     let rowColor = "#838383";
-    if (this.props.store.colorByGeo && this.props.store.metaData) {
+    if (this.props.store.colorByGeneAnnotation && this.props.store.metaData) {
       let metaData = this.props.store.metaData;
       if (metaData.get(pathName) !== undefined) {
-        rowColor = colorFromStr(metaData.get(pathName).Geo_Location);
+        rowColor = colorFromStr(metaData.get(pathName).Accession);
       }
     }
 

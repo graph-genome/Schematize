@@ -29,14 +29,7 @@ const PathNucPos = types.model("PathNucPos", {
 
 const metaDataModelEntry = types.model({
   Accession: types.identifier,
-  Release_Date: types.string,
-  Species: types.string,
-  Length: types.integer,
-  Geo_Location: types.string,
-  Host: types.string,
-  Isolation_Source: types.string,
-  Collection_Date: types.string,
-  GenBank_Title: types.string,
+  Info: types.string,
 });
 
 let RootStore;
@@ -102,7 +95,7 @@ RootStore = types
 
     last_bin_pangenome: 0,
 
-    colorByGeo: false,
+    colorByGeneAnnotation: true,
     metaDataKey: "Accession",
     metaData: types.map(metaDataModelEntry),
     //metaDataChoices: types.array(types.string)
@@ -285,10 +278,9 @@ RootStore = types
       self.last_bin_pangenome = val;
     }
 
-    function toggleColorByGeo() {
-      console.log("toggleColorByGeo");
+    /*function toggleColorByGeo() {
       self.colorByGeo = !self.colorByGeo;
-    }
+    }*/
     function setMetaData(metadata) {
       for (let [key, value] of Object.entries(metadata)) {
         self.metaData.set(key, value);
@@ -340,7 +332,7 @@ RootStore = types
 
       setLastBinPangenome,
 
-      toggleColorByGeo,
+      //toggleColorByGeo,
       setMetaData,
       getMetaData,
       setMetaDataChoices,

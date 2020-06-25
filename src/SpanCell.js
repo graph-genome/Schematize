@@ -47,8 +47,7 @@ export class MatrixCell extends React.Component {
 
       if (this.props.store.metaData.get(this.props.pathName) !== undefined) {
         new_content +=
-          " ; " +
-          this.props.store.metaData.get(this.props.pathName).Geo_Location;
+          "\n" + this.props.store.metaData.get(this.props.pathName).Info;
       }
 
       tooltipContent += new_content;
