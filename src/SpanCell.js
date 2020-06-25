@@ -45,6 +45,12 @@ export class MatrixCell extends React.Component {
         new_content = "," + new_content;
       }
 
+      if (this.props.store.metaData.get(this.props.pathName) !== undefined) {
+        new_content +=
+          " ; " +
+          this.props.store.metaData.get(this.props.pathName).Geo_Location;
+      }
+
       tooltipContent += new_content;
     }
     this.props.store.updateCellTooltipContent(tooltipContent); //item[2] is array of ranges
@@ -83,7 +89,7 @@ export class MatrixCell extends React.Component {
     const inverted = this.props.range[0][1] > 0.5;
     const copyNumber = this.props.range[0][0];
 
-    let color = "#838383";
+    let color = this.props.color;
 
     if (copyNumber > 1 && !inverted) {
       // 11 items is number of colors in copyNumberColorArray
@@ -171,6 +177,7 @@ export class SpanCell extends React.Component {
             range={span.range}
             store={this.props.store}
             pathName={this.props.pathName}
+            color={this.props.color}
             x={this.props.x + span.x * this.props.store.pixelsPerColumn}
             y={this.props.y}
             rowNumber={this.props.rowNumber}

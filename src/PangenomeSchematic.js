@@ -16,11 +16,15 @@ class PangenomeSchematic extends React.Component {
     // TODO: make FILO queue to remove old jsonCache once we hit max memory usage
     this.nucleotides = []; // nucleotides attribute and its edges
 
+    this.metadata = [];
+
     this.loadIndexFile(this.props.store.jsonName); //initializes this.chunkIndex
+    this.loadMetadataFile(this.props.store.jsonName);
 
     //STEP #1: whenever jsonName changes, loadIndexFile
     observe(this.props.store, "jsonName", () => {
       this.loadIndexFile(this.props.store.jsonName);
+      this.loadMetadataFile(this.props.store.jsonName);
     });
 
     // The FASTA files are read only when there are new chunks to read
@@ -111,6 +115,33 @@ class PangenomeSchematic extends React.Component {
             this.props.store.addChunkProcessedFasta(path_fasta);
           });
       }
+    }
+  }
+
+  loadMetadataFile(jsonFilename) {
+    const mdataPath = `${process.env.PUBLIC_URL}/test_data/${jsonFilename}/metadata.json`;
+    console.log("loadMetadataFile: ", mdataPath);
+
+    if (urlExists(mdataPath)) {
+      console.log("Reading metadata");
+      return fetch(mdataPath)
+        .then((res) => res.json())
+        .then((json) => {
+          var metaData = {};
+          // commented-out could be used further to read in the metadata categories
+          // into json_entries array.
+          //let json_entries = [];
+          for (let i = 0; i < json.length; i++) {
+            metaData[json[i][this.props.store.metaDataKey]] = json[i];
+            // if (i == 0) {
+            //   for (let [key, value] of Object.entries(json[0])) {
+            //     json_entries.push(key);
+            //   }
+            //   this.props.store.setMetaDataChoices(json_entries);
+            // }
+          }
+          this.props.store.setMetaData(metaData);
+        });
     }
   }
 
