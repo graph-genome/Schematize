@@ -28,7 +28,8 @@ const PathNucPos = types.model("PathNucPos", {
 });
 
 const metaDataModelEntry = types.model({
-  Accession: types.identifier,
+  Path: types.identifier,
+  Color: types.string,
   Info: types.string,
 });
 
@@ -96,7 +97,7 @@ RootStore = types
     last_bin_pangenome: 0,
 
     colorByGeneAnnotation: true,
-    metaDataKey: "Accession",
+    metaDataKey: "Path",
     metaData: types.map(metaDataModelEntry),
     //metaDataChoices: types.array(types.string)
   })
