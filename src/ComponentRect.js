@@ -1,10 +1,10 @@
 /* eslint-disable require-jsdoc */
 import React from "react";
-import { Rect } from "react-konva";
-import { ConnectorRect } from "./ComponentConnectorRect";
-import { SpanCell } from "./SpanCell";
+import {Rect} from "react-konva";
+import {ConnectorRect} from "./ComponentConnectorRect";
+import {SpanCell} from "./SpanCell";
 import PropTypes from "prop-types";
-import { sum } from "./utilities";
+import {sum} from "./utilities";
 
 function colorFromStr(colorKey) {
   colorKey = colorKey.toString();
@@ -20,7 +20,7 @@ function colorFromStr(colorKey) {
   return colour;
 }
 
-export function compress_visible_rows(components) {
+export function compress_visible_rows(components, pathNames)) {
   /*Returns a Map with key of the original row number and value of the new, compressed row number.
    * Use this for y values of occupancy and LinkColumn cells.  */
   let all_visible = new Set();
@@ -32,8 +32,10 @@ export function compress_visible_rows(components) {
   let sorted = Array.from(all_visible).sort();
   let row_mapping = {};
   for (let [count, index] of sorted.entries()) {
-    row_mapping[index] = count;
+      row_mapping[index] = count + 2; // +2 to reserve a row for reference and annotation
   }
+    row_mapping[pathNames.length - 1] = 1; // manual override to place reference as first row
+    //TODO manual override for annotation row
   return row_mapping;
 }
 
