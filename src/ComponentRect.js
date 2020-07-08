@@ -20,7 +20,7 @@ function colorFromStr(colorKey) {
   return colour;
 }
 
-export function compress_visible_rows(components, pathNames)) {
+export function compress_visible_rows(components, pathNames) {
   /*Returns a Map with key of the original row number and value of the new, compressed row number.
    * Use this for y values of occupancy and LinkColumn cells.  */
   let all_visible = new Set();

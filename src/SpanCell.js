@@ -18,7 +18,7 @@ export class MatrixCell extends React.Component {
     let item = this.props.range[
       Math.min(this.props.range.length - 1, relColumnX)
     ];
-      let pathName = this.props.pathName === "NC_045512" ? "Reference: NC_045512" : this.props.pathName;
+      let pathName = this.props.pathName.startsWith("NC_045512") ? "Reference: " + this.props.pathName : this.props.pathName;
     let tooltipContent = '"';
     tooltipContent +=
         pathName +
