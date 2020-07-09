@@ -1,10 +1,10 @@
 /* eslint-disable require-jsdoc */
 import React from "react";
-import {Rect} from "react-konva";
-import {ConnectorRect} from "./ComponentConnectorRect";
-import {SpanCell} from "./SpanCell";
+import { Rect } from "react-konva";
+import { ConnectorRect } from "./ComponentConnectorRect";
+import { SpanCell } from "./SpanCell";
 import PropTypes from "prop-types";
-import {sum} from "./utilities";
+import { sum } from "./utilities";
 
 function colorFromStr(colorKey) {
   colorKey = colorKey.toString();
@@ -20,7 +20,7 @@ function colorFromStr(colorKey) {
   return colour;
 }
 
-export function compress_visible_rows(components, pathNames) {
+export function compress_visible_rows(components, pathNames, annotationNames) {
   /*Returns a Map with key of the original row number and value of the new, compressed row number.
    * Use this for y values of occupancy and LinkColumn cells.  */
   let all_visible = new Set();
@@ -29,13 +29,46 @@ export function compress_visible_rows(components, pathNames) {
       all_visible.add(row);
     }
   }
+
+  let all_annotation_num_rows = new Set();
+  for (let annotationName of annotationNames) {
+    all_annotation_num_rows.add(pathNames.indexOf(annotationName));
+  }
+
   let sorted = Array.from(all_visible).sort();
+
+  let row_mapping_high = [];
+  let row_mapping_individuals = [];
+
+  for (let num_row of sorted) {
+    //console.log(num_row + ' -- ' + pathNames[num_row] + ' ----- ' + all_annotation_num_rows.has(num_row))
+    if (all_annotation_num_rows.has(num_row)) {
+      row_mapping_high.push(num_row);
+    } else {
+      row_mapping_individuals.push(num_row);
+    }
+  }
+  const row_mapping_all = row_mapping_high.concat(row_mapping_individuals);
+
+  let row_mapping = {};
+  for (let [count, index] of row_mapping_all.entries()) {
+    //row_mapping[index] = count + 2; // +2 to reserve a row for reference and annotation
+    //console.log(count + ' --- ' + index)
+    row_mapping[index] = count;
+  }
+
+  /*
+  OLD IMPLEMENTATION TO DELETE
   let row_mapping = {};
   for (let [count, index] of sorted.entries()) {
-      row_mapping[index] = count + 2; // +2 to reserve a row for reference and annotation
-  }
-    row_mapping[pathNames.length - 1] = 1; // manual override to place reference as first row
-    //TODO manual override for annotation row
+      //row_mapping[index] = count + 2; // +2 to reserve a row for reference and annotation
+    console.log(count + ' --- ' + index)
+    row_mapping[index] = count;
+  }*/
+  //row_mapping[pathNames.length - 1] = 1; // manual override to place reference as first row
+
+  console.log(row_mapping);
+
   return row_mapping;
 }
 

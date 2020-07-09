@@ -324,8 +324,9 @@ class App extends Component {
           this.recalcXLayout();
 
           this.compressed_row_mapping = compress_visible_rows(
-              this.schematic.components,
-              this.schematic.pathNames
+            this.schematic.components,
+            this.schematic.pathNames,
+            Array.from(this.props.store.metaData.keys())
           );
           this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
             this.schematic.components
