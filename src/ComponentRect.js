@@ -30,44 +30,42 @@ export function compress_visible_rows(components, pathNames, annotationNames) {
     }
   }
 
-  let all_annotation_num_rows = new Set();
-  for (let annotationName of annotationNames) {
-    all_annotation_num_rows.add(pathNames.indexOf(annotationName));
-  }
-
-  let sorted = Array.from(all_visible).sort();
-
-  let row_mapping_high = [];
-  let row_mapping_individuals = [];
-
-  for (let num_row of sorted) {
-    //console.log(num_row + ' -- ' + pathNames[num_row] + ' ----- ' + all_annotation_num_rows.has(num_row))
-    if (all_annotation_num_rows.has(num_row)) {
-      row_mapping_high.push(num_row);
-    } else {
-      row_mapping_individuals.push(num_row);
+  let row_mapping = {};
+  let ordered_num_rows = {};
+  if (annotationNames.length > 0) {
+    let all_annotation_num_rows = new Set();
+    for (let annotationName of annotationNames) {
+      all_annotation_num_rows.add(pathNames.indexOf(annotationName));
     }
-  }
-  const row_mapping_all = row_mapping_high.concat(row_mapping_individuals);
 
-  let row_mapping = {};
-  for (let [count, index] of row_mapping_all.entries()) {
-    //row_mapping[index] = count + 2; // +2 to reserve a row for reference and annotation
-    //console.log(count + ' --- ' + index)
+    let row_mapping_high = [];
+    let row_mapping_individuals = [];
+
+    const num_row_ref = pathNames.indexOf("NC_045512");
+
+    for (let num_row of all_visible) {
+      //console.log(num_row + ' -- ' + pathNames[num_row] + ' ----- ' + all_annotation_num_rows.has(num_row))
+      if (num_row !== num_row_ref) {
+        if (all_annotation_num_rows.has(num_row)) {
+          row_mapping_high.push(num_row);
+        } else {
+          row_mapping_individuals.push(num_row);
+        }
+      }
+    }
+
+    if (num_row_ref >= 0) {
+      row_mapping_high.push(num_row_ref);
+    }
+
+    ordered_num_rows = row_mapping_high.concat(row_mapping_individuals);
+  } else {
+    ordered_num_rows = Array.from(all_visible).sort();
+  }
+
+  for (let [count, index] of ordered_num_rows.entries()) {
     row_mapping[index] = count;
   }
-
-  /*
-  OLD IMPLEMENTATION TO DELETE
-  let row_mapping = {};
-  for (let [count, index] of sorted.entries()) {
-      //row_mapping[index] = count + 2; // +2 to reserve a row for reference and annotation
-    console.log(count + ' --- ' + index)
-    row_mapping[index] = count;
-  }*/
-  //row_mapping[pathNames.length - 1] = 1; // manual override to place reference as first row
-
-  console.log(row_mapping);
 
   return row_mapping;
 }
