@@ -108,7 +108,11 @@ class ComponentRect extends React.Component {
     if (this.props.store.colorByGeneAnnotation && this.props.store.metaData) {
       let metaData = this.props.store.metaData;
       if (metaData.get(pathName) !== undefined) {
-        rowColor = colorFromStr(metaData.get(pathName).Color);
+        if (metaData.get(pathName).Color.startsWith("#")) {
+          rowColor = metaData.get(pathName).Color;
+        } else {
+          rowColor = colorFromStr(metaData.get(pathName).Color);
+        }
       }
     }
 
