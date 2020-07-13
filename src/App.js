@@ -794,10 +794,13 @@ class App extends Component {
 
   handleClick = (event) => {
     this.props.store.updateBeginEndBin(
-      Math.floor(
-        (this.props.store.last_bin_pangenome * event.evt.offsetX) /
-          (event.currentTarget.attrs.width +
-            event.currentTarget.attrs.strokeWidth)
+      Math.max(
+        Math.floor(
+          (this.props.store.last_bin_pangenome * event.evt.offsetX) /
+            (event.currentTarget.attrs.width +
+              event.currentTarget.attrs.strokeWidth)
+        ),
+        1
       ),
       this.props.store.getEndBin()
     );
@@ -805,10 +808,13 @@ class App extends Component {
   handleMouseMove = (event) => {
     this.props.store.updateCellTooltipContent(
       "Go to bin: " +
-        Math.floor(
-          (this.props.store.last_bin_pangenome * event.evt.offsetX) /
-            (event.currentTarget.attrs.width +
-              event.currentTarget.attrs.strokeWidth)
+        Math.max(
+          Math.floor(
+            (this.props.store.last_bin_pangenome * event.evt.offsetX) /
+              (event.currentTarget.attrs.width +
+                event.currentTarget.attrs.strokeWidth)
+          ),
+          1
         )
     );
   };
@@ -824,13 +830,17 @@ class App extends Component {
     //this.state.actualWidth - 2
     const navigation_bar_width = window.innerWidth - 2;
 
-    let x_navigation = Math.floor(
-      (this.props.store.getBeginBin() / this.props.store.last_bin_pangenome) *
-        navigation_bar_width
-    );
+    let x_navigation =
+      this.props.store.getBeginBin() === 1
+        ? 0
+        : Math.ceil(
+            (this.props.store.getBeginBin() /
+              this.props.store.last_bin_pangenome) *
+              navigation_bar_width
+          );
 
     let width_navigation = Math.ceil(
-      ((this.props.store.getEndBin() - this.props.store.getBeginBin()) /
+      ((this.props.store.getEndBin() - this.props.store.getBeginBin() + 1) /
         this.props.store.last_bin_pangenome) *
         navigation_bar_width
     );
@@ -839,9 +849,9 @@ class App extends Component {
       width_navigation = navigation_bar_width - x_navigation;
     }
 
-    console.log("navigation_bar_width " + navigation_bar_width);
+    /*console.log("navigation_bar_width " + navigation_bar_width);
     console.log("x_navigation " + x_navigation);
-    console.log("width_navigation " + width_navigation);
+    console.log("width_navigation " + width_navigation);*/
 
     return (
       <>
