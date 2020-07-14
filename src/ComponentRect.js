@@ -6,7 +6,21 @@ import { SpanCell } from "./SpanCell";
 import PropTypes from "prop-types";
 import { sum } from "./utilities";
 
-export function compress_visible_rows(components) {
+function colorFromStr(colorKey) {
+  colorKey = colorKey.toString();
+  let hash = 0;
+  for (let i = 0; i < colorKey.length; i++) {
+    hash = colorKey.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  let colour = "#";
+  for (let j = 0; j < 3; j++) {
+    let value = (hash >> (j * 8)) & 0xff;
+    colour += ("00" + value.toString(16)).substr(-2);
+  }
+  return colour;
+}
+
+export function compress_visible_rows(components, pathNames, annotationNames) {
   /*Returns a Map with key of the original row number and value of the new, compressed row number.
    * Use this for y values of occupancy and LinkColumn cells.  */
   let all_visible = new Set();
@@ -15,11 +29,44 @@ export function compress_visible_rows(components) {
       all_visible.add(row);
     }
   }
-  let sorted = Array.from(all_visible).sort();
+
   let row_mapping = {};
-  for (let [count, index] of sorted.entries()) {
+  let ordered_num_rows = {};
+  if (annotationNames.length > 0) {
+    let all_annotation_num_rows = new Set();
+    for (let annotationName of annotationNames) {
+      all_annotation_num_rows.add(pathNames.indexOf(annotationName));
+    }
+
+    let row_mapping_high = [];
+    let row_mapping_individuals = [];
+
+    const num_row_ref = pathNames.indexOf("NC_045512");
+
+    for (let num_row of all_visible) {
+      //console.log(num_row + ' -- ' + pathNames[num_row] + ' ----- ' + all_annotation_num_rows.has(num_row))
+      if (num_row !== num_row_ref) {
+        if (all_annotation_num_rows.has(num_row)) {
+          row_mapping_high.push(num_row);
+        } else {
+          row_mapping_individuals.push(num_row);
+        }
+      }
+    }
+
+    if (num_row_ref >= 0) {
+      row_mapping_high.push(num_row_ref);
+    }
+
+    ordered_num_rows = row_mapping_high.concat(row_mapping_individuals);
+  } else {
+    ordered_num_rows = Array.from(all_visible).sort();
+  }
+
+  for (let [count, index] of ordered_num_rows.entries()) {
     row_mapping[index] = count;
   }
+
   return row_mapping;
 }
 
@@ -53,6 +100,20 @@ class ComponentRect extends React.Component {
       }
       this_y = this.props.compressed_row_mapping[uncompressed_y];
     }
+
+    let pathName = this.props.pathNames[uncompressed_y];
+    let rowColor = "#838383";
+    if (this.props.store.colorByGeneAnnotation && this.props.store.metaData) {
+      let metaData = this.props.store.metaData;
+      if (metaData.get(pathName) !== undefined) {
+        if (metaData.get(pathName).Color.startsWith("#")) {
+          rowColor = metaData.get(pathName).Color;
+        } else {
+          rowColor = colorFromStr(metaData.get(pathName).Color);
+        }
+      }
+    }
+
     return (
       <SpanCell
         key={"occupant" + uncompressed_y}
@@ -60,7 +121,8 @@ class ComponentRect extends React.Component {
         iColumns={entry[0]}
         parent={this.props.item}
         store={this.props.store}
-        pathName={this.props.pathNames[uncompressed_y]}
+        pathName={pathName}
+        color={rowColor}
         x={
           this.props.item.relativePixelX +
           this.props.item.arrivals.length * this.props.store.pixelsPerColumn

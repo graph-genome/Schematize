@@ -103,8 +103,11 @@ function calculateLinkElevations(linkToXmapping, pixelsPerColumn, topOffset) {
     pixelsPerColumn,
     topOffset
   );
-  const top = getMax(elevationOccupied) + pixelsPerColumn * 3;
 
+  let top = pixelsPerColumn * 3;
+  if (elevationOccupied.length > 0) {
+    top += getMax(elevationOccupied);
+  }
   return [distanceSortedLinks, top];
 }
 

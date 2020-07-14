@@ -1,6 +1,6 @@
-import {types} from "mobx-state-tree";
-import {urlExists} from "./URL";
-import {arraysEqual, checkAndForceMinOrMaxValue, isInt} from "./utilities";
+import { types } from "mobx-state-tree";
+import { urlExists } from "./URL";
+import { arraysEqual, checkAndForceMinOrMaxValue, isInt } from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
@@ -27,6 +27,12 @@ const PathNucPos = types.model("PathNucPos", {
   nucPos: types.integer,
 });
 
+const metaDataModelEntry = types.model({
+  Path: types.identifier,
+  Color: types.string,
+  Info: types.string,
+});
+
 let RootStore;
 RootStore = types
   .model({
@@ -38,12 +44,13 @@ RootStore = types
     useConnector: true,
     pixelsPerColumn: 10,
     pixelsPerRow: 4,
+    heightNavigationBar: 25,
     leftOffset: 1,
     topOffset: 400,
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "SARS-CoV-b-v17",
+    jsonName: "SARS-CoV-2.genbank.small",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
 
@@ -88,6 +95,11 @@ RootStore = types
     ]),
 
     last_bin_pangenome: 0,
+
+    colorByGeneAnnotation: true,
+    metaDataKey: "Path",
+    metaData: types.map(metaDataModelEntry),
+    //metaDataChoices: types.array(types.string)
   })
   .actions((self) => {
     function setChunkIndex(json) {
@@ -168,7 +180,7 @@ RootStore = types
     function tryJSONpath(event) {
       const url =
         process.env.PUBLIC_URL +
-          "/test_data/" +
+        "/test_data/" +
         event.target.value +
         "/bin2file.json";
       if (urlExists(url)) {
@@ -266,6 +278,22 @@ RootStore = types
     function setLastBinPangenome(val) {
       self.last_bin_pangenome = val;
     }
+
+    /*function toggleColorByGeo() {
+      self.colorByGeo = !self.colorByGeo;
+    }*/
+    function setMetaData(metadata) {
+      for (let [key, value] of Object.entries(metadata)) {
+        self.metaData.set(key, value);
+      }
+    }
+    function getMetaData(key) {
+      self.metaData.get(key);
+    }
+    function setMetaDataChoices(ar) {
+      self.metaDataChoices = ar;
+    }
+
     return {
       setChunkIndex,
       updateBeginEndBin,
@@ -304,6 +332,11 @@ RootStore = types
       setLoading,
 
       setLastBinPangenome,
+
+      //toggleColorByGeo,
+      setMetaData,
+      getMetaData,
+      setMetaDataChoices,
     };
   })
   .views((self) => ({}));
