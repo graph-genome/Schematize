@@ -270,6 +270,16 @@ class ControlHeader extends React.Component {
             </React.Fragment>
           ) : (
             <></>
+            /*
+              // At the moment the gene annotation will be always displayed if present
+              <span>
+                {" "}
+                    Display gene annotations:
+                <Observer>
+                  {() => <ColorGeoSwitch store={this.props.store} />}
+                </Observer>
+              </span>
+              */
           )}
           <span>
             {" "}
@@ -388,3 +398,19 @@ WidthCompressedViewSwitch.propTypes = {
 };
 
 export default ControlHeader;
+
+/*class ColorGeoSwitch extends React.Component {
+  render() {
+    return (
+        <input
+          type="checkbox"
+          checked={this.props.store.colorByGeo}
+          onChange={this.props.store.toggleColorByGeo}
+        />
+    );
+  }
+}
+
+ColorGeoSwitch.propTypes = {
+  store: PropTypes.object,
+};*/

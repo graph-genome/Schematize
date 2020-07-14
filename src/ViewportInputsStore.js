@@ -27,6 +27,12 @@ const PathNucPos = types.model("PathNucPos", {
   nucPos: types.integer,
 });
 
+const metaDataModelEntry = types.model({
+  Path: types.identifier,
+  Color: types.string,
+  Info: types.string,
+});
+
 let RootStore;
 RootStore = types
   .model({
@@ -38,6 +44,7 @@ RootStore = types
     useConnector: true,
     pixelsPerColumn: 10,
     pixelsPerRow: 3,
+    heightNavigationBar: 25,
     leftOffset: 1,
     topOffset: 400,
     highlightedLink: 0, // we will compare linkColumns
@@ -88,6 +95,11 @@ RootStore = types
     ]),
 
     last_bin_pangenome: 0,
+
+    colorByGeneAnnotation: true,
+    metaDataKey: "Path",
+    metaData: types.map(metaDataModelEntry),
+    //metaDataChoices: types.array(types.string)
   })
   .actions((self) => {
     function setChunkIndex(json) {
@@ -263,6 +275,22 @@ RootStore = types
     function setLastBinPangenome(val) {
       self.last_bin_pangenome = val;
     }
+
+    /*function toggleColorByGeo() {
+      self.colorByGeo = !self.colorByGeo;
+    }*/
+    function setMetaData(metadata) {
+      for (let [key, value] of Object.entries(metadata)) {
+        self.metaData.set(key, value);
+      }
+    }
+    function getMetaData(key) {
+      self.metaData.get(key);
+    }
+    function setMetaDataChoices(ar) {
+      self.metaDataChoices = ar;
+    }
+
     return {
       setChunkIndex,
       updateBeginEndBin,
@@ -301,6 +329,11 @@ RootStore = types
       setLoading,
 
       setLastBinPangenome,
+
+      //toggleColorByGeo,
+      setMetaData,
+      getMetaData,
+      setMetaDataChoices,
     };
   })
   .views((self) => ({}));

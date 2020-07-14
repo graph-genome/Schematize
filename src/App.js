@@ -1,4 +1,4 @@
-import { Layer, Stage, Text } from "react-konva";
+import { Layer, Stage, Text, Rect, Arrow } from "react-konva";
 import React, { Component } from "react";
 
 import "./App.css";
@@ -41,7 +41,9 @@ function Legend() {
 
 class App extends Component {
   layerRef = React.createRef();
-  layerRef2 = React.createRef(null);
+  layerRef2 = React.createRef();
+  layerNavigationBar = React.createRef();
+
   // Timer for the LinkArrow highlighting and selection (clicking on it)
   timerHighlightingLink = null;
   timerSelectionLink = null;
@@ -86,6 +88,7 @@ class App extends Component {
       "useWidthCompression",
       this.openRelevantChunksFromIndex.bind(this)
     );
+    //observe(this.props.store, "colorByGeneAnnotation", this.recalcY.bind(this));
 
     observe(this.props.store, "useConnector", this.recalcXLayout.bind(this)); //TODO faster rerender
 
@@ -320,7 +323,9 @@ class App extends Component {
           this.recalcXLayout();
 
           this.compressed_row_mapping = compress_visible_rows(
-            this.schematic.components
+            this.schematic.components,
+            this.schematic.pathNames,
+            Array.from(this.props.store.metaData.keys())
           );
           this.maxNumRowsAcrossComponents = this.calcMaxNumRowsAcrossComponents(
             this.schematic.components
@@ -804,10 +809,66 @@ class App extends Component {
     }
   }
 
+  handleClick = (event) => {
+    this.props.store.updateBeginEndBin(
+      Math.max(
+        Math.floor(
+          (this.props.store.last_bin_pangenome * event.evt.offsetX) /
+            (event.currentTarget.attrs.width +
+              event.currentTarget.attrs.strokeWidth)
+        ),
+        1
+      ),
+      this.props.store.getEndBin()
+    );
+  };
+  handleMouseMove = (event) => {
+    this.props.store.updateCellTooltipContent(
+      "Go to bin: " +
+        Math.max(
+          Math.floor(
+            (this.props.store.last_bin_pangenome * event.evt.offsetX) /
+              (event.currentTarget.attrs.width +
+                event.currentTarget.attrs.strokeWidth)
+          ),
+          1
+        )
+    );
+  };
+  handleMouseOut = () => {
+    this.props.store.updateCellTooltipContent("");
+  };
+
   render() {
     console.log("Start render");
 
     //console.log('renderNucleotidesSchematic - START')
+
+    //this.state.actualWidth - 2
+    const navigation_bar_width = window.innerWidth - 2;
+
+    let x_navigation =
+      this.props.store.getBeginBin() === 1
+        ? 0
+        : Math.ceil(
+            (this.props.store.getBeginBin() /
+              this.props.store.last_bin_pangenome) *
+              navigation_bar_width
+          );
+
+    let width_navigation = Math.ceil(
+      ((this.props.store.getEndBin() - this.props.store.getBeginBin() + 1) /
+        this.props.store.last_bin_pangenome) *
+        navigation_bar_width
+    );
+
+    if (x_navigation + width_navigation > navigation_bar_width) {
+      width_navigation = navigation_bar_width - x_navigation;
+    }
+
+    /*console.log("navigation_bar_width " + navigation_bar_width);
+    console.log("x_navigation " + x_navigation);
+    console.log("width_navigation " + width_navigation);*/
 
     return (
       <>
@@ -827,6 +888,38 @@ class App extends Component {
           }}
         >
           <ControlHeader store={this.props.store} schematic={this.schematic} />
+
+          <Stage
+            x={this.props.store.leftOffset}
+            y={this.props.topOffset}
+            style={{ cursor: "pointer" }}
+            width={navigation_bar_width + 2}
+            height={this.props.store.heightNavigationBar + 4}
+          >
+            <Layer ref={this.layerNavigationBar}>
+              <Rect
+                y={2}
+                width={navigation_bar_width}
+                height={this.props.store.heightNavigationBar}
+                fill={"lightblue"}
+                stroke={"gray"}
+                strokeWidth={2}
+                onMouseMove={this.handleMouseMove}
+                onMouseOut={this.handleMouseOut}
+                onClick={this.handleClick}
+              />
+              <Rect
+                x={x_navigation}
+                y={2}
+                width={width_navigation}
+                height={this.props.store.heightNavigationBar}
+                fill={"orange"}
+                stroke={"brown"}
+                strokeWidth={2}
+                opacity={0.7}
+              />
+            </Layer>
+          </Stage>
 
           <Stage
             x={this.props.store.leftOffset}

@@ -18,9 +18,12 @@ export class MatrixCell extends React.Component {
     let item = this.props.range[
       Math.min(this.props.range.length - 1, relColumnX)
     ];
+    let pathName = this.props.pathName.startsWith("NC_045512")
+      ? "Reference: " + this.props.pathName
+      : this.props.pathName;
     let tooltipContent = '"';
     tooltipContent +=
-      this.props.pathName +
+      pathName +
       '"\nCoverage: ' +
       item[0] +
       "\nInversion: " +
@@ -29,14 +32,30 @@ export class MatrixCell extends React.Component {
 
     const ranges = item[2];
     for (let j = 0; j < ranges.length; j++) {
-      let start = ranges[j][0];
-      let end = ranges[j][1];
-      if (j === 0) {
-        tooltipContent += start + "-" + end;
+      const start = ranges[j][0];
+      const end = ranges[j][1];
+      let new_content = "";
+
+      if (start === 0) {
+        new_content = end + "+";
+      } else if (end === 0) {
+        new_content = start + "-";
       } else {
-        tooltipContent += "," + start + "-" + end;
+        new_content = start + "-" + end;
       }
+
+      if (j > 0) {
+        new_content = "," + new_content;
+      }
+
+      tooltipContent += new_content;
     }
+
+    if (this.props.store.metaData.get(this.props.pathName) !== undefined) {
+      tooltipContent +=
+        "\n" + this.props.store.metaData.get(this.props.pathName).Info;
+    }
+
     this.props.store.updateCellTooltipContent(tooltipContent); //item[2] is array of ranges
   }
 
@@ -73,7 +92,7 @@ export class MatrixCell extends React.Component {
     const inverted = this.props.range[0][1] > 0.5;
     const copyNumber = this.props.range[0][0];
 
-    let color = "#838383";
+    let color = this.props.color;
 
     if (copyNumber > 1 && !inverted) {
       // 11 items is number of colors in copyNumberColorArray
@@ -161,6 +180,7 @@ export class SpanCell extends React.Component {
             range={span.range}
             store={this.props.store}
             pathName={this.props.pathName}
+            color={this.props.color}
             x={this.props.x + span.x * this.props.store.pixelsPerColumn}
             y={this.props.y}
             rowNumber={this.props.rowNumber}
