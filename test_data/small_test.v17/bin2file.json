@@ -1,0 +1,21 @@
+{
+    "json_version": 17,
+    "pangenome_length": 17,
+    "includes_connectors": true,
+    "zoom_levels": {
+        "1": {
+            "bin_width": 1,
+            "last_bin": 17,
+            "files": [
+                {
+                    "file": "chunk0_bin1.schematic.json",
+                    "first_bin": 0,
+                    "last_bin": 17,
+                    "x": 0,
+                    "compressedX": 0,
+                    "fasta": "seq_chunk0_bin1.fa"
+                }
+            ]
+        }
+    }
+}
