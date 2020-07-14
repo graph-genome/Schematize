@@ -246,7 +246,7 @@ class ControlHeader extends React.Component {
             Pangenome Last Bin: {this.props.store.last_bin_pangenome}
           </span>
           <span style={{ marginLeft: "30px" }}>
-            Num. of individuals: {this.props.schematic.pathNames.length}
+            Num. of individuals: {this.props.schematic.pathNames.length - 11}
           </span>
         </div>
         <div className={"row"}>

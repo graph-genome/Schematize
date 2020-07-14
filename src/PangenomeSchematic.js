@@ -119,7 +119,8 @@ class PangenomeSchematic extends React.Component {
   }
 
   loadMetadataFile(jsonFilename) {
-    const mdataPath = `${process.env.PUBLIC_URL}/test_data/${jsonFilename}/metadata.json`;
+    const mdataPath =
+      process.env.REACT_APP_FETCH + jsonFilename + "/metadata.json";
     console.log("loadMetadataFile: ", mdataPath);
 
     if (urlExists(mdataPath)) {
