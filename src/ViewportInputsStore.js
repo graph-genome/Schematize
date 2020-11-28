@@ -1,6 +1,6 @@
-import { types } from "mobx-state-tree";
-import { urlExists } from "./URL";
-import { arraysEqual, checkAndForceMinOrMaxValue, isInt } from "./utilities";
+import {types} from "mobx-state-tree";
+import {urlExists} from "./URL";
+import {arraysEqual, checkAndForceMinOrMaxValue, isInt} from "./utilities";
 
 const Chunk = types.model({
   file: types.string,
@@ -50,12 +50,12 @@ RootStore = types
     highlightedLink: 0, // we will compare linkColumns
     maximumHeightThisFrame: 150,
     cellToolTipContent: "",
-    jsonName: "SARS-CoV-2.genbank.small",
+    jsonName: "Athaliana.50000",
     // Added attributes for the zoom level management
     availableZoomLevels: types.optional(types.array(types.string), ["1"]),
 
-    precIndexSelectedZoomLevel: 0,
-    indexSelectedZoomLevel: 0,
+    precIndexSelectedZoomLevel: 4,
+    indexSelectedZoomLevel: 4,
 
     chunkURLs: types.optional(types.array(types.string), []),
     chunkFastaURLs: types.optional(types.array(types.string), []),

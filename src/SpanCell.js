@@ -1,5 +1,5 @@
 import React from "react";
-import { Rect, Text } from "react-konva";
+import {Rect, Text} from "react-konva";
 import PropTypes from "prop-types";
 
 export class MatrixCell extends React.Component {
@@ -85,6 +85,18 @@ export class MatrixCell extends React.Component {
     }
   }
 
+    colorByPosition(props) {
+        const genomeSize = 2500000; // 150 Megabases
+        let ranges = this.props.range[0][2];
+        // for (let j = 0; j < ranges.length; j++) {
+        const start = ranges[0][0];
+        const end = ranges[0][1];
+        const percent = end / genomeSize;
+
+        return this.props.store.invertedColorArray[Math.min(10, Math.round(10 * percent))];
+        // }
+    }
+
   render() {
     if (this.props.range === undefined || this.props.range.length === 0) {
       return null; //giving up
@@ -102,6 +114,7 @@ export class MatrixCell extends React.Component {
         color = this.props.store.copyNumberColorArray[10];
       }
     }
+      color = this.colorByPosition(this.props);
 
     if (inverted) {
       // 11 items is number of colors in invertedColorArray
