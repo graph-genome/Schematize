@@ -90,7 +90,7 @@ export class MatrixCell extends React.Component {
         let ranges = this.props.range[0][2];
         // for (let j = 0; j < ranges.length; j++) {
         const start = ranges[0][0];
-        const end = ranges[0][1];
+        const end = ranges[ranges.length - 1][1];
         const percent = end / genomeSize;
 
         return this.props.store.invertedColorArray[Math.min(10, Math.round(10 * percent))];
@@ -102,7 +102,7 @@ export class MatrixCell extends React.Component {
       return null; //giving up
     }
     const inverted = this.props.range[0][1] > 0.5;
-    const copyNumber = this.props.range[0][0];
+      const copyNumber = this.props.range[0][2].length;
 
     let color = this.props.color;
 
@@ -114,7 +114,7 @@ export class MatrixCell extends React.Component {
         color = this.props.store.copyNumberColorArray[10];
       }
     }
-      color = this.colorByPosition(this.props);
+      // color = this.colorByPosition(this.props);
 
     if (inverted) {
       // 11 items is number of colors in invertedColorArray

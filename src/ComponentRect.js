@@ -1,10 +1,10 @@
 /* eslint-disable require-jsdoc */
 import React from "react";
-import { Rect } from "react-konva";
-import { ConnectorRect } from "./ComponentConnectorRect";
-import { SpanCell } from "./SpanCell";
+import {Rect} from "react-konva";
+import {ConnectorRect} from "./ComponentConnectorRect";
+import {SpanCell} from "./SpanCell";
 import PropTypes from "prop-types";
-import { sum } from "./utilities";
+import {sum} from "./utilities";
 
 function colorFromStr(colorKey) {
   colorKey = colorKey.toString();
@@ -62,9 +62,19 @@ export function compress_visible_rows(components, pathNames, annotationNames) {
   } else {
     ordered_num_rows = Array.from(all_visible).sort();
   }
-
+    let fixed_order = ["AT9784_Chr1", "AT7328_Chr1", "AT6906_Chr1", "AT1741.Chr1", "AT6909.Chr1",
+        "TAIR10.Chr1", "AT7213.Chr1", "AT5784.Chr1", "AT6911.Chr1", "AT7186.Chr1", "AT6981_Chr1", "AT9518_Chr1",
+        "AT5784.Chr2", "AT7213.Chr2", "AT7328_Chr2", "AT1741.Chr2", "AT6909.Chr2", "AT7186.Chr2", "AT6981_Chr2", "AT9518_Chr2",
+        "TAIR10.Chr2", "AT6911.Chr2", "AT6906_Chr2", "AT9784_Chr2",
+        "AT7328_Chr3", "TAIR10.Chr3", "AT9784_Chr3", "AT9518_Chr3", "AT7213.Chr3", "AT7186.Chr3", "AT6981_Chr3", "AT6911.Chr3",
+        "AT6909.Chr3", "AT5784.Chr3", "AT1741.Chr3", "AT6906_Chr3",
+        "AT5784.Chr4", "AT6911.Chr4", "AT6906_Chr4", "TAIR10.Chr4", "AT9518_Chr4", "AT7328_Chr4", "AT7213.Chr4",
+        "AT7186.Chr4", "AT6981_Chr4", "AT6909.Chr4", "AT1741.Chr4", "AT9784_Chr4",
+        "AT9784_Chr5", "AT6981_Chr5", "AT6911.Chr5", "AT7213.Chr5", "AT6906_Chr5", "TAIR10.Chr5", "AT9518_Chr5",
+        "AT7328_Chr5", "AT5784.Chr5", "AT7186.Chr5", "AT6909.Chr5", "AT1741.Chr5",
+    ];
   for (let [count, index] of ordered_num_rows.entries()) {
-    row_mapping[index] = count;
+      row_mapping[index] = count;//fixed_order.indexOf(pathNames[index]); //count;
   }
 
   return row_mapping;
