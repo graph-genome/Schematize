@@ -27,6 +27,7 @@ npm run build
 Builds the app for production to the `build` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
 ## JBrowse2 Integration
+((JBrowse2 integration is not done yet. If you'd like to contribute you can make a PR for [Issue #7](https://github.com/graph-genome/Schematize/issues/7) ))
 
 The whole code in this repository is integrated as a submodule in [GMOD](http://gmod.org/wiki/Main_Page)'s
  [JBrowse-Components](https://github.com/GMOD/jbrowse-components). 
