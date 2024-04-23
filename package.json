@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "gh-pages": "^2.2.0",
+    "gh-pages": "^5.0.0",
     "jquery": "^3.5.1",
     "konva": "^4.2.2",
     "mobx": "^5.15.4",
